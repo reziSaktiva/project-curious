@@ -86,10 +86,9 @@ mutation likePost($id: ID!){
 
 export const LOGIN_USER = gql`
     mutation login(
-        $username: String!
-        $password: String!
+        $uid: String!
     ){
-    login(username: $username, password: $password)
+    login(uid: $uid)
     {
             id
             username

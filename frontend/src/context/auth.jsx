@@ -1,4 +1,5 @@
-import React, { useReducer, createContext } from 'react'
+import React, { createContext, useEffect, useReducer } from 'react'
+
 import jwtDecode from 'jwt-decode'
 
 const initialState = {
@@ -7,8 +8,18 @@ const initialState = {
 }
 
 if (localStorage.token) {
-    const decodedToken = jwtDecode(localStorage.getItem('token'))
+    /*
+        - 2nd solution is to call the login query again on this function so the query will return all the data needed
+        flow: reload -> query login with token -> return data -> update context with current result
 
+        - the caveats for 1st solution is even with stale token hacker (if they got access to browser storage/cookies) then can steal sensitive information so be carefull on what u put inside the token.
+
+        NOTE: as far as i know the backend should use firebase-admin instead of firebase since the purpose of firebase lib is for client
+        there is a few method that doesnt exist on each lib.
+    */
+    
+    const decodedToken = jwtDecode(localStorage.getItem('token'))
+    // 2nd solution (better) -> flow -> getMyProfile -> updateContext
     console.log(decodedToken);
 
     if (decodedToken.exp * 1000 < Date.now()) {
@@ -77,7 +88,16 @@ function showError(error) {
 }
 
 export function AuthProvider(props) {
+    useEffect(() => {
+        // Above code to check the token / login
+    }, [
+        // Dependencies for determine whether should rerender or not
+    ]);
+
     const [state, dispatch] = useReducer(authReducer, initialState);
+    
+    // example use state for updating context
+    // const [user, updateUser] = useState('');
 
     function getGeoLocation(position) {
         const location = {
@@ -120,6 +140,8 @@ export function AuthProvider(props) {
 
     return (
         <AuthContext.Provider
+
+            // value={{user: user, updateUser: updateUser}}
             value={{ user: state.user, facebookData: state.facebookData, login, logout, loadFacebookData }}
             {...props}
         />
