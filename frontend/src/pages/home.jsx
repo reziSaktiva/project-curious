@@ -1,12 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 
-import { useQuery } from '@apollo/client'
 import { GET_POSTS } from '../GraphQL/Queries'
-import { PostContext } from '../context/posts'
-
 import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard'
-
+import { PostContext } from '../context/posts'
+import { useQuery } from '@apollo/client'
 
 function Home() {
     const { data } = useQuery(GET_POSTS)
@@ -19,7 +17,7 @@ function Home() {
         } else {
             setPosts(data.getPosts)
         }
-    }, [data])
+    }, [data]);
 
     return (
         <div>

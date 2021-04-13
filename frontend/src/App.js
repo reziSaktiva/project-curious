@@ -1,24 +1,22 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
-
 import 'antd/dist/antd.css'
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
 
-import Context from './context/Context'
-import AuthRoute from './util/AuthRoute'
-import UserRoute from './util/UserRoute'
-import HomeRoute from './util/HomeRoute'
-import FacebookAuthRoute from './util/FacebookAuthRoute'
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
+import AuthRoute from './util/AuthRoute'
+import Context from './context/Context'
+import FacebookAuthRoute from './util/FacebookAuthRoute'
+import Grid from './pages/grid';
+import HomeRoute from './util/HomeRoute'
+import LandingPage from './pages/landingPage';
+import React from 'react'
+import RegisterFacebook from './pages/registerFacebook';
+import UserRoute from './util/UserRoute'
 // Importing Pages & Components
 import login from './pages/login';
-import register from './pages/register';
 import map from './pages/map'
-
-import RegisterFacebook from './pages/registerFacebook';
-import LandingPage from './pages/landingPage';
-import Grid from './pages/grid';
+import register from './pages/register';
 
 function App() {
   return (

@@ -1,12 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { Form, Input, Alert } from 'antd';
-
+import { Alert, Form, Input } from 'antd';
+import React, { useContext, useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { LOGIN_USER } from '../GraphQL/Mutations'
 
 import { AuthContext } from '../context/auth'
-import { Link } from 'react-router-dom';
 import { GET_USER_DATA } from '../GraphQL/Queries';
+import { LOGIN_USER } from '../GraphQL/Mutations'
+import { Link } from 'react-router-dom';
+import { auth } from '../util/Firebase';
 
 const layout = {
     labelCol: {
@@ -32,10 +32,14 @@ const Login = (props) => {
         }
     })
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         const { username, password } = values
 
-        login({ variables: { username, password } })
+        // Login
+        // Intend hardocded for testing only
+        const loginProcess = await auth.signInWithEmailAndPassword("farrizalchudry@gmail.com", password);
+        // if use 1st solution change/rename createCustomToken for more verbose function name
+        login({ variables: { uid: loginProcess.user.uid } })
     };
 
     const onCloseErr = (e) => {

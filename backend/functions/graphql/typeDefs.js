@@ -108,7 +108,7 @@ module.exports = gql`
     type Mutation {
         # users mutation
         registerUser(registerInput: RegisterInput): User!
-        login(username: String!, password: String!): User!
+        login(uid: String!): User!
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
         checkUserWithFacebook(username: String!): Boolean!
