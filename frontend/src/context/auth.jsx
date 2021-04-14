@@ -6,18 +6,18 @@ const initialState = {
     facebookData: null
 }
 
-// if (localStorage.token) {
-//     const decodedToken = jwtDecode(localStorage.getItem('token'))
+if (localStorage.token) {
+    const decodedToken = jwtDecode(localStorage.getItem('token'))
 
-//     if (decodedToken.exp * 1000 < Date.now()) {
-//         localStorage.removeItem("token")
-//         localStorage.removeItem("user")
-//         localStorage.removeItem("location")
-//     } else {
-//         initialState.user = decodedToken
-//         initialState.user.location = JSON.parse(localStorage.getItem("location"))
-//     }
-// }
+    if (decodedToken.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
+        localStorage.removeItem("location")
+    } else {
+        initialState.user = decodedToken
+        initialState.user.location = JSON.parse(localStorage.getItem("location"))
+    }
+}
 
 export const AuthContext = createContext({
     user: null,

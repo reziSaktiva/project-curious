@@ -20,6 +20,8 @@ module.exports = gql`
         location: LatLong
         likeCount: Int!
         commentCount: Int!
+        comments: [Comment]
+        likes: [Like]
     }
     type LatLong {
         lat: Float
