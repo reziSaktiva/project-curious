@@ -1,0 +1,135 @@
+.landingimage {
+  background-image: url('./assets/puzzle.png');
+  height: 818px;
+  width: 100%;
+}
+
+.terms {
+  font-weight: bold;
+}
+
+/* LOGIN */
+.gicon {
+  background-image: url('./assets/googleicon.png');
+  width: 21px;
+  height: 21px;
+}
+.radius {
+  border-radius: 10px;
+}
+
+.savee {
+  color: black;
+}
+
+/* TIMELINE NEARBY */
+
+.leftside{
+  margin-top: 25px;
+  margin-left: 333px;
+}
+
+.near {
+  enable-background: accumulate;
+}
+.gambar {
+  background-image: url('./assets/Avatar.png');
+  width: 60px;
+  height: 60px;
+}
+.image{
+  background-image: url('./assets/Avatar.png');
+  width: 60px;
+  height: 60px;
+}
+
+/* Menu List */
+.markericon {
+  background-image: url('./assets/marker.png');
+  width: 165px;
+  background-repeat: no-repeat;
+  height: 18px;
+}
+.near{
+  background-image: url('./assets/locicon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.drop{
+  background-image: url('./assets/dropicon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.star{
+  background-image: url('./assets/staricon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.subscribe{
+  background-image: url('./assets/subsicon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.muted{
+  background-image: url('./assets/mutedicon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.settings{
+  background-image: url('./assets/seticon.png');
+  height: 30px;
+  background-repeat: no-repeat;
+}
+.menu {
+  font-weight: bold;
+  color: darkslategrey;
+}
+
+/* LOGO */
+.curious {
+  background-image: url('./assets/logoc1.png');
+  height: 31px;
+  width: 128px;
+  margin-top: 31px;
+}
+
+.curiouslanding {
+  background-image: url('./assets/curiouslanding.png');
+  height: 85px;
+  width: 368px;
+  margin-top: -460px;
+  margin-left: 240px;
+  position: absolute;
+}
+
+.location {
+  background-image: url('./assets/location.jpeg');
+  height: 48px;
+  width: 48px;
+}
+
+/* MIDDLE */
+.middle{
+  margin-top: 25px;
+}
+
+.lpbutton {
+  text-align: center;
+  position: fixed;
+  bottom: 93%;
+  right: 44%;
+}
+
+.float {
+  position: relative;
+}
+
+.likeButton{
+  background-color: #fff;
+  border: 1px solid black;
+}
+
+.likeButton:hover{
+  color: red;
+  border: 1px solid black;
+}
