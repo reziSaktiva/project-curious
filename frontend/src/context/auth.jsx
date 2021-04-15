@@ -9,7 +9,7 @@ const initialState = {
 if (localStorage.token) {
     const decodedToken = jwtDecode(localStorage.getItem('token'))
 
-    console.log(decodedToken);
+    console.log("decodeToken",decodedToken);
 
     if (decodedToken.exp * 1000 < Date.now()) {
         localStorage.removeItem("token")
@@ -97,7 +97,7 @@ export function AuthProvider(props) {
         navigator.geolocation.getCurrentPosition(getGeoLocation, showError)
 
         localStorage.setItem('token', userData.token)
-
+        console.log("userData",userData);
         dispatch({
             type: 'SET_USER_DATA',
             payload: userData

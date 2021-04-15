@@ -160,10 +160,10 @@ module.exports = {
                         }
                     })
 
-                    return {
-                        ...userData,
-                        token
-                    }
+                return {
+                    ...userData,
+                    token
+                }
             }
             catch (err) {
                 console.error(err)
