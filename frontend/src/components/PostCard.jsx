@@ -37,7 +37,7 @@ export default function PostCard({ post, loading }) {
                 key={post.id}
                 actions={
                     !loading && [
-                        <LikeButton likeCount={ post.likeCount } id={ post.id } />,
+                        <LikeButton likeCount={ post.likeCount } likes={post.likes} id={ post.id } />,
                         <CommentButton commentCount={ post.commentCount } />,
                         <RepostButton />
                     ]

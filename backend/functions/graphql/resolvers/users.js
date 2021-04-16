@@ -107,10 +107,7 @@ module.exports = {
                     .then(data => data.user.getIdToken())
                     .then(idToken => idToken)
 
-                return {
-                    ...list,
-                    token
-                }
+                return token
             }
             catch (err) {
                 if (err.code === "auth/wrong-password") {

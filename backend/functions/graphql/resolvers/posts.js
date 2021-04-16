@@ -193,7 +193,11 @@ module.exports = {
               doc.update({ id: doc.id });
             });
 
-          return newPost;
+          return {
+            ...newPost,
+            likes : [],
+            comments: []
+          };
         } catch (err) {
           throw new Error(err);
         }

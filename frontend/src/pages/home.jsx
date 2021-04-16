@@ -6,12 +6,14 @@ import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard'
+import { AuthContext } from '../context/auth'
 
 
 function Home() {
     const { data } = useQuery(GET_POSTS)
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
+    const { user } = useContext(AuthContext)
 
     useEffect(() => {
         if (!data) {
@@ -23,7 +25,7 @@ function Home() {
 
     return (
         <div>
-            <InfiniteScroll>
+            {user ? (<InfiniteScroll>
                 {!posts ? null
                     : posts.map(post => {
                         return (
@@ -32,7 +34,7 @@ function Home() {
                             </div>
                         )
                     })}
-            </InfiniteScroll>
+            </InfiniteScroll>) : null}
         </div>
     );
 }

@@ -1,10 +1,8 @@
 import React, { useContext } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
-import { AuthContext } from '../context/auth'
-
 function UserRoute({ component: Component, ...rest }) {
-    const { user } = useContext(AuthContext);
+    const user = localStorage.token
 
     return (
         <Route

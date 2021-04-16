@@ -1,127 +1,154 @@
-import React, { useReducer, createContext } from 'react'
-import jwtDecode from 'jwt-decode'
+import React, { useReducer, createContext, useEffect } from "react";
+import jwtDecode from "jwt-decode";
+import { useLazyQuery } from "@apollo/client";
+import { GET_USER_DATA } from "../GraphQL/Queries";
 
 const initialState = {
-    user: null,
-    facebookData: null
-}
-
-if (localStorage.token) {
-    const decodedToken = jwtDecode(localStorage.getItem('token'))
-
-    console.log("decodeToken",decodedToken);
-
-    if (decodedToken.exp * 1000 < Date.now()) {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        localStorage.removeItem("location")
-    } else {
-        initialState.user = decodedToken
-        initialState.user.location = JSON.parse(localStorage.getItem("location"))
-    }
-}
+  user: null,
+  liked: null,
+  notifications: null,
+  facebookData: null,
+};
 
 export const AuthContext = createContext({
-    user: null,
-    facebookData: null,
-    login: (userData) => { },
-    loadFacebookData: (facebookData) => { },
-    logout: () => { }
-})
+  user: null,
+  liked: null,
+  notifications: null,
+  facebookData: null,
+  login: (token) => {},
+  loadFacebookData: (facebookData) => {},
+  logout: () => {},
+});
 
 function authReducer(state, action) {
-    switch (action.type) {
-        case 'GET_LOCATION':
-            return {
-                ...state,
-                user: {
-                    ...state.user,
-                    location: action.payload
-                }
-            }
-        case 'SET_USER_DATA':
-            return {
-                ...state,
-                user: action.payload
-            }
-        case 'REGISTER_WITH_fACEBOOK':
-            return {
-                ...state,
-                facebookData: action.payload
-            }
-        case 'LOGOUT':
-            return {
-                ...state,
-                user: null
-            }
-        default:
-            return state
-    }
+  switch (action.type) {
+    case "GET_LOCATION":
+      return {
+        ...state,
+        location: action.payload,
+      };
+    case "SET_USER_DATA":
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case "SET_LIKED_DATA":
+      return {
+        ...state,
+        liked: action.payload,
+      };
+    case "SET_NOTIFICATIONS_DATA":
+      return {
+        ...state,
+        notifications: action.payload,
+      };
+    case "REGISTER_WITH_fACEBOOK":
+      return {
+        ...state,
+        facebookData: action.payload,
+      };
+    case "LOGOUT":
+      return {
+        ...state,
+        user: null,
+      };
+    default:
+      return state;
+  }
 }
 
 function showError(error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            console.log("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            console.log("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            console.log("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            console.log("An unknown error occurred.");
-            break;
-    }
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    case error.UNKNOWN_ERROR:
+      console.log("An unknown error occurred.");
+      break;
+  }
 }
 
 export function AuthProvider(props) {
-    const [state, dispatch] = useReducer(authReducer, initialState);
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  const [userData, { called, loading, data }] = useLazyQuery(GET_USER_DATA);
 
-    function getGeoLocation(position) {
-        const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        }
-
-        localStorage.setItem('location', JSON.stringify(location))
-
-        dispatch({
-            type: 'GET_LOCATION',
-            payload: location
-        })
+  useEffect(() => {
+    if (data && !loading) {
+      dispatch({
+        type: "SET_USER_DATA",
+        payload: data.getUserData.user,
+      });
+      dispatch({
+        type: "SET_LIKED_DATA",
+        payload: data.getUserData.liked,
+      });
+      dispatch({
+        type: "SET_NOTIFICATIONS_DATA",
+        payload: data.getUserData.notifications,
+      });
     }
+  }, [data, loading]);
 
-    function login(userData) {
-        navigator.geolocation.getCurrentPosition(getGeoLocation, showError)
+  useEffect(() => {
+    if (localStorage.token) {
+      const decodedToken = jwtDecode(localStorage.getItem("token"));
 
-        localStorage.setItem('token', userData.token)
-        console.log("userData",userData);
-        dispatch({
-            type: 'SET_USER_DATA',
-            payload: userData
-        })
+      if (decodedToken.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("location");
+      } else {
+        userData();
+      }
     }
+  }, []);
 
-    function loadFacebookData(facebookData) {
-        dispatch({
-            type: 'REGISTER_WITH_fACEBOOK',
-            payload: facebookData
-        })
-    }
+  function login(token) {
+    navigator.geolocation.getCurrentPosition(getGeoLocation, showError);
 
-    function logout() {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        localStorage.removeItem("location")
-        dispatch({ type: "LOGOUT" })
-    }
+    localStorage.setItem("token", token);
+    userData();
+  }
 
-    return (
-        <AuthContext.Provider
-            value={{ user: state.user, facebookData: state.facebookData, login, logout, loadFacebookData }}
-            {...props}
-        />
-    )
+  function loadFacebookData(facebookData) {
+    dispatch({
+      type: "REGISTER_WITH_fACEBOOK",
+      payload: facebookData,
+    });
+  }
+
+  function getGeoLocation(position) {
+    const location = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    localStorage.setItem("location", JSON.stringify(location));
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("location");
+    dispatch({ type: "LOGOUT" });
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user: state.user,
+        facebookData: state.facebookData,
+        login,
+        logout,
+        loadFacebookData,
+      }}
+      {...props}
+    />
+  );
 }

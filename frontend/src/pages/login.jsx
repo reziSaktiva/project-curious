@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Form, Input, Alert } from 'antd';
 
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useLazyQuery } from '@apollo/client'
 import { LOGIN_USER } from '../GraphQL/Mutations'
 
 import { AuthContext } from '../context/auth'
@@ -23,7 +23,7 @@ const Login = (props) => {
 
     const [login] = useMutation(LOGIN_USER, {
         update(_, { data: { login } }) {
-
+            
             context.login(login)
             props.history.push('/')
         },
