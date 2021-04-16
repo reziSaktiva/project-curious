@@ -1,9 +1,15 @@
-import React, { useReducer, createContext } from 'react'
+import React, { useReducer, createContext, useEffect } from 'react'
 import jwtDecode from 'jwt-decode'
+import { get } from 'lodash'
+
+import { useLazyQuery } from '@apollo/client'
+
+import { GET_USER_DATA } from '../GraphQL/Queries'
 
 const initialState = {
     user: null,
-    facebookData: null
+    facebookData: null,
+    notification: []
 }
 
 if (localStorage.token) {
@@ -38,6 +44,11 @@ function authReducer(state, action) {
                     ...state.user,
                     location: action.payload
                 }
+            }
+        case 'SET_NOTIFICATIONS':
+            return {
+                ...state,
+                notification: action.payload
             }
         case 'SET_USER_DATA':
             return {
@@ -78,6 +89,43 @@ function showError(error) {
 
 export function AuthProvider(props) {
     const [state, dispatch] = useReducer(authReducer, initialState);
+    const [
+        loadDataUser,
+        { refetch, called, loading, data, error }
+    ] = useLazyQuery(GET_USER_DATA);
+
+    useEffect(() => {
+        if (!called) {
+            return loadDataUser();
+        }
+
+        return refetch();
+    }, [])
+
+    useEffect(() => {
+        const hasErrors = error && error.length
+
+        if (hasErrors) {
+            console.log('should do redirect to login page')
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (!loading && data && !error) {
+            const user = get(data, 'getUserData.user');
+            const notifications = get(data, 'getUserData.notifications');
+
+            dispatch({
+                type: 'SET_USER_DATA',
+                payload: user
+            });
+
+            dispatch({
+                type: 'SET_NOTIFICATIONS',
+                payload: notifications
+            })
+        }
+    }, [loading, data]);
 
     function getGeoLocation(position) {
         const location = {
