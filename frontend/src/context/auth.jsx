@@ -2,7 +2,9 @@
 import React, { useReducer, createContext, useEffect, useMemo } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { get } from 'lodash'
-import jwtDecode from 'jwt-decode'
+
+// Helper
+import { Session } from '../util/Session';
 import { auth } from '../util/Firebase'
 
 // Graphql
@@ -17,7 +19,6 @@ import {
     LOGOUT,
 
     LS_LOCATION,
-    LS_DATA_USER,
     LS_TOKEN
 } from './constant'
 
@@ -27,28 +28,15 @@ const initialState = {
     notification: []
 }
 
-if (localStorage.token) {
-    const decodedToken = jwtDecode(localStorage.getItem('token'))
+const {
+    location, user
+} = Session({ onLogout: () => {}})
 
-    console.log(decodedToken);
+// Reinit Users
+initialState.user = user;
+initialState.user.location = location;
 
-    if (decodedToken.exp * 1000 < Date.now()) {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        localStorage.removeItem("location")
-    } else {
-        initialState.user = decodedToken
-        initialState.user.location = JSON.parse(localStorage.getItem("location"))
-    }
-}
-
-export const AuthContext = createContext({
-    user: null,
-    facebookData: null,
-    login: (userData) => { },
-    loadFacebookData: (facebookData) => { },
-    logout: () => { }
-})
+export const AuthContext = createContext()
 
 function authReducer(state, action) {
     switch (action.type) {
@@ -104,15 +92,18 @@ function showError(error) {
 
 export function AuthProvider(props) {
     const [state, dispatch] = useReducer(authReducer, initialState);
+    
+    // Check Sessions
+    const { token } = Session({ onLogout: logout});
+    
+    // Mutations
     const [
         loadDataUser,
         { refetch, called, loading, data, error }
     ] = useLazyQuery(GET_USER_DATA);
 
     useEffect(() => {
-        const loginWithEmailAndPassword = localStorage.getItem(LS_TOKEN)
-
-        if (loginWithEmailAndPassword) {
+        if (token) {
             // do load data user with token from localstorage
             if (!called) {
                 return loadDataUser();
@@ -131,7 +122,7 @@ export function AuthProvider(props) {
                 return logout();
             })
         }
-    }, [])
+    }, [token])
 
     useEffect(() => {
         const hasErrors = error && error.length
@@ -190,9 +181,6 @@ export function AuthProvider(props) {
     }
 
     function logout() {
-        localStorage.removeItem(LS_TOKEN)
-        localStorage.removeItem(LS_DATA_USER)
-        localStorage.removeItem(LS_LOCATION)
         dispatch({ type: LOGOUT })
     }
 
