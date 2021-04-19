@@ -30,6 +30,17 @@ const reducer = (state, action) => {
         loading: false,
         posts: [action.payload, ...state.posts],
       };
+    case "LIKE_POST":
+      let index = state.posts.findIndex(post => post.id === action.payload.postId)
+      const posts = []
+      state.posts.forEach(post => posts.push(post))
+
+      posts[index].likes = [...state.posts[index].likes, action.payload.data]
+      posts[index].likeCount ++
+
+      return {
+        ...state
+      }
     default:
       throw new Error("Don't understand action");
   }
@@ -90,11 +101,24 @@ export const PostProvider = (props) => {
     }, 2000);
   };
 
-  const like = (id) => {
-    dispatch({
-      type: "LIKE_POST",
-      payload: id,
-    });
+  const like = (likeData, postId) => {
+    const data = {
+      id: likeData.id,
+        owner: likeData.owner,
+        createdAt: likeData.createdAt,
+        displayName: likeData.displayName,
+        displayImage: likeData.displayImage,
+        colorCode: likeData.colorCode
+    }
+    if(likeData.isLike){
+      dispatch({
+        type: "LIKE_POST",
+        payload: {
+          data,
+          postId
+        }
+      })
+    }
   };
 
   return (

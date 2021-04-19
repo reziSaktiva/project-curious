@@ -43,7 +43,7 @@ module.exports = gql`
         displayName: String!
         displayImage: String!
         colorCode: String!
-        isLiked: Boolean
+        isLike: Boolean
     },
     type Notification {
         recipient: String!

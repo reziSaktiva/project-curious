@@ -326,7 +326,7 @@ module.exports = {
                 displayName: name,
                 displayImage,
                 colorCode,
-                isLiked: false,
+                isLike: false,
               };
 
               db.doc(`/posts/${id}/likes/${likeId}`).delete();
@@ -399,7 +399,7 @@ module.exports = {
                     displayName: name,
                     displayImage,
                     colorCode,
-                    isLiked: true,
+                    isLike: true,
                   };
 
                   db.doc(`/users/${username}/liked/${data.id}`).set(likeData);

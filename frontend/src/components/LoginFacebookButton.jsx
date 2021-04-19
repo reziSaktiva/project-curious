@@ -16,12 +16,12 @@ export default function LoginFacebookButton({ props }) {
   const { loadFacebookData, login } = useContext(AuthContext)
   const [dataFacebook, setFacebookData] = useState({})
 
-  const [loginFacebook] = useMutation(LOGIN_USER_FACEBOOK, {
-    update(_, { data: { loginWithFacebook } }) {
-      console.log(loginWithFacebook);
-      login(loginWithFacebook)
-    }
-  })
+  // const [loginFacebook] = useMutation(LOGIN_USER_FACEBOOK, {
+  //   update(_, { data: { loginWithFacebook } }) {
+
+  //     login(loginWithFacebook)
+  //   }
+  // })
 
   const [check] = useMutation(CHECK_USER_BY_FACEBOOK, {
     update(_, { data: { checkUserWithFacebook } }) {
@@ -29,8 +29,9 @@ export default function LoginFacebookButton({ props }) {
         loadFacebookData(dataFacebook)
         props.history.push('/register/facebook')
       } else {
-        const { username, token } = dataFacebook
-        loginFacebook({ variables: { username, token } })
+        const { token } = dataFacebook
+        // loginFacebook({ variables: { username, token } })
+        login(token)
         props.history.push('/')
       }
     },

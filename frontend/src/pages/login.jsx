@@ -1,12 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Form, Input, Alert } from 'antd';
 
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { LOGIN_USER } from '../GraphQL/Mutations'
 
 import { AuthContext } from '../context/auth'
 import { Link } from 'react-router-dom';
-import { GET_USER_DATA } from '../GraphQL/Queries';
 
 const layout = {
     labelCol: {

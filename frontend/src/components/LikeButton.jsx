@@ -7,12 +7,12 @@ import { PostContext } from "../context/posts";
 import { AuthContext } from "../context/auth";
 
 export default function LikeButton({ likeCount, id, likes }) {
-  const {} = useContext(PostContext);
+  const { like } = useContext(PostContext);
   const { user } = useContext(AuthContext);
 
   const [likePost] = useMutation(LIKE_POST, {
-    update(_, { data: { createPost } }) {
-      PostContext.createPost(createPost);
+    update(_, { data: { likePost } }) {
+      like(likePost, id);
     },
   });
 
@@ -46,6 +46,7 @@ export default function LikeButton({ likeCount, id, likes }) {
           shape="circle"
           className="likeButton"
           icon={
+            // <HeartOutlined />
             user && likes.find((like) => like.owner === user.username) ? (
               <HeartOutlined style={{ color: "red" }} />
             ) : (

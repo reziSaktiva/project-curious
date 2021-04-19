@@ -102,6 +102,7 @@ export const LIKE_POST = gql`
       colorCode
       displayName
       displayImage
+      isLike
     }
   }
 `;
