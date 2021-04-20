@@ -82,6 +82,7 @@ module.exports = gql`
     type Query {
         getPosts: [Posts]!
         getUserData: UserData
+        getPostBasedOnNearestLoc(lat: String, lng: String): [Posts]
     },
     input RegisterInput {
         email: String!
