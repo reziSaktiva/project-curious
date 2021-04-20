@@ -1,4 +1,5 @@
 const { db } = require('../../utility/admin')
+const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -30,6 +31,39 @@ module.exports = {
                 console.log(err);
                 throw new Error(err)
             }
+        },
+        async getPostBasedOnNearestLoc (_, { lat, lng }) {
+            if (!lat || !lng) {
+                throw new UserInputError('Lat and Lng is Required')
+            }
+
+            const data = await db.collection('posts').orderBy('createdAt', 'desc').get()
+            const docs = data.docs.map((doc) => doc.data())
+            
+            if (docs.length) {
+                const nearby = []
+
+                docs.forEach(data => {
+                    const { lat: lattitude, lng: longtitude } = data.location;
+                    try {
+                        const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
+                        const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
+                        
+                        const distance = computeDistanceBetween(currentLatLng, contentLocation)
+
+                        if ((distance / 1000) <= 40) { // should be show in range 40 km
+                            nearby.push(data)
+                        }
+                    } catch (e) {
+                        console.log('error : ', e)
+                    }
+                    
+                });
+
+                return nearby;
+            }
+
+            return [];
         }
     },
 
