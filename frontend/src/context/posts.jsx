@@ -31,16 +31,43 @@ const reducer = (state, action) => {
         posts: [action.payload, ...state.posts],
       };
     case "LIKE_POST":
-      let index = state.posts.findIndex(post => post.id === action.payload.postId)
-      const posts = []
-      state.posts.forEach(post => posts.push(post))
+      let likePosts = state.posts.map((post) => {
+        if (post.id === action.payload.postId) {
+          const updatedPost = {
+            ...post,
+            likes: [...post.likes, action.payload.data],
+            likeCount: post.likeCount + 1,
+          };
 
-      posts[index].likes = [...state.posts[index].likes, action.payload.data]
-      posts[index].likeCount ++
+          return updatedPost;
+        }
 
+        return post;
+      });
+      console.log(likePosts);
       return {
-        ...state
-      }
+        ...state,
+        posts: likePosts
+      };
+      case "UNLIKE_POST":
+      const data = action.payload.data;
+      let unlikePosts = state.posts.map((post) => {
+        if (post.id === action.payload.postId) {
+          const updatedPosts = {
+            ...post,
+            likes: post.likes.filter((like) => like.owner !== data.owner),
+            likeCount: post.likeCount - 1,
+          };
+          console.log(updatedPosts);
+          return updatedPosts;
+        }
+        return post;
+      });
+      console.log(unlikePosts);
+      return {
+        ...state,
+        posts: [...unlikePosts]
+      };
     default:
       throw new Error("Don't understand action");
   }
@@ -102,22 +129,34 @@ export const PostProvider = (props) => {
   };
 
   const like = (likeData, postId) => {
+    console.log(postId);
     const data = {
       id: likeData.id,
-        owner: likeData.owner,
-        createdAt: likeData.createdAt,
-        displayName: likeData.displayName,
-        displayImage: likeData.displayImage,
-        colorCode: likeData.colorCode
-    }
-    if(likeData.isLike){
+      owner: likeData.owner,
+      createdAt: likeData.createdAt,
+      displayName: likeData.displayName,
+      displayImage: likeData.displayImage,
+      colorCode: likeData.colorCode,
+    };
+
+    if (likeData.isLike) {
+      console.log('like');
       dispatch({
         type: "LIKE_POST",
         payload: {
           data,
-          postId
-        }
-      })
+          postId,
+        },
+      });
+    } else if (!likeData.isLike) {
+      console.log('unlike');
+      dispatch({
+        type: "UNLIKE_POST",
+        payload: {
+          data,
+          postId,
+        },
+      });
     }
   };
 
