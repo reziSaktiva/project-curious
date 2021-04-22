@@ -49,7 +49,7 @@ const reducer = (state, action) => {
         ...state,
         posts: likePosts
       };
-      case "UNLIKE_POST":
+    case "UNLIKE_POST":
       const data = action.payload.data;
       let unlikePosts = state.posts.map((post) => {
         if (post.id === action.payload.postId) {
@@ -61,9 +61,10 @@ const reducer = (state, action) => {
           console.log(updatedPosts);
           return updatedPosts;
         }
+        
         return post;
       });
-      console.log(unlikePosts);
+      
       return {
         ...state,
         posts: [...unlikePosts]
@@ -149,7 +150,6 @@ export const PostProvider = (props) => {
         },
       });
     } else if (!likeData.isLike) {
-      console.log('unlike');
       dispatch({
         type: "UNLIKE_POST",
         payload: {
