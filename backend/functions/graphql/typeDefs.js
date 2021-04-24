@@ -33,7 +33,7 @@ module.exports = gql`
         owner: String!
         text: String!
         displayName: String!
-        displayImage: String!
+        photoProfile: String
         colorCode: String!
     },
     type Like {
@@ -72,6 +72,7 @@ module.exports = gql`
     },
     type Query {
         getPosts: [Post]!
+        getPost(id: String!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
     },

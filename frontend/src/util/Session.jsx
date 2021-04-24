@@ -7,7 +7,7 @@ export const Session = ({
 }) => {
     const { token, location } = getSession();
 
-    if (token && location) {
+    if (token && Object.keys(location).length) {
         const decodedToken = jwtDecode(token)
 
         if (decodedToken.exp * 1000 < Date.now()) {

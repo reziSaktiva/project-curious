@@ -23,7 +23,8 @@ import {
 } from './constant'
 
 const initialState = {
-  user: 'awdsadasd',
+  user: '',
+  location: '',
   liked: [],
   notifications: [],
   facebookData: null,
@@ -35,7 +36,7 @@ const {
 
 // Reinit Users
 initialState.user = user;
-initialState.user.location = location;
+initialState.location = location;
 
 export const AuthContext = createContext()
 
