@@ -12,15 +12,6 @@ module.exports = gql`
         comments: [Comment]
         likes: [Like]
     }
-    type Posts {
-        id: ID!
-        owner: String!
-        text: String!
-        createdAt: String!
-        location: LatLong
-        likeCount: Int!
-        commentCount: Int!
-    }
     type LatLong {
         lat: Float
         lng: Float
@@ -52,7 +43,7 @@ module.exports = gql`
         displayName: String!
         displayImage: String!
         colorCode: String!
-        isLiked: Boolean
+        isLike: Boolean
     },
     type Notification {
         recipient: String!
@@ -80,9 +71,9 @@ module.exports = gql`
         colorCode: String!
     },
     type Query {
-        getPosts: [Posts]!
+        getPosts: [Post]!
         getUserData: UserData
-        getPostBasedOnNearestLoc(lat: String, lng: String): [Posts]
+        getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
     },
     input RegisterInput {
         email: String!
@@ -109,14 +100,14 @@ module.exports = gql`
     type Mutation {
         # users mutation
         registerUser(registerInput: RegisterInput): User!
-        login(username: String!, password: String!): User!
+        login(username: String!, password: String!): String!
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
         checkUserWithFacebook(username: String!): Boolean!
 
         # posts mutation
         getPost( id:ID! ): Post!
-        nextPosts( id:ID! ): [Posts]!
+        nextPosts( id:ID! ): [Post]!
         createPost(text:String!, location: Location!): Post!
         subscribePost( postId: ID! ): Subscribe!
         deletePost(id:ID!): String!

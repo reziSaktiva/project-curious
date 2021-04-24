@@ -7,7 +7,7 @@ export const Session = ({
 }) => {
     const { token, location } = getSession();
 
-    if (token) {
+    if (token && location) {
         const decodedToken = jwtDecode(token)
 
         if (decodedToken.exp * 1000 < Date.now()) {
@@ -16,17 +16,19 @@ export const Session = ({
 
             return
         }
-        
+
         const locationData = JSON.parse(location)
 
-        return { location: locationData, user: decodedToken, token }
+        return { location: locationData, user: decodedToken || {}, token }
     }
+
+    return { location, user: '', token }
 };
 
 export const getSession = () => {
-    const token = localStorage.getItem(LS_TOKEN);
-    const user = localStorage.getItem(LS_DATA_USER);
-    const location = localStorage.getItem(LS_LOCATION);
+    const token = localStorage.getItem(LS_TOKEN) || null;
+    const user = localStorage.getItem(LS_DATA_USER) || {};
+    const location = localStorage.getItem(LS_LOCATION) || {};
 
     return { token, user, location };
 };

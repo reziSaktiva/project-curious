@@ -1,21 +1,29 @@
-import { gql } from '@apollo/client'
+import { gql } from "@apollo/client";
 
 export const GET_POSTS = gql`
-    query{
-        getPosts{
-            id
-            owner
-            text
-            createdAt
-            commentCount
-            likeCount
-            location{
-                lat
-                lng
-            }
-        }
-}
-`
+  query {
+    getPosts {
+      id
+      owner
+      text
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+    }
+  }
+`;
 
 export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
   query GetNearby($lat: String, $lng: String) {
@@ -35,38 +43,38 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
 `
 
 export const GET_USER_DATA = gql`
-    query{
-      getUserData{
-    user{
-      id
-      username
-      email
-      mobileNumber
-      gender
-      birthday
-      createdAt
-      profilePicture
-    }
-    notifications {
-      recipient
-      sender
-      read
-      postId
-      id
-      type
-      createdAt
-      displayName
-      displayImage
-      colorCode
-    }
-    liked{
-      id
-      owner
-      createdAt
-      displayName
-      displayImage
-      colorCode
+  query {
+    getUserData {
+      user {
+        id
+        username
+        email
+        mobileNumber
+        gender
+        birthday
+        createdAt
+        profilePicture
+      }
+      notifications {
+        recipient
+        sender
+        read
+        postId
+        id
+        type
+        createdAt
+        displayName
+        displayImage
+        colorCode
+      }
+      liked {
+        id
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+      }
     }
   }
-  }
-`
+`;

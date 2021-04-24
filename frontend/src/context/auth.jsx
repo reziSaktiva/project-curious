@@ -23,9 +23,10 @@ import {
 } from './constant'
 
 const initialState = {
-    user: null,
-    facebookData: null,
-    notification: []
+  user: 'awdsadasd',
+  liked: [],
+  notifications: [],
+  facebookData: null,
 }
 
 const {
@@ -41,18 +42,23 @@ export const AuthContext = createContext()
 function authReducer(state, action) {
     switch (action.type) {
         case GET_LOCATION:
-            return {
-                ...state,
-                user: {
-                    ...state.user,
-                    location: action.payload
-                }
-            }
+          return {
+              ...state,
+              user: {
+                  ...state.user,
+                  location: action.payload
+              }
+          }
         case SET_NOTIFICATIONS:
-            return {
-                ...state,
-                notification: action.payload
-            }
+          return {
+            ...state,
+            notification: action.payload
+          }
+        case "SET_LIKED_DATA":
+          return {
+            ...state,
+            liked: action.payload,
+          }
         case SET_USER_DATA:
             return {
                 ...state,
@@ -74,20 +80,20 @@ function authReducer(state, action) {
 }
 
 function showError(error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            console.log("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            console.log("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            console.log("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            console.log("An unknown error occurred.");
-            break;
-    }
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    case error.UNKNOWN_ERROR:
+      console.log("An unknown error occurred.");
+      break;
+  }
 }
 
 export function AuthProvider(props) {
@@ -133,12 +139,18 @@ export function AuthProvider(props) {
 
     useEffect(() => {
         if (!loading && data && !error) {
-            const user = get(data, 'getUserData.user') || {};
-            const notifications = get(data, 'getUserData.notifications') || [];
+            const user = get(data, 'getUserData.user', {});
+            const notifications = get(data, 'getUserData.notifications', []);
+            const likes = get(data, 'getUserData.liked', []);
 
             dispatch({
                 type: SET_USER_DATA,
                 payload: user
+            });
+
+            dispatch({
+              type: "SET_LIKED_DATA",
+              payload: likes,
             });
 
             dispatch({
@@ -165,7 +177,7 @@ export function AuthProvider(props) {
     function login(userData) {
         navigator.geolocation.getCurrentPosition(getGeoLocation, showError)
 
-        localStorage.setItem(LS_TOKEN, userData.token)
+        localStorage.setItem(LS_TOKEN, userData)
 
         dispatch({
             type: SET_USER_DATA,

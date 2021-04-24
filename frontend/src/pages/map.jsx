@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import {
     GoogleMap,
     useLoadScript,
@@ -6,7 +6,6 @@ import {
     Circle
 } from '@react-google-maps/api'
 
-import { AuthContext } from '../context/auth'
 import mapStyle from '../util/style/mapstyle'
 
 import { Slider } from 'antd'
@@ -23,8 +22,7 @@ const options = {
 }
 
 const Map = () => {
-    const { user } = useContext(AuthContext)
-    const position = user.location
+    const position = JSON.parse(localStorage.location)
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: "AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k",
         libraries,

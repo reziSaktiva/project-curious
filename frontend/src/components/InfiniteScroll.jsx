@@ -5,6 +5,7 @@ import { GET_MORE_POSTS } from '../GraphQL/Mutations'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { H4 } from 'tabler-icons-react'
 
 function ScrollInfinite(props) {
     const { posts, morePosts, lastId, more } = useContext(PostContext)
@@ -27,7 +28,7 @@ function ScrollInfinite(props) {
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
                 hasMore={more}
-                loader={<h4>Loading...</h4>}
+                loader={posts.length < 1 ? <h4>belum ada postingan</h4> : <h4>Loading...</h4>}
                 scrollableTarget="scrollableDiv"
                 {...props}
             />
