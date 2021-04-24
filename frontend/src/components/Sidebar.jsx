@@ -25,8 +25,9 @@ const Sidebar = () => {
   const [address, setAddress] = useState("");
 
   const { user } = useContext(AuthContext);
+  const loc = localStorage.location;
 
-  const location = JSON.parse(localStorage.location)
+  const location = loc ? JSON.parse(loc) : null
 
   if (location) {
 

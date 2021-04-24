@@ -25,6 +25,23 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
+  query GetNearby($lat: String, $lng: String) {
+    getPostBasedOnNearestLoc(lat: $lat, lng:$lng) {
+      id
+      owner
+      text
+      createdAt
+      commentCount
+      likeCount
+      location{
+          lat
+          lng
+      }
+    }
+  }
+`
+
 export const GET_USER_DATA = gql`
   query {
     getUserData {
