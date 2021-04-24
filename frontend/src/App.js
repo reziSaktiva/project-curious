@@ -19,6 +19,7 @@ import map from './pages/map'
 import RegisterFacebook from './pages/registerFacebook';
 import LandingPage from './pages/landingPage';
 import Grid from './pages/grid';
+import SinglePost from './pages/detailPost';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <HomeRoute exact path="/" component={LandingPage} />
             <AuthRoute exact path="/login" component={login} />
             <AuthRoute exact path="/register" component={register} />
+            <UserRoute exact path="/post/:id" component={SinglePost} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <UserRoute exact path="/map" component={map} />
           </Switch>

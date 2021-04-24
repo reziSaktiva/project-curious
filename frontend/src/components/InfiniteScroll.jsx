@@ -8,9 +8,10 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { H4 } from 'tabler-icons-react'
 
 function ScrollInfinite(props) {
+    const { isLoading } = props;
     const { posts, morePosts, lastId, more } = useContext(PostContext)
 
-    const [ nextPosts ] = useMutation(GET_MORE_POSTS, {
+    const [ nextPosts, { loading } ] = useMutation(GET_MORE_POSTS, {
         update(_, { data: { nextPosts: postsData } }){
             morePosts(postsData)
         },
@@ -19,6 +20,7 @@ function ScrollInfinite(props) {
         }
     })
 
+    console.log('loading: ', loading);
     const loadMore = () => {
         nextPosts({ variables: { id: lastId } })
     }
@@ -28,7 +30,7 @@ function ScrollInfinite(props) {
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
                 hasMore={more}
-                loader={posts.length < 1 ? <h4>belum ada postingan</h4> : <h4>Loading...</h4>}
+                loader={(!loading || !isLoading) && posts.length < 1 ? <h4>belum ada postingan</h4> : <h4>Loading...</h4>}
                 scrollableTarget="scrollableDiv"
                 {...props}
             />

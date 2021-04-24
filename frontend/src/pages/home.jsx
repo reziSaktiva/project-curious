@@ -10,7 +10,7 @@ import { AuthContext } from '../context/auth'
 
 
 function Home() {
-    const { data } = useQuery(GET_POSTS);
+    const { data, loading: loadingPosts } = useQuery(GET_POSTS);
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
@@ -35,7 +35,7 @@ function Home() {
 
     return (
         <div>
-            {user ? (<InfiniteScroll>
+            {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!posts ? null
                     : posts.map(post => {
                         return (
