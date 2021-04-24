@@ -1,37 +1,46 @@
-import React, { useReducer, createContext } from 'react'
-import jwtDecode from 'jwt-decode'
+// Modules
+import React, { useReducer, createContext, useEffect, useMemo } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import { get } from 'lodash'
+
+// Helper
+import { Session } from '../util/Session';
+import { auth } from '../util/Firebase'
+
+// Graphql
+import { GET_USER_DATA } from '../GraphQL/Queries'
+
+// Constant
+import {
+    GET_LOCATION,
+    SET_NOTIFICATIONS,
+    SET_USER_DATA,
+    REGISTER_WITH_fACEBOOK,
+    LOGOUT,
+
+    LS_LOCATION,
+    LS_TOKEN
+} from './constant'
 
 const initialState = {
     user: null,
-    facebookData: null
-}
-
-if (localStorage.token) {
-    const decodedToken = jwtDecode(localStorage.getItem('token'))
-
-    console.log(decodedToken);
-
-    if (decodedToken.exp * 1000 < Date.now()) {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        localStorage.removeItem("location")
-    } else {
-        initialState.user = decodedToken
-        initialState.user.location = JSON.parse(localStorage.getItem("location"))
-    }
-}
-
-export const AuthContext = createContext({
-    user: null,
     facebookData: null,
-    login: (userData) => { },
-    loadFacebookData: (facebookData) => { },
-    logout: () => { }
-})
+    notification: []
+}
+
+const {
+    location, user
+} = Session({ onLogout: () => {}})
+
+// Reinit Users
+initialState.user = user;
+initialState.user.location = location;
+
+export const AuthContext = createContext()
 
 function authReducer(state, action) {
     switch (action.type) {
-        case 'GET_LOCATION':
+        case GET_LOCATION:
             return {
                 ...state,
                 user: {
@@ -39,17 +48,22 @@ function authReducer(state, action) {
                     location: action.payload
                 }
             }
-        case 'SET_USER_DATA':
+        case SET_NOTIFICATIONS:
+            return {
+                ...state,
+                notification: action.payload
+            }
+        case SET_USER_DATA:
             return {
                 ...state,
                 user: action.payload
             }
-        case 'REGISTER_WITH_fACEBOOK':
+        case REGISTER_WITH_fACEBOOK:
             return {
                 ...state,
                 facebookData: action.payload
             }
-        case 'LOGOUT':
+        case LOGOUT:
             return {
                 ...state,
                 user: null
@@ -78,6 +92,61 @@ function showError(error) {
 
 export function AuthProvider(props) {
     const [state, dispatch] = useReducer(authReducer, initialState);
+    
+    // Check Sessions
+    const { token } = Session({ onLogout: logout});
+    
+    // Mutations
+    const [
+        loadDataUser,
+        { refetch, called, loading, data, error }
+    ] = useLazyQuery(GET_USER_DATA);
+
+    useEffect(() => {
+        if (token) {
+            // do load data user with token from localstorage
+            if (!called) {
+                return loadDataUser();
+            }
+    
+            return refetch();
+        } else {
+            // do check session for user login with provider
+            auth.onAuthStateChanged((user) => {
+                if(user) {
+                    if (!called) return loadDataUser();
+            
+                    return refetch();
+                }
+    
+                return logout();
+            })
+        }
+    }, [token])
+
+    useEffect(() => {
+        const hasErrors = error && error.length
+
+        if (hasErrors) logout()
+
+    }, [error]);
+
+    useEffect(() => {
+        if (!loading && data && !error) {
+            const user = get(data, 'getUserData.user') || {};
+            const notifications = get(data, 'getUserData.notifications') || [];
+
+            dispatch({
+                type: SET_USER_DATA,
+                payload: user
+            });
+
+            dispatch({
+                type: SET_NOTIFICATIONS,
+                payload: notifications
+            })
+        }
+    }, [loading, data]);
 
     function getGeoLocation(position) {
         const location = {
@@ -85,10 +154,10 @@ export function AuthProvider(props) {
             lng: position.coords.longitude
         }
 
-        localStorage.setItem('location', JSON.stringify(location))
+        localStorage.setItem(LS_LOCATION, JSON.stringify(location))
 
         dispatch({
-            type: 'GET_LOCATION',
+            type: GET_LOCATION,
             payload: location
         })
     }
@@ -96,32 +165,32 @@ export function AuthProvider(props) {
     function login(userData) {
         navigator.geolocation.getCurrentPosition(getGeoLocation, showError)
 
-        localStorage.setItem('token', userData.token)
+        localStorage.setItem(LS_TOKEN, userData.token)
 
         dispatch({
-            type: 'SET_USER_DATA',
+            type: SET_USER_DATA,
             payload: userData
         })
     }
 
     function loadFacebookData(facebookData) {
         dispatch({
-            type: 'REGISTER_WITH_fACEBOOK',
+            type: REGISTER_WITH_fACEBOOK,
             payload: facebookData
         })
     }
 
     function logout() {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        localStorage.removeItem("location")
-        dispatch({ type: "LOGOUT" })
+        dispatch({ type: LOGOUT })
     }
 
+    const authProps = useMemo(() => ({
+        user: state.user,
+        facebookData: state.facebookData,
+        login, logout, loadFacebookData // functions context
+    }), [state])
+
     return (
-        <AuthContext.Provider
-            value={{ user: state.user, facebookData: state.facebookData, login, logout, loadFacebookData }}
-            {...props}
-        />
+        <AuthContext.Provider value={authProps} {...props} />
     )
 }
