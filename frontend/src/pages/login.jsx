@@ -2,9 +2,10 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Form, Input, Alert } from 'antd';
 
 import { useMutation } from '@apollo/client'
-import { LOGIN_USER } from '../GraphQL/Mutations'
+import { LOGIN_USER } from '../GraphQL/Mutations';
 
 import { AuthContext } from '../context/auth'
+import { signInWithGoogle } from '../util/signInWithGoogle'
 import { Link } from 'react-router-dom';
 
 const layout = {
@@ -29,7 +30,38 @@ const Login = (props) => {
         onError(err) {
             setErrors(err.message)
         }
-    })
+    });
+
+    const [googlecheckDatabase] = useMutation(CHECK_GOOGLE_USER,{
+        update(_, { data: { googlecheckDatabase }}){  
+            if(googlecheckDatabase === "true"){
+                props.history.push("/")
+            } else {
+            props.history.push("/registerplus")
+            }
+        }
+    });
+
+    useEffect(() => {
+        auth.onAuthStateChanged(userAuth => {
+            if(!userAuth){ // check is not login
+                return
+            }
+
+            const { displayName, email, photoURL, uid, _lat} = userAuth;
+
+            googlecheckDatabase( { variables: {username: displayName } })
+            setState({
+                username: displayName,
+                email,
+                profilePicture: photoURL,
+                id: uid,
+                token: _lat
+            });
+
+            return;
+        })    
+      }, [signInWithGoogle])
 
     const onFinish = (values) => {
         const { username, password } = values
