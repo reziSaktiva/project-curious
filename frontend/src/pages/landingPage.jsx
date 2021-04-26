@@ -4,6 +4,7 @@ import { Col, Row, Button } from 'antd'
 import { Grid } from 'semantic-ui-react'
 
 import LoginFacebook from '../components/LoginFacebookButton'
+import { signInWithGoogle } from '../util/signInWithGoogle';
 import { Link } from 'react-router-dom'
 
 function LandingPage(props) {
@@ -22,7 +23,7 @@ function LandingPage(props) {
                                 <h1 style={{ width: 160 }}>Welcome to Curious!</h1>
                                 <LoginFacebook props={props} />
 
-                                <Button className="ui black basic button" style={{ width: 343, height: 45, marginTop: 15, borderRadius: 5 }}>
+                                <Button onClick={signInWithGoogle} className="ui black basic button" style={{ width: 343, height: 45, marginTop: 15, borderRadius: 5 }}>
                                     <i className="google icon"></i>
                                     Continue with Google
                                 </Button>

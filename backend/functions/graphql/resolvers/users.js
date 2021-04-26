@@ -119,6 +119,46 @@ module.exports = {
                 throw new Error(err)
             }
         },
+        async googlecheckDatabase(_, { username } ) {
+            let isLoggedin = false
+            
+            try{
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        if(doc.exists){
+                            isLoggedin = true
+                        }
+                    })
+
+                    return isLoggedin
+
+            } catch(err) {
+                console.log(err);
+            }
+
+        },
+        async googleLogin(_, args) {
+            const { displayName, username, email, profilePicture, mobileNumber, birthday, gender, id} = args
+            try{
+                let data = {
+                    displayName,
+                    username,
+                    email,
+                    profilePicture,
+                    mobileNumber,
+                    birthday,
+                    gender,
+                    id,
+                    createdAt: new Date().toISOString()
+                }
+                await db.doc(`/users/${displayName}`).set(data)
+
+                return token
+            } catch(err){
+                console.log(err);
+            }
+
+        },
         async checkUserWithFacebook(_, args, content, info) {
             const { username } = args;
 

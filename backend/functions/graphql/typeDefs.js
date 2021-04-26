@@ -102,6 +102,18 @@ module.exports = gql`
         # users mutation
         registerUser(registerInput: RegisterInput): User!
         login(username: String!, password: String!): String!
+        googlecheckDatabase(username: String!): String!
+        googleLogin( 
+            displayName:String!
+            username: String!
+            email: String!
+            profilePicture: String!
+            mobileNumber: String!
+            birthday: String!
+            gender: String!
+            id: ID!
+            token: String!
+        ): String!
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
         checkUserWithFacebook(username: String!): Boolean!
