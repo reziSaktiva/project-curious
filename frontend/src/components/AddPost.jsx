@@ -2,9 +2,9 @@ import React, { useState, useContext } from "react";
 import { Modal, Button, Form, Input } from "antd";
 import "../App.css";
 import UploadFile from "./Upload";
+import { get } from 'lodash'
 
 import { useMutation } from "@apollo/client";
-import { AuthContext } from "../context/auth";
 import { CREATE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
 
@@ -23,6 +23,7 @@ function AddPost() {
     setTimeout(() => {
       setState({ loading: false, visible: false });
     }, 1000);
+    onFinish()
   };
 
   const handleCancel = () => {
@@ -40,19 +41,19 @@ function AddPost() {
     },
   };
 
-  const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
-  const [createPost] = useMutation(CREATE_POST, {
+  const [ createPost ] = useMutation(CREATE_POST, {
     update(_, { data: { createPost } }) {
       postContext.createPost(createPost);
     },
   });
 
   const onFinish = (values) => {
-    const text = values.text;
+    const text = get(values, 'text', '');
     const lat = JSON.parse(localStorage.location).lat;
     const lng = JSON.parse(localStorage.location).lng;
 
+    console.log(text);
     createPost({ variables: { text, lat, lng } });
   };
 

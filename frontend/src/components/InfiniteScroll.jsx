@@ -5,7 +5,6 @@ import { GET_MORE_POSTS } from '../GraphQL/Mutations'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { H4 } from 'tabler-icons-react'
 
 function ScrollInfinite(props) {
     const { isLoading } = props;
@@ -19,11 +18,10 @@ function ScrollInfinite(props) {
             console.log(err.message);
         }
     })
-
-    console.log('loading: ', loading);
     const loadMore = () => {
         nextPosts({ variables: { id: lastId } })
     }
+    
     return (
         <div>
             <InfiniteScroll

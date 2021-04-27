@@ -22,7 +22,7 @@ export const Session = ({
         return { location: locationData, user: decodedToken || {}, token }
     }
 
-    return { location, user: '', token }
+    return { location: '', user: '', token }
 };
 
 export const getSession = () => {
