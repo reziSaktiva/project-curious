@@ -141,48 +141,6 @@ module.exports = {
   },
 
   Mutation: {
-    async getPost(_, { id }, context) {
-      const { username } = await fbAuthContext(context);
-
-      const postDocument = db.doc(`/posts/${id}`);
-      const commentCollection = db.collection(`/posts/${id}/comments`);
-      const likeCollection = db.collection(`/posts/${id}/likes`);
-
-      if (username) {
-        try {
-          let post;
-
-          await postDocument
-            .get()
-            .then((doc) => {
-              if (!doc.exists) {
-                throw new UserInputError("post tidak di temukan");
-              } else {
-                post = doc.data();
-                post.comments = [];
-                post.likes = [];
-                return commentCollection.orderBy("createdAt", "asc").get();
-              }
-            })
-            .then((data) => {
-              data.forEach((doc) => {
-                post.comments.push(doc.data());
-                console.log(doc.data());
-              });
-              return likeCollection.get();
-            })
-            .then((data) => {
-              data.forEach((doc) => {
-                post.likes.push(doc.data());
-              });
-            });
-          return post;
-        } catch (err) {
-          console.log(err);
-          throw new Error(err);
-        }
-      }
-    },
     async nextPosts(_, { id }, context) {
       try {
         const lastPosts = db.doc(`/posts/${id}`);

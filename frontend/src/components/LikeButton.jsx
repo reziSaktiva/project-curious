@@ -34,6 +34,7 @@ export default function LikeButton({ likeCount, id, likes }) {
             marginRight: -20,
             position: "relative",
             backgroundColor: "white",
+            width: 90
           }}
         >
           <p style={{ marginTop: -4, marginLeft: 5 }}>{likeCount} likes</p>
