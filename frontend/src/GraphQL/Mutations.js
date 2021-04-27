@@ -21,22 +21,19 @@ export const CREATE_POST = gql`
         displayName
         displayImage
       }
-      comments {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-        text
-      }
     }
   }
 `;
 
+export const DELETE_POST = gql`
+  mutation deletePost($id: ID!) {
+    deletePost(id: $id)
+  }
+`
+
 export const GET_POST = gql`
   mutation getPost($id: ID!) {
-    getPost(id: "0XW5NbsMpvfd5z54FGpS") {
+    getPost(id: $id) {
       id
       owner
       text
