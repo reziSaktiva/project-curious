@@ -1,36 +1,45 @@
 /* eslint-disable react/display-name, jsx-a11y/click-events-have-key-events */
 import React, { useContext, useState, useEffect } from "react";
-import "../App.css";
-import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/auth";
 
-import { Layout, Menu, List } from "antd";
+//location
+import Geocode from "react-geocode";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+
+//css & assets
+import "../App.css";
+import Blank from '../assets/blank.png'
+import Pin from '../assets/pin-svg-25px.svg'
+
+//antd
+import { Layout, Menu, List, Button } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
   SettingOutlined,
   SearchOutlined,
-  StarOutlined
+  StarOutlined,
 } from "@ant-design/icons";
-
-import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
-import { AuthContext } from "../context/auth";
-
-import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
-
-import Blank from '../assets/blank.png'
-import Pin from '../assets/pin-svg-25px.svg'
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
 const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [ windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [address, setAddress] = useState("");
 
+
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth)
+  }
+  useEffect(() => {
+    window.addEventListener("resize", handleResize)
+  }, [])
+
   const { user } = useContext(AuthContext);
-  console.log(user);
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null
@@ -48,24 +57,25 @@ const Sidebar = () => {
       }
     );
   }
+  console.log(address);
   return (
     <React.Fragment >
       {/* Sidebar */}
-      <div className="sidebarcoy" style={{ position: 'fixed', backgroundColor: 'white', zIndex: 1}} >
-        <Sider className="site-layout-background" width={230} style={{backgroundColor: 'white'}}>
+      <div className="sidebarcoy" style={{ position: 'fixed', backgroundColor: 'white', zIndex: 1, height: "100%", borderRight: "1px #cccccc solid"}} >
+        <Sider className="site-layout-background" width={windowWidth < 1200? 230 : 280} style={{backgroundColor: 'white'}} collapsed={windowWidth < 993? true : false} >
         <div style={{width: 60}}>
           <Link to="/"><div className="profilefoto" style={user.profilePicture? {backgroundImage: `url(${user.profilePicture}`} : {backgroundImage: `url(${Blank})` }} /></Link>
         </div>
 
-        <h3 style={{ marginTop: 15, marginBottom: -1}}>{user.username? user.username : "My Account"}</h3>
+        <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15}}>{user.username? user.username : "My Account"}</h3>
           <List.Item.Meta
-          title={<a href="https://ant.design"> <  img src={Pin} style={{width:20, marginTop: -5}}/>{address}</a>}
-        />
+          title={<a href="https://ant.design"> <img src={Pin} style={{width:20, marginTop: -5,}}/>{address}</a>}/>
           <Menu
             mode="inline"
             defaultSelectedKeys={['NearBy']}
             defaultOpenKeys={['NearBy']}
             style={{ height: '100%', border: 'none'}}
+            inlineCollapsed="false"
           >
             <Menu.Divider />
 
@@ -99,7 +109,10 @@ const Sidebar = () => {
             </Menu.Item>
           </Menu>
         </Sider>
-        <div className="curious" />
+        {windowWidth < 993 ? (null) : (
+          <div className="curious" />
+        )}
+        
 
       </div>
     </React.Fragment>

@@ -58,7 +58,7 @@ export default function PostCard({ post, loading }) {
                   title={<div>
                     <Row>
                       <Col span={12}>
-                      <a href={`/post/${post.id}`}><img src={Pin} style={{ width: 15 }} /> {address}</a>
+                      <a href={`/post/${post.id}`} style={{fontSize: 15}}><img src={Pin} style={{ width: 15, marginTop: -4 }} />{address}</a>
                       </Col>
                       <Col span={12} style={{textAlign: "right"}}>
                         <Dropdown overlay={
@@ -81,10 +81,10 @@ export default function PostCard({ post, loading }) {
                       </Col>
                   </Row>
                     </div>}
-                  description={<div style={{ marginTop: -9 }}>{moment(post.createdAt).fromNow()}</div>}
+                  description={<div style={{ marginTop: -15 }}>{moment(post.createdAt).fromNow()}</div>}
                 >
                 </List.Item.Meta>
-                {post.text}
+                <p style={{marginTop: -9}}>{post.text}</p>
             </List.Item>
         </List>
     )
