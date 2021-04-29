@@ -91,7 +91,9 @@ const Sidebar = () => {
             style={{ height: "100%", border: "none", backgroundColor: "white" }}
           >
             <Menu.Item key="Sub1" icon={<UserOutlined />}>
+            <Link to="/nearby">
               Nearby
+            </Link>
             </Menu.Item>
             <SubMenu
               key="sub2"

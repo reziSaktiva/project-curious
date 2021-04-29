@@ -116,8 +116,36 @@ module.exports = {
       if (docs.length) {
         const nearby = []
 
-        docs.forEach(data => {
-          const { lat: lattitude, lng: longtitude } = data.location;
+        docs.forEach(async data => {
+          const likes = () => {
+            return db
+              .collection(`/posts/${data.id}/likes`)
+              .get()
+              .then((data) => {
+                const likes = [];
+                data.forEach((doc) => {
+                  likes.push(doc.data());
+                });
+                return likes;
+              });
+          };
+
+          const comments = () => {
+            return db
+              .collection(`/posts/${data.id}/comments`)
+              .get()
+              .then((data) => {
+                const comments = [];
+                data.forEach((doc) => {
+                  comments.push(doc.data());
+                });
+                return comments;
+              });
+          };
+
+          const newData = { ...data, likes: likes(), comments}
+
+          const { lat: lattitude, lng: longtitude } = newData.location;
           try {
             const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
             const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
@@ -125,7 +153,7 @@ module.exports = {
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
             if ((distance / 1000) <= 40) { // should be show in range 40 km
-              nearby.push(data)
+              nearby.push(newData)
             }
           } catch (e) {
             console.log('error : ', e)
