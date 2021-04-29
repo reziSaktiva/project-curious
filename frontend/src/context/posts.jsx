@@ -33,8 +33,8 @@ const reducer = (state, action) => {
     case "DELETE_POST":
       return {
         ...state,
-        posts: state.posts.filter(post => post.id !== action.payload)
-      }
+        posts: state.posts.filter((post) => post.id !== action.payload),
+      };
     case "LIKE_POST":
       return {
         ...state,
@@ -45,12 +45,12 @@ const reducer = (state, action) => {
               likes: [...post.likes, action.payload.data],
               likeCount: post.likeCount + 1,
             };
-  
+
             return updatedPost;
           }
-  
+
           return post;
-        })
+        }),
       };
     case "UNLIKE_POST":
       const data = action.payload.data;
@@ -65,9 +65,39 @@ const reducer = (state, action) => {
             };
             return updatedPosts;
           }
-          
+
           return post;
-        })
+        }),
+      };
+    case "MUTE_POST":
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              muted: [...post.muted, action.payload],
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNMUTE_POST":
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              muted: post.muted.filter((mute) => mute.owner !== action.payload.owner),
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
       };
     default:
       throw new Error("Don't understand action");
@@ -84,8 +114,9 @@ export const PostContext = createContext({
   setPosts: (posts) => {},
   morePosts: () => {},
   createPost: () => {},
-  delete:() => {},
+  deletePost: () => {},
   like: () => {},
+  mutePost: () => {},
 });
 
 const initialState = {
@@ -114,16 +145,37 @@ export const PostProvider = (props) => {
 
   const deletePost = (id) => {
     dispatch({
-      type: 'DELETE_POST',
-      payload: id
-    })
-  }
+      type: "DELETE_POST",
+      payload: id,
+    });
+  };
 
   const setPosts = (posts) => {
     if (posts.length > 0) {
       dispatch({
         type: "SET_POSTS",
         payload: posts,
+      });
+    }
+  };
+
+  const mutePost = (data) => {
+    const muteData = {
+      owner: data.owner,
+      id: data.id,
+      createAt: data.createdAt,
+      postId: data.postId,
+    };
+
+    if (data.mute) {
+      dispatch({
+        type: "MUTE_POST",
+        payload: muteData,
+      });
+    } else if (!data.mute) {
+      dispatch({
+        type: "UNMUTE_POST",
+        payload: muteData,
       });
     }
   };
@@ -138,7 +190,6 @@ export const PostProvider = (props) => {
   };
 
   const like = (likeData, postId) => {
-
     const data = {
       id: likeData.id,
       owner: likeData.owner,
@@ -149,7 +200,6 @@ export const PostProvider = (props) => {
     };
 
     if (likeData.isLike) {
-      
       dispatch({
         type: "LIKE_POST",
         payload: {
@@ -178,6 +228,7 @@ export const PostProvider = (props) => {
         createPost,
         like,
         deletePost,
+        mutePost,
         loading,
         lastId,
         more,

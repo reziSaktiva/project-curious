@@ -12,7 +12,7 @@ import RepostButton from './RepostButton';
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { DELETE_POST } from "../GraphQL/Mutations";
+import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
 
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
@@ -29,6 +29,12 @@ export default function PostCard({ post, loading }) {
       alert(deletePost);
       postContext.deletePost(post.id)
     },
+  })
+
+  const [ mutePost ] = useMutation(MUTE_POST, {
+    update(_, {data: { mutePost } }){
+      postContext.mutePost(mutePost)
+    }
   })
 
   const userName = user && user.username;

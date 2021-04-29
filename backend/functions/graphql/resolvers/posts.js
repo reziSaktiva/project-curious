@@ -44,6 +44,19 @@ module.exports = {
                   });
               };
 
+              const muted = () => {
+                return db
+                  .collection(`/posts/${doc.data().id}/muted`)
+                  .get()
+                  .then((data) => {
+                    const muted = [];
+                    data.forEach((doc) => {
+                      muted.push(doc.data());
+                    });
+                    return muted;
+                  });
+              }
+
               posts.push({
                 id: doc.data().id,
                 text: doc.data().text,
@@ -54,6 +67,7 @@ module.exports = {
                 location: doc.data().location,
                 likes: likes(),
                 comments: comments(),
+                muted: muted()
               });
             });
           });
@@ -210,6 +224,20 @@ module.exports = {
                     });
                 };
 
+                const muted = () => {
+                  return db
+                    .collection(`/posts/${doc.data().id}/muted`)
+                    .get()
+                    .then((data) => {
+                      const muted = [];
+                      data.forEach((doc) => {
+                        muted.push(doc.data());
+                      });
+                      return muted;
+                    });
+                }
+  
+
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
@@ -220,6 +248,7 @@ module.exports = {
                   location: doc.data().location,
                   likes: likes(),
                   comments: comments(),
+                  muted: muted()
                 });
               });
             });
@@ -569,10 +598,10 @@ module.exports = {
                       id: data.id
                     }
                   })
-              } 
+              }
             }
           })
-          
+
         return mute
 
       } catch (err) {
