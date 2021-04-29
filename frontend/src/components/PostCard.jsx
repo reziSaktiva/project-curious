@@ -5,9 +5,10 @@ import moment from "moment";
 import Geocode from "react-geocode";
 
 import { AuthContext } from "../context/auth";
-import LikeButton from "./LikeButton";
-import CommentButton from "./CommentButton";
-import RepostButton from "./RepostButton";
+import Pin from '../assets/pin-svg-25px.svg'
+import LikeButton from './LikeButton';
+import CommentButton from './CommentButton';
+import RepostButton from './RepostButton';
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
@@ -46,73 +47,59 @@ export default function PostCard({ post, loading }) {
     }
   }, [post]);
 
-  return (
-    <List itemLayout="vertical" size="large">
-      <List.Item
-        key={post.id}
-        actions={
-          !loading && [
-            <LikeButton
-              likeCount={post.likeCount}
-              likes={post.likes}
-              id={post.id}
-            />,
-            <CommentButton commentCount={post.commentCount} />,
-            <RepostButton />,
-          ]
-        }
-      >
-        <List.Item.Meta
-          extra={<a href="#" />}
-          title={
-            <div>
-              <Row>
-                <Col span={12}>
-                  <a href={`/post/${post.id}`}>
-                    <img
-                      src="https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/mapRadius%2Fpin-figma.png?alt=media&token=3d842f6c-3338-486c-8605-4940e05b96b6"
-                      style={{ width: 15 }}
-                    />{" "}
-                    {address}
-                  </a>
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        <Menu.Item key="0">Subscribe</Menu.Item>
-                        <Menu.Item key="1" onClick={(e) => console.log(e)}>
-                          Mute
-                        </Menu.Item>
-                        <Menu.Item key="3">Report</Menu.Item>
-                        {post.owner === userName && (
-                          <Menu.Item key="4" onClick={() => deletePost({ variables: { id: post.id } })}>delete</Menu.Item>
-                        )}
-                      </Menu>
-                    }
-                    trigger={["click"]}
-                    placement="bottomRight"
-                  >
-                    <a
-                      className="ant-dropdown-link"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <EllipsisOutlined />
-                    </a>
-                  </Dropdown>
-                </Col>
-              </Row>
-            </div>
-          }
-          description={
-            <div style={{ marginTop: -9 }}>
-              {moment(post.createdAt).fromNow()}
-            </div>
-          }
-        ></List.Item.Meta>
-        {post.text}
-        <br />
-      </List.Item>
-    </List>
-  );
+    return (
+        <List
+            itemLayout="vertical"
+            size="large" >
+            <List.Item
+                key={post.id}
+                actions={
+                    !loading && [
+                      <Row gutter={[48, 0]}>
+                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                        <LikeButton likeCount={ post.likeCount } likes={post.likes} id={ post.id } />
+                        </Col>
+                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                        <CommentButton commentCount={ post.commentCount } />
+                        </Col>
+                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                        <RepostButton />
+                        </Col>
+                      </Row>
+                    ]}>
+                <List.Item.Meta
+                extra={<a href="#" />}
+                  title={<div>
+                    <Row>
+                      <Col span={12}>
+                      <a href={`/post/${post.id}`} style={{fontSize: 15}}><img src={Pin} style={{ width: 15, marginTop: -4 }} />{address}</a>
+                      </Col>
+                      <Col span={12} style={{textAlign: "right"}}>
+                        <Dropdown overlay={
+                          <Menu>
+                          <Menu.Item key="0">
+                            Subscribe
+                          </Menu.Item>
+                          <Menu.Item key="1" onClick={e=> console.log(e)}>
+                            Mute
+                          </Menu.Item>
+                          <Menu.Item key="3">
+                            Report
+                          </Menu.Item>
+                        </Menu>
+                        } trigger={['click']} placement="bottomRight">
+                        <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                          <EllipsisOutlined />
+                        </a>
+                      </Dropdown>
+                      </Col>
+                  </Row>
+                    </div>}
+                  description={<div style={{ marginTop: -15 }}>{moment(post.createdAt).fromNow()}</div>}
+                >
+                </List.Item.Meta>
+                <p style={{marginTop: -9}}>{post.text}</p>
+            </List.Item>
+        </List>
+    )
 }
