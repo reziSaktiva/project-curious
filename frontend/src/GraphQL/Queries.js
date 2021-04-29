@@ -31,6 +31,39 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_POST = gql`
+query($id: String!){
+getPost(id: $id){
+    id
+    createdAt
+    owner
+    commentCount
+    likeCount
+    text
+    location {
+      lat
+      lng
+    }
+    likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+    comments{
+        id
+        createdAt
+        owner
+        text
+        displayName
+        photoProfile
+        colorCode
+        }
+    }
+}
+`;
 export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
   query GetNearby($lat: String, $lng: String) {
     getPostBasedOnNearestLoc(lat: $lat, lng:$lng) {
@@ -40,9 +73,17 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
       createdAt
       commentCount
       likeCount
-      location{
-          lat
-          lng
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
       }
     }
   }

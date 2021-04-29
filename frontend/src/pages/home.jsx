@@ -7,6 +7,7 @@ import { PostContext } from '../context/posts'
 import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard'
 import { AuthContext } from '../context/auth'
+import NavBar from '../components/NavBar'
 
 
 function Home() {
@@ -35,6 +36,7 @@ function Home() {
 
     return (
         <div>
+            <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!posts ? null
                     : posts.map(post => {

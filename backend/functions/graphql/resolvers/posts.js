@@ -130,8 +130,36 @@ module.exports = {
       if (docs.length) {
         const nearby = []
 
-        docs.forEach(data => {
-          const { lat: lattitude, lng: longtitude } = data.location;
+        docs.forEach(async data => {
+          const likes = () => {
+            return db
+              .collection(`/posts/${data.id}/likes`)
+              .get()
+              .then((data) => {
+                const likes = [];
+                data.forEach((doc) => {
+                  likes.push(doc.data());
+                });
+                return likes;
+              });
+          };
+
+          const comments = () => {
+            return db
+              .collection(`/posts/${data.id}/comments`)
+              .get()
+              .then((data) => {
+                const comments = [];
+                data.forEach((doc) => {
+                  comments.push(doc.data());
+                });
+                return comments;
+              });
+          };
+
+          const newData = { ...data, likes: likes(), comments}
+
+          const { lat: lattitude, lng: longtitude } = newData.location;
           try {
             const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
             const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
@@ -139,7 +167,7 @@ module.exports = {
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
             if ((distance / 1000) <= 40) { // should be show in range 40 km
-              nearby.push(data)
+              nearby.push(newData)
             }
           } catch (e) {
             console.log('error : ', e)
@@ -155,48 +183,6 @@ module.exports = {
   },
 
   Mutation: {
-    async getPost(_, { id }, context) {
-      const { username } = await fbAuthContext(context);
-
-      const postDocument = db.doc(`/posts/${id}`);
-      const commentCollection = db.collection(`/posts/${id}/comments`);
-      const likeCollection = db.collection(`/posts/${id}/likes`);
-
-      if (username) {
-        try {
-          let post;
-
-          await postDocument
-            .get()
-            .then((doc) => {
-              if (!doc.exists) {
-                throw new UserInputError("post tidak di temukan");
-              } else {
-                post = doc.data();
-                post.comments = [];
-                post.likes = [];
-                return commentCollection.orderBy("createdAt", "asc").get();
-              }
-            })
-            .then((data) => {
-              data.forEach((doc) => {
-                post.comments.push(doc.data());
-                console.log(doc.data());
-              });
-              return likeCollection.get();
-            })
-            .then((data) => {
-              data.forEach((doc) => {
-                post.likes.push(doc.data());
-              });
-            });
-          return post;
-        } catch (err) {
-          console.log(err);
-          throw new Error(err);
-        }
-      }
-    },
     async nextPosts(_, { id }, context) {
       try {
         const lastPosts = db.doc(`/posts/${id}`);
