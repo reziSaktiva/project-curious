@@ -67,9 +67,17 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
       createdAt
       commentCount
       likeCount
-      location{
-          lat
-          lng
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
       }
     }
   }
