@@ -57,6 +57,13 @@ module.exports = gql`
         displayImage: String!
         colorCode: String!
     },
+    type Mute {
+        id:ID!
+        owner: String!
+        createdAt: String!
+        postID: ID!
+        mute: Boolean!
+    }
     type UserData {
         user: User!
         notifications: [Notification]
@@ -111,6 +118,7 @@ module.exports = gql`
         nextPosts( id:ID! ): [Post]!
         createPost(text:String!, location: Location!): Post!
         subscribePost( postId: ID! ): Subscribe!
+        mutePost ( postId:ID! ): Mute!
         deletePost(id:ID!): String!
         likePost(id: ID!): Like
 
