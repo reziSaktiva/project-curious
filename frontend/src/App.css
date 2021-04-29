@@ -1,7 +1,12 @@
+
+
 .landingimage {
   background-image: url('./assets/puzzle.png');
-  height: 818px;
+  height: 100%;
   width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .terms {
@@ -33,12 +38,12 @@
   enable-background: accumulate;
 }
 .gambar {
-  background-image: url('./assets/Avatar.png');
+  background-image: url('./assets/blank.png');
   width: 60px;
   height: 60px;
 }
 .image{
-  background-image: url('./assets/Avatar.png');
+  background-image: url('./assets/blank.png');
   width: 60px;
   height: 60px;
 }
@@ -95,11 +100,13 @@
 
 .curiouslanding {
   background-image: url('./assets/curiouslanding.png');
-  height: 85px;
+  background-repeat: no-repeat;
+  height: 100%;
   width: 368px;
   margin-top: -460px;
   margin-left: 240px;
   position: absolute;
+
 }
 
 .location {
@@ -132,4 +139,59 @@
 .likeButton:hover{
   color: red;
   border: 1px solid black;
+}
+
+/* SIDE BAR */
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected, .ant-menu-item-selected a, .ant-menu-item-selected a:hover {
+  background-color:#7f57ff;
+  color: white;
+
+}
+
+
+.ant-menu-item:hover, .ant-menu-item-active:hover, .ant-menu-submenu-title:hover{
+  color: #7f57ff;
+}
+.ant-menu-item-selected:hover a{
+  color: white;
+}
+
+.ant-menu-item:hover a{
+  color: #7f57ff;
+}
+
+.ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
+  border-right: none;
+}
+.profilefoto{
+  height: 60px;
+  width: 60px;
+  background-size: 60px;
+  border-radius: 50%;
+  margin-top: 10px;
+}
+
+/* NAV BAR */
+.centeredButton{
+  position: absolute;
+  top: auto;
+  left: 50%;
+  -ms-transform: translate(-50%, 30%);
+transform: translate(-50%, 30%);
+}
+.ant-radio-button-wrapper{
+  color: #7f57ff;
+  border: 1px solid #7f57ff;
+}
+.ant-radio-button-wrapper:hover {
+  color: #7f57ff;
+}
+.ant-radio-button-wrapper-checked:hover {
+  color: #7f57ff;
+}
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+  background: #7f57ff;
+}
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover{
+  background: #7f57ff;
 }

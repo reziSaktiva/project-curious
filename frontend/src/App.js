@@ -20,23 +20,28 @@ import RegisterFacebook from './pages/registerFacebook';
 import LandingPage from './pages/landingPage';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
+import { Container } from 'semantic-ui-react';
 
 function App() {
   return (
-    <Context>
-      <Router>
-        <Grid>
-          <Switch>
-            <HomeRoute exact path="/" component={LandingPage} />
-            <AuthRoute exact path="/login" component={login} />
-            <AuthRoute exact path="/register" component={register} />
-            <UserRoute exact path="/post/:id" component={SinglePost} />
-            <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
-            <UserRoute exact path="/map" component={map} />
-          </Switch>
-        </Grid>
-      </Router>
-    </Context>
+    
+      <Context>
+          <Router>
+            <Container>
+            <Grid>
+              <Switch>
+                <HomeRoute exact path="/" component={LandingPage} />
+                <AuthRoute exact path="/login" component={login} />
+                <AuthRoute exact path="/register" component={register} />
+                <UserRoute exact path="/post/:id" component={SinglePost} />
+                <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
+                <UserRoute exact path="/map" component={map} />
+              </Switch>
+            </Grid>
+            </Container>
+          </Router>
+        </Context>
+    
   );
 }
 
