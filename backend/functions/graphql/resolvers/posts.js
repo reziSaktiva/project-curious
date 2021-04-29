@@ -71,69 +71,69 @@ module.exports = {
       const commentCollection = db.collection(`/posts/${id}/comments`)
       const likeCollection = db.collection(`/posts/${id}/likes`)
       if (username) {
-          try {
-              let post;
+        try {
+          let post;
 
-              await postDocument.get()
-                  .then(doc => {
-                      if (!doc.exists) {
-                          throw new UserInputError('Postingan tidak ditemukan')
-                      } else {
-                          post = doc.data()
-                          post.comments = []
-                          post.likes = []
+          await postDocument.get()
+            .then(doc => {
+              if (!doc.exists) {
+                throw new UserInputError('Postingan tidak ditemukan')
+              } else {
+                post = doc.data()
+                post.comments = []
+                post.likes = []
 
-                          return commentCollection.orderBy('createdAt', 'asc').get()
-                      }
-                  })
-                  .then(docs => {
-                      docs.forEach(doc => {
-                          post.comments.push(doc.data())
-                      })
-                      return likeCollection.get()
-                  })
-                  .then(data => {
-                      data.forEach(doc => {
-                          post.likes.push(doc.data())
-                      })
-                  })
-              return post
-          }
-          catch (err) {
-              console.log(err)
-              throw new Error(err)
-          }
+                return commentCollection.orderBy('createdAt', 'asc').get()
+              }
+            })
+            .then(docs => {
+              docs.forEach(doc => {
+                post.comments.push(doc.data())
+              })
+              return likeCollection.get()
+            })
+            .then(data => {
+              data.forEach(doc => {
+                post.likes.push(doc.data())
+              })
+            })
+          return post
+        }
+        catch (err) {
+          console.log(err)
+          throw new Error(err)
+        }
       }
     },
-    async getPostBasedOnNearestLoc (_, { lat, lng }) {
+    async getPostBasedOnNearestLoc(_, { lat, lng }) {
       if (!lat || !lng) {
-          throw new UserInputError('Lat and Lng is Required')
+        throw new UserInputError('Lat and Lng is Required')
       }
 
       const data = await db.collection('posts').orderBy('createdAt', 'desc').get()
       const docs = data.docs.map((doc) => doc.data())
-      
+
       if (docs.length) {
-          const nearby = []
+        const nearby = []
 
-          docs.forEach(data => {
-              const { lat: lattitude, lng: longtitude } = data.location;
-              try {
-                  const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
-                  const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
-                  
-                  const distance = computeDistanceBetween(currentLatLng, contentLocation)
+        docs.forEach(data => {
+          const { lat: lattitude, lng: longtitude } = data.location;
+          try {
+            const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
+            const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
 
-                  if ((distance / 1000) <= 40) { // should be show in range 40 km
-                      nearby.push(data)
-                  }
-              } catch (e) {
-                  console.log('error : ', e)
-              }
-              
-          });
+            const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-          return nearby;
+            if ((distance / 1000) <= 40) { // should be show in range 40 km
+              nearby.push(data)
+            }
+          } catch (e) {
+            console.log('error : ', e)
+          }
+
+        });
+
+        return nearby;
       }
 
       return [];
@@ -267,7 +267,7 @@ module.exports = {
 
           return {
             ...newPost,
-            likes : [],
+            likes: [],
             comments: []
           };
         } catch (err) {
@@ -533,6 +533,67 @@ module.exports = {
         console.log(err);
         throw new Error(err);
       }
+    }, async mutePost(_, { postId }, context) {
+      const { username } = await fbAuthContext(context)
+      const postDocument = db.doc(`/posts/${postId}`)
+      const muteDocument = db.collection(`/posts/${postId}/muted`)
+
+      try {
+        const { isMuted, muteId } = await muteDocument.where("owner", "==", username).limit(1).get()
+          .then(data => {
+            const isMuted = data.empty
+            let muteId = '';
+
+            if (!data.empty) {
+              muteId = data.docs[0].id
+            }
+
+            return {
+              isMuted,
+              muteId
+            }
+          })
+
+        let mute = {
+          owner: username,
+          createdAt: new Date().toISOString(),
+          postId
+        }
+
+        await postDocument.get()
+          .then(doc => {
+            if (!doc.exists) {
+              throw new UserInputError('Postingan tidak di temukan')
+            } else {
+              if (!isMuted) {
+                db.doc(`/posts/${postId}/muted/${muteId}`).delete()
+                mute = {
+                  ...mute,
+                  mute: false,
+                  id: muteId
+                }
+              } else {
+                return muteDocument.add({ owner: username, createdAt: new Date().toISOString(), postId })
+                  .then(data => {
+                    data.update({ id: data.id })
+                    console.log(data.id);
+                    mute = {
+                      ...mute,
+                      mute: true,
+                      id: data.id
+                    }
+                  })
+              } 
+            }
+          })
+          
+        return mute
+
+      } catch (err) {
+        throw new Error(err)
+      }
+
+
     },
     async subscribePost(_, { postId }, context) {
       const { username } = await fbAuthContext(context);
