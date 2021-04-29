@@ -39,9 +39,13 @@ function Home() {
                 {!posts ? null
                     : posts.map(post => {
                         return (
-                            <div key={post.id}>
+                            user && post.muted.find((mute) => mute.owner === user.username) ? (
+                                <div></div>
+                            ) : (
+                                <div key={post.id}>
                                 <PostCard post={post} loading={loading} />
                             </div>
+                            )
                         )
                     })}
             </InfiniteScroll>) : null}

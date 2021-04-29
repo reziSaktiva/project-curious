@@ -11,7 +11,7 @@ import RepostButton from "./RepostButton";
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { DELETE_POST } from "../GraphQL/Mutations";
+import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
 
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
@@ -28,6 +28,12 @@ export default function PostCard({ post, loading }) {
       alert(deletePost);
       postContext.deletePost(post.id)
     },
+  })
+
+  const [ mutePost ] = useMutation(MUTE_POST, {
+    update(_, {data: { mutePost } }){
+      postContext.mutePost(mutePost)
+    }
   })
 
   const userName = user && user.username;
@@ -81,8 +87,8 @@ export default function PostCard({ post, loading }) {
                     overlay={
                       <Menu>
                         <Menu.Item key="0">Subscribe</Menu.Item>
-                        <Menu.Item key="1" onClick={(e) => console.log(e)}>
-                          Mute
+                        <Menu.Item key="1" onClick={() => mutePost({ variables: { id: post.id } })}>
+                          {user && post.muted.find((mute) => mute.owner === user.username) ? "Unmute" : "Mute"}
                         </Menu.Item>
                         <Menu.Item key="3">Report</Menu.Item>
                         {post.owner === userName && (

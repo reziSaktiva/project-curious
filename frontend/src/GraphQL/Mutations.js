@@ -31,6 +31,18 @@ export const DELETE_POST = gql`
   }
 `
 
+export const MUTE_POST = gql`
+  mutation mutePost($id: ID!) {
+    mutePost( postId: $id ){
+      id
+      owner
+      createdAt
+      postId
+      mute
+    }
+  }
+`
+
 export const GET_POST = gql`
   mutation getPost($id: ID!) {
     getPost(id: $id) {
@@ -85,6 +97,12 @@ export const GET_MORE_POSTS = gql`
         colorCode
         displayName
         displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
       }
     }
   }

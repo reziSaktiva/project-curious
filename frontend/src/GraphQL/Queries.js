@@ -21,6 +21,12 @@ export const GET_POSTS = gql`
         displayName
         displayImage
       }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
     }
   }
 `;
