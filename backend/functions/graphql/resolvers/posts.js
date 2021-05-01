@@ -44,6 +44,19 @@ module.exports = {
                   });
               };
 
+              const muted = () => {
+                return db
+                  .collection(`/posts/${doc.data().id}/muted`)
+                  .get()
+                  .then((data) => {
+                    const muted = [];
+                    data.forEach((doc) => {
+                      muted.push(doc.data());
+                    });
+                    return muted;
+                  });
+              }
+
               posts.push({
                 id: doc.data().id,
                 text: doc.data().text,
@@ -55,6 +68,7 @@ module.exports = {
                 location: doc.data().location,
                 likes: likes(),
                 comments: comments(),
+                muted: muted()
               });
             });
           });
@@ -117,8 +131,36 @@ module.exports = {
       if (docs.length) {
         const nearby = []
 
-        docs.forEach(data => {
-          const { lat: lattitude, lng: longtitude } = data.location;
+        docs.forEach(async data => {
+          const likes = () => {
+            return db
+              .collection(`/posts/${data.id}/likes`)
+              .get()
+              .then((data) => {
+                const likes = [];
+                data.forEach((doc) => {
+                  likes.push(doc.data());
+                });
+                return likes;
+              });
+          };
+
+          const comments = () => {
+            return db
+              .collection(`/posts/${data.id}/comments`)
+              .get()
+              .then((data) => {
+                const comments = [];
+                data.forEach((doc) => {
+                  comments.push(doc.data());
+                });
+                return comments;
+              });
+          };
+
+          const newData = { ...data, likes: likes(), comments}
+
+          const { lat: lattitude, lng: longtitude } = newData.location;
           try {
             const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
             const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
@@ -126,7 +168,7 @@ module.exports = {
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
             if ((distance / 1000) <= 40) { // should be show in range 40 km
-              nearby.push(data)
+              nearby.push(newData)
             }
           } catch (e) {
             console.log('error : ', e)
@@ -183,6 +225,20 @@ module.exports = {
                     });
                 };
 
+                const muted = () => {
+                  return db
+                    .collection(`/posts/${doc.data().id}/muted`)
+                    .get()
+                    .then((data) => {
+                      const muted = [];
+                      data.forEach((doc) => {
+                        muted.push(doc.data());
+                      });
+                      return muted;
+                    });
+                }
+  
+
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
@@ -193,6 +249,7 @@ module.exports = {
                   location: doc.data().location,
                   likes: likes(),
                   comments: comments(),
+                  muted: muted()
                 });
               });
             });
@@ -544,10 +601,10 @@ module.exports = {
                       id: data.id
                     }
                   })
-              } 
+              }
             }
           })
-          
+
         return mute
 
       } catch (err) {

@@ -12,6 +12,7 @@ module.exports = gql`
         commentCount: Int!
         comments: [Comment]
         likes: [Like]
+        muted: [Mute]
     }
     type LatLong {
         lat: Float
@@ -62,8 +63,8 @@ module.exports = gql`
         id:ID!
         owner: String!
         createdAt: String!
-        postID: ID!
-        mute: Boolean!
+        postId: ID!
+        mute: Boolean
     }
     type UserData {
         user: User!

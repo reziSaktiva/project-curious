@@ -80,11 +80,10 @@ const Sidebar = () => {
             inlineCollapsed="false"
           >
             <Menu.Divider />
-
             <Menu.Item key="NearBy" icon={<UserOutlined />}>
-            <Link to="/">
-              NearBy
-              </Link>
+            <Link to="/nearby">
+              Nearby
+            </Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
               Search
