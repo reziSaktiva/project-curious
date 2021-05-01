@@ -99,7 +99,7 @@ export default function ModalPost() {
   useEffect(() => {
     console.log('state upload text: ', state.text && !uploaded.length && isFinishUpload);
     console.log('state upload image: ', !!uploaded.length, ' ', typeof(uploaded));
-    if (!!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
+    if (visible && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
       const { text= '' } = state;
       const variables = {
         text,
