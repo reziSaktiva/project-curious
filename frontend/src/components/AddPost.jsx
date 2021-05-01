@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Modal, Button, Form, Input, Row, Col, Upload } from "antd";
+import { Modal, Button, Form, Input, Row, Col, Upload, Divider } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useMutation, gql } from '@apollo/client';
 import "../App.css";
@@ -162,10 +162,13 @@ export default function ModalPost() {
     });
   };
 
-  const handleChange = ({ fileList }) => setState({
-    ...state, 
-    fileList 
-  });
+  const handleChange = ({ fileList }) => {
+    const newFiles = fileList.map(file => ({ ...file, status: 'done'}))
+    setState({
+      ...state, 
+      fileList: newFiles
+    });
+  }
 
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
@@ -179,8 +182,8 @@ export default function ModalPost() {
   };
 
   const onFinish = async (value) => {
-    console.log('file list: ', fileList);
     let uploaded = [];
+    const fileList = [];
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
@@ -190,10 +193,14 @@ export default function ModalPost() {
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => {},
-            error => reject(error),
+            error => {
+              fileList.push({ ...elem, status: 'error' })
+              reject()
+            },
             async () => {
               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
   
+              fileList.push({ ...elem, status: 'done' })
               resolve(downloadUrl);
             }
           )
@@ -202,8 +209,7 @@ export default function ModalPost() {
         return url
       }));
 
-      console.log('set image')
-      setState({ ...state, uploaded, isFinishUpload: true, text: value.text });
+      setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
 
       return;
     }
@@ -215,7 +221,6 @@ export default function ModalPost() {
     return;
   };
 
-  console.log('visible: ', visible);
   return (
     <div>
       
@@ -243,43 +248,42 @@ export default function ModalPost() {
           <Form.Item name="text"  >
             <Input.TextArea />
           </Form.Item>
-          <Row>
-          {fileList.length == 0 ? (
+          {fileList.length > 0 && (
+            <Form.Item name="foto" style={{ marginBottom: 0 }} > 
+              <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+              >
+                {fileList.length >= 5 ? null : uploadButton}
+              </Upload>
+            </Form.Item>
+          )}
+          <div style={{ position: 'relative', width: '100%'}}>
+            {/* <Divider /> */}
+            <hr style={{
+              border: 'none',
+              borderTop: '1px solid #d9d9d9',
+              height: '0.2px'
+            }} />
             <Col span={12}>
               <Form.Item name="foto" style={{marginBottom: 0}}> 
-            <Upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            showUploadList={null}
-            onChange={handleChange}
-            >
-              <PictureOutlined />
-            </Upload>
-          </Form.Item>
-            </Col>
-          ) : (
-
-        <Form.Item name="foto" > 
-            <Upload
-                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                      listType="picture-card"
-                      fileList={fileList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                    >
-                      {fileList.length >= 5 ? null : uploadButton}
-                    </Upload>
-          </Form.Item>
-          )}
-          <Col span={12}>
-            <div style={{float: "right"}}>
+                <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                showUploadList={null}
+                onChange={handleChange}
+                >
+                  <PictureOutlined />
+                </Upload>
+              </Form.Item>
+              </Col>
             <Button htmlType="submit" key="submit" type="primary" 
-                      style={{ backgroundColor: '#7958f5', borderRadius: 20, position:"absolute",  bottom:"3%", left: "70%", height:25, fontSize: 10}}>
-                          Postnya
-                      </Button>
-            </div>
-          </Col>
-          </Row>
-          
+              style={{ backgroundColor: '#7958f5', borderRadius: 20, position:"absolute",  bottom:"3%", right: 0, height:25, fontSize: 10}}>
+              Postnya
+            </Button>
+          </div>
          
           </Form>
           <Modal

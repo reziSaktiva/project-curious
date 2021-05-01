@@ -37,6 +37,8 @@ const Sidebar = () => {
   }
   useEffect(() => {
     window.addEventListener("resize", handleResize)
+
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   const { user } = useContext(AuthContext);
