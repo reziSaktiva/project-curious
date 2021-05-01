@@ -20,6 +20,7 @@ import RegisterFacebook from './pages/registerFacebook';
 import LandingPage from './pages/landingPage';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
+import { Container } from 'semantic-ui-react';
 
 function App() {
   return (

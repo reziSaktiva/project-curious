@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Modal, Button, Upload, Form, Input, Row, Col } from 'antd';
+import React, { useState, useContext } from "react";
+import { Modal, Button, Form, Input, Row, Col, Upload } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useMutation, gql } from '@apollo/client';
-import '../App.css'
+import "../App.css";
+import UploadFile from "./Upload";
+import { get } from 'lodash'
+
+import { useMutation } from "@apollo/client";
+import { CREATE_POST } from "../GraphQL/Mutations";
+import { PostContext } from "../context/posts";
+
 import firebase from 'firebase/app'
 import 'firebase/storage'
 
@@ -127,6 +134,13 @@ export default function ModalPost() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+  const handleOk = () => {
+    setState({ loading: true, visible: true });
+    setTimeout(() => {
+      setState({ loading: false, visible: false });
+    }, 1000);
+    onFinish()
+  };
 
   const handleCancel = () => setState({...state, previewVisible: false });
 

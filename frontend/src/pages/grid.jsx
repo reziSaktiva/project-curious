@@ -8,6 +8,9 @@ import { Container } from 'semantic-ui-react';
 // ant design
 import { Row, Col } from 'antd';
 
+// ant design
+import { Row, Col } from 'antd';
+
 export default function Grid({ children }) {
     const { user } = useContext(AuthContext)
 

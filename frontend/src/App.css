@@ -1,3 +1,14 @@
+
+
+.landingimage {
+  background-image: url('./assets/puzzle.png');
+  height: 100%;
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .terms {
   font-weight: bold;
 }
@@ -120,6 +131,17 @@
   height: 31px;
   width: 128px;
   margin-top: 31px;
+}
+
+.curiouslanding {
+  background-image: url('./assets/curiouslanding.png');
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 368px;
+  margin-top: -460px;
+  margin-left: 240px;
+  position: absolute;
+
 }
 
 .location {

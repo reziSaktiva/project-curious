@@ -1,38 +1,51 @@
-import React, { useState, useEffect } from 'react'
-import { List } from 'antd';
-import { Row, Col, Menu, Dropdown } from 'antd';
-import moment from 'moment'
-import Geocode from 'react-geocode'
+import React, { useState, useEffect, useContext } from "react";
+import { List } from "antd";
+import { Row, Col, Menu, Dropdown } from "antd";
+import moment from "moment";
+import Geocode from "react-geocode";
 
+import { AuthContext } from "../context/auth";
 import Pin from '../assets/pin-svg-25px.svg'
 import LikeButton from './LikeButton';
 import CommentButton from './CommentButton';
 import RepostButton from './RepostButton';
 
-import { EllipsisOutlined } from '@ant-design/icons';
+import { EllipsisOutlined } from "@ant-design/icons";
+import { useMutation } from "@apollo/client";
+import { DELETE_POST } from "../GraphQL/Mutations";
+import { PostContext } from "../context/posts";
 
-
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k")
+Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading }) {
-  console.log(post);
-    const [address, setAddress] = useState('')
+  const [address, setAddress] = useState("");
+  const { user } = useContext(AuthContext);
+  const postContext = useContext(PostContext)
 
-    useEffect(() => {
-        if (post.location) {
-            Geocode.fromLatLng(post.location.lat, post.location.lng).then(
-                response => {
-                    const address = response.results[0].address_components[1].short_name;
-                    setAddress(address);
-                },
-                error => {
-                    console.error(error)
-                }
-            );
+  const [ deletePost ] = useMutation(DELETE_POST, {
+    update(_, { data: { deletePost } }) {
+      alert(deletePost);
+      postContext.deletePost(post.id)
+    },
+  })
+
+  const userName = user && user.username;
+
+  useEffect(() => {
+    if (post.location) {
+      Geocode.fromLatLng(post.location.lat, post.location.lng).then(
+        (response) => {
+          const address = response.results[0].address_components[1].short_name;
+          setAddress(address);
+        },
+        (error) => {
+          console.error(error);
         }
-    }, [post])
+      );
+    }
+  }, [post]);
 
     return (
         <List

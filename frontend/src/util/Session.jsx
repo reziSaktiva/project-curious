@@ -12,9 +12,9 @@ export const Session = ({
 
         if (decodedToken.exp * 1000 < Date.now()) {
             destorySession();
-            onLogout();
+            onLogout && onLogout();
 
-            return
+            return { location: {}, user: '', token: '' }
         }
 
         const locationData = JSON.parse(location)
@@ -22,7 +22,7 @@ export const Session = ({
         return { location: locationData, user: decodedToken || {}, token }
     }
 
-    return { location, user: '', token }
+    return { location: '', user: '', token }
 };
 
 export const getSession = () => {

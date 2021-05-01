@@ -30,44 +30,44 @@ const reducer = (state, action) => {
         loading: false,
         posts: [action.payload, ...state.posts],
       };
-    case "LIKE_POST":
-      let likePosts = state.posts.map((post) => {
-        if (post.id === action.payload.postId) {
-          const updatedPost = {
-            ...post,
-            likes: [...post.likes, action.payload.data],
-            likeCount: post.likeCount + 1,
-          };
-
-          return updatedPost;
-        }
-
-        return post;
-      });
-      console.log(likePosts);
+    case "DELETE_POST":
       return {
         ...state,
-        posts: likePosts
+        posts: state.posts.filter(post => post.id !== action.payload)
+      }
+    case "LIKE_POST":
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+  
+            return updatedPost;
+          }
+  
+          return post;
+        })
       };
     case "UNLIKE_POST":
       const data = action.payload.data;
-      let unlikePosts = state.posts.map((post) => {
-        if (post.id === action.payload.postId) {
-          const updatedPosts = {
-            ...post,
-            likes: post.likes.filter((like) => like.owner !== data.owner),
-            likeCount: post.likeCount - 1,
-          };
-          console.log(updatedPosts);
-          return updatedPosts;
-        }
-        
-        return post;
-      });
-      
       return {
         ...state,
-        posts: [...unlikePosts]
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter((like) => like.owner !== data.owner),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+          
+          return post;
+        })
       };
     default:
       throw new Error("Don't understand action");
@@ -84,6 +84,7 @@ export const PostContext = createContext({
   setPosts: (posts) => {},
   morePosts: () => {},
   createPost: () => {},
+  delete:() => {},
   like: () => {},
 });
 
@@ -111,6 +112,13 @@ export const PostProvider = (props) => {
     });
   };
 
+  const deletePost = (id) => {
+    dispatch({
+      type: 'DELETE_POST',
+      payload: id
+    })
+  }
+
   const setPosts = (posts) => {
     if (posts.length > 0) {
       dispatch({
@@ -130,7 +138,7 @@ export const PostProvider = (props) => {
   };
 
   const like = (likeData, postId) => {
-    console.log(postId);
+
     const data = {
       id: likeData.id,
       owner: likeData.owner,
@@ -141,7 +149,7 @@ export const PostProvider = (props) => {
     };
 
     if (likeData.isLike) {
-      console.log('like');
+      
       dispatch({
         type: "LIKE_POST",
         payload: {
@@ -169,6 +177,7 @@ export const PostProvider = (props) => {
         morePosts,
         createPost,
         like,
+        deletePost,
         loading,
         lastId,
         more,
