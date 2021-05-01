@@ -5,8 +5,6 @@ import AddPosts from '../components/AddPost'
 import { AuthContext } from '../context/auth'
 import { Container } from 'semantic-ui-react';
 
-// ant design
-import { Row, Col } from 'antd';
 
 // ant design
 import { Row, Col } from 'antd';

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Modal, Button, Form, Input, Row, Col, Upload } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useMutation, gql } from '@apollo/client';
@@ -6,8 +6,6 @@ import "../App.css";
 import UploadFile from "./Upload";
 import { get } from 'lodash'
 
-import { useMutation } from "@apollo/client";
-import { CREATE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
 
 import firebase from 'firebase/app'
