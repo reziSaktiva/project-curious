@@ -9,67 +9,72 @@ import { Link } from 'react-router-dom'
 function LandingPage(props) {
     return (
         <div>
-            <>
-                <Row>
-                    <Col span={12}>
-                        <div className="landingimage" />
+            <Row>
+                <Col xs={0} sm={12} md={12} lg={12} xl={12}>
+                    <div className="landingimage" />
+                    <div className="container-landing">
                         <div className="curiouslanding" />
+                    </div>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+                    <div className="landingPage-input">
+                        <h1>Welcome to Curious!</h1>
 
-                    </Col>
-                    <Col span={12}>
-                        <div>
-                            <div style={{ marginLeft: 260, marginTop: 240 }}>
-                                <h1 style={{ width: 160 }}>Welcome to Curious!</h1>
-                                <LoginFacebook props={props} />
+                        <div style={{ paddingLeft: 70, paddingRight: 70}}>
+                        <LoginFacebook props={props} />
+                        <Button className="ui black basic button" style={{ width: "100%", height: 45, marginTop: 15, borderRadius: 5 }}>
+                            <i className="google icon"></i>
+                                Continue with Google
+                        </Button>
+                        </div>
+                        
+                        <Row style={{marginTop: 20}}>
+                            <Col span={12} style={{paddingLeft: "15%", paddingRight: "4%"}}>
+                            <Button className="ui black basic button" style={{ width: "100%"}}>
+                                <Link to='/register'>
+                                    Sign Up
+                                </Link>
+                            </Button>
+                            </Col>
 
-                                <Button className="ui black basic button" style={{ width: 343, height: 45, marginTop: 15, borderRadius: 5 }}>
-                                    <i className="google icon"></i>
-                                    Continue with Google
-                                </Button>
+                            <Col span={12} style={{paddingLeft: "4%", paddingRight: "15%"}}>
+                            <Button className="ui black basic button" style={{ width: "100%"}}>
+                                <Link to='login'>
+                                    Login
+                                </Link>
+                            </Button>
+                            </Col>
+                        </Row>
 
-                                <Grid container justify="center" style={{ marginTop: 15 }}>
-                                    <Button className="ui secondary basic button" style={{ width: 164, height: 45, marginRight: 15, color: 'black' }}>
-                                        <Link to='/register'>
-                                            Sign Up
-                                        </Link>
-                                    </Button>
-                                    <Button className="ui secondary basic button" style={{ width: 164, height: 45, color: 'black' }}>
-                                        <Link to='login'>
-                                            Login
-                                        </Link>
-                                    </Button>
-                                </Grid>
-                            </div>
+                    <p style={{ marginTop: 30, fontSize: 14 }}>By signing up, you agree to our <span className="terms">Terms & Privacy Policy</span></p>
+                        <p style={{ marginTop: 320 }}>&copy; 2020 Curious</p>
 
-                            <p style={{ marginLeft: 265, marginTop: 30, fontSize: 14 }}>By signing up, you agree to our <span className="terms">Terms & Privacy Policy</span></p>
-                            <p style={{ marginLeft: 380, marginTop: 220 }}>&copy; 2020 Curious</p>
-                            <Grid style={{ marginLeft: 270, marginTop: 10 }}>
-
-
+                        <Row>
+                            <Col span={6}>
                                 <Button type="text" style={{ fontSize: 8 }}>
                                     Terms of Service
-                            </Button>
+                                </Button>
+                            </Col>
+                            <Col span={6}>
                                 <Button type="text" style={{ fontSize: 8 }}>
                                     Privacy Policy
-                            </Button>
+                                </Button>
+                            </Col>
+                            <Col span={6}>
                                 <Button type="text" style={{ fontSize: 8 }}>
                                     Cookie Policy
-                            </Button>
+                                </Button>
+                            </Col>
+                            <Col span={6}>
                                 <Button type="text" style={{ fontSize: 8 }}>
                                     Ads Info
-                            </Button>
-
-
-                            </Grid>
-                        </div>
+                                </Button>
+                            </Col>
+                        </Row>  
+                    </div>
                     </Col>
                 </Row>
-            </>
-
-
-        </div>
-
-    )
+        </div>)
 }
 
 export default LandingPage

@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar'
 import Notification from '../components/Notification'
 import AddPosts from '../components/AddPost'
 import { AuthContext } from '../context/auth'
+import { Container } from 'semantic-ui-react';
 
 // ant design
 import { Row, Col } from 'antd';
@@ -12,6 +13,7 @@ export default function Grid({ children }) {
 
     if (user) {
         return (
+            <Container>
                 <Row>
                 <Col xs={0} sm={0} md={3} lg={6} xl={6} >
                     {user && <Sidebar />}
@@ -24,6 +26,7 @@ export default function Grid({ children }) {
                     {user && <AddPosts />}
                 </Col>
             </Row>
+            </Container>
             
         )
     } else return <div>{children}</div>

@@ -17,6 +17,7 @@ Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k")
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading }) {
+  console.log(post);
     const [address, setAddress] = useState('')
 
     useEffect(() => {
@@ -85,6 +86,7 @@ export default function PostCard({ post, loading }) {
                 >
                 </List.Item.Meta>
                 <p style={{marginTop: -9}}>{post.text}</p>
+                {post.media? <img src={post.media} style={{ width: 300}} /> : null }
             </List.Item>
         </List>
     )

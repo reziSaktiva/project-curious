@@ -5,6 +5,7 @@ module.exports = gql`
         id: ID!
         owner: String!
         text: String!
+        media: [String]
         createdAt: String!
         location: LatLong
         likeCount: Int!
@@ -109,7 +110,7 @@ module.exports = gql`
         # posts mutation
         getPost( id:ID! ): Post!
         nextPosts( id:ID! ): [Post]!
-        createPost(text:String!, location: Location!): Post!
+        createPost(text:String, media: [String] location: Location!): Post!
         subscribePost( postId: ID! ): Subscribe!
         deletePost(id:ID!): String!
         likePost(id: ID!): Like

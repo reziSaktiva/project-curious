@@ -47,6 +47,7 @@ module.exports = {
               posts.push({
                 id: doc.data().id,
                 text: doc.data().text,
+                media: doc.data().media,
                 createdAt: doc.data().createdAt,
                 owner: doc.data().owner,
                 likeCount: doc.data().likeCount,
@@ -202,13 +203,15 @@ module.exports = {
         console.log(err);
       }
     },
-    async createPost(_, { text, location }, context) {
+    async createPost(_, { text, media, location }, context) {
+      console.log(location);
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
           const newPost = {
             owner: username,
             text,
+            media,
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,

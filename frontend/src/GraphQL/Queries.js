@@ -6,6 +6,7 @@ export const GET_POSTS = gql`
       id
       owner
       text
+      media
       createdAt
       commentCount
       likeCount

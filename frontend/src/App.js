@@ -20,14 +20,12 @@ import RegisterFacebook from './pages/registerFacebook';
 import LandingPage from './pages/landingPage';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
-import { Container } from 'semantic-ui-react';
 
 function App() {
   return (
     
       <Context>
           <Router>
-            <Container>
             <Grid>
               <Switch>
                 <HomeRoute exact path="/" component={LandingPage} />
@@ -38,7 +36,6 @@ function App() {
                 <UserRoute exact path="/map" component={map} />
               </Switch>
             </Grid>
-            </Container>
           </Router>
         </Context>
     
