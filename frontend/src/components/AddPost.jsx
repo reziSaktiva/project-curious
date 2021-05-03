@@ -56,7 +56,7 @@ mutation createPost(
 
 export default function ModalPost() {
 
-  const [createPost, { error, data, loading}] = useMutation(
+  const [createPost] = useMutation(
     CREATE_POST,
     {
       onCompleted: () => {
@@ -221,14 +221,15 @@ export default function ModalPost() {
         <i className="plus icon" style={{ color: 'white' }}></i>
       </div>
       <Modal
+      key="addPost"
           visible={visible}
           title={[
-            <p>Post to</p>,
-            <div style={{ position: "absolute", marginTop: 15, marginLeft: 60, width: 150 }}>
+            <p key="paragraf">Post to</p>,
+            <div key="location" style={{ position: "absolute", marginTop: 15, marginLeft: 60, width: 150 }}>
               <h3 style={{ fontWeight: "bold" }}>Nearby</h3>
               <a style={{ fontSize: 12 }}>Wild Park, Melbourne</a>
             </div>,
-            <div style={{ width: 45 }}>
+            <div key="location2"style={{ width: 45 }}>
               <a href="/"><p className="location" style={{ marginTop: 10 }} /></a>
             </div>
           ]}
@@ -272,7 +273,7 @@ export default function ModalPost() {
               </Col>
             <Button htmlType="submit" key="submit" type="primary" 
               style={{ backgroundColor: '#7958f5', borderRadius: 20, position:"absolute",  bottom:"3%", right: 0, height:25, fontSize: 10}}>
-              Postnya
+              Post
             </Button>
           </div>
          
