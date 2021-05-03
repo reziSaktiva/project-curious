@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { Card } from 'antd'
 import { AuthContext } from '../context/auth'
 
@@ -22,7 +23,8 @@ export default function Notification() {
                             default:
                                 break;
                         }
-                        return <p key={`notif${key}`} style={{ fontSize: 10, fontWeight: 'bold' }}>{notif.displayName} <span>{`${type}: this is a ${text} post.`}</span> </p>
+
+                        return <Link to={`/post/${notif.postId}`} key={`notif${key}`} style={{ fontSize: 10, fontWeight: 'bold', color: "black" }}><p>{notif.displayName} <span>{`${type}: this is a ${text} post.`}</span> </p></Link>
                     })}
                 </Card>
             </div>

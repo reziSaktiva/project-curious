@@ -35,7 +35,6 @@ const IconText = ({ icon, text }) => (
 export default function SinglePost(props) {
   const [address, setAddress] = useState('')
   
-  const {state, setState} = useContext(AuthContext)
   let id = props.match.params.id;
   
   const  {loading , data}  = useQuery(GET_POST, {
@@ -49,7 +48,7 @@ export default function SinglePost(props) {
 
     if(!data) postMarkUp = <p>Loading...</p>
     else {
-        let {getPost} = data
+        let { getPost } = data
 
     //translate location
 

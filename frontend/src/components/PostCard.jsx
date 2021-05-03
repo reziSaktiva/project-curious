@@ -14,6 +14,7 @@ import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
+import { Link } from "react-router-dom";
 
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 
@@ -83,10 +84,10 @@ export default function PostCard({ post, loading }) {
             <div>
               <Row>
                 <Col span={12}>
-                  <a href={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                  <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
-                  </a>
+                  </Link>
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
                   <Dropdown
