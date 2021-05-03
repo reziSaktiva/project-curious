@@ -3,7 +3,6 @@ import { Modal, Button, Form, Input, Row, Col, Upload, Divider } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useMutation, gql } from '@apollo/client';
 import "../App.css";
-import UploadFile from "./Upload";
 import { get } from 'lodash'
 
 import { PostContext } from "../context/posts";
@@ -55,7 +54,6 @@ mutation createPost(
 `
 /////////GQL FINISH///////////
 
-
 export default function ModalPost() {
 
   const [createPost, { error, data, loading}] = useMutation(
@@ -100,6 +98,7 @@ export default function ModalPost() {
     console.log('state upload text: ', state.text && !uploaded.length && isFinishUpload);
     console.log('state upload image: ', !!uploaded.length, ' ', typeof(uploaded));
     if (visible && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
+      console.log("ga jalan nih");
       const { text= '' } = state;
       const variables = {
         text,
@@ -132,13 +131,6 @@ export default function ModalPost() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-  const handleOk = () => {
-    setState({ loading: true, visible: true });
-    setTimeout(() => {
-      setState({ loading: false, visible: false });
-    }, 1000);
-    onFinish()
-  };
 
   const handleCancel = () => setState({...state, previewVisible: false });
 
@@ -182,12 +174,12 @@ export default function ModalPost() {
   };
 
   const onFinish = async (value) => {
+    console.log("tombol jalan euy");
     let uploaded = [];
-    const fileList = [];
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-        // console.log(elem)
+         console.log("tetete",elem)
         const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
   
         const url = await new Promise((resolve, reject) => {
@@ -200,7 +192,6 @@ export default function ModalPost() {
             async () => {
               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
   
-              fileList.push({ ...elem, status: 'done' })
               resolve(downloadUrl);
             }
           )
