@@ -39,12 +39,12 @@ function Home() {
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!posts ? null
-                    : posts.map(post => {
+                    : posts.map((post, key) => {
                         return (
                             user && post.muted.find((mute) => mute.owner === user.username) ? (
                                 <div></div>
                             ) : (
-                                <div key={post.id}>
+                                <div key={`posts${post.id} ${key}`}>
                                 <PostCard post={post} loading={loading} />
                             </div>
                             )

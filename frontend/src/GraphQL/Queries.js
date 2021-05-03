@@ -61,6 +61,18 @@ getPost(id: $id){
         photoProfile
         colorCode
         }
+    notifications {
+      recipient
+        sender
+        read
+        postId
+        id
+        type
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
 }
 `;

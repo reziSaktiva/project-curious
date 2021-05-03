@@ -283,7 +283,8 @@ module.exports = {
           return {
             ...newPost,
             likes: [],
-            comments: []
+            comments: [],
+            muted: []
           };
         } catch (err) {
           throw new Error(err);
