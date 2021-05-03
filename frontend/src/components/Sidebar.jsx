@@ -57,7 +57,6 @@ const Sidebar = () => {
       }
     );
   }
-  console.log(address);
   return (
     <React.Fragment >
       {/* Sidebar */}
