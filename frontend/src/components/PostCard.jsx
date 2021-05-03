@@ -5,10 +5,10 @@ import moment from "moment";
 import Geocode from "react-geocode";
 
 import { AuthContext } from "../context/auth";
-import Pin from '../assets/pin-svg-25px.svg'
-import LikeButton from './LikeButton';
-import CommentButton from './CommentButton';
-import RepostButton from './RepostButton';
+import Pin from "../assets/pin-svg-25px.svg";
+import LikeButton from "./LikeButton";
+import CommentButton from "./CommentButton";
+import RepostButton from "./RepostButton";
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
@@ -22,20 +22,20 @@ Geocode.setLanguage("id");
 export default function PostCard({ post, loading }) {
   const [address, setAddress] = useState("");
   const { user } = useContext(AuthContext);
-  const postContext = useContext(PostContext)
+  const postContext = useContext(PostContext);
 
-  const [ deletePost ] = useMutation(DELETE_POST, {
+  const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
       alert(deletePost);
-      postContext.deletePost(post.id)
+      postContext.deletePost(post.id);
     },
-  })
+  });
 
-  const [ mutePost ] = useMutation(MUTE_POST, {
-    update(_, {data: { mutePost } }){
-      postContext.mutePost(mutePost)
-    }
-  })
+  const [mutePost] = useMutation(MUTE_POST, {
+    update(_, { data: { mutePost } }) {
+      postContext.mutePost(mutePost);
+    },
+  });
 
   const userName = user && user.username;
 
@@ -53,47 +53,58 @@ export default function PostCard({ post, loading }) {
     }
   }, [post]);
 
-    return (
-        <List
-            itemLayout="vertical"
-            size="large" >
-            <List.Item
-                key={post.id}
-                actions={
-                    !loading && [
-                      <Row gutter={[48, 0]}>
-                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                        <LikeButton likeCount={ post.likeCount } likes={post.likes} id={ post.id } />
-                        </Col>
-                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                        <CommentButton commentCount={ post.commentCount } />
-                        </Col>
-                        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                        <RepostButton />
-                        </Col>
-                      </Row>
-                    ]}>
-                <List.Item.Meta
-                extra={<a href="#" />}
-                  title={<div>
-                    <Row>
-                      <Col span={12}>
-                      <a href={`/post/${post.id}`} style={{fontSize: 15}}><img src={Pin} style={{ width: 15, marginTop: -4 }} />{address}</a>
-                      </Col>
-                      <Col span={12} style={{textAlign: "right"}}>
-                        <Dropdown overlay={
-                          <Menu>
-                          <Menu.Item key="0">
-                            Subscribe
+  return (
+    <List itemLayout="vertical" size="large">
+      <List.Item
+        key={post.id}
+        actions={
+          !loading && [
+            <Row gutter={[48, 0]}>
+              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                <LikeButton
+                  likeCount={post.likeCount}
+                  likes={post.likes}
+                  id={post.id}
+                />
+              </Col>
+              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                <CommentButton commentCount={post.commentCount} />
+              </Col>
+              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+                <RepostButton />
+              </Col>
+            </Row>,
+          ]
+        }
+      >
+        <List.Item.Meta
+          extra={<a href="#" />}
+          title={
+            <div>
+              <Row>
+                <Col span={12}>
+                  <a href={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                    <img src={Pin} style={{ width: 15, marginTop: -4 }} />
+                    {address}
+                  </a>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key="0">Subscribe</Menu.Item>
+                        <Menu.Item key="1" onClick={() => mutePost({ variables: { id: post.id } })}>
+                          Mute
+                        </Menu.Item>
+                        <Menu.Item key="3">Report</Menu.Item>
+                        {userName === post.owner ? (
+                          <Menu.Item key="4" onClick={() => deletePost({ variables: { id: post.Id } })}>
+                            Delete Post
                           </Menu.Item>
-                          <Menu.Item key="1" onClick={e=> console.log(e)}>
-                            Mute
-                          </Menu.Item>
-                          <Menu.Item key="3">
-                            Report
-                          </Menu.Item>
+                          ) : (null)}
                         </Menu>
-                        } trigger={['click']} placement="bottomRight">
+                        } 
+                        trigger={['click']} placement="bottomRight">
                         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                           <EllipsisOutlined />
                         </a>

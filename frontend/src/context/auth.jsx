@@ -50,7 +50,7 @@ function authReducer(state, action) {
     case SET_NOTIFICATIONS:
       return {
         ...state,
-        notification: action.payload,
+        notifications: action.payload,
       };
     case "SET_LIKED_DATA":
       return {
@@ -99,6 +99,8 @@ export function AuthProvider(props) {
 
   // Check Sessions
   const { token } = Session({ onLogout: logout });
+
+  const { user, facebookData, liked, notifications } = state
 
   // Mutations
   const [
@@ -195,8 +197,10 @@ export function AuthProvider(props) {
 
   const authProps = useMemo(
     () => ({
-      user: state.user,
-      facebookData: state.facebookData,
+      user,
+      facebookData,
+      liked,
+      notifications,
       login,
       logout,
       loadFacebookData, // functions context
