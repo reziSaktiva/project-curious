@@ -54,6 +54,8 @@ export default function PostCard({ post, loading }) {
     }
   }, [post]);
 
+  console.log(post);
+
   return (
     <List itemLayout="vertical" size="large">
       <List.Item
@@ -117,7 +119,44 @@ export default function PostCard({ post, loading }) {
                 >
                 </List.Item.Meta>
                 <p style={{marginTop: -9}}>{post.text}</p>
-                {post.media? <img src={post.media} style={{ width: 300}} /> : null }
+                {post.media? (
+                  post.media.length == 1? (
+                    <img src={post.media} style={{ width: "100%", borderRadius: 10 }} />
+                  ) : null
+                ) : null}
+
+                {post.media? (
+                  post.media.length == 2? (
+                    <div className="row-card-2">
+                      <img src={post.media[0]} style={{borderRadius: "10px 0px 0px 10px"}} />
+                      <img src={post.media[1]} style={{borderRadius: "0px 10px 10px 0px"}} />
+                  </div>
+                  ) : null
+                ) : null}
+
+                {post.media? (
+                  post.media.length >= 3? (
+                    <table className="photo-grid-3">
+                      <tr>
+                        <td rowspan="2" style={{width: "50%"}}>
+                          <img className="pict1-3" src={post.media[0]} style={{borderRadius: "10px 0px 0px 10px"}} />
+                        </td>
+                        <td style={{width: "50%"}}>
+                          <img className="pict2-3" src={post.media[1]} style={{borderRadius: "0px 10px 0px 0px"}} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{width: "50%"}}>
+                          <div className="text-container">
+                        <img className="pict3-3" src={post.media[2]} style={post.media.length > 3? {borderRadius: "0px 0px 10px 0px", filter: "blur(2px)" }: {borderRadius: "0px 0px 10px 0px" }} />
+                          <div className="text-center">{post.media.length > 3? ("+" +(post.media.length - 3)) : null}</div>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  ) : null
+                ) : null}
+
             </List.Item>
         </List>
     )
