@@ -62,6 +62,32 @@ module.exports = {
         }
     },
     Mutation: {
+        async readNotification(_, { id }, context){
+            const { username } = await fbAuthContext(context)
+
+            try{
+                const batch = db.batch()
+                let data ;
+                if(!username){
+                    throw UserInputError("you can't read this notification")
+                } else {
+                    const notification = db.doc(`/users/${username}/notifications/${id}`)
+                    batch.update(notification, {read: true})
+
+                    await batch.commit()
+                        .then(() => {
+                            return notification.get()
+                        })
+                        .then(doc => {
+                            data = doc.data()
+                        })
+                }
+                return data
+            }
+            catch(err){
+                throw new Error(err)
+            }
+        },
         async login(_, { username, password }) {
             const { valid, errors } = validateLoginInput(username, password)
             if (!valid) throw new UserInputError("Errors", { errors })

@@ -78,7 +78,7 @@ module.exports = gql`
         displayName: String!
         displayImage: String!
         colorCode: String!
-    },
+    }
     type Query {
         getPosts: [Post]!
         getPost(id: String!): Post!
@@ -114,6 +114,7 @@ module.exports = gql`
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
         checkUserWithFacebook(username: String!): Boolean!
+        readNotification( id: ID! ): Notification!
 
         # posts mutation
         getPost( id:ID! ): Post!
