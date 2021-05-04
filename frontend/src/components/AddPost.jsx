@@ -245,6 +245,7 @@ export default function ModalPost() {
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
+                accept="video/*, image/*"
                 onPreview={handlePreview}
                 onChange={handleChange}
               >
@@ -262,6 +263,7 @@ export default function ModalPost() {
             <Col span={12}>
               <Form.Item name="foto" style={{marginBottom: 0}}> 
                 <Upload
+                accept="video/*, image/*"
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 showUploadList={null}
                 onChange={handleChange}
