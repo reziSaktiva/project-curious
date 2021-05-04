@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
-import { Card } from 'antd'
+import { Card, Menu, Dropdown  } from "antd";
+import { EllipsisOutlined } from "@ant-design/icons";
 import { AuthContext } from '../context/auth'
 
 export default function Notification() {
@@ -7,7 +8,21 @@ export default function Notification() {
     return (
         <div>
             <div style={{ position: 'fixed', zIndex: 1 }}>
-                <Card title="Notification" extra={<a href="#"><i className="ellipsis horizontal icon" style={{ color: 'black' }}></i></a>} style={{ width: "100%" }}>
+                <Card title="Notification" extra={
+                <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item key="0">Read All</Menu.Item>
+                    <Menu.Item key="3">Clear</Menu.Item>
+                    
+                    </Menu>
+                    } 
+                    trigger={['click']} placement="bottomRight">
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                      <EllipsisOutlined />
+                    </a>
+                  </Dropdown>
+                }>
                     {notifications && notifications.map((notif, key) => {
                         let type = ''
                         let text = ''
