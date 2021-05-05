@@ -276,6 +276,9 @@ transform: translate(-50%, 30%);
   text-align: center;
   color: white;
 }
+.text-container:hover .text-center {
+  display: none;
+}
 .text-center {
     position: absolute;
     top: 50%;
