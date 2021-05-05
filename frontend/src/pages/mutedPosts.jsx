@@ -10,7 +10,7 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
 
-function Home() {
+function MutedPost() {
     const { data, loading: loadingPosts } = useQuery(GET_POSTS);
     const _isMounted = useRef(false);
 
@@ -42,12 +42,10 @@ function Home() {
                     : posts.map((post, key) => {
                         return (
                             user && post.muted.find((mute) => mute.owner === user.username) ? (
-                                <div key={`posts${post.id} ${key}`}></div>
-                            ) : (
                                 <div key={`posts${post.id} ${key}`}>
                                 <PostCard post={post} loading={loading} />
                             </div>
-                            )
+                            ) : null
                         )
                     })}
             </InfiniteScroll>) : null}
@@ -55,6 +53,4 @@ function Home() {
     );
 }
 
-export default Home
-
-
+export default MutedPost

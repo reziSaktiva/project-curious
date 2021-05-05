@@ -71,6 +71,7 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
       id
       owner
       text
+      media
       createdAt
       commentCount
       likeCount
@@ -85,6 +86,12 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
         colorCode
         displayName
         displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
       }
     }
   }

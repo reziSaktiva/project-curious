@@ -85,6 +85,8 @@ module.exports = {
       const postDocument = db.doc(`/posts/${id}`)
       const commentCollection = db.collection(`/posts/${id}/comments`)
       const likeCollection = db.collection(`/posts/${id}/likes`)
+      const mutedCollection = db.collection(`/posts/${id}/muted`)
+
       if (username) {
         try {
           let post;
@@ -97,6 +99,8 @@ module.exports = {
                 post = doc.data()
                 post.comments = []
                 post.likes = []
+                post.muted = []
+
 
                 return commentCollection.orderBy('createdAt', 'asc').get()
               }
@@ -110,6 +114,12 @@ module.exports = {
             .then(data => {
               data.forEach(doc => {
                 post.likes.push(doc.data())
+              })
+              return mutedCollection.get()
+            })
+            .then(data => {
+              data.forEach(doc => {
+                post.muted.push(doc.data())
               })
             })
           return post
@@ -158,7 +168,20 @@ module.exports = {
               });
           };
 
-          const newData = { ...data, likes: likes(), comments}
+          const muted = () => {
+            return db
+              .collection(`/posts/${data.id}/muted`)
+              .get()
+              .then((data) => {
+                const muted = [];
+                data.forEach((doc) => {
+                  muted.push(doc.data());
+                });
+                return muted;
+              });
+          };
+
+          const newData = { ...data, likes: likes(), comments, muted}
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
