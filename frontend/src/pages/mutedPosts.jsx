@@ -37,18 +37,19 @@ function MutedPost() {
     return (
         <div>
             <NavBar />
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
+            {user ? (<div>
                 {!posts ? null
                     : posts.map((post, key) => {
                         return (
                             user && post.muted.find((mute) => mute.owner === user.username) ? (
                                 <div key={`posts${post.id} ${key}`}>
+                                    {console.log(post)}
                                 <PostCard post={post} loading={loading} />
                             </div>
                             ) : null
                         )
                     })}
-            </InfiniteScroll>) : null}
+            </div>) : null}
         </div>
     );
 }

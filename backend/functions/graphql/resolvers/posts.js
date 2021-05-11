@@ -609,6 +609,7 @@ module.exports = {
             } else {
               if (!isMuted) {
                 db.doc(`/posts/${postId}/muted/${muteId}`).delete()
+                db.doc(`/users/${username}/muted/${muteId}`).delete()
                 mute = {
                   ...mute,
                   mute: false,
@@ -618,12 +619,12 @@ module.exports = {
                 return muteDocument.add({ owner: username, createdAt: new Date().toISOString(), postId })
                   .then(data => {
                     data.update({ id: data.id })
-                    console.log(data.id);
                     mute = {
                       ...mute,
                       mute: true,
                       id: data.id
                     }
+                    db.doc(`/users/${username}/muted/${data.id}`).set(mute)
                   })
               }
             }

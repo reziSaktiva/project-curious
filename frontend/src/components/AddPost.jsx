@@ -95,10 +95,7 @@ export default function ModalPost() {
   }, []);
 
   useEffect(() => {
-    console.log('state upload text: ', state.text && !uploaded.length && isFinishUpload);
-    console.log('state upload image: ', !!uploaded.length, ' ', typeof(uploaded));
     if (visible && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
-      console.log("ga jalan nih");
       const { text= '' } = state;
       const variables = {
         text,
@@ -109,7 +106,6 @@ export default function ModalPost() {
         }
       };
 
-       console.log('payload: ', variables);
       createPost( { variables });
     }
   }, [uploaded, isFinishUpload])
@@ -174,12 +170,10 @@ export default function ModalPost() {
   };
 
   const onFinish = async (value) => {
-    console.log("tombol jalan euy");
     let uploaded = [];
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-         console.log("tetete",elem)
         const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
   
         const url = await new Promise((resolve, reject) => {
@@ -205,7 +199,6 @@ export default function ModalPost() {
       return;
     }
 
-    console.log('set text')
 
     setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
     

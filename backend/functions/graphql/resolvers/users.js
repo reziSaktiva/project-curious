@@ -59,20 +59,50 @@ module.exports = {
                 throw new Error(err)
             }
 
+        },
+        async mutedPosts(_, args, context) {
+            const { username } = await fbAuthContext(context)
+            const muteData = db.collection(`users/${username}/muted`)
+
+            try {
+                const posts = []
+
+                if (!username) {
+                    throw UserInputError("you must login first")
+                } else {
+                    await muteData.get()
+                        .then(data => {
+                            data.forEach(doc => {
+                                return db.collection('posts').where('id', "==", doc.data().postId).get()
+                                    .then(data => {
+                                        return data.docs.forEach(post => {
+                                            posts.push(post.data())
+                                        })
+                                    })
+                            })
+                        })
+                }
+                console.log(posts);
+                return posts
+            }
+            catch (err) {
+                console.log(err)
+                throw new Error(err)
+            }
         }
     },
     Mutation: {
-        async readNotification(_, { id }, context){
+        async readNotification(_, { id }, context) {
             const { username } = await fbAuthContext(context)
 
-            try{
+            try {
                 const batch = db.batch()
-                let data ;
-                if(!username){
+                let data;
+                if (!username) {
                     throw UserInputError("you can't read this notification")
                 } else {
                     const notification = db.doc(`/users/${username}/notifications/${id}`)
-                    batch.update(notification, {read: true})
+                    batch.update(notification, { read: true })
 
                     await batch.commit()
                         .then(() => {
@@ -84,7 +114,7 @@ module.exports = {
                 }
                 return data
             }
-            catch(err){
+            catch (err) {
                 throw new Error(err)
             }
         },
