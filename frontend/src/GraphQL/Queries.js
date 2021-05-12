@@ -32,6 +32,38 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_PROFILE_POSTS = gql`
+  query {
+    getProfilePosts {
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+    }
+  }
+`;
+
 export const GET_POST = gql`
 query($id: String!){
 getPost(id: $id){

@@ -22,6 +22,8 @@ import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
 import Nearby from './pages/nearby';
 import MutedPost from './pages/mutedPosts'
+import Profile from './pages/Profile'
+import Visited from './pages/Visited'
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
             <UserRoute exact path="/mutedPost" component={MutedPost} />
+            <UserRoute exact path="/profile" component={Profile} />
+            <UserRoute exact path="/visited" component={Visited} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <UserRoute exact path="/map" component={map} />
           </Switch>

@@ -79,6 +79,81 @@ module.exports = {
         throw new Error(err);
       }
     },
+    async getProfilePosts(_, args, context) {
+      const { username } = await fbAuthContext(context)
+      const posts = [];
+      if(username) {
+        try {
+          await db
+            .collection("posts")
+            .where("owner", "==",username)
+            .orderBy("createdAt", "desc")
+            .get()
+            .then((data) => {
+              return data.docs.forEach((doc) => {
+                const likes = () => {
+                  return db
+                    .collection(`/posts/${doc.data().id}/likes`)
+                    .get()
+                    .then((data) => {
+                      const likes = [];
+                      data.forEach((doc) => {
+                        likes.push(doc.data());
+                      });
+                      return likes;
+                    });
+                };
+  
+                const comments = () => {
+                  return db
+                    .collection(`/posts/${doc.data().id}/comments`)
+                    .get()
+                    .then((data) => {
+                      const comments = [];
+                      data.forEach((doc) => {
+                        comments.push(doc.data());
+                      });
+                      return comments;
+                    });
+                };
+  
+                const muted = () => {
+                  return db
+                    .collection(`/posts/${doc.data().id}/muted`)
+                    .get()
+                    .then((data) => {
+                      const muted = [];
+                      data.forEach((doc) => {
+                        muted.push(doc.data());
+                      });
+                      return muted;
+                    });
+                }
+  
+                posts.push({
+                  id: doc.data().id,
+                  text: doc.data().text,
+                  media: doc.data().media,
+                  createdAt: doc.data().createdAt,
+                  owner: doc.data().owner,
+                  likeCount: doc.data().likeCount,
+                  commentCount: doc.data().commentCount,
+                  location: doc.data().location,
+                  likes: likes(),
+                  comments: comments(),
+                  muted: muted()
+                });
+              });
+            });
+  
+          return posts;
+        } catch (err) {
+          console.log(err);
+          throw new Error(err);
+        }
+      }
+      
+    },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
 
@@ -130,6 +205,7 @@ module.exports = {
         }
       }
     },
+    
     async getPostBasedOnNearestLoc(_, { lat, lng }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -265,6 +341,7 @@ module.exports = {
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
+                  media: doc.data().media,
                   createdAt: doc.data().createdAt,
                   owner: doc.data().owner,
                   likeCount: doc.data().likeCount,

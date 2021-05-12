@@ -14,7 +14,7 @@ import Blank from "../assets/blank.png";
 import Pin from "../assets/pin-svg-25px.svg";
 
 //antd
-import { Layout, Menu, List, Button } from "antd";
+import { Layout, Menu, List } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,

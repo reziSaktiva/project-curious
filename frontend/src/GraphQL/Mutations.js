@@ -100,6 +100,7 @@ export const GET_MORE_POSTS = gql`
       id
       owner
       text
+      media
       createdAt
       commentCount
       likeCount
