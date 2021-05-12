@@ -59,9 +59,65 @@ module.exports = {
                 throw new Error(err)
             }
 
+        },
+        async mutedPosts(_, args, context) {
+            const { username } = await fbAuthContext(context)
+            const muteData = db.collection(`users/${username}/muted`)
+
+            try {
+                const posts = []
+
+                if (!username) {
+                    throw UserInputError("you must login first")
+                } else {
+                    await muteData.get()
+                        .then(data => {
+                            return data.docs.forEach(doc => {
+                                return db.collection('posts').where('id', "==", doc.data().postId).get()
+                                    .then(data => {
+                                        return data.docs.forEach(post => {
+                                            posts.push(post.data())
+                                        })
+                                    })
+                            })
+                        })
+                }
+                console.log(posts);
+                return posts
+            }
+            catch (err) {
+                console.log(err)
+                throw new Error(err)
+            }
         }
     },
     Mutation: {
+        async readNotification(_, { id }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                const batch = db.batch()
+                let data;
+                if (!username) {
+                    throw UserInputError("you can't read this notification")
+                } else {
+                    const notification = db.doc(`/users/${username}/notifications/${id}`)
+                    batch.update(notification, { read: true })
+
+                    await batch.commit()
+                        .then(() => {
+                            return notification.get()
+                        })
+                        .then(doc => {
+                            data = doc.data()
+                        })
+                }
+                return data
+            }
+            catch (err) {
+                throw new Error(err)
+            }
+        },
         async login(_, { username, password }) {
             const { valid, errors } = validateLoginInput(username, password)
             if (!valid) throw new UserInputError("Errors", { errors })

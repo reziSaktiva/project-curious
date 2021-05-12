@@ -25,6 +25,23 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const READ_NOTIFICATION = gql`
+  mutation readNotification($id: ID!) {
+    readNotification(id: $id){
+      recipient
+      sender
+      read
+      postId
+      id
+      type
+      createdAt
+      displayName
+      displayImage
+      colorCode
+  }
+}
+`
+
 export const DELETE_POST = gql`
   mutation deletePost($id: ID!) {
     deletePost(id: $id)

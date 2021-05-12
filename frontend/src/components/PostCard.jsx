@@ -54,8 +54,6 @@ export default function PostCard({ post, loading }) {
     }
   }, [post]);
 
-  console.log(post);
-
   return (
     <List itemLayout="vertical" size="large">
       <List.Item
@@ -101,12 +99,22 @@ export default function PostCard({ post, loading }) {
                     overlay={
                       <Menu>
                         <Menu.Item key="0">Subscribe</Menu.Item>
-                        <Menu.Item key="1" onClick={() => mutePost({ variables: { id: post.id } })}>
+                        <Menu.Item
+                          key="1"
+                          onClick={() =>
+                            mutePost({ variables: { id: post.id } })
+                          }
+                        >
                           Mute
                         </Menu.Item>
                         <Menu.Item key="3">Report</Menu.Item>
                         {userName === post.owner ? (
-                          <Menu.Item key="4" onClick={() => deletePost({ variables: { id: post.Id } })}>
+                          <Menu.Item
+                            key="4"
+                            onClick={() =>
+                              deletePost({ variables: { id: post.Id } })
+                            }
+                          >
                             Delete Post
                           </Menu.Item>
                           ) : (null)}
@@ -206,7 +214,54 @@ export default function PostCard({ post, loading }) {
                   ) : null
                 ) : null}
 
-            </List.Item>
-        </List>
-    )
+        {post.media ? (
+          post.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <tbody>
+                <tr>
+                  <td rowSpan="2" style={{ width: "50%" }}>
+                    <img
+                      className="pict1-3"
+                      src={post.media[0]}
+                      style={{ borderRadius: "10px 0px 0px 10px" }}
+                    />
+                  </td>
+                  <td style={{ width: "50%" }}>
+                    <img
+                      className="pict2-3"
+                      src={post.media[1]}
+                      style={{ borderRadius: "0px 10px 0px 0px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "50%" }}>
+                    <div className="text-container">
+                      <img
+                        className="pict3-3"
+                        src={post.media[2]}
+                        style={
+                          post.media.length > 3
+                            ? {
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
+                            : { borderRadius: "0px 0px 10px 0px" }
+                        }
+                      />
+                      <div className="text-center">
+                        {post.media.length > 3
+                          ? "+" + (post.media.length - 3)
+                          : null}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+      </List.Item>
+    </List>
+  );
 }

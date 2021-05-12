@@ -78,13 +78,14 @@ module.exports = gql`
         displayName: String!
         displayImage: String!
         colorCode: String!
-    },
+    }
     type Query {
         getPosts: [Post]!
         getProfilePosts: [Post]!
         getPost(id: String!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
+        mutedPosts: [Post]!
     },
     input RegisterInput {
         email: String!
@@ -115,6 +116,7 @@ module.exports = gql`
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
         checkUserWithFacebook(username: String!): Boolean!
+        readNotification( id: ID! ): Notification!
 
         # posts mutation
         getPost( id:ID! ): Post!
