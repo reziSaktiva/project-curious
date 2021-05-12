@@ -11,7 +11,13 @@ import NavBar from '../components/NavBar'
 
 
 function Home() {
-    const { data, loading: loadingPosts } = useQuery(GET_POSTS);
+    const lat = JSON.parse(localStorage.location).lat;
+    const lng = JSON.parse(localStorage.location).lng;
+
+    const { data, loading: loadingPosts } = useQuery(GET_POSTS, {
+        variables: { lat, lng }
+    });
+    
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
