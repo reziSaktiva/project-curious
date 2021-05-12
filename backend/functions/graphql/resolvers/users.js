@@ -72,7 +72,7 @@ module.exports = {
                 } else {
                     await muteData.get()
                         .then(data => {
-                            data.forEach(doc => {
+                            return data.docs.forEach(doc => {
                                 return db.collection('posts').where('id', "==", doc.data().postId).get()
                                     .then(data => {
                                         return data.docs.forEach(post => {
