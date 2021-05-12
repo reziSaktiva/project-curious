@@ -3,6 +3,7 @@ import { List } from "antd";
 import { Row, Col, Menu, Dropdown, Image  } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
+import { Link } from "react-router-dom";
 
 import { AuthContext } from "../context/auth";
 import Pin from "../assets/pin-svg-25px.svg";
@@ -85,10 +86,15 @@ export default function PostCard({ post, loading }) {
             <div>
               <Row>
                 <Col span={12}>
-                  <a href={`/post/${post.id}`} style={{ fontSize: 15 }}>
-                    <img src={Pin} style={{ width: 15, marginTop: -4 }} />
-                    {address}
-                  </a>
+                      <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                      <img src={Pin} style={{ width: 15, marginTop: -4 }} />
+                      {address}
+                    </Link>
+                    {userName == post.owner && 
+                      <div style={{width:60, height: 20, border: "1px black solid", borderRadius: 5, textAlign: "center", display: "inline-block", marginLeft: 6}}>
+                        <p style={{fontSize: 14}}>My Post</p>
+                      </div>
+                    }
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
                   <Dropdown

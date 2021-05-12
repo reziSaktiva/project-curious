@@ -51,9 +51,7 @@
 /* Menu List */
 .markericon {
   background-image: url('./assets/marker.png');
-  width: 165px;
   background-repeat: no-repeat;
-  height: 18px;
 }
 .near{
   background-image: url('./assets/locicon.png');
@@ -282,4 +280,21 @@ transform: translate(-50%, 30%);
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: larger;
+}
+
+/* PROFILE */
+
+.profileProfilePicture {
+  margin-top:50;
+  border-radius: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80;
+  height: 80;
+  object-fit: cover
+}
+
+.ant-tabs-tab {
+  text-align: center;
 }

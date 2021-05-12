@@ -7,7 +7,7 @@ export default function Notification() {
     const { notifications } = useContext(AuthContext)
     return (
         <div>
-            <div style={{ position: 'fixed', zIndex: 1 }}>
+            <div style={{ position: 'fixed', zIndex: 1, width: "30vh"}}>
                 <Card title="Notification" extra={
                 <Dropdown
                 overlay={

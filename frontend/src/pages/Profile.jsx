@@ -1,18 +1,66 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { GET_PROFILE_POSTS } from '../GraphQL/Queries'
+import { AuthContext } from "../context/auth";
 import 'antd/dist/antd.css';
 import '../App.css'
-import { Card, Col, Row, Tabs } from 'antd';
-import { RetweetOutlined, LeftOutlined, HeartOutlined, MessageOutlined } from '@ant-design/icons'
+import {  Col, Row, Tabs } from 'antd';
+
+//assets
+import Pin from '../assets/pin-svg-25px.svg'
+
+//location
+import Geocode from "react-geocode";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+import { Link } from 'react-router-dom';
+import PostCard from '../components/PostCard';
 
 
 
 function Profile() {
+
+    const { data, loading } = useQuery(GET_PROFILE_POSTS);
+    const { user } = useContext(AuthContext);
+    const [address, setAddress] = useState("");
+    console.log(data);
+    //set location
+    const loc = localStorage.location;
+
+const location = loc ? JSON.parse(loc) : null
+
+if (location) {
+
+  Geocode.fromLatLng(location.lat, location.lng).then(
+    (response) => {
+      const address = response.results[0].address_components[1].short_name;
+      setAddress(address);
+
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+}
+
+
     const { TabPane } = Tabs;
 
     const Demo = () => (
         <Tabs defaultActiveKey="1" centered>
             <TabPane tab="Posts" key="1">
-                Halaman Kesatu
+            {!data ? null
+                    : data.getProfilePosts.map((post, key) => {
+                        return (
+                            user && post.muted.find((mute) => mute.owner === user.username) ? (
+                                <div></div>
+                            ) : (
+                                <div key={`posts${post.id} ${key}`}>
+                                <PostCard post={post} loading={loading} />
+                            </div>
+                            )
+                        )
+                    })}
             </TabPane>
             <TabPane tab="Liked" key="2">
                 <h1>Halaman kedua</h1>
@@ -21,6 +69,7 @@ function Profile() {
             <TabPane tab="Media" key="3">
                 <h1>Halaman ketiga</h1>
             </TabPane>
+            
         </Tabs>
     );
     return (
@@ -40,50 +89,55 @@ function Profile() {
                     </button>
                     </Col>
                 </Row>
+
             <div style={{position:'fixed', width: "100%"}}>
+                <div class="ui divider" style={{ marginLeft: -14 }}/>
+            </div>
+                <img src={user.profilePicture} 
+                     style={{
+                        marginTop:50,
+                        borderRadius:"50%",
+                        display: "block",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        width: 80,
+                        height: 80,
+                        objectFit: "cover"
+                     }}
+                />
+                <h4 style={{textAlign: "center"}}>My Account</h4>
+                <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
+                    <Link to="/"><img src={Pin} style={{width:20, marginTop: -5}} /><span style={{ fontSize: 12 }}>{address}</span></Link>
+                </div>
+
+
+                <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20 }}>
+                    <Row>
+                        <Col span={8}> 
+                            <h5>12</h5>
+                            <p>Post</p>
+                        </Col>
+                        <Col span={8}> 
+                            <h5>12</h5>
+                            <p>Repost</p>
+                        </Col>
+                        <Col span={8}> 
+                            <h5>12</h5>
+                            <p>Likes</p>
+                        </Col>
+                    </Row>
+                </div>
                 
-
-                
-                        
-                        <div class="ui divider" style={{ marginLeft: -14 }}/>
-
-                        </div>
-
-
-                        <div style={{ marginLeft: 225, width: 60, marginTop: 50 }}>
-                            <a href="/"><p className="gambar"></p></a>
-                        </div>
-
-                        <h4 style={{ marginTop: 5, marginLeft: 218, width: 80 }}>My Account</h4>
-                        <div style={{ marginLeft: 180, marginTop: 10, width: 150 }}>
-                        <a href="/"><p className="markericon" ><span style={{ marginLeft: 20, fontSize: 12 }}>Albert Park, Melbourne</span></p></a>
-                        </div>
-
-                        <div class="ui secondary menu">
-                            <h5 class="item" style={{ marginLeft: 172 }}>
-                                12
-                            </h5>
-                            <h5 class="item" style={{ marginLeft: 22 }}>
-                                12
-                            </h5>
-                            <h5 class="item" style={{ marginLeft: 22 }}>
-                                12
-                            </h5>
-                        </div>
-
-                        <div class="ui secondary menu" style={{ fontSize: 10, marginTop: -25 }}>
-                            <p class="item" style={{ marginLeft: 172 }}>Posts</p>
-                            <p class="item" style={{ marginLeft: 20 }}>Repost</p>
-                            <p class="item" style={{ marginLeft: 20 }}>Likes</p>
-                        </div>
-
-                        <div class="ui action input"
-                            style={{ textAlign: 'center', marginLeft: 165, width: 150, height: 25, marginTop: -4 }}>
-                            <input type="text" value="http://ww.short.url/c0opq" />
-                            <button class="ui teal right icon button" style={{ backgroundColor: '#7F57FF', fontSize: 10 }}>
-                                Copy
+                <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20, marginBottom: 40 }}>
+                <div class="ui action input"
+                    style={{height: 25}}>
+                    <input type="text" value="http://ww.short.url/c0opq" />
+                    <button class="ui teal right icon button" style={{ backgroundColor: '#7F57FF', fontSize: 10 }}>
+                        Copy
                 </button>
                         </div>
+                </div>
+                
                         {Demo()}
                     </div>
     )
