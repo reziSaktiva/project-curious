@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image  } from "antd";
+import { Row, Col, Menu, Dropdown, Image } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
@@ -158,51 +158,49 @@ export default function PostCard({ post, loading }) {
                   post.media.length >= 3? (
                     <table className="photo-grid-3">
                       <Image.PreviewGroup>
-                      <tr style={{margin: 0, padding: 0}}>
-                        <td rowspan="2" style={{width: "50%"}}>
-                        <Image
-                        className="pict1-3"
-                      style={{borderRadius: "10px 0px 0px 10px"}}
-                      src={post.media[0]}
-                    />
-                        </td>
-                        <td style={{width: "50%"}}>
-                        <Image
-                        className="pict2-3"
-                      style={{borderRadius: "0px 10px 0px 0px"}}
-                      src={post.media[1]}
-                    />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{width: "50%"}}>
-                          <div className="text-container">
-                          <Image
-                            className="pict3-3"
-                            style={post.media.length > 3? {borderRadius: "0px 0px 10px 0px", filter: "blur(2px)" }: {borderRadius: "0px 0px 10px 0px" }}
-                            src={post.media[2]}
-                          />
-                        <div className="text-center">{post.media.length > 3? ("+" +(post.media.length - 3)) : null}</div>
-                          </div>
-                        </td>
-                      </tr>
-                      {post.media.length > 3? (
-                        <div>
-                      <Image
-                        className="pict3-3"
-                        style={{display: "none"}}
-                        src={post.media[3]}
-                      />
-                      {post.media.length > 4?(
-                        <Image
-                        className="pict3-3"
-                        style={{display: "none"}}
-                        src={post.media[4]}
-                      />
-                      ) : null}  
-                        </div>
-                        
-                      ) : null }
+                        <tbody>
+                          <tr style={{margin: 0, padding: 0}}>
+                            <td rowspan="2" style={{width: "50%", verticalAlign: 'top' }}>
+                              <Image
+                                className="pict1-3"
+                                style={{borderRadius: "10px 0px 0px 10px"}}
+                                src={post.media[0]}
+                              />
+                            </td>
+                            <td style={{width: "50%"}}>
+                              <Image
+                                className="pict2-3"
+                                style={{borderRadius: "0px 10px 0px 0px"}}
+                                src={post.media[1]}
+                              />
+                              <div className="text-container" style={{ marginTop: '-6px'}}>
+                                <Image
+                                  className="pict3-3"
+                                  style={post.media.length > 3? {borderRadius: "0px 0px 10px 0px", filter: "blur(2px)" }: {borderRadius: "0px 0px 10px 0px" }}
+                                  src={post.media[2]}
+                                />
+                                <div className="text-center">{post.media.length > 3? ("+" +(post.media.length - 3)) : null}</div>
+                              </div>
+                            </td>
+                          </tr>
+                          {post.media.length > 3? (
+                            <div>
+                              <Image
+                                className="pict3-3"
+                                style={{display: "none"}}
+                                src={post.media[3]}
+                              />
+                              {post.media.length > 4?(
+                                <Image
+                                className="pict3-3"
+                                style={{display: "none"}}
+                                src={post.media[4]}
+                              />
+                              ) : null}  
+                            </div>
+                            
+                          ) : null }
+                        </tbody>
                       </Image.PreviewGroup>
                     </table>
                   ) : null
