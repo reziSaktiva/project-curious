@@ -7,73 +7,55 @@ const randomGenerator = require("../../utility/randomGenerator");
 
 module.exports = {
   Query: {
-    async getPosts() {
+    async getPosts(_, { lat, lng }) {
       const posts = [];
+      if (!lat || !lng) {
+        throw new UserInputError('Lat and Lng is Required')
+      }
 
       try {
-        await db
-          .collection("posts")
-          .orderBy("createdAt", "desc")
-          .limit(8)
-          .get()
-          .then((data) => {
-            return data.docs.forEach((doc) => {
-              const likes = () => {
-                return db
-                  .collection(`/posts/${doc.data().id}/likes`)
-                  .get()
-                  .then((data) => {
-                    const likes = [];
-                    data.forEach((doc) => {
-                      likes.push(doc.data());
-                    });
-                    return likes;
-                  });
-              };
+        const data = await db.collection('posts').orderBy('createdAt', 'desc').limit(8).get()
+        const docs = data.docs.map((doc) => doc.data())
+        
+        return docs.map(async data => {
+          const { repost: repostId } = data;
+          let repost = {}
 
-              const comments = () => {
-                return db
-                  .collection(`/posts/${doc.data().id}/comments`)
-                  .get()
-                  .then((data) => {
-                    const comments = [];
-                    data.forEach((doc) => {
-                      comments.push(doc.data());
-                    });
-                    return comments;
-                  });
-              };
+          if (repostId) {
+            const repostData = await db.doc(`/posts/${repostId}`).get()
+            repost = repostData.data() || {}
+          }
 
-              const muted = () => {
-                return db
-                  .collection(`/posts/${doc.data().id}/muted`)
-                  .get()
-                  .then((data) => {
-                    const muted = [];
-                    data.forEach((doc) => {
-                      muted.push(doc.data());
-                    });
-                    return muted;
-                  });
-              }
+          // Likes
+          const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+          const likes = likesData.docs.map(doc => doc.data())
 
-              posts.push({
-                id: doc.data().id,
-                text: doc.data().text,
-                media: doc.data().media,
-                createdAt: doc.data().createdAt,
-                owner: doc.data().owner,
-                likeCount: doc.data().likeCount,
-                commentCount: doc.data().commentCount,
-                location: doc.data().location,
-                likes: likes(),
-                comments: comments(),
-                muted: muted()
-              });
-            });
-          });
+          // Comments
+          const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+          const comments = commentsData.docs.map(doc => doc.data())
 
-        return posts;
+          // Muted
+          const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+          const muted = mutedData.docs.map(doc => doc.data());
+
+          const newData = { ...data, likes, comments, muted, repost }
+
+          const { lat: lattitude, lng: longtitude } = newData.location;
+          try {
+            const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
+            const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
+
+            const distance = computeDistanceBetween(currentLatLng, contentLocation)
+
+            if ((distance / 1000) <= 40) { // should be show in range 40 km
+              posts.push(newData)
+            }
+          } catch (e) {
+            console.log('error : ', e)
+          }
+          return newData
+
+        });
       } catch (err) {
         console.log(err);
         throw new Error(err);
@@ -87,32 +69,31 @@ module.exports = {
       const likeCollection = db.collection(`/posts/${id}/likes`)
       if (username) {
         try {
-          let post;
+          let repost = {}
 
-          await postDocument.get()
-            .then(doc => {
-              if (!doc.exists) {
-                throw new UserInputError('Postingan tidak ditemukan')
-              } else {
-                post = doc.data()
-                post.comments = []
-                post.likes = []
+          const dataPost = await postDocument.get();
+          const post = dataPost.data();
 
-                return commentCollection.orderBy('createdAt', 'asc').get()
-              }
-            })
-            .then(docs => {
-              docs.forEach(doc => {
-                post.comments.push(doc.data())
-              })
-              return likeCollection.get()
-            })
-            .then(data => {
-              data.forEach(doc => {
-                post.likes.push(doc.data())
-              })
-            })
-          return post
+          const { repost: repostId } = post;
+
+          if (repostId) {
+            const repostData = await db.doc(`/posts/${repostId}`).get();
+
+            repost = repostData.data();
+          }
+
+          const likesPost = await likeCollection.get();
+          const likes = likesPost.docs.map(doc => doc.data()) || []
+
+          const commentsPost = await commentCollection.get();
+          const comments = commentsPost.docs.map(doc => doc.data()) || [];
+
+          return {
+            ...post,
+            likes,
+            comments,
+            repost
+          }
         }
         catch (err) {
           console.log(err)
@@ -260,8 +241,7 @@ module.exports = {
         console.log(err);
       }
     },
-    async createPost(_, { text, media, location }, context) {
-      console.log(location);
+    async createPost(_, { text, media, location, repost }, context) {
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
@@ -272,8 +252,12 @@ module.exports = {
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,
-            location,
+            location
           };
+
+          if (repost) {
+            newPost.repost = repost
+          }
 
           await db
             .collection("/posts")

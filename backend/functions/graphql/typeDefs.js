@@ -13,6 +13,15 @@ module.exports = gql`
         comments: [Comment]
         likes: [Like]
         muted: [Mute]
+        repost: Repost
+    }
+    type Repost {
+        id: ID
+        owner: String
+        text: String
+        media: [String]
+        createdAt: String
+        location: LatLong
     }
     type LatLong {
         lat: Float
@@ -80,7 +89,7 @@ module.exports = gql`
         colorCode: String!
     },
     type Query {
-        getPosts: [Post]!
+        getPosts(lat: Float, lng: Float): [Post]!
         getPost(id: String!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
@@ -118,7 +127,7 @@ module.exports = gql`
         # posts mutation
         getPost( id:ID! ): Post!
         nextPosts( id:ID! ): [Post]!
-        createPost(text:String, media: [String] location: Location!): Post!
+        createPost(text:String, media: [String] location: Location!, repost: String): Post!
         subscribePost( postId: ID! ): Subscribe!
         mutePost ( postId:ID! ): Mute!
         deletePost(id:ID!): String!
