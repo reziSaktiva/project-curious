@@ -19,6 +19,7 @@ import {
   LOGOUT,
   LS_LOCATION,
   LS_TOKEN,
+  NOTIFICATION_READ
 } from "./constant";
 
 const initialState = {
@@ -72,6 +73,21 @@ function authReducer(state, action) {
         ...state,
         user: null,
       };
+    case NOTIFICATION_READ:
+      return {
+        ...state,
+        notifications: state.notifications.map((notif) => {
+          if (notif.id === action.payload.id) {
+            const updatedPosts = {
+              ...notif,
+              read: true,
+            };
+            return updatedPosts;
+          }
+
+          return notif;
+        })
+      }
     default:
       return state;
   }
@@ -191,6 +207,13 @@ export function AuthProvider(props) {
     });
   }
 
+  function notificationRead(data) {
+    dispatch({
+      type: NOTIFICATION_READ,
+      payload: data
+    })
+  }
+
   function logout() {
     dispatch({ type: LOGOUT });
   }
@@ -201,6 +224,7 @@ export function AuthProvider(props) {
       facebookData,
       liked,
       notifications,
+      notificationRead,
       login,
       logout,
       loadFacebookData, // functions context

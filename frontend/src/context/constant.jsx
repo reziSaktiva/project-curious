@@ -4,6 +4,7 @@ export const SET_NOTIFICATIONS = 'SET_NOTIFICATIONS';
 export const SET_USER_DATA = 'SET_USER_DATA';
 export const REGISTER_WITH_fACEBOOK = 'REGISTER_WITH_fACEBOOK';
 export const LOGOUT = 'LOGOUT';
+export const NOTIFICATION_READ = "NOTIFICATION_READ"
 
 // Storage Keys
 export const LS_LOCATION = 'location';

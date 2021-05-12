@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown } from "antd";
+import { Row, Col, Menu, Dropdown, Image } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
+import { Link } from "react-router-dom";
 
 import { AuthContext } from "../context/auth";
 import Pin from "../assets/pin-svg-25px.svg";
@@ -53,8 +54,6 @@ export default function PostCard({ post, loading }) {
     }
   }, [post]);
 
-  console.log(post);
-
   return (
     <List itemLayout="vertical" size="large">
       <List.Item
@@ -85,22 +84,37 @@ export default function PostCard({ post, loading }) {
             <div>
               <Row>
                 <Col span={12}>
-                  <a href={`/post/${post.id}`} style={{ fontSize: 15 }}>
-                    <img src={Pin} style={{ width: 15, marginTop: -4 }} />
-                    {address}
-                  </a>
+                      <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                      <img src={Pin} style={{ width: 15, marginTop: -4 }} />
+                      {address}
+                    </Link>
+                    {userName == post.owner && 
+                      <div style={{width:60, height: 20, border: "1px black solid", borderRadius: 5, textAlign: "center", display: "inline-block", marginLeft: 6}}>
+                        <p style={{fontSize: 14}}>My Post</p>
+                      </div>
+                    }
                 </Col>
                 <Col span={12} style={{ textAlign: "right" }}>
                   <Dropdown
                     overlay={
                       <Menu>
                         <Menu.Item key="0">Subscribe</Menu.Item>
-                        <Menu.Item key="1" onClick={() => mutePost({ variables: { id: post.id } })}>
+                        <Menu.Item
+                          key="1"
+                          onClick={() =>
+                            mutePost({ variables: { id: post.id } })
+                          }
+                        >
                           Mute
                         </Menu.Item>
                         <Menu.Item key="3">Report</Menu.Item>
                         {userName === post.owner ? (
-                          <Menu.Item key="4" onClick={() => deletePost({ variables: { id: post.Id } })}>
+                          <Menu.Item
+                            key="4"
+                            onClick={() =>
+                              deletePost({ variables: { id: post.Id } })
+                            }
+                          >
                             Delete Post
                           </Menu.Item>
                           ) : (null)}
@@ -120,43 +134,134 @@ export default function PostCard({ post, loading }) {
                 <p style={{marginTop: -9}}>{post.text}</p>
                 {post.media? (
                   post.media.length == 1? (
-                    <img src={post.media} style={{ width: "100%", borderRadius: 10 }} />
+                    <Image
+                      style={{ width: "100%", borderRadius: 10, objectFit: "cover" }}
+                      src={post.media}
+                    />
                   ) : null
                 ) : null}
 
                 {post.media? (
                   post.media.length == 2? (
-                    <div className="row-card-2">
-                      <img src={post.media[0]} style={{borderRadius: "10px 0px 0px 10px"}} />
-                      <img src={post.media[1]} style={{borderRadius: "0px 10px 10px 0px"}} />
-                  </div>
+                    <table className="row-card-2">
+                      <Image.PreviewGroup>
+                      <td style={{width:"50%"}}>
+                      <Image
+                      style={{borderRadius: "10px 0px 0px 10px"}}
+                      src={post.media[0]}
+                    />
+                      </td>
+                    <td>
+                    <Image
+                      style={{borderRadius: "0px 10px 10px 0px"}}
+                      src={post.media[1]}
+                    />
+                    </td>
+                    </Image.PreviewGroup>
+                  </table>
                   ) : null
                 ) : null}
 
                 {post.media? (
                   post.media.length >= 3? (
                     <table className="photo-grid-3">
-                      <tr>
-                        <td rowspan="2" style={{width: "50%"}}>
-                          <img className="pict1-3" src={post.media[0]} style={{borderRadius: "10px 0px 0px 10px"}} />
-                        </td>
-                        <td style={{width: "50%"}}>
-                          <img className="pict2-3" src={post.media[1]} style={{borderRadius: "0px 10px 0px 0px"}} />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{width: "50%"}}>
-                          <div className="text-container">
-                        <img className="pict3-3" src={post.media[2]} style={post.media.length > 3? {borderRadius: "0px 0px 10px 0px", filter: "blur(2px)" }: {borderRadius: "0px 0px 10px 0px" }} />
-                          <div className="text-center">{post.media.length > 3? ("+" +(post.media.length - 3)) : null}</div>
-                          </div>
-                        </td>
-                      </tr>
+                      <Image.PreviewGroup>
+                        <tbody>
+                          <tr style={{margin: 0, padding: 0}}>
+                            <td rowspan="2" style={{width: "50%", verticalAlign: 'top' }}>
+                              <Image
+                                className="pict1-3"
+                                style={{borderRadius: "10px 0px 0px 10px"}}
+                                src={post.media[0]}
+                              />
+                            </td>
+                            <td style={{width: "50%"}}>
+                              <Image
+                                className="pict2-3"
+                                style={{borderRadius: "0px 10px 0px 0px"}}
+                                src={post.media[1]}
+                              />
+                              <div className="text-container" style={{ marginTop: '-6px'}}>
+                                <Image
+                                  className="pict3-3"
+                                  style={post.media.length > 3? {borderRadius: "0px 0px 10px 0px", filter: "blur(2px)" }: {borderRadius: "0px 0px 10px 0px" }}
+                                  src={post.media[2]}
+                                />
+                                <div className="text-center">{post.media.length > 3? ("+" +(post.media.length - 3)) : null}</div>
+                              </div>
+                            </td>
+                          </tr>
+                          {post.media.length > 3? (
+                            <div>
+                              <Image
+                                className="pict3-3"
+                                style={{display: "none"}}
+                                src={post.media[3]}
+                              />
+                              {post.media.length > 4?(
+                                <Image
+                                className="pict3-3"
+                                style={{display: "none"}}
+                                src={post.media[4]}
+                              />
+                              ) : null}  
+                            </div>
+                            
+                          ) : null }
+                        </tbody>
+                      </Image.PreviewGroup>
                     </table>
                   ) : null
                 ) : null}
 
-            </List.Item>
-        </List>
-    )
+        {post.media ? (
+          post.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <tbody>
+                <tr>
+                  <td rowSpan="2" style={{ width: "50%" }}>
+                    <img
+                      className="pict1-3"
+                      src={post.media[0]}
+                      style={{ borderRadius: "10px 0px 0px 10px" }}
+                    />
+                  </td>
+                  <td style={{ width: "50%" }}>
+                    <img
+                      className="pict2-3"
+                      src={post.media[1]}
+                      style={{ borderRadius: "0px 10px 0px 0px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "50%" }}>
+                    <div className="text-container">
+                      <img
+                        className="pict3-3"
+                        src={post.media[2]}
+                        style={
+                          post.media.length > 3
+                            ? {
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
+                            : { borderRadius: "0px 0px 10px 0px" }
+                        }
+                      />
+                      <div className="text-center">
+                        {post.media.length > 3
+                          ? "+" + (post.media.length - 3)
+                          : null}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+      </List.Item>
+    </List>
+  );
 }

@@ -32,6 +32,38 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_PROFILE_POSTS = gql`
+  query {
+    getProfilePosts {
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+    }
+  }
+`;
+
 export const GET_POST = gql`
 query($id: String!){
 getPost(id: $id){
@@ -62,18 +94,6 @@ getPost(id: $id){
         photoProfile
         colorCode
         }
-    notifications {
-      recipient
-        sender
-        read
-        postId
-        id
-        type
-        createdAt
-        displayName
-        displayImage
-        colorCode
-    }
     }
 }
 `;
@@ -83,6 +103,7 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
       id
       owner
       text
+      media
       createdAt
       commentCount
       likeCount
@@ -97,6 +118,12 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
         colorCode
         displayName
         displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
       }
     }
   }

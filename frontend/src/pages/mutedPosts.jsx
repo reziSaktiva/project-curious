@@ -10,14 +10,8 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
 
-function Home() {
-    const lat = JSON.parse(localStorage.location).lat;
-    const lng = JSON.parse(localStorage.location).lng;
-
-    const { data, loading: loadingPosts } = useQuery(GET_POSTS, {
-        variables: { lat, lng }
-    });
-    
+function MutedPost() {
+    const { data, loading: loadingPosts } = useQuery(GET_POSTS);
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
@@ -43,24 +37,21 @@ function Home() {
     return (
         <div>
             <NavBar />
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
+            {user ? (<div>
                 {!posts ? null
                     : posts.map((post, key) => {
                         return (
                             user && post.muted.find((mute) => mute.owner === user.username) ? (
-                                <div key={`posts${post.id} ${key}`}></div>
-                            ) : (
                                 <div key={`posts${post.id} ${key}`}>
+                                    {console.log(post)}
                                 <PostCard post={post} loading={loading} />
                             </div>
-                            )
+                            ) : null
                         )
                     })}
-            </InfiniteScroll>) : null}
+            </div>) : null}
         </div>
     );
 }
 
-export default Home
-
-
+export default MutedPost
