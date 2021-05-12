@@ -14,7 +14,7 @@ import Blank from '../assets/blank.png'
 import Pin from '../assets/pin-svg-25px.svg'
 
 //antd
-import { Layout, Menu, List, Button } from "antd";
+import { Layout, Menu, List } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
@@ -65,7 +65,7 @@ const Sidebar = () => {
       <div className="sidebarcoy" style={{ position: 'fixed', backgroundColor: 'white', zIndex: 1, height: "100%", borderRight: "1px #cccccc solid"}} >
         <Sider className="site-layout-background" width={windowWidth < 1200? 230 : 280} style={{backgroundColor: 'white'}} collapsed={windowWidth < 993? true : false} >
         <div style={{width: 60}}>
-          <Link to="/"><div className="profilefoto" style={user.profilePicture? {backgroundImage: `url(${user.profilePicture}`} : {backgroundImage: `url(${Blank})` }} /></Link>
+          <Link to="/profile"><div className="profilefoto" style={user.profilePicture? {backgroundImage: `url(${user.profilePicture}`} : {backgroundImage: `url(${Blank})` }} /></Link>
         </div>
 
         <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15}}>{user.username? user.username : "My Account"}</h3>
