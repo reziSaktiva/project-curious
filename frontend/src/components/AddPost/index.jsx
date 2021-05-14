@@ -1,85 +1,84 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Modal, Button, Form, Input, Row, Col, Upload, Divider } from "antd";
+// Modules
+import React, { useState, useEffect, useContext } from "react";
+import { useMutation, useLazyQuery } from '@apollo/client';
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
-import { useMutation, gql } from '@apollo/client';
-import "../App.css";
-import { get } from 'lodash'
+import moment from 'moment';
+import { get } from 'lodash';
 
-import { PostContext } from "../context/posts";
+// Styles
+import "../../App.css";
 
+// Context
+import { PostContext } from "../../context/posts";
+
+// Query
+import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
+
+// Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
-
 const  storage = firebase.storage()
 
-/////////GQL START////////////
+const InitialState = {
+  previewVisible: false,
+  confirmLoading: false,
+  visible: false,
+  previewImage: '',
+  previewTitle: '',
+  fileList:[],
+  lat: '',
+  lng: '',
+  uploaded:[],
+  isFinishUpload: false,
+  text: ''
+};
 
-const CREATE_POST = gql`
-mutation createPost(
-  $text: String
-  $media: [String]
-  $location: Location!
-) {
-  createPost(
-  text: $text
-  media: $media
-  location: $location
-){
-  id
-  owner
-  text
-  media
-  createdAt
-  location{
-    lat
-    lng
-  }
-  commentCount
-  likeCount
-  likes{
-    id
-  }
-  comments {
-    id
-    createdAt
-    owner
-    text
-    displayName
-    photoProfile
-    colorCode
-  }
-
-}
-}
-`
-/////////GQL FINISH///////////
+const UploadButton = () => (
+  <div>
+    <PlusOutlined />
+    <div style={{ marginTop: 8 }}>Upload</div>
+  </div>
+);
 
 export default function ModalPost() {
+  // Context
+  const {
+    isOpenNewPost,
+    repost,
+    toggleOpenNewPost,
+    createPost: updatePosts
+  } = useContext(PostContext);
 
+  // Local State
+  const [state, setState] = useState(InitialState);
+  const [form] = Form.useForm();
+
+  // Query
+  const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
+  const getPost = get(dataRepost, 'getPost') || {};
+  
   const [createPost] = useMutation(
     CREATE_POST,
     {
-      onCompleted: () => {
-        setState({ ...state, visible: false, isFinishUpload: false })
+      onCompleted: (data) => {
+        const { createPost } = data;
+        
+        // Reset Form
+        setState(InitialState);
+        form.resetFields();
+
+        // Update Redux
+        toggleOpenNewPost(false)
+        updatePosts({
+          ...createPost,
+          repost: getPost
+        });
       }
     }
   )
 
-  const [state, setState] = useState({
-    previewVisible: false,
-    confirmLoading: false,
-    visible: false,
-    previewImage: '',
-    previewTitle: '',
-    fileList:[],
-    lat: '',
-    lng: '',
-    uploaded:[],
-    isFinishUpload: false,
-    text: ''
-  })
-  
-  const { isFinishUpload, visible, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded} = state;
+  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded} = state;
 
   ///////// location /////////
   function showPosition(position) {
@@ -95,7 +94,13 @@ export default function ModalPost() {
   }, []);
 
   useEffect(() => {
-    if (visible && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
+    if (repost) {
+      getRepost({ variables: { id: repost }});
+    }
+  }, [repost]);
+
+  useEffect(() => {
+    if (isOpenNewPost && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
       const { text= '' } = state;
       const variables = {
         text,
@@ -103,12 +108,13 @@ export default function ModalPost() {
         location: {
           lat,
           lng
-        }
+        },
+        repost
       };
 
       createPost( { variables });
     }
-  }, [uploaded, isFinishUpload])
+  }, [uploaded, isFinishUpload]);
 
   //////////////////// Upload Photo Function Start//////////////////////////////////
 
@@ -121,20 +127,10 @@ export default function ModalPost() {
     });
   }
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   const handleCancel = () => setState({...state, previewVisible: false });
 
   const handleCancelModal = () => {
-    setState({
-      ...state,
-      visible: false
-    });
+    toggleOpenNewPost(false);
   };
 
   const handlePreview = async file => {
@@ -160,14 +156,6 @@ export default function ModalPost() {
 
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
-
-  const showModal = () => {
-    setState({
-      ...state,
-      visible: true,
-      loading: false
-    });
-  };
 
   const onFinish = async (value) => {
     let uploaded = [];
@@ -207,17 +195,11 @@ export default function ModalPost() {
 
   return (
     <div>
-      
-      <div className="ui circular outlined icon button fixed"
-        style={{ position: 'fixed', backgroundColor: '#7958F5', borderRadius: '100%', right: '16%', bottom: '10%' }}
-        onClick={showModal}>
-        <i className="plus icon" style={{ color: 'white' }}></i>
-      </div>
       <Modal
-      key="addPost"
-          visible={visible}
+        key="addPost"
+          visible={isOpenNewPost}
           title={[
-            <p key="paragraf">Post to</p>,
+            <p key="paragraf">{repost ? 'Repost' : 'Post to'}</p>,
             <div key="location" style={{ position: "absolute", marginTop: 15, marginLeft: 60, width: 150 }}>
               <h3 style={{ fontWeight: "bold" }}>Nearby</h3>
               <a style={{ fontSize: 12 }}>Wild Park, Melbourne</a>
@@ -229,9 +211,33 @@ export default function ModalPost() {
           onCancel={handleCancelModal}
           footer={null}
         >
-        <Form  name="nest-messages" onFinish={onFinish}>
+          {!!repost && (
+            <>
+             {loading ?
+              (
+                <div style={{ marginBottom: 10 }}>
+                  <Space>
+                    <Skeleton.Avatar active={true} size={"large"}/>
+                    <Skeleton.Button style={{ width: window.isMobile ? '200px' : '400px'}} size={"small"} />
+                  </Space>
+                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10}} size={"small"} />
+                </div>
+              )
+             : (
+              <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
+                <div style={{ display: 'flex'}}>
+                  <p className="ic-location-small" style={{ margin: 0}}/>
+                  <div style={{ fontWeight: 600, paddingLeft: 10 }}>Jakarta, Indonesia</div>
+                </div>
+                <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
+                <div style={{ marginTop: 5 }}>{getPost.text}</div>
+              </Card>
+             )}
+            </>
+          )}
+        <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
-            <Input.TextArea />
+            <Input.TextArea bordered={false} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} > 
@@ -243,7 +249,7 @@ export default function ModalPost() {
                 onPreview={handlePreview}
                 onChange={handleChange}
               >
-                {fileList.length >= 5 ? null : uploadButton}
+                {fileList.length >= 5 ? null : <UploadButton />}
               </Upload>
             </Form.Item>
           )}

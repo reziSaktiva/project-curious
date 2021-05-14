@@ -2,9 +2,10 @@ import React, { useContext } from 'react'
 import { Container } from 'semantic-ui-react';
 import Sidebar from '../components/Sidebar'
 import Notification from '../components/Notification'
-import AddPosts from '../components/AddPost'
-import { AuthContext } from '../context/auth'
+import AddPosts from '../components/AddPost/index'
+import ButtonAdd from '../components/AddPost/ButtonAdd';
 
+import { AuthContext } from '../context/auth'
 
 // ant design
 import { Row, Col } from 'antd';
@@ -24,7 +25,12 @@ export default function Grid({ children }) {
                     </Col>
                     <Col xs={0} sm={24} md={6} lg={6} xl={6}>
                         {user && <Notification />}
-                        {user && <AddPosts />}
+                        {user && (
+                            <>
+                                <ButtonAdd />
+                                <AddPosts />
+                            </>
+                        )}
                     </Col>
                 </Row>
             </Container>

@@ -1,4 +1,5 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useMemo, useReducer } from "react";
+import { cloneDeep } from 'lodash';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -25,15 +26,20 @@ const reducer = (state, action) => {
         lastId: state.posts[state.posts.length - 1].id,
       };
     case "CREATE_POST":
+      const oldPosts = cloneDeep(state.posts) || [];
+      const posts = [action.payload, ...oldPosts];
+      
       return {
         ...state,
         loading: false,
-        posts: [action.payload, ...state.posts],
+        posts,
       };
     case "DELETE_POST":
+      const deleteId = action.payload;
+
       return {
         ...state,
-        posts: state.posts.filter((post) => post.id !== action.payload),
+        posts: state.posts.filter((post) => post.id !== deleteId),
       };
     case "LIKE_POST":
       return {
@@ -99,6 +105,13 @@ const reducer = (state, action) => {
           return post;
         }),
       };
+    case "OPEN_POST_CARD":
+      const { repost, isOpenNewPost } = action.payload;
+      return {
+        ...state,
+        isOpenNewPost,
+        repost
+      }
     default:
       throw new Error("Don't understand action");
   }
@@ -110,6 +123,8 @@ export const PostContext = createContext({
   loading: false,
   lastId: null,
   more: true,
+  isOpenNewPost: false,
+  repost: false,
   loadingData: () => {},
   setPosts: (posts) => {},
   morePosts: () => {},
@@ -130,7 +145,7 @@ const initialState = {
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastId, more } = state;
+  const { posts, loading, lastId, more, isOpenNewPost, repost } = state;
 
   const loadingData = () => {
     dispatch({ type: "LOADING_DATA" });
@@ -189,6 +204,17 @@ export const PostProvider = (props) => {
     }, 2000);
   };
 
+  const toggleOpenNewPost = (repost = false) => {
+    console.log('repost: ', repost);
+    dispatch({
+      type: "OPEN_POST_CARD",
+      payload: {
+        isOpenNewPost: !isOpenNewPost,
+        repost
+      }
+    })
+  };
+
   const like = (likeData, postId) => {
     const data = {
       id: likeData.id,
@@ -229,9 +255,12 @@ export const PostProvider = (props) => {
         like,
         deletePost,
         mutePost,
+        toggleOpenNewPost,
         loading,
         lastId,
         more,
+        isOpenNewPost,
+        repost
       }}
       {...props}
     />
