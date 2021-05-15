@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar'
 import Notification from '../components/Notification'
 import AddPosts from '../components/AddPost/index'
 import ButtonAdd from '../components/AddPost/ButtonAdd';
+import BottomBar from '../components/BottomBar';
 
 import { AuthContext } from '../context/auth'
 
@@ -33,6 +34,7 @@ export default function Grid({ children }) {
                         )}
                     </Col>
                 </Row>
+                {window.isMobile && <BottomBar />}
             </Container>
             
         )
