@@ -76,7 +76,7 @@ const Sidebar = () => {
           collapsed={windowWidth < 993 ? true : false}
         >
           <div style={{ width: 60 }}>
-            <Link to="/">
+            <Link to="/profile">
               <div
                 className="profilefoto"
                 style={
@@ -93,7 +93,7 @@ const Sidebar = () => {
           </h3>
           <List.Item.Meta
             title={
-              <a href="https://ant.design">
+              <a href="/profile">
                 {" "}
                 <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                 {address}
