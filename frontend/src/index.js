@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, from} from '@apollo/client';
 import { setContext } from 'apollo-link-context'
+import { isMobile } from "react-device-detect";
 
 // Importing styles
 import './index.css'
@@ -27,6 +28,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: authLink.concat(link)
 });
+
+window.isMobile = isMobile;
 
 ReactDOM.render(
   <ApolloProvider client={client}>

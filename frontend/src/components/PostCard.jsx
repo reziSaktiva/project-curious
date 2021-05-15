@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image } from "antd";
+import { Row, Col, Menu, Dropdown, Image, Card } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
+import { get } from 'lodash';
 
 import { AuthContext } from "../context/auth";
 import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "./LikeButton";
-import CommentButton from "./CommentButton";
-import RepostButton from "./RepostButton";
+import LikeButton from "./Buttons/LikeButton";
+import CommentButton from "./Buttons/Comment";
+import RepostButton from "./Buttons/RepostButton/index";
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
@@ -22,6 +23,8 @@ Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading }) {
   const [address, setAddress] = useState("");
+  const [repostAddress, setRepostAddress] = useState("");
+
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
 
@@ -39,6 +42,8 @@ export default function PostCard({ post, loading }) {
   });
 
   const userName = user && user.username;
+  const repost = get(post, 'repost') || {};
+  const isRepost = get(repost, 'id') || '';
 
   useEffect(() => {
     if (post.location) {
@@ -51,8 +56,21 @@ export default function PostCard({ post, loading }) {
           console.error(error);
         }
       );
+
+      if (isRepost) {
+        const { location } = repost
+        Geocode.fromLatLng(location.lat, location.lng).then(
+          (response) => {
+            const address = response.results[0].address_components[1].short_name;
+            setRepostAddress(address);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
     }
-  }, [post]);
+  }, [post, isRepost]);
 
   return (
     <List itemLayout="vertical" size="large">
@@ -72,7 +90,7 @@ export default function PostCard({ post, loading }) {
                 <CommentButton commentCount={post.commentCount} />
               </Col>
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                <RepostButton />
+                <RepostButton idPost={post.id} />
               </Col>
             </Row>,
           ]
@@ -131,6 +149,16 @@ export default function PostCard({ post, loading }) {
                   description={<div style={{ marginTop: -15 }}>{moment(post.createdAt).fromNow()}</div>}
                 >
                 </List.Item.Meta>
+                {isRepost && (
+                  <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 20 }}>
+                    <div style={{ display: 'flex'}}>
+                      <p className="ic-location-small" style={{ margin: 0}}/>
+                      <div style={{ fontWeight: 600, paddingLeft: 10 }}>{repostAddress}</div>
+                    </div>
+                    <span style={{ fontSize: 12 }}>{moment(repost.createdAt).fromNow()}</span>
+                    <div style={{ marginTop: 5 }}>{repost.text}</div>
+                  </Card>
+                )}
                 <p style={{marginTop: -9}}>{post.text}</p>
                 {post.media? (
                   post.media.length == 1? (

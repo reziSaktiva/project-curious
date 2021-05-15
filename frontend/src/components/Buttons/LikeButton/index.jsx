@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from "react";
 import { HeartOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useMutation } from "@apollo/client";
-import { LIKE_POST } from "../GraphQL/Mutations";
-import { PostContext } from "../context/posts";
-import { AuthContext } from "../context/auth";
+import { LIKE_POST } from "../../../GraphQL/Mutations";
+import { PostContext } from "../../../context/posts";
+import { AuthContext } from "../../../context/auth";
 
 export default function LikeButton({ likeCount, id, likes }) {
   const { like } = useContext(PostContext);

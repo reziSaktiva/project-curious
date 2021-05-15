@@ -1,10 +1,8 @@
 //GQL
-import { GET_POST } from "../GraphQL/Queries";
+import { useQuery } from "@apollo/client";
 import moment from "moment";
 import Geocode from "react-geocode";
-import { useQuery } from "@apollo/client";
-import { AuthContext } from "../context/auth";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -22,11 +20,16 @@ import {
 } from "antd";
 
 //component
-import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "../components/LikeButton";
-import CommentButton from "../components/CommentButton";
-import RepostButton from "../components/RepostButton";
+import LikeButton from "../components/Buttons/LikeButton";
+import CommentButton from "../components/Buttons/Comment";
+import RepostButton from "../components/Buttons/RepostButton";
 import { EllipsisOutlined } from "@ant-design/icons";
+
+// Assets
+import Pin from "../assets/pin-svg-25px.svg";
+
+// Query
+import { GET_POST } from "../GraphQL/Queries";
 
 //location
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
