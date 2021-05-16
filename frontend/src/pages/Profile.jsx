@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/client'
 import { GET_PROFILE_POSTS } from '../GraphQL/Queries'
 import { AuthContext } from "../context/auth";
@@ -22,26 +23,30 @@ function Profile() {
 
     const { data, loading } = useQuery(GET_PROFILE_POSTS);
     const { user } = useContext(AuthContext);
+    const history = useHistory();
     const [address, setAddress] = useState("");
     console.log(data);
     //set location
     const loc = localStorage.location;
 
-const location = loc ? JSON.parse(loc) : null
+    const location = loc ? JSON.parse(loc) : null
 
-if (location) {
+    if (location) {
+        Geocode.fromLatLng(location.lat, location.lng).then(
+            (response) => {
+            const address = response.results[0].address_components[1].short_name;
+            setAddress(address);
 
-  Geocode.fromLatLng(location.lat, location.lng).then(
-    (response) => {
-      const address = response.results[0].address_components[1].short_name;
-      setAddress(address);
-
-    },
-    (error) => {
-      console.error(error);
+            },
+            (error) => {
+            console.error(error);
+            }
+        );
     }
-  );
-}
+
+    const handleBackPage = () => {
+        history.push('/');
+    }
 
 
     const { TabPane } = Tabs;
@@ -77,7 +82,7 @@ if (location) {
             <Row>
                     <Col span={6}>
                     <button class="ui inverted basic button" type="text">
-                            <i class="chevron left icon" style={{ color: 'black' }}></i>
+                        <i class="chevron left icon" style={{ color: 'black' }} onClick={handleBackPage}></i>
                     </button>
                     </Col>
                     <Col span={12} style={{textAlign: "center"}}>

@@ -45,7 +45,7 @@ export default function ModalPost() {
   // Context
   const {
     isOpenNewPost,
-    repost,
+    repost = '',
     toggleOpenNewPost,
     createPost: updatePosts
   } = useContext(PostContext);
@@ -109,7 +109,7 @@ export default function ModalPost() {
           lat,
           lng
         },
-        repost
+        repost: repost || ''
       };
 
       createPost( { variables });
