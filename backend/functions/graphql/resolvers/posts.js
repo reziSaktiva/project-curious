@@ -136,6 +136,18 @@ module.exports = {
       }
       
     },
+    // async getLikedPost(_, { liked }) {
+    //   console.log(liked);
+      
+    //   try {
+    //     const likedData =  liked.forEach(id => {
+    //        db.collection(`/posts/${id}`).get();  
+    //     })
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    //   return likedData
+    // },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
 

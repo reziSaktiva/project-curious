@@ -15,17 +15,18 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
+import PhotoGallery from '../components/PhotoGalerry';
 
 
 
 function Profile() {
 
     const { data, loading } = useQuery(GET_PROFILE_POSTS);
-    const { user } = useContext(AuthContext);
+    const { user, liked } = useContext(AuthContext);
     const [address, setAddress] = useState("");
-    console.log(data);
     //set location
     const loc = localStorage.location;
+    const photogallery = []
 
 const location = loc ? JSON.parse(loc) : null
 
@@ -52,13 +53,10 @@ if (location) {
             {!data ? null
                     : data.getProfilePosts.map((post, key) => {
                         return (
-                            user && post.muted.find((mute) => mute.owner === user.username) ? (
-                                <div></div>
-                            ) : (
+                            user && 
                                 <div key={`posts${post.id} ${key}`}>
                                 <PostCard post={post} loading={loading} />
                             </div>
-                            )
                         )
                     })}
             </TabPane>
@@ -67,7 +65,38 @@ if (location) {
             </TabPane>
 
             <TabPane tab="Media" key="3">
-                <h1>Halaman ketiga</h1>
+            {/* {!data ? null
+                    : data.getProfilePosts.map((post, key) => {
+                        return (
+                            user && 
+                                <div key={`posts${post.id} ${key}`}>
+                                <PhotoGallery post={post} loading={loading} />
+                            </div>
+                        )
+                    })} */}
+                    <div className="gallery">
+            {!data ? null
+                    : data.getProfilePosts.map((post, key) => {
+
+                        const hasmedia = post.media && post.media.length >=1 
+                        console.log(post.media);
+                        // if(post.media) {
+                        //     if(post.media.length >= 1) {
+                        //         photogallery.push(post.media)
+                        //     }
+                        // }
+                        return(
+                            user && hasmedia && 
+                            <div className={key}>
+                                        {/* <figure className="gallery_item_1"> */}
+                                            <img src={post.media} className="gallery__img"  alt="Image 1" />
+                                       {/* </figure> */}
+                                        </div>
+                        )
+                            
+                    })}
+                    </div>
+                
             </TabPane>
             
         </Tabs>

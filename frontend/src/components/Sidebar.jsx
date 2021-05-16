@@ -76,7 +76,7 @@ const Sidebar = () => {
           collapsed={windowWidth < 993 ? true : false}
         >
           <div style={{ width: 60 }}>
-            <Link to="/">
+            <Link to="/profile">
               <div
                 className="profilefoto"
                 style={

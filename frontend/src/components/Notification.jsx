@@ -16,7 +16,7 @@ export default function Notification() {
   });
 
   return (
-    <div>
+    <div style={{position: 'relative', }}>
       <div style={{ position: "fixed", zIndex: 1 }}>
         <Card
           title="Notification"
