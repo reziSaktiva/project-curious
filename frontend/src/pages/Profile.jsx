@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { GET_PROFILE_POSTS } from '../GraphQL/Queries'
+import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from '../GraphQL/Queries'
 import { AuthContext } from "../context/auth";
 import 'antd/dist/antd.css';
 import '../App.css'
@@ -21,7 +21,8 @@ import PhotoGallery from '../components/PhotoGalerry';
 
 function Profile() {
 
-    const { data, loading } = useQuery(GET_PROFILE_POSTS);
+    const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
+    const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
     const { user, liked } = useContext(AuthContext);
     const [address, setAddress] = useState("");
     //set location
@@ -50,8 +51,9 @@ if (location) {
     const Demo = () => (
         <Tabs defaultActiveKey="1" centered>
             <TabPane tab="Posts" key="1">
-            {!data ? null
-                    : data.getProfilePosts.map((post, key) => {
+            {!getProfilePosts ? null
+                    : getProfilePosts.getProfilePosts.map((post, key) => {
+                        console.log("array",post);
                         return (
                             user && 
                                 <div key={`posts${post.id} ${key}`}>
@@ -61,7 +63,16 @@ if (location) {
                     })}
             </TabPane>
             <TabPane tab="Liked" key="2">
-                <h1>Halaman kedua</h1>
+            {!getProfileLikedPost ? null
+                    : getProfileLikedPost.getProfileLikedPost.map((post, key) => {
+                        console.log("profile post liked",post);
+                        return (
+                            user && 
+                                <div key={`posts${post.id} ${key}`}>
+                                <PostCard post={post} loading={loading} />
+                            </div>
+                        )
+                    })}
             </TabPane>
 
             <TabPane tab="Media" key="3">
@@ -75,11 +86,10 @@ if (location) {
                         )
                     })} */}
                     <div className="gallery">
-            {!data ? null
-                    : data.getProfilePosts.map((post, key) => {
+            {!getProfilePosts ? null
+                    : Array(getProfilePosts).map((post, key) => {
 
                         const hasmedia = post.media && post.media.length >=1 
-                        console.log(post.media);
                         // if(post.media) {
                         //     if(post.media.length >= 1) {
                         //         photogallery.push(post.media)
@@ -90,6 +100,7 @@ if (location) {
                             <div className={key}>
                                         {/* <figure className="gallery_item_1"> */}
                                             <img src={post.media} className="gallery__img"  alt="Image 1" />
+                                            
                                        {/* </figure> */}
                                         </div>
                         )

@@ -136,18 +136,29 @@ module.exports = {
       }
       
     },
-    // async getLikedPost(_, { liked }) {
-    //   console.log(liked);
+    async getProfileLikedPost(_, args, context) {
+      const {likes} = await fbAuthContext(context)
       
-    //   try {
-    //     const likedData =  liked.forEach(id => {
-    //        db.collection(`/posts/${id}`).get();  
-    //     })
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    //   return likedData
-    // },
+      try {
+      //fungsi ngambil postingan yang sudah di like
+      const likesData = likes.map(data => data.postId)
+      const likePost = await db.collection("/posts").where("id", "in", likesData).get()
+      const Post = likePost.docs.map(  doc => doc.data())
+      
+      //fungsi ngambil koleksi likes
+       const Likesnya = await likesData.map( doc => db.collection(`/posts/${doc}/likes`).get())
+       const Postnya = Likesnya.docs.map(doc=> doc.data())
+       
+      console.log("isi const Likesnya",Likesnya);
+      console.log("isi const Postnya",Postnya);
+      
+      return Post
+
+      
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
 

@@ -21,6 +21,7 @@ Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading }) {
+  console.log("kdowkdwodwok",post.likes);
   const [address, setAddress] = useState("");
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);

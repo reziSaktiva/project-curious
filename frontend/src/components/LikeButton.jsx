@@ -7,6 +7,7 @@ import { PostContext } from "../context/posts";
 import { AuthContext } from "../context/auth";
 
 export default function LikeButton({ likeCount, id, likes }) {
+  console.log("dwadwadaw",likeCount, id, likes);
   const { like } = useContext(PostContext);
   const { user } = useContext(AuthContext);
 

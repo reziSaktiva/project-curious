@@ -91,6 +91,7 @@ module.exports = gql`
     type Query {
         getPosts(lat: Float, lng: Float): [Post]!
         getProfilePosts: [Post]!
+        getProfileLikedPost: [Post]!
         getPost(id: String!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
