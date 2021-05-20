@@ -205,7 +205,6 @@ export const PostProvider = (props) => {
   };
 
   const toggleOpenNewPost = (repost = false) => {
-    console.log('repost: ', repost);
     dispatch({
       type: "OPEN_POST_CARD",
       payload: {

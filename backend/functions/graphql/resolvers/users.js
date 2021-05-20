@@ -65,24 +65,70 @@ module.exports = {
             const muteData = db.collection(`users/${username}/muted`)
 
             try {
-                const posts = []
-
                 if (!username) {
                     throw UserInputError("you must login first")
-                } else {
-                    await muteData.get()
-                        .then(data => {
-                            return data.docs.forEach(doc => {
-                                return db.collection('posts').where('id', "==", doc.data().postId).get()
-                                    .then(data => {
-                                        return data.docs.forEach(post => {
-                                            posts.push(post.data())
-                                        })
-                                    })
-                            })
-                        })
                 }
-                console.log(posts);
+                const getMuteData = await muteData.get();
+                const data = getMuteData.docs.map(doc => doc.data()) || [];
+                const posts = await data.map(doc => {
+                    return db.doc(`/posts/${doc.postId}`).get()
+                        .then(doc => {
+                            const likes = () => {
+                                return db
+                                  .collection(`/posts/${doc.postId}/likes`)
+                                  .get()
+                                  .then((data) => {
+                                    const likes = [];
+                                    data.forEach((doc) => {
+                                      likes.push(doc.data());
+                                    });
+                                    return likes;
+                                  });
+                              };
+                
+                              const comments = () => {
+                                return db
+                                  .collection(`/posts/${doc.postId}/comments`)
+                                  .get()
+                                  .then((data) => {
+                                    const comments = [];
+                                    data.forEach((doc) => {
+                                      comments.push(doc.data());
+                                    });
+                                    return comments;
+                                  });
+                              };
+                
+                              const muted = () => {
+                                return db
+                                  .collection(`/posts/${doc.postId}/muted`)
+                                  .get()
+                                  .then((data) => {
+                                    const muted = [];
+                                    data.forEach((doc) => {
+                                      muted.push(doc.data());
+                                    });
+                                    return muted;
+                                  });
+                              }
+                            
+                            return {
+                                id: doc.data().id,
+                                text: doc.data().text,
+                                media: doc.data().media,
+                                createdAt: doc.data().createdAt,
+                                owner: doc.data().owner,
+                                likeCount: doc.data().likeCount,
+                                commentCount: doc.data().commentCount,
+                                location: doc.data().location,
+                                repost: doc.data().repost,
+                                likes: likes(),
+                                comments: comments(),
+                                muted: muted()
+                              }
+                        })
+                })
+
                 return posts
             }
             catch (err) {
