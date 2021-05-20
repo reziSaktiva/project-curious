@@ -771,7 +771,12 @@ module.exports = {
             }
           });
 
-        return subscribe;
+        return {
+          owner: username,
+          createdAt: subscribe.createdAt,
+          postId: subscribe.postId,
+          isSubscribe : isSubscribed
+        };
       } catch (err) {
         console.log(err);
         throw new Error(err);

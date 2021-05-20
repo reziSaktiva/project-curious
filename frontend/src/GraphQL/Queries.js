@@ -46,7 +46,7 @@ export const GET_POSTS = gql`
 export const GET_MUTED_POSTS = gql`
 query {
   mutedPosts {
-      id
+    id
       owner
       text
       media
@@ -70,6 +70,17 @@ query {
         owner
         postId
         createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
       }
     }
   }

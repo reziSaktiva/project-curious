@@ -69,69 +69,36 @@ module.exports = {
                     throw UserInputError("you must login first")
                 }
                 const getMuteData = await muteData.get();
-                const data = getMuteData.docs.map(doc => doc.data()) || [];
-                const posts = await data.map(doc => {
-                    return db.doc(`/posts/${doc.postId}`).get()
-                        .then(doc => {
-                            const likes = () => {
-                                return db
-                                  .collection(`/posts/${doc.postId}/likes`)
-                                  .get()
-                                  .then((data) => {
-                                    const likes = [];
-                                    data.forEach((doc) => {
-                                      likes.push(doc.data());
-                                    });
-                                    return likes;
-                                  });
-                              };
-                
-                              const comments = () => {
-                                return db
-                                  .collection(`/posts/${doc.postId}/comments`)
-                                  .get()
-                                  .then((data) => {
-                                    const comments = [];
-                                    data.forEach((doc) => {
-                                      comments.push(doc.data());
-                                    });
-                                    return comments;
-                                  });
-                              };
-                
-                              const muted = () => {
-                                return db
-                                  .collection(`/posts/${doc.postId}/muted`)
-                                  .get()
-                                  .then((data) => {
-                                    const muted = [];
-                                    data.forEach((doc) => {
-                                      muted.push(doc.data());
-                                    });
-                                    return muted;
-                                  });
-                              }
-                            
-                            return {
-                                id: doc.data().id,
-                                text: doc.data().text,
-                                media: doc.data().media,
-                                createdAt: doc.data().createdAt,
-                                owner: doc.data().owner,
-                                likeCount: doc.data().likeCount,
-                                commentCount: doc.data().commentCount,
-                                location: doc.data().location,
-                                repost: doc.data().repost,
-                                likes: likes(),
-                                comments: comments(),
-                                muted: muted()
-                              }
-                        })
-                })
+                const postId = getMuteData.docs.map(doc => doc.data().postId) || [];
 
-                return posts
-            }
-            catch (err) {
+                const data = await db.collection('posts').where('id', 'in', postId).get()
+                const docs = data.docs.map(doc => doc.data())
+
+                return docs.map(async data => {
+                    const { repost: repostId } = data;
+                    let repost = {}
+
+                    if (repostId) {
+                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        repost = repostData.data() || {}
+                    }
+
+                    // Likes
+                    const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+                    const likes = likesData.docs.map(doc => doc.data())
+
+                    // Comments
+                    const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+                    const comments = commentsData.docs.map(doc => doc.data())
+
+                    // Muted
+                    const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+                    const muted = mutedData.docs.map(doc => doc.data());
+
+                    return { ...data, likes, comments, muted, repost }
+                });
+
+            } catch (err) {
                 console.log(err)
                 throw new Error(err)
             }

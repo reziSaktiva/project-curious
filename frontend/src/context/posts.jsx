@@ -1,5 +1,5 @@
 import React, { createContext, useMemo, useReducer } from "react";
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -17,6 +17,12 @@ const reducer = (state, action) => {
         posts: action.payload,
         lastId: id,
       };
+    case "SET_MUTED_POST":
+      return {
+        ...state,
+        loading: false,
+        mutedPost: action.payload,
+      };
     case "MORE_POSTS":
       return {
         ...state,
@@ -28,7 +34,7 @@ const reducer = (state, action) => {
     case "CREATE_POST":
       const oldPosts = cloneDeep(state.posts) || [];
       const posts = [action.payload, ...oldPosts];
-      
+
       return {
         ...state,
         loading: false,
@@ -75,16 +81,31 @@ const reducer = (state, action) => {
           return post;
         }),
       };
+    case 'SUBCRIBE_POST':
+      return {
+        ...state,
+        posts: state.posts.map(post => {
+          if (post.id === action.payload.postId){
+            const updatePosts = {
+              ...post,
+              subscribe: [...post.subscribe, action.payload]
+            }
+            return updatePosts
+          }
+
+          return post
+        })
+      }
     case "MUTE_POST":
       return {
         ...state,
         posts: state.posts.map((post) => {
           if (post.id === action.payload.postId) {
-            const updatedPosts = {
+            const updatePosts = {
               ...post,
               muted: [...post.muted, action.payload],
             };
-            return updatedPosts;
+            return updatePosts;
           }
 
           return post;
@@ -97,7 +118,9 @@ const reducer = (state, action) => {
           if (post.id === action.payload.postId) {
             const updatedPosts = {
               ...post,
-              muted: post.muted.filter((mute) => mute.owner !== action.payload.owner),
+              muted: post.muted.filter(
+                (mute) => mute.owner !== action.payload.owner
+              ),
             };
             return updatedPosts;
           }
@@ -110,8 +133,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         isOpenNewPost,
-        repost
-      }
+        repost,
+      };
     default:
       throw new Error("Don't understand action");
   }
@@ -125,6 +148,9 @@ export const PostContext = createContext({
   more: true,
   isOpenNewPost: false,
   repost: false,
+  mutedPost: [],
+  setMutedPost: () => {},
+  subscribePost : () => {},
   loadingData: () => {},
   setPosts: (posts) => {},
   morePosts: () => {},
@@ -136,6 +162,7 @@ export const PostContext = createContext({
 
 const initialState = {
   posts: [],
+  mutedPost: [],
   more: true,
   newPosts: null,
   loading: null,
@@ -145,7 +172,8 @@ const initialState = {
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastId, more, isOpenNewPost, repost } = state;
+  const { posts, loading, lastId, more, isOpenNewPost, repost, mutedPost } =
+    state;
 
   const loadingData = () => {
     dispatch({ type: "LOADING_DATA" });
@@ -157,6 +185,36 @@ export const PostProvider = (props) => {
       payload: post,
     });
   };
+
+  const setMutedPost = (posts) => {
+    if (posts.length > 0) {
+      dispatch({
+        type: "SET_MUTED_POST",
+        payload: posts,
+      });
+    }
+  };
+
+  const subscribePost = (data) => {
+    const subscribeData = {
+      owner: data.owner,
+      createAt: data.createdAt,
+      postId: data.postId,
+    };
+
+    if (data.isSubscribe) {
+      dispatch({
+        type: "SUBCRIBE_POST",
+        payload: subscribeData
+      })
+    } else if (!data.isSubscribe) {
+      dispatch({
+        type: "UNSUBCRIBE_POST",
+        payload: subscribeData
+      })
+    }
+    
+  }
 
   const deletePost = (id) => {
     dispatch({
@@ -209,9 +267,9 @@ export const PostProvider = (props) => {
       type: "OPEN_POST_CARD",
       payload: {
         isOpenNewPost: !isOpenNewPost,
-        repost
-      }
-    })
+        repost,
+      },
+    });
   };
 
   const like = (likeData, postId) => {
@@ -255,11 +313,14 @@ export const PostProvider = (props) => {
         deletePost,
         mutePost,
         toggleOpenNewPost,
+        setMutedPost,
+        subscribePost,
+        mutedPost,
         loading,
         lastId,
         more,
         isOpenNewPost,
-        repost
+        repost,
       }}
       {...props}
     />

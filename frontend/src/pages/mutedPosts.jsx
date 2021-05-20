@@ -13,27 +13,36 @@ import NavBar from '../components/NavBar'
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
 
-    const { posts, setPosts, loadingData, loading } = useContext(PostContext)
+    const _isMounted = useRef(false);
+    const { mutedPost, setMutedPost, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
+        if (!_isMounted.current && data) { // check if doesn't fetch data
             if (!data) {
                 loadingData();
 
                 return;
             }
 
-            setPosts(data.mutedPosts)
-    }, [data])
+            setMutedPost(data.mutedPosts)
+            
+            // set did mount react
+            _isMounted.current = true;
+
+            return;
+        }
+    }, [data, _isMounted])
 
     return (
         <div>
             <NavBar />
             {user ? (<div>
-                {!posts ? null
-                    : posts.map((post, key) => {
+                {!mutedPost ? null
+                    : mutedPost.map((post, key) => {
                         return (
                                 <div key={`posts${post.id} ${key}`}>
+                                    {console.log(post)}
                                 <PostCard post={post} loading={loading} />
                             </div>
                         )

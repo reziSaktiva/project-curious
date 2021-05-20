@@ -81,12 +81,10 @@ module.exports = gql`
         liked: [Like]
     },
     type Subscribe {
-        postId: ID!
         owner: String!
         createdAt: String!
-        displayName: String!
-        displayImage: String!
-        colorCode: String!
+        postId: ID!
+        isSubscribe: Boolean
     }
     type Query {
         getPosts(lat: Float, lng: Float): [Post]!
