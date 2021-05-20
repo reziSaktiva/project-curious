@@ -146,14 +146,28 @@ module.exports = {
       const Post = likePost.docs.map(  doc => doc.data())
       
       //fungsi ngambil koleksi likes
-       const Likesnya = await likesData.map( doc => db.collection(`/posts/${doc}/likes`).get())
-       const Postnya = Likesnya.docs.map(doc=> doc.data())
-       
-      console.log("isi const Likesnya",Likesnya);
-      console.log("isi const Postnya",Postnya);
       
-      return Post
+      
+      // Cara 1
+      // return Post.map(async doc => {
+      //   const request = await db.collection(`/posts/${doc.id}/likes`).get()
+      //   const likes = request.docs.map(doc => doc.data())
 
+      //   return { ...doc, likes }
+      // })
+
+
+      // Cara 2
+      const Likesnya = likesData.map(async doc => db.collection(`/posts/${doc}/likes`).get());
+      return Promise.all(Likesnya).then(req => { // pakai promise.all karna di `Likesnya` ini isinya array of Promise, jadi perlu di ambil semua requestnya
+        return req.map((v, idx) => {
+          const like = v.docs.map(doc => doc.data())
+          return {
+            ...Post[idx],
+            likes: like
+          }
+        });
+      });
       
       } catch (error) {
         console.log(error);
