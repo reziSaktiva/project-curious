@@ -143,64 +143,31 @@ module.exports = {
       //fungsi ngambil postingan yang sudah di like
       const likesData = likes.map(data => data.postId)
       const likePost = await db.collection("/posts").where("id", "in", likesData).get()
-      const Post = await likePost.docs.map(  doc => {
-        
-        const likes = () => {
-          return db
-            .collection(`/posts/${doc.data().id}/likes`)
-            .get()
-            .then((data) => {
-              const likes = [];
-              data.forEach((doc) => {
-                likes.push(doc.data());
-              });
-              return likes;
-            });
-          }
-          const comments = () => {
-            return db
-              .collection(`/posts/${doc.data().id}/comments`)
-              .get()
-              .then((data) => {
-                const comments = [];
-                data.forEach((doc) => {
-                  comments.push(doc.data());
-                });
-                return comments;
-              });
-          };
-
-          const muted = () => {
-            return db
-              .collection(`/posts/${doc.data().id}/muted`)
-              .get()
-              .then((data) => {
-                const muted = [];
-                data.forEach((doc) => {
-                  muted.push(doc.data());
-                });
-                return muted;
-              });
-          }
-
-      return {
-        id: doc.data().id,
-        text: doc.data().text,
-        media: doc.data().media,
-        createdAt: doc.data().createdAt,
-        owner: doc.data().owner,
-        commentCount: doc.data().commentCount,
-        location: doc.data().location,
-        repost: doc.data().repost,
-        likeCount: doc.data().likeCount,
-        likes: likes(),
-        comments: comments(), 
-        muted: muted()
-      }
-      })
+      const Post = likePost.docs.map(  doc => doc.data())
       
-      return Post
+      //fungsi ngambil koleksi likes
+      
+      
+      // Cara 1
+      // return Post.map(async doc => {
+      //   const request = await db.collection(`/posts/${doc.id}/likes`).get()
+      //   const likes = request.docs.map(doc => doc.data())
 
+      //   return { ...doc, likes }
+      // })
+
+
+      // Cara 2
+      const Likesnya = likesData.map(async doc => db.collection(`/posts/${doc}/likes`).get());
+      return Promise.all(Likesnya).then(req => { // pakai promise.all karna di `Likesnya` ini isinya array of Promise, jadi perlu di ambil semua requestnya
+        return req.map((v, idx) => {
+          const like = v.docs.map(doc => doc.data())
+          return {
+            ...Post[idx],
+            likes: like
+          }
+        });
+      });
       
       } catch (error) {
         console.log(error);
