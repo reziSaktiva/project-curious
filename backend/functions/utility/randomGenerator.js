@@ -2,37 +2,158 @@ const { UserInputError } = require('apollo-server-express')
 const { db } = require('./admin')
 
 module.exports = async (username, postId) => {
-    const benda = ['kuda', 'gelas', 'televisi', 'motor', 'pohon']
+    const benda = [
+    "Hammer", "Ball", "Cow","Monkey","Dolphin",
+    "Horse", "Bowl", "Scissor","Camera","Glass",
+    "Tree", "Clover", "Star", "Rabbit", "Diamonds",
+    "Cat","Spades","Battery","Bear","Butterfly", 
+    "Donuts", "Eight", "Five","Flower","Foot", 
+    "Four", "Gifts","Headphones", "Heart", "Koala", 
+    "Moon", "Mushroom", "Nine","One", "Panda", 
+    "Pants","Pig", "Seven", "Six", "Socks",
+    "Sunglasses", "Strawberry", "T-shirt","Pumpkin", "Three",
+    "Tiger", "Two", "Unicorn", "X", "Zero" 
+]
     const warna = [
         {
-            namaWarna: 'biru',
-            kode: '#150485'
+            namaWarna: "Yellow",
+            kode: "#FFFF00"
         },
         {
-            namaWarna: 'merah',
-            kode: '#a20a0a'
+            namaWarna: "Green",
+            kode: "#008000"
         },
         {
-            namaWarna: 'kuning',
-            kode: '#fecd1a'
+            namaWarna: "Red",
+            kode: "#FF0000"
         },
         {
-            namaWarna: 'hijau',
-            kode: '#cad315'
+            namaWarna: "Blue",
+            kode: "#0000FF"
         },
         {
-            namaWarna: 'hitam',
-            kode: '#373a40'
+            namaWarna: "Black",
+            kode: "#010821"
+        },
+        {
+            namaWarna: "Purple",
+            kode: "#9370db"
+        },
+        {
+            namaWarna: "Muddy",
+            kode: "#cfb997"
+        },
+        {
+            namaWarna: "Aqua",
+            kode: "#00FFFF"
+        },
+        {
+            namaWarna: "Chocolate",
+            kode: "#8B4513"
+        },
+        {
+            namaWarna: "Grey",
+            kode: "#8F8F8F"
+        },
+        {
+            namaWarna: "Lime",
+            kode: "#BFFF00"
+        },
+        {
+            namaWarna: "Pink",
+            kode: "#FF3E96"
+        },
+        {
+            namaWarna: "Fuchsia",
+            kode: "#FF00FF"
+        },
+        {
+            namaWarna: "Beige",
+            kode: "#F5F5DC"
+        },
+        {
+            namaWarna: "Khaki",
+            kode: "#ADA96E"
+        },
+        {
+            namaWarna: "Maroon",
+            kode: "#8B1C62"
+        },
+        {
+            namaWarna: "Gold",
+            kode: "#CFB53B"
+        },
+        {
+            namaWarna: "Violet",
+            kode: "#EE82EE"
+        },
+        {
+            namaWarna: "Coffee",
+            kode: "#AA5303"
+        },
+        {
+            namaWarna: "Scarlet",
+            kode: "#FF2400"
+        },
+        {
+            namaWarna: "Lilac",
+            kode: "#C8A2C8"
+        },
+        {
+            namaWarna: "Pearl",
+            kode: "#FDEEF4"
+        },
+        {
+            namaWarna: "Rust",
+            kode: "#C36241"
+        },
+        {
+            namaWarna: "Cyan",
+            kode: "#97FFFF"
+        },
+        {
+            namaWarna: "Dark",
+            kode: "#424242"
+        },
+        {
+            namaWarna: "Bronze",
+            kode: "#CD7F32"
+        },
+        {
+            namaWarna: "Orange",
+            kode: "#0000FF"
+        },
+        {
+            namaWarna: "Mustard",
+            kode: "#FFDB58"
+        },
+        {
+            namaWarna: "Cooper",
+            kode: "#B87333"
+        },
+        {
+            namaWarna: "Vanilla",
+            kode: "#F3E5AB"
+        },
+        {
+            namaWarna: "Turquoise",
+            kode: "#43C6DB"
         }
     ]
-    const ajektif = ['jelek', 'bagus', 'cantik', "rusak", 'super']
+    const ajektif = ["Smelly", "Fat", "Broken", "Tall", "Short", 
+     "Grumpy", "Cute", "Adorable", "Stiff", "Chubby", "Annoying", "Disturbing",
+      "Big", "Small", "Calm", "Chaotic", "Disgusting", "Smart", "Crazy", "Beautiful", "Wise", "Rotten", "Bitter", "Fluffy", "Creepy", "Elegant",
+      "Unstable", "Arrogant", "Dying", "Chewy", "Happy", "Sad", "Crying", "Ripped", "Fake", "Shining", "Pierced", "Flat", "Cheap", "Suspicious",
+       "Coward", "Spooky", "Dirty", "Delicious", "Naughty", "Hansome", "Perfect", "Fast", "Slow", "Itchy" 
+    ]
 
-    const randomNumber = Math.floor(Math.random() * 5)
+    const randomNumber = Math.floor(Math.random() * 50)
+    const randomNumberWarna = Math.floor(Math.random() * 31)
 
     const bendaRandom = benda[randomNumber]
-    const warnaRandom = warna[randomNumber]
+    const warnaRandom = warna[randomNumberWarna]
 
-    const randomNama = `${bendaRandom} ${warnaRandom.namaWarna} ${ajektif[randomNumber]}`
+    const randomNama = `${ajektif[randomNumber]} ${warnaRandom.namaWarna} ${bendaRandom}`
 
     const postDocument = db.doc(`/posts/${postId}`)
     const randomNameCollection = db.collection(`/posts/${postId}/randomizedData`)
@@ -56,11 +177,11 @@ module.exports = async (username, postId) => {
                                 if (username === doc.data().owner) {
                                     randomNameData.displayName = 'Author'
                                     randomNameData.colorCode = '#fff'
-                                    randomNameData.displayImage = `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/Display%20Image%2Fauthor.png?alt=media`
+                                    randomNameData.displayImage = `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/image%2FAuthor.png?alt=media`
                                 } else {
                                     randomNameData.displayName = randomNama
                                     randomNameData.colorCode = warnaRandom.kode
-                                    randomNameData.displayImage = `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/Display%20Image%2F${bendaRandom}.png?alt=media`
+                                    randomNameData.displayImage =  `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/image%2F${bendaRandom}.png?alt=media`
                                 }
                                 return randomNameCollection.add(randomNameData)
                             }

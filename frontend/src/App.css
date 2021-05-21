@@ -229,6 +229,10 @@ transform: translate(-50%, 30%);
   background: #7f57ff;
 }
 
+/* POST CARD */
+.ant-list-vertical .ant-list-item-meta-title{
+  margin-bottom: 0;
+}
 /* POST CARD IMAGE LAYOUT */
 
 .row-card-2 {

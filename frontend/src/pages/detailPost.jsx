@@ -3,7 +3,6 @@ import { GET_POST } from "../GraphQL/Queries";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { useQuery } from "@apollo/client";
-import { AuthContext } from "../context/auth";
 import React, { useContext, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -27,6 +26,7 @@ import LikeButton from "../components/LikeButton";
 import CommentButton from "../components/CommentButton";
 import RepostButton from "../components/RepostButton";
 import { EllipsisOutlined } from "@ant-design/icons";
+import PostNavBar from "../components/PostNavBar";
 
 //location
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
@@ -71,8 +71,10 @@ export default function SinglePost(props) {
     //post card start here
 
     let { comments } = getPost;
+    console.log(comments);
     postMarkUp = (
       <List itemLayout="vertical" size="large">
+        <PostNavBar />
         <List.Item
           key={getPost.id}
           actions={
@@ -151,7 +153,7 @@ export default function SinglePost(props) {
                         size={50}
                         style={{
                           backgroundColor: item.colorCode,
-                          backgroundImage: `url(${item.photoProfile})`,
+                          backgroundImage: `url(${item.displayImage})`,
                           backgroundSize: 50,
                         }}
                       />

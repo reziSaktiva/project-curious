@@ -143,14 +143,61 @@ module.exports = {
       //fungsi ngambil postingan yang sudah di like
       const likesData = likes.map(data => data.postId)
       const likePost = await db.collection("/posts").where("id", "in", likesData).get()
-      const Post = likePost.docs.map(  doc => doc.data())
-      
-      //fungsi ngambil koleksi likes
-       const Likesnya = await likesData.map( doc => db.collection(`/posts/${doc}/likes`).get())
-       const Postnya = Likesnya.docs.map(doc=> doc.data())
-       
-      console.log("isi const Likesnya",Likesnya);
-      console.log("isi const Postnya",Postnya);
+      const Post = await likePost.docs.map(  doc => {
+        
+        const likes = () => {
+          return db
+            .collection(`/posts/${doc.data().id}/likes`)
+            .get()
+            .then((data) => {
+              const likes = [];
+              data.forEach((doc) => {
+                likes.push(doc.data());
+              });
+              return likes;
+            });
+          }
+          const comments = () => {
+            return db
+              .collection(`/posts/${doc.data().id}/comments`)
+              .get()
+              .then((data) => {
+                const comments = [];
+                data.forEach((doc) => {
+                  comments.push(doc.data());
+                });
+                return comments;
+              });
+          };
+
+          const muted = () => {
+            return db
+              .collection(`/posts/${doc.data().id}/muted`)
+              .get()
+              .then((data) => {
+                const muted = [];
+                data.forEach((doc) => {
+                  muted.push(doc.data());
+                });
+                return muted;
+              });
+          }
+
+      return {
+        id: doc.data().id,
+        text: doc.data().text,
+        media: doc.data().media,
+        createdAt: doc.data().createdAt,
+        owner: doc.data().owner,
+        commentCount: doc.data().commentCount,
+        location: doc.data().location,
+        repost: doc.data().repost,
+        likeCount: doc.data().likeCount,
+        likes: likes(),
+        comments: comments(), 
+        muted: muted()
+      }
+      })
       
       return Post
 

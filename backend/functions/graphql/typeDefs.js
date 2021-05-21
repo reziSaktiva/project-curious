@@ -44,6 +44,7 @@ module.exports = gql`
         owner: String!
         text: String!
         displayName: String!
+        displayImage: String!
         photoProfile: String
         colorCode: String!
     },

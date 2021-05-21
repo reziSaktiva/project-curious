@@ -21,7 +21,6 @@ Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading }) {
-  console.log("kdowkdwodwok",post.likes);
   const [address, setAddress] = useState("");
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
@@ -69,9 +68,13 @@ export default function PostCard({ post, loading }) {
                   id={post.id}
                 />
               </Col>
+              
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+              <Link to={`/post/${post.id}`}>
                 <CommentButton commentCount={post.commentCount} />
+                </Link>
               </Col>
+              
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                 <RepostButton />
               </Col>
@@ -80,7 +83,6 @@ export default function PostCard({ post, loading }) {
         }
       >
         <List.Item.Meta
-          extra={<a href="#" />}
           title={
             <div>
               <Row>
@@ -129,10 +131,10 @@ export default function PostCard({ post, loading }) {
                       </Col>
                   </Row>
                     </div>}
-                  description={<div style={{ marginTop: -15 }}>{moment(post.createdAt).fromNow()}</div>}
+                  description={<div>{moment(post.createdAt).fromNow()}</div>}
                 >
                 </List.Item.Meta>
-                <p style={{marginTop: -9}}>{post.text}</p>
+                <p style={{marginTop: 10}}>{post.text}</p>
                 {post.media? (
                   post.media.length == 1? (
                     <Image

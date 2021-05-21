@@ -124,6 +124,7 @@ getPost(id: $id){
         owner
         text
         displayName
+        displayImage
         photoProfile
         colorCode
         }

@@ -45,7 +45,7 @@ if (location) {
   );
 }
 
-
+const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc => doc.likeCount)
     const { TabPane } = Tabs;
 
     const Demo = () => (
@@ -53,7 +53,6 @@ if (location) {
             <TabPane tab="Posts" key="1">
             {!getProfilePosts ? null
                     : getProfilePosts.getProfilePosts.map((post, key) => {
-                        console.log("array",post);
                         return (
                             user && 
                                 <div key={`posts${post.id} ${key}`}>
@@ -65,7 +64,7 @@ if (location) {
             <TabPane tab="Liked" key="2">
             {!getProfileLikedPost ? null
                     : getProfileLikedPost.getProfileLikedPost.map((post, key) => {
-                        console.log("profile post liked",post);
+                        
                         return (
                             user && 
                                 <div key={`posts${post.id} ${key}`}>
@@ -154,7 +153,7 @@ if (location) {
                 <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20 }}>
                     <Row>
                         <Col span={8}> 
-                            <h5>12</h5>
+                            <h5>{getProfilePosts? getProfilePosts.getProfilePosts.length: 0}</h5>
                             <p>Post</p>
                         </Col>
                         <Col span={8}> 
@@ -162,7 +161,7 @@ if (location) {
                             <p>Repost</p>
                         </Col>
                         <Col span={8}> 
-                            <h5>12</h5>
+                            <h5>{getProfilePosts && likeCounter.reduce((total, num) => total += num)}</h5>
                             <p>Likes</p>
                         </Col>
                     </Row>
