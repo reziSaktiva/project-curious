@@ -93,6 +93,7 @@ module.exports = gql`
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
+        getSubscribePosts: [Post]!
     },
     input RegisterInput {
         email: String!

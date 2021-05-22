@@ -35,13 +35,13 @@ export default function PostCard({ post, loading }) {
     },
   });
 
-  const [ mutePost ] = useMutation(MUTE_POST, {
+  const [mutePost] = useMutation(MUTE_POST, {
     update(_, { data: { mutePost } }) {
       postContext.mutePost(mutePost);
     },
   });
 
-  const [ subscribePost ] = useMutation(SUBSCRIBE_POST, {
+  const [subscribePost] = useMutation(SUBSCRIBE_POST, {
     update(_, { data: { subscribePost } }) {
       postContext.subscribePost(subscribePost)
     }
@@ -220,20 +220,24 @@ export default function PostCard({ post, loading }) {
         {post.media ? (
           post.media.length == 2 ? (
             <table className="row-card-2">
-              <Image.PreviewGroup>
-                <td style={{ width: "50%" }}>
-                  <Image
-                    style={{ borderRadius: "10px 0px 0px 10px" }}
-                    src={post.media[0]}
-                  />
-                </td>
-                <td>
-                  <Image
-                    style={{ borderRadius: "0px 10px 10px 0px" }}
-                    src={post.media[1]}
-                  />
-                </td>
-              </Image.PreviewGroup>
+              <tbody>
+                <tr>
+                  <Image.PreviewGroup>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={post.media[0]}
+                      />
+                    </td>
+                    <td>
+                      <Image
+                        style={{ borderRadius: "0px 10px 10px 0px" }}
+                        src={post.media[1]}
+                      />
+                    </td>
+                  </Image.PreviewGroup>
+                </tr>
+              </tbody>
             </table>
           ) : null
         ) : null}
@@ -269,9 +273,9 @@ export default function PostCard({ post, loading }) {
                           style={
                             post.media.length > 3
                               ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
                               : { borderRadius: "0px 0px 10px 0px" }
                           }
                           src={post.media[2]}
@@ -335,9 +339,9 @@ export default function PostCard({ post, loading }) {
                         style={
                           post.media.length > 3
                             ? {
-                                borderRadius: "0px 0px 10px 0px",
-                                filter: "blur(2px)",
-                              }
+                              borderRadius: "0px 0px 10px 0px",
+                              filter: "blur(2px)",
+                            }
                             : { borderRadius: "0px 0px 10px 0px" }
                         }
                       />

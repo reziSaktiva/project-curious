@@ -6,9 +6,6 @@ export const SUBSCRIBE_POST = gql`
     postId
     owner
     createdAt
-    displayName
-    displayImage
-    colorCode
     isSubcribe
     }
   }

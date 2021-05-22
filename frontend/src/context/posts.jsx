@@ -23,6 +23,12 @@ const reducer = (state, action) => {
         loading: false,
         mutedPost: action.payload,
       };
+    case "SET_SUBSCRIBE_POSTS":
+      return {
+        ...state,
+        loading: false,
+        subscribePosts: action.payload,
+      };
     case "MORE_POSTS":
       return {
         ...state,
@@ -85,7 +91,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         posts: state.posts.map(post => {
-          if (post.id === action.payload.postId){
+          if (post.id === action.payload.postId) {
             const updatePosts = {
               ...post,
               subscribe: [...post.subscribe, action.payload]
@@ -149,15 +155,17 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   mutedPost: [],
-  setMutedPost: () => {},
-  subscribePost : () => {},
-  loadingData: () => {},
-  setPosts: (posts) => {},
-  morePosts: () => {},
-  createPost: () => {},
-  deletePost: () => {},
-  like: () => {},
-  mutePost: () => {},
+  subscribePosts: [],
+  setSubscribePosts : () =>{}, 
+  setMutedPost: () => { },
+  subscribePost: () => { },
+  loadingData: () => { },
+  setPosts: (posts) => { },
+  morePosts: () => { },
+  createPost: () => { },
+  deletePost: () => { },
+  like: () => { },
+  mutePost: () => { },
 });
 
 const initialState = {
@@ -167,12 +175,13 @@ const initialState = {
   newPosts: null,
   loading: null,
   lastId: null,
+  subscribePosts: [],
 };
 
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastId, more, isOpenNewPost, repost, mutedPost } =
+  const { posts, loading, lastId, more, isOpenNewPost, repost, mutedPost, subscribePosts } =
     state;
 
   const loadingData = () => {
@@ -195,6 +204,15 @@ export const PostProvider = (props) => {
     }
   };
 
+  const setSubscribePosts = (posts) => {
+    if (posts.length > 0) {
+      dispatch({
+        type: "SET_SUBSCRIBE_POSTS",
+        payload: posts,
+      });
+    }
+  }
+
   const subscribePost = (data) => {
     const subscribeData = {
       owner: data.owner,
@@ -213,7 +231,7 @@ export const PostProvider = (props) => {
         payload: subscribeData
       })
     }
-    
+
   }
 
   const deletePost = (id) => {
@@ -315,6 +333,8 @@ export const PostProvider = (props) => {
         toggleOpenNewPost,
         setMutedPost,
         subscribePost,
+        setSubscribePosts,
+        subscribePosts,
         mutedPost,
         loading,
         lastId,

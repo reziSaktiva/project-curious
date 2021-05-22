@@ -21,7 +21,8 @@ import LandingPage from './pages/landingPage';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
 import Nearby from './pages/nearby';
-import MutedPost from './pages/mutedPosts'
+import MutedPosts from './pages/mutedPosts'
+import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
 import Visited from './pages/Visited'
 
@@ -36,7 +37,8 @@ function App() {
             <AuthRoute exact path="/register" component={register} />
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
-            <UserRoute exact path="/mutedPost" component={MutedPost} />
+            <UserRoute exact path="/mutedPost" component={MutedPosts} />
+            <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
