@@ -109,7 +109,7 @@ const Sidebar = () => {
           >
             <Menu.Divider />
             <Menu.Item key="NearBy" icon={<UserOutlined />}>
-              <Link to="/nearby">Nearby</Link>
+              <Link to="/">Nearby</Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
               Search
@@ -127,7 +127,7 @@ const Sidebar = () => {
               <Link to="/visited">Visited Places</Link>
             </Menu.Item>
             <Menu.Item key="Sub" icon={<NotificationOutlined />}>
-              Subscribed Posts
+              <Link to="/subscribePosts">Subscribed Posts</Link> 
             </Menu.Item>
             <Menu.Item key="Muted" icon={<SettingOutlined />}>
               <Link to="/MutedPost" >Muted Posts</Link>

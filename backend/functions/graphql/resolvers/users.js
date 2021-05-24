@@ -65,28 +65,83 @@ module.exports = {
             const muteData = db.collection(`users/${username}/muted`)
 
             try {
-                const posts = []
-
                 if (!username) {
                     throw UserInputError("you must login first")
-                } else {
-                    await muteData.get()
-                        .then(data => {
-                            return data.docs.forEach(doc => {
-                                return db.collection('posts').where('id', "==", doc.data().postId).get()
-                                    .then(data => {
-                                        return data.docs.forEach(post => {
-                                            posts.push(post.data())
-                                        })
-                                    })
-                            })
-                        })
                 }
-                console.log(posts);
-                return posts
+                const getMuteData = await muteData.get();
+                const postId = getMuteData.docs.map(doc => doc.data().postId) || [];
+
+                const data = await db.collection('posts').where('id', 'in', postId).get()
+                const docs = data.docs.map(doc => doc.data())
+
+                return docs.map(async data => {
+                    const { repost: repostId } = data;
+                    let repost = {}
+
+                    if (repostId) {
+                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        repost = repostData.data() || {}
+                    }
+
+                    // Likes
+                    const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+                    const likes = likesData.docs.map(doc => doc.data())
+
+                    // Comments
+                    const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+                    const comments = commentsData.docs.map(doc => doc.data())
+
+                    // Muted
+                    const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+                    const muted = mutedData.docs.map(doc => doc.data());
+
+                    return { ...data, likes, comments, muted, repost }
+                });
+
+            } catch (err) {
+                console.log(err)
+                throw new Error(err)
+            }
+        },
+        async getSubscribePosts(_, args, context) {
+            const { username } = await fbAuthContext(context)
+            const posts = []
+
+            try {
+                if (!username) {
+                    throw UserInputError("you must login first")
+                }
+                const getPosts = await db.collection("posts").get()
+
+                const docs = getPosts.docs.map(doc => doc.data())
+
+                return docs.map(async data => {
+                    const getSubscribes = await db.collection(`/posts/${data.id}/subscribes`).where('owner', '==', username).get()
+                    
+                    const { repost: repostId } = data;
+                    let repost = {}
+
+                    if (repostId) {
+                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        repost = repostData.data() || {}
+                    }
+
+                    // Likes
+                    const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+                    const likes = likesData.docs.map(doc => doc.data())
+
+                    // Comments
+                    const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+                    const comments = commentsData.docs.map(doc => doc.data())
+
+                    // Muted
+                    const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+                    const muted = mutedData.docs.map(doc => doc.data());
+
+                    if(!getSubscribes.empty) return { ...data, likes, comments, muted, repost }
+                })
             }
             catch (err) {
-                console.log(err)
                 throw new Error(err)
             }
         }

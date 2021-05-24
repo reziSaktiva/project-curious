@@ -75,11 +75,11 @@ module.exports = {
     async getProfilePosts(_, args, context) {
       const { username } = await fbAuthContext(context)
       const posts = [];
-      if(username) {
+      if (username) {
         try {
           await db
             .collection("posts")
-            .where("owner", "==",username)
+            .where("owner", "==", username)
             .orderBy("createdAt", "desc")
             .get()
             .then((data) => {
@@ -96,7 +96,7 @@ module.exports = {
                       return likes;
                     });
                 };
-  
+
                 const comments = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/comments`)
@@ -109,7 +109,7 @@ module.exports = {
                       return comments;
                     });
                 };
-  
+
                 const muted = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/muted`)
@@ -122,7 +122,7 @@ module.exports = {
                       return muted;
                     });
                 }
-  
+
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
@@ -138,14 +138,14 @@ module.exports = {
                 });
               });
             });
-  
+
           return posts;
         } catch (err) {
           console.log(err);
           throw new Error(err);
         }
       }
-      
+
     },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
@@ -189,7 +189,7 @@ module.exports = {
         }
       }
     },
-    
+
     async getPostBasedOnNearestLoc(_, { lat, lng }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -200,6 +200,15 @@ module.exports = {
 
       if (docs.length) {
         const nearby = []
+        let repost = {}
+
+        const { repost: repostId } = docs;
+
+        if (repostId) {
+          const repostData = await db.doc(`/posts/${repostId}`).get();
+
+          repost = repostData.data();
+        }
 
         docs.forEach(async data => {
           const likes = () => {
@@ -241,7 +250,7 @@ module.exports = {
               });
           };
 
-          const newData = { ...data, likes: likes(), comments, muted}
+          const newData = { ...data, likes: likes(), comments, muted, repost }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -320,7 +329,7 @@ module.exports = {
                       return muted;
                     });
                 }
-  
+
 
                 posts.push({
                   id: doc.data().id,
@@ -526,8 +535,7 @@ module.exports = {
                           ).delete();
 
                           if (post.owner !== username) {
-                            return db
-                              .collection(`/users/${post.owner}/notifications`)
+                            db.collection(`/users/${post.owner}/notifications`)
                               .where("type", "==", "LIKE")
                               .where("sender", "==", username)
                               .get()
@@ -542,8 +550,7 @@ module.exports = {
                   });
                 } else {
                   if (post.owner !== username) {
-                    return db
-                      .collection(`/users/${post.owner}/notifications`)
+                    db.collection(`/users/${post.owner}/notifications`)
                       .where("type", "==", "LIKE")
                       .where("sender", "==", username)
                       .get()
@@ -782,7 +789,12 @@ module.exports = {
             }
           });
 
-        return subscribe;
+        return {
+          owner: username,
+          createdAt: subscribe.createdAt,
+          postId: subscribe.postId,
+          isSubscribe: isSubscribed
+        };
       } catch (err) {
         console.log(err);
         throw new Error(err);
