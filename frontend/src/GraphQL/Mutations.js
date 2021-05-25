@@ -25,6 +25,20 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const CREATE_COMMENT = gql`
+mutation createComment($id: ID!, $text: String!) {
+  createComment(id : $id, text: $text) {
+  id
+  owner
+  text
+  createdAt
+  colorCode
+  displayName
+  displayImage
+    }
+}
+`;
+
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
     readNotification(id: $id){

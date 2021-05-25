@@ -1,11 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Modal, Button, Form, Input, Row, Col, Upload, Divider } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, Input, Col, Upload } from "antd";
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useMutation, gql } from '@apollo/client';
 import "../App.css";
-import { get } from 'lodash'
-
-import { PostContext } from "../context/posts";
 
 import firebase from 'firebase/app'
 import 'firebase/storage'

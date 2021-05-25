@@ -54,9 +54,9 @@ export default function Notification() {
                   }
                   name={notif.id}
                   key={`notif${key}`}
-                  style={notif.read ? { fontSize: 10, color: "black" } : { fontSize: 10, fontWeight: "bold", color: "black" }}
+                  style={notif.read ? { fontSize: 13, color: "black",  } : { fontSize: 13, fontWeight: "bold", color: "black", }}
                 >
-                  <p>
+                  <p style={{ marginBottom: 5}}>
                     {notif.displayName}{" "}
                     <span>{`${type}: this is a ${text} post.`}</span>{" "}
                   </p>

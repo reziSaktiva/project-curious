@@ -1,4 +1,11 @@
-
+/* assetes */
+.centeringButton {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
 
 .landingimage {
   background-image: url('./assets/puzzle.png');

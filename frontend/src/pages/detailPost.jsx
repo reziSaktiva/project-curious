@@ -2,7 +2,8 @@
 import { GET_POST } from "../GraphQL/Queries";
 import moment from "moment";
 import Geocode from "react-geocode";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_COMMENT } from "../GraphQL/Mutations"
 import React, { useContext, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -18,6 +19,9 @@ import {
   Dropdown,
   Menu,
   Input,
+  Upload,
+  Button,
+  Form,
 } from "antd";
 
 //component
@@ -25,7 +29,7 @@ import Pin from "../assets/pin-svg-25px.svg";
 import LikeButton from "../components/LikeButton";
 import CommentButton from "../components/CommentButton";
 import RepostButton from "../components/RepostButton";
-import { EllipsisOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined  } from "@ant-design/icons";
 import PostNavBar from "../components/PostNavBar";
 
 //location
@@ -42,13 +46,28 @@ const IconText = ({ icon, text }) => (
 export default function SinglePost(props) {
   const [address, setAddress] = useState("");
 
+  
+
   let id = props.match.params.id;
 
   const { loading, data } = useQuery(GET_POST, {
     variables: { id },
   });
 
-  const { Search } = Input;
+  //input form 
+
+  const [createComment] = useMutation(CREATE_COMMENT, {
+    onError(err) {
+      console.log(err.message)
+  }
+  })
+
+  const onFinish = (values) => {
+    const { comment } = values
+    console.log('Success:', values);
+    
+    createComment({ variables: { id, text: comment } })
+  };
 
   let postMarkUp;
 
@@ -141,7 +160,6 @@ export default function SinglePost(props) {
         </List.Item>
         {comments.length == 0 ? null : (
           <List
-          style={{backgroundColor: '#ececec'}}
             itemLayout="vertical"
             size="large"
             dataSource={comments}
@@ -205,12 +223,37 @@ export default function SinglePost(props) {
             )}
           />
         )}
-        <Search
-          placeholder="Input comment here..."
-          allowClear
-          enterButton="Post"
-          size="large"
-        />
+        <Form
+        style={{marginTop: 21, paddingBottom: -20}}
+      name="basic"
+      onFinish={onFinish}
+      onFinishFailed={onFinish}
+     >
+       <Row>
+         <Col span={2}>
+            <Form.Item name="upload" className="centeringButton">
+            <Upload>
+                <Button style={{ border: 'none'}} icon={<PlusOutlined style={{color: '#7f57ff'}} />} />
+              </Upload>
+          </Form.Item>
+         </Col>
+         
+         <Col span={19}>
+            <Form.Item
+            name="comment"
+            rules={[{ required: true, message: 'Isi komennya dulu ya broooo!' }]}
+          >
+          <Input  placeholder="Write your comment..." style={{borderRadius: 20}}/>
+          </Form.Item>
+         </Col>
+
+         <Col span={3}>
+          <Form.Item className="centeringButton">
+        <Button htmlType="submit" style={{ borderRadius: 20, backgroundColor: '#7f57ff', display: 'inline-block', color: 'white'}}>Post</Button>
+        </Form.Item>   
+         </Col>
+       </Row>
+    </Form>
       </List>
     );
   }
