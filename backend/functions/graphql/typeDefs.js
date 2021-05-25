@@ -88,6 +88,7 @@ module.exports = gql`
     }
     type Query {
         getPosts(lat: Float, lng: Float): [Post]!
+        getPopularPosts(lat: Float, lng: Float): [Post]!
         getProfilePosts: [Post]!
         getPost(id: String!): Post!
         getUserData: UserData
@@ -128,7 +129,8 @@ module.exports = gql`
 
         # posts mutation
         getPost( id:ID! ): Post!
-        nextPosts( id:ID! ): [Post]!
+        nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
+        nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
         createPost(text:String, media: [String] location: Location!, repost: String): Post!
         subscribePost( postId: ID! ): Subscribe!
         mutePost ( postId:ID! ): Mute!

@@ -9,13 +9,22 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      let id = action.payload[action.payload.length - 1].id;
+      let lastIdPosts = action.payload[action.payload.length - 1].id;
 
       return {
         ...state,
         loading: false,
         posts: action.payload,
-        lastId: id,
+        lastIdPosts,
+      };
+    case "SET_POPULAR":
+      let lastIdPopular = action.payload[action.payload.length - 1].id;
+
+      return {
+        ...state,
+        loading: false,
+        popular: action.payload,
+        lastIdPopular,
       };
     case "SET_MUTED_POST":
       return {
@@ -34,8 +43,16 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: [...state.posts, ...action.payload],
-        more: action.payload.length === 3,
-        lastId: state.posts[state.posts.length - 1].id,
+        isMorePost: action.payload.length === 3,
+        lastIdPosts: state.posts[state.posts.length - 1].id,
+      };
+    case "MORE_POPULAR":
+      return {
+        ...state,
+        loading: false,
+        popular: [...state.popular, ...action.payload],
+        isMorePopular: action.payload.length === 3,
+        lastIdPopular: state.popular[state.popular.length - 1].id,
       };
     case "CREATE_POST":
       const oldPosts = cloneDeep(state.posts) || [];
@@ -150,18 +167,23 @@ export const PostContext = createContext({
   posts: [],
   newPosts: null,
   loading: false,
-  lastId: null,
-  more: true,
+  lastIdPosts: null,
+  lastIdPopular: null,
+  isMorePost: true,
+  isMorePopular: true,
   isOpenNewPost: false,
   repost: false,
   mutedPost: [],
   subscribePosts: [],
-  setSubscribePosts : () =>{}, 
+  popular: [],
+  setPopular: () => { },
+  setSubscribePosts: () => { },
   setMutedPost: () => { },
   subscribePost: () => { },
   loadingData: () => { },
   setPosts: (posts) => { },
   morePosts: () => { },
+  morePopular: () => {},
   createPost: () => { },
   deletePost: () => { },
   like: () => { },
@@ -171,17 +193,20 @@ export const PostContext = createContext({
 const initialState = {
   posts: [],
   mutedPost: [],
-  more: true,
+  isMorePost: true,
+  isMorePopular: true,
   newPosts: null,
   loading: null,
-  lastId: null,
+  lastIdPosts: null,
+  lastIdPopular: null,
   subscribePosts: [],
+  popular: []
 };
 
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastId, more, isOpenNewPost, repost, mutedPost, subscribePosts } =
+  const { posts, loading, lastIdPosts, lastIdPopular, isMorePost, isMorePopular, isOpenNewPost, repost, mutedPost, subscribePosts, popular } =
     state;
 
   const loadingData = () => {
@@ -250,6 +275,15 @@ export const PostProvider = (props) => {
     }
   };
 
+  const setPopular = (posts) => {
+    if (posts.length > 0) {
+      dispatch({
+        type: "SET_POPULAR",
+        payload: posts,
+      });
+    }
+  };
+
   const mutePost = (data) => {
     const muteData = {
       owner: data.owner,
@@ -275,6 +309,15 @@ export const PostProvider = (props) => {
     setTimeout(() => {
       dispatch({
         type: "MORE_POSTS",
+        payload: posts,
+      });
+    }, 2000);
+  };
+
+  const morePopular = (posts) => {
+    setTimeout(() => {
+      dispatch({
+        type: "MORE_POPULAR",
         payload: posts,
       });
     }, 2000);
@@ -326,6 +369,7 @@ export const PostProvider = (props) => {
         setPosts,
         loadingData,
         morePosts,
+        morePopular,
         createPost,
         like,
         deletePost,
@@ -334,11 +378,15 @@ export const PostProvider = (props) => {
         setMutedPost,
         subscribePost,
         setSubscribePosts,
+        setPopular,
+        popular,
         subscribePosts,
         mutedPost,
         loading,
-        lastId,
-        more,
+        lastIdPosts,
+        lastIdPopular,
+        isMorePost,
+        isMorePopular,
         isOpenNewPost,
         repost,
       }}
