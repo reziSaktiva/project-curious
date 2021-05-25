@@ -116,6 +116,16 @@ module.exports = gql`
         gender: String!
         birthday: String!
     },
+    input GoogleData {
+        id: String!
+        username: String!
+        email: String!
+        imageUrl: String!
+        token: String!
+        mobileNumber: String!
+        gender: String!
+        birthday: String!
+    },
     input Location {
         lat: Float
         lng: Float
@@ -126,7 +136,9 @@ module.exports = gql`
         login(username: String!, password: String!): String!
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
+        registerUserWithGoogle(googleData: GoogleData): User!
         checkUserWithFacebook(username: String!): Boolean!
+        checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
 
         # posts mutation

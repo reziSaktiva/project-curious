@@ -141,11 +141,12 @@ export default function SinglePost(props) {
         </List.Item>
         {comments.length == 0 ? null : (
           <List
+          style={{backgroundColor: '#ececec'}}
             itemLayout="vertical"
             size="large"
             dataSource={comments}
             renderItem={(item) => (
-              <Card style={{ width: 300, marginTop: 16 }} loading={loading}>
+              <Card style={{ width: "100%", backgroundColor: '#ececec', marginBottom: -20 }} loading={loading}>
                 <Meta
                   avatar={
                     <Link to="/profile">
@@ -159,15 +160,51 @@ export default function SinglePost(props) {
                       />
                     </Link>
                   }
-                  title={item.displayName}
-                  description={moment(item.createdAt).fromNow()}
+                  title={
+                    <Row>
+                      <Col span={12}>
+                      <p style={{fontWeight: 'bold'}}>{item.displayName}</p>
+                      </Col>
+                      <Col span={12} style={{ textAlign: "right" }}>
+                      <Dropdown
+                        overlay={
+                          <Menu>
+                            <Menu.Item key="0">Subscribe</Menu.Item>
+                            <Menu.Item key="1" onClick={(e) => console.log(e)}>
+                              Mute
+                            </Menu.Item>
+                            <Menu.Item key="3">Report</Menu.Item>
+                          </Menu>
+                        }
+                        trigger={["click"]}
+                        placement="bottomRight"
+                      >
+                        <a
+                          className="ant-dropdown-link"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <EllipsisOutlined />
+                        </a>
+                      </Dropdown>
+                    </Col>
+                    </Row>
+                }
+                  description={<p style={{color: 'black'}}>{item.text}</p>}
                 />
-                {item.text}
+                <div style={{marginTop: 20,display: 'inline-block', marginBottom: -20}}>
+                  <p>
+                    {moment(item.createdAt).fromNow()}
+                  <p style={{
+                          fontWeight: 'bold',
+                          display: 'inline-block',
+                          marginLeft: 10
+                          }}>Reply</p>
+                  </p>
+                </div>
               </Card>
             )}
           />
         )}
-
         <Search
           placeholder="Input comment here..."
           allowClear
