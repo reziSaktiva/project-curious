@@ -1,5 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import cn from 'classnames';
 import { useQuery } from '@apollo/client'
+import { chunk } from 'lodash';
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from '../GraphQL/Queries'
 import { AuthContext } from "../context/auth";
 import 'antd/dist/antd.css';
@@ -8,6 +10,7 @@ import {  Col, Row, Tabs } from 'antd';
 
 //assets
 import Pin from '../assets/pin-svg-25px.svg'
+import IconCrash from '../assets/ic-crash.png';
 
 //location
 import Geocode from "react-geocode";
@@ -20,34 +23,50 @@ import PhotoGallery from '../components/PhotoGalerry';
 
 
 function Profile() {
-
     const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
     const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
     const { user, liked } = useContext(AuthContext);
+    const [gallery, setGallery] = useState([]); 
     const [address, setAddress] = useState("");
     //set location
     const loc = localStorage.location;
     const photogallery = []
 
-const location = loc ? JSON.parse(loc) : null
+    const location = loc ? JSON.parse(loc) : null
 
-if (location) {
+    if (location) {
 
-  Geocode.fromLatLng(location.lat, location.lng).then(
-    (response) => {
-      const address = response.results[0].address_components[1].short_name;
-      setAddress(address);
+    Geocode.fromLatLng(location.lat, location.lng).then(
+        (response) => {
+        const address = response.results[0].address_components[1].short_name;
+        setAddress(address);
 
-    },
-    (error) => {
-      console.error(error);
+        },
+        (error) => {
+        console.error(error);
+        }
+    );
     }
-  );
-}
+
+    useEffect(() => {
+        if (!loading && getProfilePosts) {
+            const filterByMedia = getProfilePosts && getProfilePosts.getProfilePosts.filter(post => {
+                const hasMedia = post.media && post.media.length >=1;
+
+                if (hasMedia) return post
+            });
+
+
+            const gallery = chunk(filterByMedia, 4);
+
+            setGallery(gallery);
+        }
+    }, [loading, getProfilePosts]);
 
 const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc => doc.likeCount)
     const { TabPane } = Tabs;
 
+    console.log('gallery: ', gallery)
     const Demo = () => (
         <Tabs defaultActiveKey="1" centered>
             <TabPane tab="Posts" key="1">
@@ -84,29 +103,27 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
                             </div>
                         )
                     })} */}
-                    <div className="gallery">
-            {!getProfilePosts ? null
-                    : Array(getProfilePosts).map((post, key) => {
-
-                        const hasmedia = post.media && post.media.length >=1 
-                        // if(post.media) {
-                        //     if(post.media.length >= 1) {
-                        //         photogallery.push(post.media)
-                        //     }
-                        // }
-                        return(
-                            user && hasmedia && 
-                            <div className={key}>
-                                        {/* <figure className="gallery_item_1"> */}
-                                            <img src={post.media} className="gallery__img"  alt="Image 1" />
-                                            
-                                       {/* </figure> */}
-                                        </div>
-                        )
-                            
-                    })}
-                    </div>
-                
+                    {gallery.length && gallery.map(media => (
+                        <div className="gallery">
+                            {media.length && media.map((photo, idx) => {
+                                const imgClass = cn({
+                                    'gallery_item_right': idx == 1,
+                                    'gallery_item_left': idx == 2,
+                                    'gallery__img': idx != 1 || idx != 2
+                                })
+                                return (
+                                    <img
+                                        src={photo.media}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = IconCrash;
+                                        }} 
+                                        className={imgClass}  alt="Image 1"
+                                    />
+                                )
+                            })}
+                        </div>
+                    ))}
             </TabPane>
             
         </Tabs>
