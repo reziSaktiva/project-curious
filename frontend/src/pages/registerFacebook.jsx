@@ -67,7 +67,6 @@ const RegisterFacebook = (props) => {
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
-    console.log(context.facebookData);
 
     const [registerUserFacebook] = useMutation(REGISTER_USER_FACEBOOK, {
         update(_, { data: { registerUserWithFacebook: userData } }){

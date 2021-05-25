@@ -49,7 +49,9 @@ export default function ReserPassword(props) {
 
     return (
         <div>
+            <Link to='/'>
             <div className="curious" style={{ marginLeft: 710, marginTop: 100 }} />
+            </Link>
             <div className="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
                 <div className="content">
                     <h1>Reset Password</h1>

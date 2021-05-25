@@ -103,35 +103,24 @@ const RegisterGoogle = (props) => {
     );
 
     return (
-        <Form
-            {...formItemLayout}
-            form={form}
-            name="register"
-            onFinish={onFinish}
-            initialValues={{
-                residence: ['zhejiang', 'hangzhou', 'xihu'],
-                prefix: '86',
-            }}
-            scrollToFirstError
-        >
-            <Form.Item
-                label="E-mail"
-            >
-                {context.googleData.email}
-            </Form.Item>
+        <div>
+            <div>
+                <div className="curious" style={{ display: "block", marginLeft: "auto", marginRight: "auto", backgroundRepeat: 'no-repeat' }} />
+                <div class="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+                    <div class="content">
 
-            <Form.Item
-                label={
-                    <span>
-                        Nickname&nbsp;
-            <Tooltip title="What do you want others to call you?">
-                            <QuestionCircleOutlined />
-                        </Tooltip>
-                    </span>
-                }
-            >
-                {context.googleData.username}
-            </Form.Item>
+                        <Form
+                            form={form}
+                            name="register"
+                            onFinish={onFinish}
+                            initialValues={{
+                                residence: ['zhejiang', 'hangzhou', 'xihu'],
+                                prefix: '86',
+                            }}
+                            scrollToFirstError
+                        >
+            <h3>Hello, {context.googleData.username}</h3>
+            <p>isi data data di bawah untuk menyelesaikan pendaftaran anda</p>
 
             <Form.Item
                 name="gender"
@@ -194,7 +183,7 @@ const RegisterGoogle = (props) => {
                 </Checkbox>
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" style={{backgroundColor: "#7f57ff", borderRadius: 10}}>
                     Register
         </Button>
             </Form.Item>
@@ -206,7 +195,12 @@ const RegisterGoogle = (props) => {
                     onClose={onCloseErr}
                 />
             )}
-        </Form>
+                        </Form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

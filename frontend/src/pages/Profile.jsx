@@ -18,7 +18,6 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
-import PhotoGallery from '../components/PhotoGalerry';
 
 
 
@@ -30,7 +29,6 @@ function Profile() {
     const [address, setAddress] = useState("");
     //set location
     const loc = localStorage.location;
-    const photogallery = []
 
     const location = loc ? JSON.parse(loc) : null
 
@@ -178,7 +176,7 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
                             <p>Repost</p>
                         </Col>
                         <Col span={8}> 
-                            <h5>{getProfilePosts && likeCounter.reduce((total, num) => total += num)}</h5>
+                            <h5>{getProfilePosts&& likeCounter.length >= 1 ? likeCounter.reduce((total, num) => total += num) : 0}</h5>
                             <p>Likes</p>
                         </Col>
                     </Row>
