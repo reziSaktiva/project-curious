@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client'
-import { REGISTER_USER_FACEBOOK } from '../GraphQL/Mutations'
+import { REGISTER_USER_GOOGLE } from '../GraphQL/Mutations'
 
 import { AuthContext } from '../context/auth'
 
@@ -63,14 +63,15 @@ const tailFormItemLayout = {
     },
 };
 
-const RegisterFacebook = (props) => {
+const RegisterGoogle = (props) => {
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
+    console.log(context.googleData);
 
-    const [registerUserFacebook] = useMutation(REGISTER_USER_FACEBOOK, {
-        update(_, { data: { registerUserWithFacebook: userData } }){
-            context.login(userData)
+    const [registerUserGoogle] = useMutation(REGISTER_USER_GOOGLE, {
+        update(_, { data: { registerUserWithGoogle: userData } }){
+            context.login(userData.token)
             props.history.push('/')
         },
         onError(err) {
@@ -81,9 +82,9 @@ const RegisterFacebook = (props) => {
 
     const onFinish = (values) => {
         const { birthday, gender, phone, phoneCode } = values
-        const { email, username, imageUrl, token, id } = context.facebookData
-        registerUserFacebook({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}`, username, email, imageUrl, token, id } })
-        console.log(context.facebookData, values);
+        const { email, username, imageUrl, token, id } = context.googleData
+        registerUserGoogle({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}`, username, email, imageUrl, token, id } })
+        console.log(context.googleData, values);
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
@@ -102,35 +103,24 @@ const RegisterFacebook = (props) => {
     );
 
     return (
-        <Form
-            {...formItemLayout}
-            form={form}
-            name="register"
-            onFinish={onFinish}
-            initialValues={{
-                residence: ['zhejiang', 'hangzhou', 'xihu'],
-                prefix: '86',
-            }}
-            scrollToFirstError
-        >
-            <Form.Item
-                label="E-mail"
-            >
-                {context.facebookData.email}
-            </Form.Item>
+        <div>
+            <div>
+                <div className="curious" style={{ display: "block", marginLeft: "auto", marginRight: "auto", backgroundRepeat: 'no-repeat' }} />
+                <div class="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+                    <div class="content">
 
-            <Form.Item
-                label={
-                    <span>
-                        Nickname&nbsp;
-            <Tooltip title="What do you want others to call you?">
-                            <QuestionCircleOutlined />
-                        </Tooltip>
-                    </span>
-                }
-            >
-                {context.facebookData.username}
-            </Form.Item>
+                        <Form
+                            form={form}
+                            name="register"
+                            onFinish={onFinish}
+                            initialValues={{
+                                residence: ['zhejiang', 'hangzhou', 'xihu'],
+                                prefix: '86',
+                            }}
+                            scrollToFirstError
+                        >
+            <h3>Hello, {context.googleData.username}</h3>
+            <p>isi data data di bawah untuk menyelesaikan pendaftaran anda</p>
 
             <Form.Item
                 name="gender"
@@ -193,7 +183,7 @@ const RegisterFacebook = (props) => {
                 </Checkbox>
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" style={{backgroundColor: "#7f57ff", borderRadius: 10}}>
                     Register
         </Button>
             </Form.Item>
@@ -205,8 +195,13 @@ const RegisterFacebook = (props) => {
                     onClose={onCloseErr}
                 />
             )}
-        </Form>
+                        </Form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 
-export default RegisterFacebook
+export default RegisterGoogle
