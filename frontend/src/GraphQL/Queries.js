@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_POSTS = gql`
-  query getPostNearby($lat: Float, $lng: Float) {
-    getPosts(lat: $lat, lng: $lng) {
+  query getPostNearby($lat: Float, $lng: Float, $range: Float) {
+    getPosts(lat: $lat, lng: $lng, range: $range) {
       id
       owner
       text

@@ -9,7 +9,7 @@ import PostCard from '../components/PostCard'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
-import { getSession } from '../util/Session';
+import { getSession, getRangeSearch } from '../util/Session';
 
 
 function Home() {
@@ -18,13 +18,15 @@ function Home() {
     const { user } = useContext(AuthContext)
 
     const { location } = getSession();
+    const range = getRangeSearch();
+
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS);
     
     useEffect(() => {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
 
-            getPosts({ variables: loc });
+            getPosts({ variables: { ...loc, range: parseFloat(range) } });
         }
     }, [location]);
 
