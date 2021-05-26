@@ -9,13 +9,13 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      let id = action.payload[action.payload.length - 1].id;
+      let lastIdPosts = action.payload[action.payload.length - 1].id;
 
       return {
         ...state,
         loading: false,
         posts: action.payload,
-        lastId: id,
+        lastIdPosts,
       };
     case "SET_MUTED_POST":
       return {
@@ -34,8 +34,8 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: [...state.posts, ...action.payload],
-        more: action.payload.length === 3,
-        lastId: state.posts[state.posts.length - 1].id,
+        isMorePost: action.payload.length === 3,
+        lastIdPosts: state.posts[state.posts.length - 1].id,
       };
     case "CREATE_POST":
       const oldPosts = cloneDeep(state.posts) || [];
@@ -150,13 +150,13 @@ export const PostContext = createContext({
   posts: [],
   newPosts: null,
   loading: false,
-  lastId: null,
-  more: true,
+  lastIdPosts: null,
+  isMorePost: true,
   isOpenNewPost: false,
   repost: false,
   mutedPost: [],
   subscribePosts: [],
-  setSubscribePosts : () =>{}, 
+  setSubscribePosts: () => { },
   setMutedPost: () => { },
   subscribePost: () => { },
   loadingData: () => { },
@@ -171,17 +171,17 @@ export const PostContext = createContext({
 const initialState = {
   posts: [],
   mutedPost: [],
-  more: true,
+  isMorePost: true,
   newPosts: null,
   loading: null,
-  lastId: null,
+  lastIdPosts: null,
   subscribePosts: [],
 };
 
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastId, more, isOpenNewPost, repost, mutedPost, subscribePosts } =
+  const { posts, loading, lastIdPosts, isMorePost, isOpenNewPost, repost, mutedPost, subscribePosts } =
     state;
 
   const loadingData = () => {
@@ -337,8 +337,8 @@ export const PostProvider = (props) => {
         subscribePosts,
         mutedPost,
         loading,
-        lastId,
-        more,
+        lastIdPosts,
+        isMorePost,
         isOpenNewPost,
         repost,
       }}

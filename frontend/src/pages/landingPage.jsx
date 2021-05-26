@@ -1,9 +1,9 @@
 import React from 'react'
 import '../App.css'
 import { Col, Row, Button } from 'antd'
-import { Grid } from 'semantic-ui-react'
 
-import LoginFacebook from '../components/LoginFacebookButton'
+import LoginFacebook from '../components/LoginFacebookButton';
+import LoginGoogle from '../components/LoginGoogleButton';
 import { Link } from 'react-router-dom'
 
 function LandingPage(props) {
@@ -22,10 +22,11 @@ function LandingPage(props) {
 
                         <div style={{ paddingLeft: 70, paddingRight: 70}}>
                         <LoginFacebook props={props} />
-                        <Button className="ui black basic button" style={{ width: "100%", height: 45, marginTop: 15, borderRadius: 5 }}>
+                        <LoginGoogle props={props} />
+                        {/* <Button className="ui black basic button" style={{ width: "100%", height: 45, marginTop: 15, borderRadius: 5 }}>
                             <i className="google icon"></i>
                                 Continue with Google
-                        </Button>
+                        </Button> */}
                         </div>
                         
                         <Row style={{marginTop: 20}}>

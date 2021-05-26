@@ -16,6 +16,7 @@ import {
   SET_NOTIFICATIONS,
   SET_USER_DATA,
   REGISTER_WITH_fACEBOOK,
+  REGISTER_WITH_GOOGLE,
   LOGOUT,
   LS_LOCATION,
   LS_TOKEN,
@@ -28,6 +29,7 @@ const initialState = {
   liked: [],
   notifications: [],
   facebookData: null,
+  googleData: null
 };
 
 const { location, user } = Session({ onLogout: () => {} });
@@ -67,6 +69,11 @@ function authReducer(state, action) {
       return {
         ...state,
         facebookData: action.payload,
+      };
+      case REGISTER_WITH_GOOGLE:
+      return {
+        ...state,
+        googleData: action.payload,
       };
     case LOGOUT:
       return {
@@ -116,7 +123,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, liked, notifications } = state
+  const { user, facebookData, googleData, liked, notifications } = state
 
   // Mutations
   const [
@@ -191,6 +198,7 @@ export function AuthProvider(props) {
 
   function login(userData) {
     navigator.geolocation.getCurrentPosition(getGeoLocation, showError);
+    console.log("userdatanyaaaa", userData);
 
     localStorage.setItem(LS_TOKEN, userData);
 
@@ -204,6 +212,13 @@ export function AuthProvider(props) {
     dispatch({
       type: REGISTER_WITH_fACEBOOK,
       payload: facebookData,
+    });
+  }
+
+  function loadGoogleData(googleData) {
+    dispatch({
+      type: REGISTER_WITH_GOOGLE,
+      payload: googleData,
     });
   }
 
@@ -222,12 +237,14 @@ export function AuthProvider(props) {
     () => ({
       user,
       facebookData,
+      googleData,
       liked,
       notifications,
       notificationRead,
       login,
       logout,
       loadFacebookData, // functions context
+      loadGoogleData
     }),
     [state]
   );

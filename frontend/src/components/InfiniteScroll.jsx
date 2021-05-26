@@ -5,10 +5,12 @@ import { GET_MORE_POSTS } from '../GraphQL/Mutations'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { getSession } from '../util/Session'
 
 function ScrollInfinite(props) {
     const { isLoading } = props;
-    const { posts, morePosts, lastId, more } = useContext(PostContext)
+    const { posts, morePosts, lastIdPosts, isMorePost } = useContext(PostContext)
+    const { location } = getSession()
 
     const [ nextPosts, { loading } ] = useMutation(GET_MORE_POSTS, {
         update(_, { data: { nextPosts: postsData } }){
@@ -18,8 +20,10 @@ function ScrollInfinite(props) {
             console.log(err.message);
         }
     })
+    
     const loadMore = () => {
-        nextPosts({ variables: { id: lastId } })
+        const loc = JSON.parse(location)
+        nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng } })
     }
     
     return (
@@ -27,7 +31,7 @@ function ScrollInfinite(props) {
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
-                hasMore={more}
+                hasMore={isMorePost}
                 loader={(!loading || !isLoading) && posts.length < 1 ? <h4>belum ada postingan</h4> : <h4>Loading...</h4>}
                 scrollableTarget="scrollableDiv"
                 {...props}

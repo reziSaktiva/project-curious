@@ -17,8 +17,10 @@ module.exports = async (context) => {
                     user = decodedToken
                     return db.collection('users').where('id', '==', user.uid).limit(1).get()
                 })
-                .then(data => {
+                .then(async data => {
                     user.username = data.docs[0].data().username
+                    const likes = await db.collection(`/users/${user.username}/liked`).get()
+                     user.likes = likes.docs.map(doc => doc.data() )
                 })
 
                 return user

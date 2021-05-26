@@ -250,6 +250,26 @@ module.exports = {
                 console.log(err);
             }
         },
+        async checkUserWithGoogle(_, args, content) {
+            const { username } = args;
+
+            try {
+                let user;
+                await db.doc(`users/${username}`).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            user = true
+                        } else {
+                            user = false
+                        }
+                    })
+
+                return user
+            }
+            catch (err) {
+                console.log(err);
+            }
+        },
         async loginWithFacebook(_, { username, token }, content, info) {
             let userData;
 
@@ -276,6 +296,32 @@ module.exports = {
         },
         async registerUserWithFacebook(_, args, content, info) {
             const { facebookData: { username, email, imageUrl, token, mobileNumber, gender, birthday, id } } = args
+
+            let newUser = {
+                username,
+                id,
+                email,
+                mobileNumber,
+                gender,
+                birthday,
+                createdAt: new Date().toISOString(),
+                profilePicture: imageUrl
+            }
+
+            try {
+                await db.doc(`/users/${username}`).set(newUser)
+
+                return {
+                    ...newUser,
+                    token
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        },
+        async registerUserWithGoogle(_, args, content, info) {
+            const { googleData: { username, email, imageUrl, token, mobileNumber, gender, birthday, id } } = args
 
             let newUser = {
                 username,

@@ -36,6 +36,20 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const CREATE_COMMENT = gql`
+mutation createComment($id: ID!, $text: String!) {
+  createComment(id : $id, text: $text) {
+  id
+  owner
+  text
+  createdAt
+  colorCode
+  displayName
+  displayImage
+    }
+}
+`;
+
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
     readNotification(id: $id){
@@ -106,8 +120,8 @@ export const GET_POST = gql`
 `;
 
 export const GET_MORE_POSTS = gql`
-  mutation nextPosts($id: ID!) {
-    nextPosts(id: $id) {
+  mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {
+    nextPosts(id: $id, lat:$lat ,lng: $lng) {
       id
       owner
       text
@@ -133,8 +147,62 @@ export const GET_MORE_POSTS = gql`
         postId
         createdAt
       }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
     }
   }
+`;
+
+export const GET_MORE_POPULAR = gql`
+mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
+  nextPopularPosts(id: $id, lat:$lat ,lng: $lng) {
+    id
+    owner
+    text
+    media
+    createdAt
+    commentCount
+    likeCount
+    location {
+      lat
+      lng
+    }
+    likes {
+      id
+      owner
+      createdAt
+      colorCode
+      displayName
+      displayImage
+    }
+    muted {
+      id
+      owner
+      postId
+      createdAt
+    }
+    repost {
+      id
+      owner
+      text
+      media
+      createdAt
+      location {
+        lat
+        lng
+      }
+    }
+  }
+}
 `;
 
 export const LIKE_POST = gql`
@@ -186,6 +254,41 @@ export const REGISTER_USER_FACEBOOK = gql`
   ) {
     registerUserWithFacebook(
       facebookData: {
+        mobileNumber: $mobileNumber
+        id: $id
+        email: $email
+        token: $token
+        imageUrl: $imageUrl
+        gender: $gender
+        birthday: $birthday
+        username: $username
+      }
+    ) {
+      id
+      username
+      email
+      token
+      createdAt
+      profilePicture
+      gender
+      birthday
+      mobileNumber
+    }
+  }
+`;
+export const REGISTER_USER_GOOGLE = gql`
+  mutation registerUserGoogle(
+    $username: String!
+    $email: String!
+    $imageUrl: String!
+    $token: String!
+    $mobileNumber: String!
+    $gender: String!
+    $birthday: String!
+    $id: String!
+  ) {
+    registerUserWithGoogle(
+      googleData: {
         mobileNumber: $mobileNumber
         id: $id
         email: $email

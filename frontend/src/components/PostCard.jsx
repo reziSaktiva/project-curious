@@ -9,7 +9,7 @@ import { get } from "lodash";
 import { AuthContext } from "../context/auth";
 import Pin from "../assets/pin-svg-25px.svg";
 import LikeButton from "./Buttons/LikeButton";
-import CommentButton from "./Buttons/Comment";
+import CommentButton from "./Buttons/CommentButton";
 import RepostButton from "./Buttons/RepostButton/index";
 
 import { EllipsisOutlined } from "@ant-design/icons";
@@ -86,16 +86,20 @@ export default function PostCard({ post, loading }) {
         actions={
           !loading && [
             <Row gutter={[48, 0]}>
-              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+              <Col xs={6} sm={8} md={8} lg={8} xl={8}>
                 <LikeButton
                   likeCount={post.likeCount}
                   likes={post.likes}
                   id={post.id}
                 />
               </Col>
+              
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+              <Link to={`/post/${post.id}`}>
                 <CommentButton commentCount={post.commentCount} />
+                </Link>
               </Col>
+              
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                 <RepostButton idPost={post.id} />
               </Col>
@@ -104,7 +108,6 @@ export default function PostCard({ post, loading }) {
         }
       >
         <List.Item.Meta
-          extra={<a href="#" />}
           title={
             <div>
               <Row>
