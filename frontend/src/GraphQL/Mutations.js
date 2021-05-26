@@ -120,8 +120,8 @@ export const GET_POST = gql`
 `;
 
 export const GET_MORE_POSTS = gql`
-  mutation nextPosts($id: ID!) {
-    nextPosts(id: $id) {
+  mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {
+    nextPosts(id: $id, lat:$lat ,lng: $lng) {
       id
       owner
       text
@@ -147,8 +147,62 @@ export const GET_MORE_POSTS = gql`
         postId
         createdAt
       }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
     }
   }
+`;
+
+export const GET_MORE_POPULAR = gql`
+mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
+  nextPopularPosts(id: $id, lat:$lat ,lng: $lng) {
+    id
+    owner
+    text
+    media
+    createdAt
+    commentCount
+    likeCount
+    location {
+      lat
+      lng
+    }
+    likes {
+      id
+      owner
+      createdAt
+      colorCode
+      displayName
+      displayImage
+    }
+    muted {
+      id
+      owner
+      postId
+      createdAt
+    }
+    repost {
+      id
+      owner
+      text
+      media
+      createdAt
+      location {
+        lat
+        lng
+      }
+    }
+  }
+}
 `;
 
 export const LIKE_POST = gql`

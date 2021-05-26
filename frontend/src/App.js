@@ -27,6 +27,7 @@ import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
 import Visited from './pages/Visited'
+import Popular from './pages/popular';
 import resetPassword from './pages/resetPassword';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             <AuthRoute exact path="/register" component={register} />
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
+            <UserRoute exact path="/popular" component={Popular} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />

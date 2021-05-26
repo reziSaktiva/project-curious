@@ -43,6 +43,49 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_POPULAR_POSTS = gql`
+  query getPosts($lat: Float, $lng: Float) {
+    getPopularPosts(lat: $lat, lng: $lng) {
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+    }
+  }
+`;
+
 export const GET_MUTED_POSTS = gql`
 query {
   mutedPosts {
