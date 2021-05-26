@@ -87,7 +87,7 @@ module.exports = gql`
         isSubscribe: Boolean
     }
     type Query {
-        getPosts(lat: Float, lng: Float): [Post]!
+        getPosts(lat: Float, lng: Float, range: Float): [Post]!
         getProfilePosts: [Post]!
         getPost(id: String!): Post!
         getUserData: UserData

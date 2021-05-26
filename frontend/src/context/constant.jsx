@@ -10,3 +10,4 @@ export const NOTIFICATION_READ = "NOTIFICATION_READ"
 export const LS_LOCATION = 'location';
 export const LS_TOKEN = 'token';
 export const LS_DATA_USER = 'user';
+export const R_SEARCH = 'rng';

@@ -93,7 +93,7 @@ const Sidebar = () => {
           </h3>
           <List.Item.Meta
             title={
-              <a href="/profile">
+              <a href="/map">
                 {" "}
                 <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                 {address}

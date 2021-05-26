@@ -7,7 +7,7 @@ const randomGenerator = require("../../utility/randomGenerator");
 
 module.exports = {
   Query: {
-    async getPosts(_, { lat, lng }) {
+    async getPosts(_, { lat, lng, range }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -59,7 +59,7 @@ module.exports = {
   
               const distance = computeDistanceBetween(currentLatLng, contentLocation)
   
-              if ((distance / 1000) <= 1000) { // should be show in range 40 km
+              if ((distance / 1000) <= (range || 1000)) { // by default will be show in range 1000 km
                 nearby.push(newData);
               }
             } catch (e) {

@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useHistory } from "react-router-dom";
+import { Slider } from 'antd'
 import {
     GoogleMap,
     useLoadScript,
@@ -8,10 +10,14 @@ import {
 import { Button } from 'antd';
 import { AimOutlined, LeftOutlined } from '@ant-design/icons';
 
+import { getRangeSearch } from '../../util/Session';
+
+// Constant
+import { LS_LOCATION, R_SEARCH } from '../../context/constant'
+import { MAP_API_KEY } from '../../util/ConfigMap';
+
+// Styles
 import mapStyle from '../../util/style/mapstyle'
-
-import { Slider } from 'antd'
-
 import './style.css';
 
 const libraries = ["places"]
@@ -45,9 +51,15 @@ const MapHeader = props => {
 }
 
 const Map = () => {
-  const position = JSON.parse(localStorage.location)
+  const currentPosition = localStorage.location && JSON.parse(localStorage.location)
+  
+  const [position, setPosition] = useState(currentPosition);
+  const range = getRangeSearch();
+  const history = useHistory();
+  
+  // Hooks Map
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k",
+    googleMapsApiKey: MAP_API_KEY,
     libraries,
   });
 
@@ -58,6 +70,27 @@ const Map = () => {
     40: "5km",
     60: "10km",
     80: "15km"
+  }
+
+  const handleBackPage = () => {
+    history.push("/");
+  };
+
+  const setCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const location = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      localStorage.setItem(LS_LOCATION, JSON.stringify(location));
+      setPosition(location);
+    })
+  }
+
+  const oSaveRangePosts = () => {
+    localStorage.setItem(R_SEARCH, radius / 1000);
+    history.push("/");
   }
     
   const onChangeSlider = (value) => {
@@ -80,8 +113,8 @@ const Map = () => {
   return (
       <div>
         <MapHeader
-          onSetCurrentLoc={() => {}}
-          onBack={() => {}}
+          onSetCurrentLoc={setCurrentLocation}
+          onBack={handleBackPage}
         />
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
@@ -106,7 +139,12 @@ const Map = () => {
         </GoogleMap>
         <Slider marks={marks} defaultValue={[0, 100]} onChange={onChangeSlider} tooltipVisible={false}/>
         <div className="footer-map">
-          <Button className="footer-map__btn-confirm btn-curious-colors" type="primary" >Confirm</Button>
+          <Button
+            onClick={oSaveRangePosts}
+            className="footer-map__btn-confirm btn-curious-colors"
+            type="primary">
+            Confirm
+          </Button>
         </div>
       </div>
   )
