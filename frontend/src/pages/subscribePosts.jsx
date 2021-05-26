@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
 import { useQuery } from '@apollo/client'
-import { GET_MUTED_POSTS, GET_POSTS } from '../GraphQL/Queries'
+import { GET_SUBSCRIBED_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
@@ -10,11 +10,11 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
 
-function MutedPost() {
-    const { data } = useQuery(GET_MUTED_POSTS);
+function SubscribePosts() {
+    const { data } = useQuery(GET_SUBSCRIBED_POSTS);
 
     const _isMounted = useRef(false);
-    const { mutedPost, setMutedPost, loadingData, loading } = useContext(PostContext)
+    const { subscribePosts, setSubscribePosts, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
@@ -25,7 +25,7 @@ function MutedPost() {
                 return;
             }
 
-            setMutedPost(data.mutedPosts)
+            setSubscribePosts(data.getSubscribePosts)
             
             // set did mount react
             _isMounted.current = true;
@@ -38,18 +38,16 @@ function MutedPost() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!mutedPost ? null
-                    : mutedPost.map((post, key) => {
-                        return (
-                                <div key={`posts${post.id} ${key}`}>
-                                    {console.log(post)}
-                                <PostCard post={post} loading={loading} />
-                            </div>
-                        )
-                    })}
+                {!subscribePosts ? null
+                    : subscribePosts.map((post, key) => post === null ? (null) : (
+                        <div key={`posts${post.id} ${key}`}>
+                            {console.log(post)}
+                        <PostCard post={post} loading={loading} />
+                    </div>
+                ))}
             </div>) : null}
         </div>
     );
 }
 
-export default MutedPost
+export default SubscribePosts

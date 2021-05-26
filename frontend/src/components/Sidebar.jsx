@@ -93,7 +93,7 @@ const Sidebar = () => {
           </h3>
           <List.Item.Meta
             title={
-              <a href="https://ant.design">
+              <a href="/profile">
                 {" "}
                 <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                 {address}
@@ -109,7 +109,7 @@ const Sidebar = () => {
           >
             <Menu.Divider />
             <Menu.Item key="NearBy" icon={<UserOutlined />}>
-              <Link to="/nearby">Nearby</Link>
+              <Link to="/">Nearby</Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
               Search
@@ -127,7 +127,7 @@ const Sidebar = () => {
               <Link to="/visited">Visited Places</Link>
             </Menu.Item>
             <Menu.Item key="Sub" icon={<NotificationOutlined />}>
-              Subscribed Posts
+              <Link to="/subscribePosts">Subscribed Posts</Link> 
             </Menu.Item>
             <Menu.Item key="Muted" icon={<SettingOutlined />}>
               <Link to="/MutedPost" >Muted Posts</Link>

@@ -16,8 +16,8 @@ export default function Notification() {
   });
 
   return (
-    <div style={{position: 'relative', }}>
-      <div style={{ position: "fixed", zIndex: 1 }}>
+    <div style={{ position: 'sticky', zIndex: 1}}>
+      <div style={{ position: "absolute", left: 0, right: 0 }}>
         <Card
           title="Notification"
           extra={
@@ -66,5 +66,6 @@ export default function Notification() {
         </Card>
       </div>
     </div>
+    
   );
 }

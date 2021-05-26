@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client";
 
+export const SUBSCRIBE_POST = gql`
+  mutation subscribePost($id: ID!) {
+    subscribePost(id: $id){ 
+    postId
+    owner
+    createdAt
+    isSubcribe
+    }
+  }
+`
+
 export const CREATE_POST = gql`
   mutation createPost($text: String!, $lat: Float, $lng: Float) {
     createPost(text: $text, location: { lat: $lat, lng: $lng }) {

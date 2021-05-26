@@ -28,6 +28,103 @@ export const GET_POSTS = gql`
         postId
         createdAt
       }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+    }
+  }
+`;
+
+export const GET_MUTED_POSTS = gql`
+query {
+  mutedPosts {
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SUBSCRIBED_POSTS = gql`
+query {
+  getSubscribePosts {
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
     }
   }
 `;
@@ -159,6 +256,17 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
         postId
         createdAt
       }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
     }
   }
 `
@@ -199,3 +307,55 @@ export const GET_USER_DATA = gql`
     }
   }
 `;
+
+export const CREATE_POST = gql`
+  mutation createPost(
+    $text: String
+    $media: [String]
+    $location: Location!
+    $repost: String
+  ) {
+    createPost(
+    text: $text
+    media: $media
+    location: $location
+    repost: $repost
+  )
+    {
+      id
+      owner
+      text
+      media
+      createdAt
+      location {
+        lat
+        lng
+      }
+      commentCount
+      likeCount
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      comments {
+        id
+        createdAt
+        owner
+        text
+        displayName
+        photoProfile
+        colorCode
+      }
+    }
+  }
+`

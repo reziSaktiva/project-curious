@@ -8,67 +8,78 @@ const randomGenerator = require("../../utility/randomGenerator");
 module.exports = {
   Query: {
     async getPosts(_, { lat, lng }) {
-      const posts = [];
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
 
-      try {
         const data = await db.collection('posts').orderBy('createdAt', 'desc').limit(8).get()
         const docs = data.docs.map((doc) => doc.data())
         
-        return docs.map(async data => {
-          const { repost: repostId } = data;
-          let repost = {}
+        if (docs.length) {
+          const nearby = []
 
-          if (repostId) {
-            const repostData = await db.doc(`/posts/${repostId}`).get()
-            repost = repostData.data() || {}
-          }
-
-          // Likes
-          const likesData = await db.collection(`/posts/${data.id}/likes`).get()
-          const likes = likesData.docs.map(doc => doc.data())
-
-          // Comments
-          const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
-          const comments = commentsData.docs.map(doc => doc.data())
-
-          // Muted
-          const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
-          const muted = mutedData.docs.map(doc => doc.data());
-
-          const newData = { ...data, likes, comments, muted, repost }
-
-          const { lat: lattitude, lng: longtitude } = newData.location;
-          try {
-            const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
-            const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
-
-            const distance = computeDistanceBetween(currentLatLng, contentLocation)
-
-            if ((distance / 1000) <= 40) { // should be show in range 40 km
-              posts.push(newData)
+          docs.forEach(async data => {
+            const { repost: repostId } = data;
+            let repost = {}
+  
+            const repostData = async () => {
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                repost = repostData.data() || {}
+              }
             }
-          } catch (e) {
-            console.log('error : ', e)
-          }
-          return newData
+  
+            // Likes
+            const likes = async () => {
 
-        });
-      } catch (err) {
-        console.log(err);
-        throw new Error(err);
-      }
+              const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+              const likes = likesData.docs.map(doc => doc.data())
+
+              return likes;
+            };
+  
+            // Comments
+            const comments = async () => {
+              const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+              return commentsData.docs.map(doc => doc.data())
+            }
+  
+            // Muted
+            const muted = async () => {
+              const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+              return mutedData.docs.map(doc => doc.data());
+            }
+  
+            const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData() }
+  
+            const { lat: lattitude, lng: longtitude } = newData.location;
+            try {
+              const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
+              const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
+  
+              const distance = computeDistanceBetween(currentLatLng, contentLocation)
+  
+              if ((distance / 1000) <= 1000) { // should be show in range 40 km
+                nearby.push(newData);
+              }
+            } catch (e) {
+              console.log('error : ', e)
+            }
+          });
+
+          return nearby;
+        }
+
+        return [];
     },
     async getProfilePosts(_, args, context) {
       const { username } = await fbAuthContext(context)
       const posts = [];
-      if(username) {
+      if (username) {
         try {
           await db
             .collection("posts")
-            .where("owner", "==",username)
+            .where("owner", "==", username)
             .orderBy("createdAt", "desc")
             .get()
             .then((data) => {
@@ -85,7 +96,7 @@ module.exports = {
                       return likes;
                     });
                 };
-  
+
                 const comments = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/comments`)
@@ -98,7 +109,7 @@ module.exports = {
                       return comments;
                     });
                 };
-  
+
                 const muted = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/muted`)
@@ -111,7 +122,7 @@ module.exports = {
                       return muted;
                     });
                 }
-  
+
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
@@ -127,14 +138,14 @@ module.exports = {
                 });
               });
             });
-  
+
           return posts;
         } catch (err) {
           console.log(err);
           throw new Error(err);
         }
       }
-      
+
     },
     async getProfileLikedPost(_, args, context) {
       const {likes} = await fbAuthContext(context)
@@ -216,7 +227,7 @@ module.exports = {
         }
       }
     },
-    
+
     async getPostBasedOnNearestLoc(_, { lat, lng }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -227,6 +238,15 @@ module.exports = {
 
       if (docs.length) {
         const nearby = []
+        let repost = {}
+
+        const { repost: repostId } = docs;
+
+        if (repostId) {
+          const repostData = await db.doc(`/posts/${repostId}`).get();
+
+          repost = repostData.data();
+        }
 
         docs.forEach(async data => {
           const likes = () => {
@@ -268,7 +288,7 @@ module.exports = {
               });
           };
 
-          const newData = { ...data, likes: likes(), comments, muted}
+          const newData = { ...data, likes: likes(), comments, muted, repost }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -347,7 +367,7 @@ module.exports = {
                       return muted;
                     });
                 }
-  
+
 
                 posts.push({
                   id: doc.data().id,
@@ -553,8 +573,7 @@ module.exports = {
                           ).delete();
 
                           if (post.owner !== username) {
-                            return db
-                              .collection(`/users/${post.owner}/notifications`)
+                            db.collection(`/users/${post.owner}/notifications`)
                               .where("type", "==", "LIKE")
                               .where("sender", "==", username)
                               .get()
@@ -569,8 +588,7 @@ module.exports = {
                   });
                 } else {
                   if (post.owner !== username) {
-                    return db
-                      .collection(`/users/${post.owner}/notifications`)
+                    db.collection(`/users/${post.owner}/notifications`)
                       .where("type", "==", "LIKE")
                       .where("sender", "==", username)
                       .get()
@@ -809,7 +827,12 @@ module.exports = {
             }
           });
 
-        return subscribe;
+        return {
+          owner: username,
+          createdAt: subscribe.createdAt,
+          postId: subscribe.postId,
+          isSubscribe: isSubscribed
+        };
       } catch (err) {
         console.log(err);
         throw new Error(err);
