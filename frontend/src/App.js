@@ -14,7 +14,7 @@ import FacebookAuthRoute from './util/FacebookAuthRoute'
 // Importing Pages & Components
 import login from './pages/login';
 import register from './pages/register';
-import map from './pages/map'
+import map from './pages/map/index'
 
 import RegisterFacebook from './pages/registerFacebook';
 import LandingPage from './pages/landingPage';
