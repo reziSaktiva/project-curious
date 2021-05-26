@@ -36,6 +36,20 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const CREATE_COMMENT = gql`
+mutation createComment($id: ID!, $text: String!) {
+  createComment(id : $id, text: $text) {
+  id
+  owner
+  text
+  createdAt
+  colorCode
+  displayName
+  displayImage
+    }
+}
+`;
+
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
     readNotification(id: $id){
@@ -186,6 +200,41 @@ export const REGISTER_USER_FACEBOOK = gql`
   ) {
     registerUserWithFacebook(
       facebookData: {
+        mobileNumber: $mobileNumber
+        id: $id
+        email: $email
+        token: $token
+        imageUrl: $imageUrl
+        gender: $gender
+        birthday: $birthday
+        username: $username
+      }
+    ) {
+      id
+      username
+      email
+      token
+      createdAt
+      profilePicture
+      gender
+      birthday
+      mobileNumber
+    }
+  }
+`;
+export const REGISTER_USER_GOOGLE = gql`
+  mutation registerUserGoogle(
+    $username: String!
+    $email: String!
+    $imageUrl: String!
+    $token: String!
+    $mobileNumber: String!
+    $gender: String!
+    $birthday: String!
+    $id: String!
+  ) {
+    registerUserWithGoogle(
+      googleData: {
         mobileNumber: $mobileNumber
         id: $id
         email: $email

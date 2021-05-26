@@ -17,7 +17,7 @@ const layout = {
     },
 };
 
-const Login = (props) => {
+export default function ReserPassword(props) {
     const context = useContext(AuthContext)
     const [errors, setErrors] = useState({});
 
@@ -33,9 +33,14 @@ const Login = (props) => {
     })
 
     const onFinish = (values) => {
-        const { username, password } = values
+        const { email } = values
 
-        login({ variables: { username, password } })
+        auth.sendPasswordResetEmail(email).then(
+            console.log("email sent@")
+        )
+        .catch(error => {
+            console.log(error)
+        })
     };
 
     const onCloseErr = (e) => {
@@ -44,10 +49,12 @@ const Login = (props) => {
 
     return (
         <div>
+            <Link to='/'>
             <div className="curious" style={{ marginLeft: 710, marginTop: 100 }} />
+            </Link>
             <div className="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
                 <div className="content">
-                    <h1>Sign in</h1>
+                    <h1>Reset Password</h1>
                     <Form
                         {...layout}
                         name="basic"
@@ -57,11 +64,11 @@ const Login = (props) => {
                         onFinish={onFinish}
                     >
                         <Form.Item
-                            name="username"
+                            name="email"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your email or username!',
+                                    message: 'Please input your email!',
                                 },
                             ]}
                             style={{ width: 539 }}
@@ -69,31 +76,14 @@ const Login = (props) => {
                             <Input placeholder="Email / Username" />
                         </Form.Item>
 
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your password!',
-                                },
-                            ]}
-                            style={{ width: 539 }}
-                        >
-                            <Input.Password placeholder="Password" />
-                        </Form.Item>
-
                         <Form.Item>
                             <button className="ui facebook button" type="submit" style={{ backgroundColor: '#7F57FF', width: 359, height: 40 }}>
-                                Sign in
-    </button>
+                                Send Verification Email
+                            </button>
                         </Form.Item>
                     </Form>
-                    <Link to='/resetPassword'>
-                        <p style={{ textAlign: 'center' }}>Forgot Password?</p>
-                    </Link>
                 </div>
             </div>
-            <p style={{ textAlign: 'center', marginTop: 30, fontSize: 14 }}>Don't have an account yet? <Link to="/register" style={{ fontWeight: 'bold' }}>Sign Up</Link> now</p>
             {Object.keys(errors).length > 0 && (
                 <Alert
                     message={errors}
@@ -106,4 +96,3 @@ const Login = (props) => {
     );
 };
 
-export default Login;

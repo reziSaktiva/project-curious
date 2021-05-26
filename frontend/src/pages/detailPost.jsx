@@ -1,8 +1,9 @@
 //GQL
-import { useQuery } from "@apollo/client";
 import moment from "moment";
 import Geocode from "react-geocode";
-import React, { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_COMMENT } from "../GraphQL/Mutations"
+import React, { useContext, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -17,16 +18,19 @@ import {
   Dropdown,
   Menu,
   Input,
+  Upload,
+  Button,
+  Form,
 } from "antd";
 
 //component
-import LikeButton from "../components/Buttons/LikeButton";
-import CommentButton from "../components/Buttons/Comment";
-import RepostButton from "../components/Buttons/RepostButton";
-import { EllipsisOutlined } from "@ant-design/icons";
-
-// Assets
 import Pin from "../assets/pin-svg-25px.svg";
+import LikeButton from "../components/Buttons/LikeButton";
+import CommentButton from "../components/Buttons/CommentButton";
+import RepostButton from "../components/Buttons/RepostButton";
+import { EllipsisOutlined, PlusOutlined  } from "@ant-design/icons";
+import PostNavBar from "../components/PostNavBar";
+
 
 // Query
 import { GET_POST } from "../GraphQL/Queries";
@@ -45,13 +49,28 @@ const IconText = ({ icon, text }) => (
 export default function SinglePost(props) {
   const [address, setAddress] = useState("");
 
+  
+
   let id = props.match.params.id;
 
   const { loading, data } = useQuery(GET_POST, {
     variables: { id },
   });
 
-  const { Search } = Input;
+  //input form 
+
+  const [createComment] = useMutation(CREATE_COMMENT, {
+    onError(err) {
+      console.log(err.message)
+  }
+  })
+
+  const onFinish = (values) => {
+    const { comment } = values
+    console.log('Success:', values);
+    
+    createComment({ variables: { id, text: comment } })
+  };
 
   let postMarkUp;
 
@@ -74,8 +93,10 @@ export default function SinglePost(props) {
     //post card start here
 
     let { comments } = getPost;
+    console.log(comments);
     postMarkUp = (
       <List itemLayout="vertical" size="large">
+        <PostNavBar />
         <List.Item
           key={getPost.id}
           actions={
@@ -146,7 +167,7 @@ export default function SinglePost(props) {
             size="large"
             dataSource={comments}
             renderItem={(item) => (
-              <Card style={{ width: 300, marginTop: 16 }} loading={loading}>
+              <Card style={{ width: "100%", backgroundColor: '#ececec', marginBottom: -20 }} loading={loading}>
                 <Meta
                   avatar={
                     <Link to="/profile">
@@ -154,27 +175,88 @@ export default function SinglePost(props) {
                         size={50}
                         style={{
                           backgroundColor: item.colorCode,
-                          backgroundImage: `url(${item.photoProfile})`,
+                          backgroundImage: `url(${item.displayImage})`,
                           backgroundSize: 50,
                         }}
                       />
                     </Link>
                   }
-                  title={item.displayName}
-                  description={moment(item.createdAt).fromNow()}
+                  title={
+                    <Row>
+                      <Col span={12}>
+                      <p style={{fontWeight: 'bold'}}>{item.displayName}</p>
+                      </Col>
+                      <Col span={12} style={{ textAlign: "right" }}>
+                      <Dropdown
+                        overlay={
+                          <Menu>
+                            <Menu.Item key="0">Subscribe</Menu.Item>
+                            <Menu.Item key="1" onClick={(e) => console.log(e)}>
+                              Mute
+                            </Menu.Item>
+                            <Menu.Item key="3">Report</Menu.Item>
+                          </Menu>
+                        }
+                        trigger={["click"]}
+                        placement="bottomRight"
+                      >
+                        <a
+                          className="ant-dropdown-link"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <EllipsisOutlined />
+                        </a>
+                      </Dropdown>
+                    </Col>
+                    </Row>
+                }
+                  description={<p style={{color: 'black'}}>{item.text}</p>}
                 />
-                {item.text}
+                <div style={{marginTop: 20,display: 'inline-block', marginBottom: -20}}>
+                  <p>
+                    {moment(item.createdAt).fromNow()}
+                  <p style={{
+                          fontWeight: 'bold',
+                          display: 'inline-block',
+                          marginLeft: 10
+                          }}>Reply</p>
+                  </p>
+                </div>
               </Card>
             )}
           />
         )}
+        <Form
+        style={{marginTop: 21, paddingBottom: -20}}
+      name="basic"
+      onFinish={onFinish}
+      onFinishFailed={onFinish}
+     >
+       <Row>
+         <Col span={2}>
+            <Form.Item name="upload" className="centeringButton">
+            <Upload>
+                <Button style={{ border: 'none'}} icon={<PlusOutlined style={{color: '#7f57ff'}} />} />
+              </Upload>
+          </Form.Item>
+         </Col>
+         
+         <Col span={19}>
+            <Form.Item
+            name="comment"
+            rules={[{ required: true, message: 'Isi komennya dulu ya broooo!' }]}
+          >
+          <Input  placeholder="Write your comment..." style={{borderRadius: 20}}/>
+          </Form.Item>
+         </Col>
 
-        <Search
-          placeholder="Input comment here..."
-          allowClear
-          enterButton="Post"
-          size="large"
-        />
+         <Col span={3}>
+          <Form.Item className="centeringButton">
+        <Button htmlType="submit" style={{ borderRadius: 20, backgroundColor: '#7f57ff', display: 'inline-block', color: 'white'}}>Post</Button>
+        </Form.Item>   
+         </Col>
+       </Row>
+    </Form>
       </List>
     );
   }

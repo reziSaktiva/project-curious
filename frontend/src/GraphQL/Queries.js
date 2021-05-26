@@ -160,6 +160,39 @@ export const GET_PROFILE_POSTS = gql`
     }
   }
 `;
+export const GET_PROFILE_LIKED_POSTS = gql`
+query{
+  getProfileLikedPost{
+      id
+      createdAt
+      owner
+      commentCount
+      likeCount
+      text
+      location {
+        lat
+        lng
+      }
+      likes {
+          id
+          owner
+          createdAt
+          colorCode
+          displayName
+          displayImage
+        }
+      comments{
+          id
+          createdAt
+          owner
+          text
+          displayName
+          photoProfile
+          colorCode
+          }
+      }
+  }
+`;
 
 export const GET_POST = gql`
 query($id: String!){
@@ -188,6 +221,7 @@ getPost(id: $id){
         owner
         text
         displayName
+        displayImage
         photoProfile
         colorCode
         }

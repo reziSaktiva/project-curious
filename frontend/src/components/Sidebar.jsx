@@ -138,7 +138,7 @@ const Sidebar = () => {
             </Menu.Item>
           </Menu>
         </Sider>
-        {windowWidth < 993 ? null : <div className="curious" />}
+        {windowWidth < 993 ? null : <Link to='/' ><div className="curious" /></Link>}
       </div>
     </React.Fragment>
   );
