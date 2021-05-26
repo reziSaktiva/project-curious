@@ -17,15 +17,6 @@ const reducer = (state, action) => {
         posts: action.payload,
         lastIdPosts,
       };
-    case "SET_POPULAR":
-      let lastIdPopular = action.payload[action.payload.length - 1].id;
-
-      return {
-        ...state,
-        loading: false,
-        popular: action.payload,
-        lastIdPopular,
-      };
     case "SET_MUTED_POST":
       return {
         ...state,
@@ -45,14 +36,6 @@ const reducer = (state, action) => {
         posts: [...state.posts, ...action.payload],
         isMorePost: action.payload.length === 3,
         lastIdPosts: state.posts[state.posts.length - 1].id,
-      };
-    case "MORE_POPULAR":
-      return {
-        ...state,
-        loading: false,
-        popular: [...state.popular, ...action.payload],
-        isMorePopular: action.payload.length === 3,
-        lastIdPopular: state.popular[state.popular.length - 1].id,
       };
     case "CREATE_POST":
       const oldPosts = cloneDeep(state.posts) || [];
@@ -168,22 +151,17 @@ export const PostContext = createContext({
   newPosts: null,
   loading: false,
   lastIdPosts: null,
-  lastIdPopular: null,
   isMorePost: true,
-  isMorePopular: true,
   isOpenNewPost: false,
   repost: false,
   mutedPost: [],
   subscribePosts: [],
-  popular: [],
-  setPopular: () => { },
   setSubscribePosts: () => { },
   setMutedPost: () => { },
   subscribePost: () => { },
   loadingData: () => { },
   setPosts: (posts) => { },
   morePosts: () => { },
-  morePopular: () => {},
   createPost: () => { },
   deletePost: () => { },
   like: () => { },
@@ -194,19 +172,16 @@ const initialState = {
   posts: [],
   mutedPost: [],
   isMorePost: true,
-  isMorePopular: true,
   newPosts: null,
   loading: null,
   lastIdPosts: null,
-  lastIdPopular: null,
   subscribePosts: [],
-  popular: []
 };
 
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastIdPosts, lastIdPopular, isMorePost, isMorePopular, isOpenNewPost, repost, mutedPost, subscribePosts, popular } =
+  const { posts, loading, lastIdPosts, isMorePost, isOpenNewPost, repost, mutedPost, subscribePosts } =
     state;
 
   const loadingData = () => {
@@ -275,15 +250,6 @@ export const PostProvider = (props) => {
     }
   };
 
-  const setPopular = (posts) => {
-    if (posts.length > 0) {
-      dispatch({
-        type: "SET_POPULAR",
-        payload: posts,
-      });
-    }
-  };
-
   const mutePost = (data) => {
     const muteData = {
       owner: data.owner,
@@ -309,15 +275,6 @@ export const PostProvider = (props) => {
     setTimeout(() => {
       dispatch({
         type: "MORE_POSTS",
-        payload: posts,
-      });
-    }, 2000);
-  };
-
-  const morePopular = (posts) => {
-    setTimeout(() => {
-      dispatch({
-        type: "MORE_POPULAR",
         payload: posts,
       });
     }, 2000);
@@ -369,7 +326,6 @@ export const PostProvider = (props) => {
         setPosts,
         loadingData,
         morePosts,
-        morePopular,
         createPost,
         like,
         deletePost,
@@ -378,15 +334,11 @@ export const PostProvider = (props) => {
         setMutedPost,
         subscribePost,
         setSubscribePosts,
-        setPopular,
-        popular,
         subscribePosts,
         mutedPost,
         loading,
         lastIdPosts,
-        lastIdPopular,
         isMorePost,
-        isMorePopular,
         isOpenNewPost,
         repost,
       }}
