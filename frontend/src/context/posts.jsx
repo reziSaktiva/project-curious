@@ -17,6 +17,12 @@ const reducer = (state, action) => {
         posts: action.payload,
         lastIdPosts,
       };
+    case "SET_POST":
+      return {
+        ...state,
+        loading: false,
+        post: action.payload
+      }
     case "SET_MUTED_POST":
       return {
         ...state,
@@ -148,6 +154,7 @@ const reducer = (state, action) => {
 
 export const PostContext = createContext({
   posts: [],
+  post: null,
   newPosts: null,
   loading: false,
   lastIdPosts: null,
@@ -156,6 +163,7 @@ export const PostContext = createContext({
   repost: false,
   mutedPost: [],
   subscribePosts: [],
+  setPost: () => {},
   setSubscribePosts: () => { },
   setMutedPost: () => { },
   subscribePost: () => { },
@@ -170,6 +178,7 @@ export const PostContext = createContext({
 
 const initialState = {
   posts: [],
+  post: null,
   mutedPost: [],
   isMorePost: true,
   newPosts: null,
@@ -181,7 +190,7 @@ const initialState = {
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, loading, lastIdPosts, isMorePost, isOpenNewPost, repost, mutedPost, subscribePosts } =
+  const { posts, post, loading, lastIdPosts, isMorePost, isOpenNewPost, repost, mutedPost, subscribePosts } =
     state;
 
   const loadingData = () => {
@@ -194,6 +203,13 @@ export const PostProvider = (props) => {
       payload: post,
     });
   };
+
+  const setPost = (post) => {
+    dispatch({
+      type: 'SET_POST',
+      payload: post
+    })
+  }
 
   const setMutedPost = (posts) => {
     if (posts.length > 0) {
@@ -323,7 +339,9 @@ export const PostProvider = (props) => {
     <PostContext.Provider
       value={{
         posts,
+        post,
         setPosts,
+        setPost,
         loadingData,
         morePosts,
         createPost,
