@@ -59,6 +59,15 @@ const reducer = (state, action) => {
         ...state,
         posts: state.posts.filter((post) => post.id !== deleteId),
       };
+    case "SET_COMMENT":
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments:[...state.post.comments, action.payload],
+          commentsCount: state.post.comments + 1
+        }
+      }
     case "LIKE_POST":
       return {
         ...state,
@@ -75,6 +84,12 @@ const reducer = (state, action) => {
 
           return post;
         }),
+        post: {
+          ...state.post,
+          likes: [...state.post.likes, action.payload.data],
+          likeCount: state.post.likeCount + 1
+
+        }
       };
     case "UNLIKE_POST":
       const data = action.payload.data;
@@ -92,6 +107,12 @@ const reducer = (state, action) => {
 
           return post;
         }),
+        post: {
+          ...state.post,
+          likes: state.post.likes.filter((like) => like.owner !== data.owner),
+          likeCount: state.post.likeCount - 1
+
+        }
       };
     case 'SUBCRIBE_POST':
       return {
@@ -163,6 +184,7 @@ export const PostContext = createContext({
   repost: false,
   mutedPost: [],
   subscribePosts: [],
+  setComment: () => {},
   setPost: () => {},
   setSubscribePosts: () => { },
   setMutedPost: () => { },
@@ -208,6 +230,13 @@ export const PostProvider = (props) => {
     dispatch({
       type: 'SET_POST',
       payload: post
+    })
+  }
+
+  const setComment = (data) => {
+    dispatch({
+      type: "SET_COMMENT",
+      payload: data
     })
   }
 
@@ -342,6 +371,7 @@ export const PostProvider = (props) => {
         post,
         setPosts,
         setPost,
+        setComment,
         loadingData,
         morePosts,
         createPost,

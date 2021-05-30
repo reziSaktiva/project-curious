@@ -3,7 +3,7 @@ import moment from "moment";
 import Geocode from "react-geocode";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "../GraphQL/Mutations";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -47,9 +47,9 @@ const IconText = ({ icon, text }) => (
 );
 
 export default function SinglePost(props) {
-  const { post, setPost, loading } = useContext(PostContext);
+  const _isMounted = useRef(false)
+  const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const [address, setAddress] = useState("");
-  const [comments, setComments] = useState([]);
 
   let id = props.match.params.id;
 
@@ -59,11 +59,17 @@ export default function SinglePost(props) {
     if (id) {
       getPost({ variables: { id } });
     }
-  }, []);
+  }, [id]);
   //input form
 
   useEffect(() => {
-    if (data) {
+    if (!_isMounted.current && data) {
+      if (!data) {
+        loadingData()
+
+        return;
+      }
+
       const post = data.getPost
       setPost(post);
 
@@ -77,14 +83,19 @@ export default function SinglePost(props) {
         }
       );
 
-      setComments(post.comments);
+      // set did mount react
+      _isMounted.current = true;
+
+      return;
     }
-  }, [data]);
+  }, [data, _isMounted]);
 
   const [createComment] = useMutation(CREATE_COMMENT, {
     onError(err) {
       console.log(err.message);
-    },
+    },update(_, { data: { createComment: commentData } }){
+      setComment(commentData)
+  },
   });
 
   const onFinish = (values) => {
@@ -162,11 +173,11 @@ export default function SinglePost(props) {
           {post.text}
         </Skeleton>
       </List.Item>
-      {comments && comments.length == 0 ? null : (
+      {post.comments && post.comments.length == 0 ? null : (
         <List
           itemLayout="vertical"
           size="large"
-          dataSource={comments}
+          dataSource={post.comments}
           renderItem={(item) => (
             <Card
               style={{
@@ -247,8 +258,8 @@ export default function SinglePost(props) {
       <Form
         style={{ marginTop: 21, paddingBottom: -20 }}
         name="basic"
-        // onFinish={onFinish}
-        // onFinishFailed={onFinish}
+      onFinish={onFinish}
+      onFinishFailed={onFinish}
       >
         <Row>
           <Col span={2}>
