@@ -28,7 +28,7 @@ import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
 import Visited from './pages/Visited'
 import Popular from './pages/popular';
-import resetPassword from './pages/resetPassword';
+import resetPassword from './pages/reset-password';
 
 function App() {
   return (
