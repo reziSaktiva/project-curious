@@ -264,7 +264,6 @@ module.exports = {
           const post = dataPost.data();
 
           const { repost: repostId } = post;
-
           if (repostId) {
             const repostData = await db.doc(`/posts/${repostId}`).get();
 
@@ -277,11 +276,15 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
+          const mutedPost = await mutedCollection.get();
+          const muted = mutedPost.docs.map(doc => doc.data()) || [];
+
           return {
             ...post,
             likes,
             comments,
-            repost
+            repost,
+            muted
           }
         }
         catch (err) {

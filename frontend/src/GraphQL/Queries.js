@@ -238,7 +238,7 @@ query{
 `;
 
 export const GET_POST = gql`
-query($id: String!){
+query getPost($id: ID!){
 getPost(id: $id){
     id
     createdAt
