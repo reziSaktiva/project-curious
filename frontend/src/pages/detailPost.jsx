@@ -105,10 +105,6 @@ export default function SinglePost(props) {
     createComment({ variables: { id, text: comment } });
   };
 
-  // //translate location
-
-
-  // //post card start here
   return post ? (
     <List itemLayout="vertical" size="large">
       <PostNavBar />
