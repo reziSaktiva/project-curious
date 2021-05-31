@@ -79,6 +79,8 @@ export default function PostCard({ post, loading }) {
     }
   }, [post, isRepost]);
 
+  console.log("repost", repost);
+
   return (
     <List itemLayout="vertical" size="large">
       <List.Item
@@ -180,7 +182,7 @@ export default function PostCard({ post, loading }) {
             </div>
           }
           description={
-            <div style={{ marginTop: -15 }}>
+            <div>
               {moment(post.createdAt).fromNow()}
             </div>
           }
@@ -207,6 +209,14 @@ export default function PostCard({ post, loading }) {
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>
+            {repost.media?(
+              repost.media.length == 1 ? (
+                <Image
+                  style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300, objectFit: "cover" }}
+                  src={repost.media}
+                />
+              ) : null
+              ) : null}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
@@ -214,7 +224,7 @@ export default function PostCard({ post, loading }) {
         {post.media ? (
           post.media.length == 1 ? (
             <Image
-              style={{ width: "100%", borderRadius: 10, objectFit: "cover" }}
+              style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300 }}
               src={post.media}
             />
           ) : null

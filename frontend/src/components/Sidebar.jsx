@@ -87,17 +87,19 @@ const Sidebar = () => {
               />
             </Link>
           </div>
-
-          <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
+                <Link to="/profile">
+                <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
             {user.username ? user.username : "My Account"}
           </h3>
+                </Link>
+          
           <List.Item.Meta
             title={
-              <a href="/profile">
+              <Link href="/maps">
                 {" "}
                 <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                 {address}
-              </a>
+              </Link>
             }
           />
           <Menu

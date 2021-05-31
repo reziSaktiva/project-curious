@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image } from "antd";
+import { Image } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
 
 import { AuthContext } from "../context/auth";
-import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "./LikeButton";
-import CommentButton from "./CommentButton";
-import RepostButton from "./RepostButton";
-
-import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
 import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";

@@ -6,6 +6,8 @@ import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { getSession } from '../util/Session'
+import SkeletonLoading from './SkeletonLoading'
+import { LoadingOutlined } from '@ant-design/icons';
 
 function ScrollInfinite(props) {
     const { isLoading } = props;
@@ -25,14 +27,14 @@ function ScrollInfinite(props) {
         const loc = JSON.parse(location)
         nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng } })
     }
-    
+    console.log("posts", posts);
     return (
         <div>
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
                 hasMore={isMorePost}
-                loader={(!loading || !isLoading) && posts.length < 1 ? <h4>belum ada postingan</h4> : <h4>Loading...</h4>}
+                loader={(!loading || !isLoading) && posts.length < 1 ? <SkeletonLoading />  : <div className="centeringButton" ><LoadingOutlined /></div>}
                 scrollableTarget="scrollableDiv"
                 {...props}
             />

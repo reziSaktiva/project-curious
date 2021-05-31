@@ -6,7 +6,7 @@ import { LOGIN_USER } from '../GraphQL/Mutations'
 
 import { AuthContext } from '../context/auth'
 import { Link } from 'react-router-dom';
-import { auth } from '../util/Firebase';
+import { LoadingOutlined } from "@ant-design/icons";
 
 const layout = {
     labelCol: {
@@ -21,7 +21,7 @@ const Login = (props) => {
     const context = useContext(AuthContext)
     const [errors, setErrors] = useState({});
 
-    const [login] = useMutation(LOGIN_USER, {
+    const [login, { loading }] = useMutation(LOGIN_USER, {
         update(_, { data: { login } }) {
             
             context.login(login)
@@ -84,7 +84,7 @@ const Login = (props) => {
 
                         <Form.Item>
                             <button className="ui facebook button" type="submit" style={{ backgroundColor: '#7F57FF', width: 359, height: 40 }}>
-                                Sign in
+                            {loading ? (<LoadingOutlined />): ("Sign in")} 
     </button>
                         </Form.Item>
                     </Form>

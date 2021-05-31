@@ -7,6 +7,7 @@ import { AuthContext } from "../context/auth";
 import 'antd/dist/antd.css';
 import '../App.css'
 import {  Col, Row, Tabs } from 'antd';
+import { EditOutlined } from "@ant-design/icons";
 
 //assets
 import Pin from '../assets/pin-svg-25px.svg'
@@ -21,7 +22,7 @@ import PostCard from '../components/PostCard';
 
 
 
-function Profile() {
+function Profile(props) {
     const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
     const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
     const { user, liked } = useContext(AuthContext);
@@ -130,7 +131,7 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
         <div>
             <Row>
                     <Col span={6}>
-                    <button class="ui inverted basic button" type="text">
+                    <button class="ui inverted basic button" type="text" onClick={() => props.history.goBack()}>
                             <i class="chevron left icon" style={{ color: 'black' }}></i>
                     </button>
                     </Col>
@@ -147,19 +148,24 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
             <div style={{position:'fixed', width: "100%"}}>
                 <div class="ui divider" style={{ marginLeft: -14 }}/>
             </div>
-                <img src={user.profilePicture} 
-                     style={{
-                        marginTop:50,
-                        borderRadius:"50%",
-                        display: "block",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        width: 80,
-                        height: 80,
-                        objectFit: "cover"
-                     }}
-                />
-                <h4 style={{textAlign: "center"}}>My Account</h4>
+
+            <div style={{margin: "auto", width: 80, marginTop: 60, marginBottom: -10}}>
+                <div style={{position: "relative",textAlign: "center", width: 80}}>
+                    <img src={user.profilePicture} 
+                        style={{
+                            borderRadius:"50%",
+                            objectFit: "cover",
+                            width: 80,
+                            height: 80,
+                        }}
+                    />
+                    <div style={{ backgroundColor: "#7f57ff", color: "white", borderRadius: "50%", width: 21, height: 21, position: 'absolute', bottom: 0, right : 0 }}>
+                    <EditOutlined />
+                    </div>
+                </div>
+            </div>
+
+                <h4 style={{textAlign: "center"}}>{user.username}</h4>
                 <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
                     <Link to="/"><img src={Pin} style={{width:20, marginTop: -5}} /><span style={{ fontSize: 12 }}>{address}</span></Link>
                 </div>
