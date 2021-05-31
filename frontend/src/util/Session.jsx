@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode'
 
-import { LS_DATA_USER, LS_TOKEN, LS_LOCATION } from '../context/constant';
+import { LS_DATA_USER, LS_TOKEN, LS_LOCATION, R_SEARCH } from '../context/constant';
 
 export const Session = ({
     onLogout = () => { }
@@ -42,3 +42,13 @@ export const destorySession = () => {
         console.log('error destroy session: ', e);
     }
 };
+
+export const getRangeSearch = () => {
+  try {
+    const range = localStorage.getItem(R_SEARCH) || 10;
+
+    return range;
+  } catch (e) {
+    return 400;
+  }
+}

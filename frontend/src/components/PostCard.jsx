@@ -43,13 +43,16 @@ export default function PostCard({ post, loading }) {
 
   const [subscribePost] = useMutation(SUBSCRIBE_POST, {
     update(_, { data: { subscribePost } }) {
-      postContext.subscribePost(subscribePost)
-    }
-  })
+      postContext.subscribePost(subscribePost);
+    },
+  });
 
   const userName = user && user.username;
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
+
+  const { muted } = post;
+  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
 
   useEffect(() => {
     if (post.location) {
@@ -95,13 +98,13 @@ export default function PostCard({ post, loading }) {
                   id={post.id}
                 />
               </Col>
-              
+
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-              <Link to={`/post/${post.id}`}>
-                <CommentButton commentCount={post.commentCount} />
+                <Link to={`/post/${post.id}`}>
+                  <CommentButton commentCount={post.commentCount} />
                 </Link>
               </Col>
-              
+
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                 <RepostButton idPost={post.id} />
               </Col>
@@ -152,7 +155,7 @@ export default function PostCard({ post, loading }) {
                             mutePost({ variables: { id: post.id } })
                           }
                         >
-                          Mute
+                          {isMuted ? "Unmute" : "Mute"}
                         </Menu.Item>
                         <Menu.Item key="3">Report</Menu.Item>
                         {userName === post.owner ? (
@@ -286,9 +289,9 @@ export default function PostCard({ post, loading }) {
                           style={
                             post.media.length > 3
                               ? {
-                                borderRadius: "0px 0px 10px 0px",
-                                filter: "blur(2px)",
-                              }
+                                  borderRadius: "0px 0px 10px 0px",
+                                  filter: "blur(2px)",
+                                }
                               : { borderRadius: "0px 0px 10px 0px" }
                           }
                           src={post.media[2]}
@@ -352,9 +355,9 @@ export default function PostCard({ post, loading }) {
                         style={
                           post.media.length > 3
                             ? {
-                              borderRadius: "0px 0px 10px 0px",
-                              filter: "blur(2px)",
-                            }
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
                             : { borderRadius: "0px 0px 10px 0px" }
                         }
                       />

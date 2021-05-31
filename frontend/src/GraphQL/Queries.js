@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_POSTS = gql`
-  query getPostNearby($lat: Float, $lng: Float) {
-    getPosts(lat: $lat, lng: $lng) {
+  query getPostNearby($lat: Float, $lng: Float, $range: Float) {
+    getPosts(lat: $lat, lng: $lng, range: $range) {
       id
       owner
       text
@@ -238,7 +238,7 @@ query{
 `;
 
 export const GET_POST = gql`
-query($id: String!){
+query getPost($id: ID!){
 getPost(id: $id){
     id
     createdAt

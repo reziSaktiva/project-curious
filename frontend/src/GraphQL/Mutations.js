@@ -2,12 +2,12 @@ import { gql } from "@apollo/client";
 
 export const SUBSCRIBE_POST = gql`
   mutation subscribePost($id: ID!) {
-    subscribePost(id: $id){ 
+    subscribePost(postId: $id){
     postId
     owner
     createdAt
-    isSubcribe
-    }
+    isSubscribe
+  }
   }
 `
 

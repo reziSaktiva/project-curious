@@ -7,7 +7,7 @@ const randomGenerator = require("../../utility/randomGenerator");
 
 module.exports = {
   Query: {
-    async getPosts(_, { lat, lng }) {
+    async getPosts(_, { lat, lng, range }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -122,7 +122,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= 1000) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -264,7 +264,6 @@ module.exports = {
           const post = dataPost.data();
 
           const { repost: repostId } = post;
-
           if (repostId) {
             const repostData = await db.doc(`/posts/${repostId}`).get();
 
@@ -277,11 +276,15 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
+          const mutedPost = await mutedCollection.get();
+          const muted = mutedPost.docs.map(doc => doc.data()) || [];
+
           return {
             ...post,
             likes,
             comments,
-            repost
+            repost,
+            muted
           }
         }
         catch (err) {

@@ -88,11 +88,11 @@ module.exports = gql`
         isSubscribe: Boolean
     }
     type Query {
-        getPosts(lat: Float, lng: Float): [Post]!
+        getPosts(lat: Float, lng: Float, range: Float): [Post]!
         getPopularPosts(lat: Float, lng: Float): [Post]!
         getProfilePosts: [Post]!
         getProfileLikedPost: [Post]!
-        getPost(id: String!): Post!
+        getPost(id: ID!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
