@@ -49,7 +49,12 @@ module.exports = {
             return mutedData.docs.map(doc => doc.data());
           }
 
-          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData() }
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -71,7 +76,7 @@ module.exports = {
 
       return [];
     },
-    async getPopularPosts(_, { lat, lng }, context) {
+    async getPopularPosts(_, { lat, lng, range }, context) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -113,7 +118,12 @@ module.exports = {
             return mutedData.docs.map(doc => doc.data());
           }
 
-          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData() }
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -186,6 +196,11 @@ module.exports = {
                     });
                 }
 
+                const subscribe = async () => {
+                  const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+                  return subscribeData.docs.map(doc => doc.data());
+                }
+
                 posts.push({
                   id: doc.data().id,
                   text: doc.data().text,
@@ -197,7 +212,8 @@ module.exports = {
                   location: doc.data().location,
                   likes: likes(),
                   comments: comments(),
-                  muted: muted()
+                  muted: muted(),
+                  subscribe: subscribe()
                 });
               });
             });
@@ -211,39 +227,39 @@ module.exports = {
 
     },
     async getProfileLikedPost(_, args, context) {
-      const {likes} = await fbAuthContext(context)
-      
+      const { likes } = await fbAuthContext(context)
+
       try {
-      //fungsi ngambil postingan yang sudah di like
-      const likesData = likes.map(data => data.postId)
-      const likePost = await db.collection("/posts").where("id", "in", likesData).get()
-      const Post = likePost.docs.map(  doc => doc.data())
-      
-      //fungsi ngambil koleksi likes
-      
-      
-      // Cara 1
-      return Post.map(async doc => {
-        const request = await db.collection(`/posts/${doc.id}/likes`).get()
-        const likes = request.docs.map(doc => doc.data())
+        //fungsi ngambil postingan yang sudah di like
+        const likesData = likes.map(data => data.postId)
+        const likePost = await db.collection("/posts").where("id", "in", likesData).get()
+        const Post = likePost.docs.map(doc => doc.data())
 
-        return { ...doc, likes }
-      })
+        //fungsi ngambil koleksi likes
 
 
-      // Cara 2
-      // const Likesnya = likesData.map(async doc => await db.collection(`/posts/${doc}/likes`).get());
-      
-      // return Promise.all(Likesnya).then(req => { // pakai promise.all karna di `Likesnya` ini isinya array of Promise, jadi perlu di ambil semua requestnya
-      //   return req.map((v, idx) => {
-      //     const like = v.docs.map(doc => doc.data())
-      //     return {
-      //       ...Post[idx],
-      //       likes: like
-      //     }
-      //   });
-      // });
-      
+        // Cara 1
+        return Post.map(async doc => {
+          const request = await db.collection(`/posts/${doc.id}/likes`).get()
+          const likes = request.docs.map(doc => doc.data())
+
+          return { ...doc, likes }
+        })
+
+
+        // Cara 2
+        // const Likesnya = likesData.map(async doc => await db.collection(`/posts/${doc}/likes`).get());
+
+        // return Promise.all(Likesnya).then(req => { // pakai promise.all karna di `Likesnya` ini isinya array of Promise, jadi perlu di ambil semua requestnya
+        //   return req.map((v, idx) => {
+        //     const like = v.docs.map(doc => doc.data())
+        //     return {
+        //       ...Post[idx],
+        //       likes: like
+        //     }
+        //   });
+        // });
+
       } catch (error) {
         console.log(error);
       }
@@ -255,6 +271,7 @@ module.exports = {
       const commentCollection = db.collection(`/posts/${id}/comments`)
       const likeCollection = db.collection(`/posts/${id}/likes`)
       const mutedCollection = db.collection(`/posts/${id}/muted`)
+      const subscribeCollection = db.collection(`/posts/${id}/subscribes`)
 
       if (username) {
         try {
@@ -279,12 +296,16 @@ module.exports = {
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
+          const subscribePost = await subscribeCollection.get();
+          const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
+
           return {
             ...post,
             likes,
             comments,
             repost,
-            muted
+            muted,
+            subscribe
           }
         }
         catch (err) {
@@ -424,7 +445,12 @@ module.exports = {
             return mutedData.docs.map(doc => doc.data());
           }
 
-          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData() }
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -490,7 +516,12 @@ module.exports = {
             return mutedData.docs.map(doc => doc.data());
           }
 
-          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData() }
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
@@ -949,9 +980,7 @@ module.exports = {
           });
 
         return {
-          owner: username,
-          createdAt: subscribe.createdAt,
-          postId: subscribe.postId,
+          ...subscribe,
           isSubscribe: isSubscribed
         };
       } catch (err) {

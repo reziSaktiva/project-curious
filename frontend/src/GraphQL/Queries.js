@@ -39,13 +39,21 @@ export const GET_POSTS = gql`
           lng
         }
       }
+      subscribe {
+          postId
+          owner
+          createdAt
+          displayName
+          displayImage
+          colorCode
+      }
     }
   }
 `;
 
 export const GET_POPULAR_POSTS = gql`
-  query getPosts($lat: Float, $lng: Float) {
-    getPopularPosts(lat: $lat, lng: $lng) {
+  query getPosts($lat: Float, $lng: Float $range: Float) {
+    getPopularPosts(lat: $lat, lng: $lng range: $range) {
       id
       owner
       text
@@ -82,6 +90,14 @@ export const GET_POPULAR_POSTS = gql`
           lng
         }
       }
+      subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
   }
 `;
@@ -125,6 +141,14 @@ query {
           lng
         }
       }
+      subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
   }
 `;
@@ -168,6 +192,14 @@ query {
           lng
         }
       }
+      subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
   }
 `;
@@ -268,6 +300,14 @@ getPost(id: $id){
         photoProfile
         colorCode
         }
+    subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+      }
     }
 }
 `;
