@@ -1,0 +1,24 @@
+.landingPage-input .btn-wrapper {
+  padding-left: 70px;
+  padding-right: 70px;
+  position: relative;
+}
+
+.copy-right {
+  margin-top: 25vh
+}
+
+@media only screen and (max-width: 600px) {
+  .landingPage-input .btn-wrapper {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  
+  .landingPage-input {
+    width: 65%;
+  }
+
+  .copy-right {
+    margin-top: 10vh
+  }
+}

@@ -19,7 +19,7 @@ import map from './pages/map/index'
 
 import RegisterFacebook from './pages/registerFacebook';
 import RegisterGoogle from './pages/registerGoogle';
-import LandingPage from './pages/landingPage';
+import LandingPage from './pages/landing-page';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
 import Nearby from './pages/nearby';
