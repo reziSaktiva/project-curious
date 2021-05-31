@@ -29,6 +29,7 @@ import Profile from './pages/Profile'
 import Visited from './pages/Visited'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
+import confirmPassword from './pages/confirm-password';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <HomeRoute exact path="/" component={LandingPage} />
             <AuthRoute exact path="/login" component={login} />
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
+            <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />

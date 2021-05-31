@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Form, Input, Alert } from 'antd';
+import { useHistory } from 'react-router-dom'
 
 import { useMutation } from '@apollo/client'
 import { LOGIN_USER } from '../../GraphQL/Mutations'
@@ -8,7 +9,7 @@ import { AuthContext } from '../../context/auth'
 import { Link } from 'react-router-dom';
 import { auth } from '../../util/Firebase';
 
-import './style.css';
+import '../reset-password/style.css';
 
 const layout = {
   labelCol: {
@@ -21,8 +22,19 @@ const layout = {
 
 export default function ReserPassword(props) {
   const context = useContext(AuthContext);
+  const history = useHistory();
+
+  const search = history.location.search.substring(1);
+  const querystring = search && JSON.parse(
+    '{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+    function(key, value) { return key===""?value:decodeURIComponent(value)
+  });
+
+  const { oobCode } = querystring;
+
+  // Local State
   const [alert, setAlert] = useState('');
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState('');
 
   const [login] = useMutation(LOGIN_USER, {
     update(_, { data: { login } }) {
@@ -36,13 +48,21 @@ export default function ReserPassword(props) {
   })
 
   const onFinish = (values) => {
-    const { email } = values
+    const { password } = values
 
-    auth.sendPasswordResetEmail(email).then(
-      (resp) => {
-        console.log("email sent@: ", resp)
+    if (!oobCode) {
+      setAlert('error');
+      setMessage('Verify code is not valid or expired');
+    }
+
+    auth.confirmPasswordReset(oobCode, password).then(
+      () => {
         setAlert('success');
-        setMessage('Success send link reset passowrd to your email');
+        setMessage('Success reset your password, will redirect to login page in a few seconds');
+
+        setTimeout(() => {
+          history.replace('/login');
+        }, 1500)
       }
     )
     .catch(error => {
@@ -59,14 +79,11 @@ export default function ReserPassword(props) {
     })
   };
 
-  const onCloseErr = (e) => {
-    console.log(e, 'I was closed.');
+  const onCloseErr = () => {
     setAlert('');
     setMessage('');
   };
   
-  console.log('message: ', !!(message && alert));
-  console.log('alert : ', alert)
   return (
     <div>
       <Link to='/' className="header-page">
@@ -74,7 +91,7 @@ export default function ReserPassword(props) {
         </Link>
       <div className="body-page ui card container">
         <div className="body-page__wrapper content">
-          <h1>Reset Password</h1>
+          <h1>Change Password</h1>
           <Form
             {...layout}
             name="basic"
@@ -83,21 +100,21 @@ export default function ReserPassword(props) {
             }}
             onFinish={onFinish}>
               <Form.Item
-                name="email"
+                name="password"
                 className="body-page__textfield"
                 rules={[
                   {
                     required: true,
-                    message: 'Please input your email!',
+                    message: 'Please input your new password!',
                   },
                 ]}
               >
-                <Input placeholder="Email / Username" />
+                <Input placeholder="Input your new password" type="password" />
               </Form.Item>
 
               <Form.Item>
                 <button className="ui facebook button body-page__btn-send" type="submit" >
-                    Send Verification Email
+                    Send
                 </button>
               </Form.Item>
             </Form>
