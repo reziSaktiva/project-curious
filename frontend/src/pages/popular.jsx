@@ -29,19 +29,20 @@ function Popular() {
     }, [location]);
 
     useEffect(() => {
-        if (data) { // check if doesn't fetch data
+        if (data  && !_isMounted.current) { // check if doesn't fetch data
             if (!data) {
                 loadingData();
 
                 return;
             }
             setPosts(data.getPopularPosts)
-            
+
+            _isMounted.current = true
             // set did mount react
 
             return;
         }
-    }, [data])
+    }, [data, _isMounted])
 
     return (
         <div>

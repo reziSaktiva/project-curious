@@ -163,7 +163,7 @@ export default function PostCard({ post, loading }) {
                           <Menu.Item
                             key="4"
                             onClick={() =>
-                              deletePost({ variables: { id: post.Id } })
+                              deletePost({ variables: { id: post.id } })
                             }
                           >
                             Delete Post
