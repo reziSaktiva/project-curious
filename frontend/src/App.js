@@ -13,7 +13,7 @@ import FacebookAuthRoute from './util/FacebookAuthRoute'
 import GoogleAuthRoute from './util/GoogleAuthRoute'
 
 // Importing Pages & Components
-import login from './pages/login';
+import login from './pages/login/index';
 import register from './pages/register';
 import map from './pages/map/index'
 

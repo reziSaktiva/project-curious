@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Link, useHistory } from "react-router-dom";
 import {
   UserOutlined,
   HomeOutlined,
@@ -11,18 +12,23 @@ import { PostContext } from "../../context/posts";
 
 import './style.css';
 
-const BottomBar = props => {
+const BottomBar = () => {
   const { toggleOpenNewPost } = useContext(PostContext);
+  const history = useHistory();
 
   const handleOpenAddPost = () => {
     toggleOpenNewPost()
   }
 
+  const currentPath = history.location.pathname.replace('/', '');
+
   return (
     <div className="bottom-bar">
       <div className="bottom-bar__wrapper">
         <div className="bottom-bar__items">
-          <HomeOutlined style={{ fontSize: 20 }} />
+          <Link className={`${currentPath === '' ? 'active' : '' }`} to="/">
+            <HomeOutlined style={{ fontSize: 20 }} />
+          </Link>
         </div>
         <div className="bottom-bar__items">
           <SearchOutlined style={{ fontSize: 20 }} />
@@ -38,7 +44,9 @@ const BottomBar = props => {
           <MessageOutlined style={{ fontSize: 20 }} />
         </div>
         <div className="bottom-bar__items">
-          <UserOutlined style={{ fontSize: 20 }} />
+          <Link className={`${currentPath === 'profile' ? 'active' : '' }`} to="/profile">
+            <UserOutlined style={{ fontSize: 20 }} />
+          </Link>
         </div>
       </div>
     </div>
