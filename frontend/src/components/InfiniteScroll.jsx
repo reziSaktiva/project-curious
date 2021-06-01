@@ -27,7 +27,6 @@ function ScrollInfinite(props) {
         const loc = JSON.parse(location)
         nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng } })
     }
-    console.log("posts", posts);
     return (
         <div>
             <InfiniteScroll

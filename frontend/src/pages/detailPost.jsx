@@ -53,7 +53,9 @@ export default function SinglePost(props) {
 
   let id = props.match.params.id;
 
-  const [getPost, { data }] = useLazyQuery(GET_POST);
+  const [getPost, { data }] = useLazyQuery(GET_POST ,{
+    fetchPolicy: "network-only"
+  });
 
   useEffect(() => {
     if (id) {

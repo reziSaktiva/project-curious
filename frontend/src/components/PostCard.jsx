@@ -51,8 +51,11 @@ export default function PostCard({ post, loading }) {
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
 
-  const { muted } = post;
-  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
+  const { muted, subscribe } = post;
+  const isMuted =
+    user && muted && muted.find((mute) => mute.owner === user.username);
+  const isSubscribe =
+    user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   useEffect(() => {
     if (post.location) {
@@ -145,7 +148,7 @@ export default function PostCard({ post, loading }) {
                             subscribePost({ variables: { id: post.id } })
                           }
                         >
-                          Subscribe
+                          {isSubscribe ? "Unsubscribe" : "Subscribe"}
                         </Menu.Item>
                         <Menu.Item
                           key="1"
@@ -160,7 +163,7 @@ export default function PostCard({ post, loading }) {
                           <Menu.Item
                             key="4"
                             onClick={() =>
-                              deletePost({ variables: { id: post.Id } })
+                              deletePost({ variables: { id: post.id } })
                             }
                           >
                             Delete Post
@@ -182,11 +185,7 @@ export default function PostCard({ post, loading }) {
               </Row>
             </div>
           }
-          description={
-            <div>
-              {moment(post.createdAt).fromNow()}
-            </div>
-          }
+          description={<div>{moment(post.createdAt).fromNow()}</div>}
         ></List.Item.Meta>
         {isRepost && (
           <Card
@@ -210,14 +209,20 @@ export default function PostCard({ post, loading }) {
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>
-            {repost.media?(
+            {repost.media ? (
               repost.media.length == 1 ? (
                 <Image
-                  style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300, objectFit: "cover" }}
+                  style={{
+                    width: "100%",
+                    borderRadius: 10,
+                    objectFit: "cover",
+                    maxHeight: 300,
+                    objectFit: "cover",
+                  }}
                   src={repost.media}
                 />
               ) : null
-              ) : null}
+            ) : null}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
@@ -225,7 +230,12 @@ export default function PostCard({ post, loading }) {
         {post.media ? (
           post.media.length == 1 ? (
             <Image
-              style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300 }}
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                objectFit: "cover",
+                maxHeight: 300,
+              }}
               src={post.media}
             />
           ) : null
