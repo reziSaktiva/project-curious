@@ -71,7 +71,7 @@ export default function ReserPassword(props) {
     <div>
       <Link to='/' className="header-page">
         <div className="curious"/>
-        </Link>
+      </Link>
       <div className="body-page ui card container">
         <div className="body-page__wrapper content">
           <h1>Reset Password</h1>

@@ -82,8 +82,6 @@ export default function PostCard({ post, loading }) {
     }
   }, [post, isRepost]);
 
-  console.log("repost", repost);
-
   return (
     <List itemLayout="vertical" size="large">
       <List.Item
