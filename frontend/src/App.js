@@ -19,7 +19,7 @@ import map from './pages/map/index'
 
 import RegisterFacebook from './pages/registerFacebook';
 import RegisterGoogle from './pages/registerGoogle';
-import LandingPage from './pages/landingPage';
+import LandingPage from './pages/landing-page';
 import Grid from './pages/grid';
 import SinglePost from './pages/detailPost';
 import Nearby from './pages/nearby';
@@ -28,7 +28,8 @@ import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
 import Visited from './pages/Visited'
 import Popular from './pages/popular';
-import resetPassword from './pages/resetPassword';
+import resetPassword from './pages/reset-password';
+import confirmPassword from './pages/confirm-password';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <HomeRoute exact path="/" component={LandingPage} />
             <AuthRoute exact path="/login" component={login} />
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
+            <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
