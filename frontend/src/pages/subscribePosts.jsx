@@ -11,7 +11,9 @@ import NavBar from '../components/NavBar'
 
 
 function SubscribePosts() {
-    const { data } = useQuery(GET_SUBSCRIBED_POSTS);
+    const { data } = useQuery(GET_SUBSCRIBED_POSTS, {
+        fetchPolicy: "network-only"
+      });
 
     const _isMounted = useRef(false);
     const { subscribePosts, setSubscribePosts, loadingData, loading } = useContext(PostContext)

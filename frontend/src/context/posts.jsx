@@ -69,9 +69,49 @@ const reducer = (state, action) => {
         },
       };
     case "LIKE_POST":
-      console.log(state.post);
+      let subcribePosts = state.subscribePosts.length !== 0
+      let mutedPost = state.mutedPost.length !== 0
       return {
         ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
+        subscribePosts: subcribePosts && state.subscribePosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
+        mutedPost: mutedPost && state.mutedPost.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
         posts: state.posts.map((post) => {
           if (post.id === action.payload.postId) {
             const updatedPost = {

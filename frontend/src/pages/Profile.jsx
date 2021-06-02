@@ -23,10 +23,14 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
 
+// Components
+import PostCard from '../components/PostCard';
+import AppBar from '../components/AppBar';
 
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import { PostContext } from '../context/posts';
 const  storage = firebase.storage()
 
 const InitialState = {
@@ -35,20 +39,24 @@ const InitialState = {
     isFinishUpload: false,
   };
 
-// Components
-import PostCard from '../components/PostCard';
-import { AuthContext } from "../context/auth";
-import AppBar from '../components/AppBar';
-
 function Profile() {
-    const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
+    const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
+        fetchPolicy: "network-only"
+      });
     const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
     const [changePPuser, { data }] = useMutation(CHANGE_PP);
-    const { user, liked } = useContext(AuthContext);
+    const { user, changeProfilePicture } = useContext(AuthContext);
+    const { posts, setPosts } = useContext(PostContext)
     const [gallery, setGallery] = useState([]);
     const [address, setAddress] = useState(""); 
     const [profilePicture, setProfilePicture] = useState(InitialState);
     const { isFinishUpload, url} = profilePicture;
+
+    useEffect(() => {
+        if(getProfilePosts){
+            setPosts(getProfilePosts.getProfilePosts)
+        }
+    }, [getProfilePosts])
 
     //change Photo Profile funtion
 
@@ -64,7 +72,10 @@ function Profile() {
               .ref("proflePicture")
               .child(value.file.originFileObj.name)
               .getDownloadURL()
-              .then(url => setProfilePicture({url , isFinishUpload: true}))
+              .then(url => {
+                setProfilePicture({url , isFinishUpload: true})
+                changeProfilePicture(url)
+              })
             }
         )
     }
@@ -116,8 +127,8 @@ function Profile() {
     const Demo = () => (
         <Tabs defaultActiveKey="1" centered>
             <TabPane tab="Posts" key="1">
-            {!getProfilePosts ? null
-                    : getProfilePosts.getProfilePosts.map((post, key) => {
+            {!getProfilePosts ? <p>loading...</p>
+                    : posts.map((post, key) => {
                         return (
                             user && 
                                 <div key={`posts${post.id} ${key}`}>
@@ -173,7 +184,7 @@ function Profile() {
             </TabPane>
             
         </Tabs>
-    );
+    )
 
     return (
         <div>
@@ -223,10 +234,10 @@ function Profile() {
             </div>
             
             <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20, marginBottom: 40 }}>
-                <div class="ui action input"
+                <div className="ui action input"
                     style={{height: 25}}>
                     <input type="text" value="http://ww.short.url/c0opq" />
-                    <button class="ui teal right icon button" style={{ backgroundColor: '#7F57FF', fontSize: 10 }}>
+                    <button className="ui teal right icon button" style={{ backgroundColor: '#7F57FF', fontSize: 10 }}>
                         Copy
                     </button>
                 </div>
