@@ -73,6 +73,12 @@ export const DELETE_POST = gql`
   }
 `
 
+export const CHANGE_PP = gql`
+  mutation changePPUser($url: String!) {
+    changePPUser(url: $url)
+  }
+`
+
 export const MUTE_POST = gql`
   mutation mutePost($id: ID!) {
     mutePost( postId: $id ){

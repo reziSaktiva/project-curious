@@ -355,6 +355,17 @@ transform: translate(-50%, 30%);
   grid-row-start: 2;
   grid-row-end: 4;
 }
+
+/* NOTIFICATION */
+
+.notifContainer :hover {
+  background-color: #7958f5;
+  color: white;
+  padding: 2px;
+}
+.notifContainer {
+  padding: 4px;
+}
 @media only screen and (max-width: 767px) {
   .ui.container {
     margin-left: 0px !important;

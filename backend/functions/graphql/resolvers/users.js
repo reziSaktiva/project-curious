@@ -424,6 +424,21 @@ module.exports = {
                 console.log(err)
                 throw new Error(err)
             }
+        },
+        async changePPUser(_, {url}, context) {
+            const { username } = await fbAuthContext(context)
+            console.log(url);
+
+            try {
+                await db.doc(`users/${username}`).get()
+                .then(doc => {
+                    doc.ref.update({profilePicture: url})
+                }) 
+
+                return "beres"
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 }
