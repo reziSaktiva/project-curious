@@ -268,6 +268,17 @@ getPost(id: $id){
         photoProfile
         colorCode
         }
+        repost {
+          id
+          owner
+          text
+          media
+          createdAt
+          location {
+            lat
+            lng
+          }
+        }
     }
 }
 `;

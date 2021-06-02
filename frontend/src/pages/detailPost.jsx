@@ -6,6 +6,7 @@ import { CREATE_COMMENT } from "../GraphQL/Mutations";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { get } from "lodash";
 
 //antd
 import {
@@ -21,6 +22,7 @@ import {
   Upload,
   Button,
   Form,
+  Image
 } from "antd";
 
 //component
@@ -50,6 +52,7 @@ export default function SinglePost(props) {
   const _isMounted = useRef(false)
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const [address, setAddress] = useState("");
+  const [repostAddress, setRepostAddress] = useState("");
 
   let id = props.match.params.id;
 
@@ -72,6 +75,7 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
+      console.log(post);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
@@ -89,6 +93,28 @@ export default function SinglePost(props) {
       return;
     }
   }, [data, _isMounted]);
+
+  //repost
+  const repost = get(post, "repost") || {};
+  const isRepost = get(repost, "id") || "";
+
+  console.log("repost", repost);
+  useEffect(() => {
+      if (isRepost) {
+        const { location } = repost;
+        Geocode.fromLatLng(location.lat, location.lng).then(
+          (response) => {
+            const address =
+              response.results[0].address_components[1].short_name;
+            setRepostAddress(address);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      }
+  }, [post, isRepost]);
+
 
   const [createComment] = useMutation(CREATE_COMMENT, {
     onError(err) {
@@ -166,6 +192,39 @@ export default function SinglePost(props) {
             }
             description={moment(post.createdAt).fromNow()}
           />
+          {isRepost && (
+          <Card
+            bodyStyle={{ padding: "10px 12px" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: 10,
+              backgroundColor: "#f5f5f5",
+              borderColor: "#ededed",
+              padding: 0,
+              marginBottom: 20,
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <p className="ic-location-small" style={{ margin: 0 }} />
+              <div style={{ fontWeight: 600, paddingLeft: 10 }}>
+                {repostAddress}
+              </div>
+            </div>
+            <span style={{ fontSize: 12 }}>
+              {moment(repost.createdAt).fromNow()}
+            </span>
+            {repost.media?(
+              repost.media.length == 1 ? (
+                <Image
+                  style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300, objectFit: "cover" }}
+                  src={repost.media}
+                />
+              ) : null
+              ) : null}
+            <div style={{ marginTop: 5 }}>{repost.text}</div>
+          </Card>
+        )}
           {post.text}
         </Skeleton>
       </List.Item>

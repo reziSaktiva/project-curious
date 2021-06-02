@@ -140,6 +140,7 @@ module.exports = gql`
         checkUserWithFacebook(username: String!): Boolean!
         checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
+        changePPUser( url : String! ): String!
 
         # posts mutation
         getPost( id:ID! ): Post!

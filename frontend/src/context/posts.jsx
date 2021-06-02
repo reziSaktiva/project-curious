@@ -84,7 +84,7 @@ const reducer = (state, action) => {
 
           return post;
         }),
-        post: {
+        post: state.post && {
           ...state.post,
           likes: [...state.post.likes, action.payload.data],
           likeCount: state.post.likeCount + 1
@@ -107,7 +107,7 @@ const reducer = (state, action) => {
 
           return post;
         }),
-        post: {
+        post: state.post && {
           ...state.post,
           likes: state.post.likes.filter((like) => like.owner !== data.owner),
           likeCount: state.post.likeCount - 1

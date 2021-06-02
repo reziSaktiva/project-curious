@@ -24,6 +24,7 @@ Geocode.setLanguage("id");
 export default function PostCard({ post, loading }) {
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
+  const [repostData, setRepostData] = useState("");
 
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
@@ -46,10 +47,11 @@ export default function PostCard({ post, loading }) {
       postContext.subscribePost(subscribePost);
     },
   });
-
   const userName = user && user.username;
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
+  
+console.log("post", post.owner,"userName", userName, "repost", repost.owner);
 
   const { muted } = post;
   const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
@@ -73,6 +75,7 @@ export default function PostCard({ post, loading }) {
             const address =
               response.results[0].address_components[1].short_name;
             setRepostAddress(address);
+            setRepostData(repost)
           },
           (error) => {
             console.error(error);
@@ -81,8 +84,6 @@ export default function PostCard({ post, loading }) {
       }
     }
   }, [post, isRepost]);
-
-  console.log("repost", repost);
 
   return (
     <List itemLayout="vertical" size="large">
@@ -203,12 +204,25 @@ export default function PostCard({ post, loading }) {
               marginBottom: 20,
             }}
           >
-            <div style={{ display: "flex" }}>
-              <p className="ic-location-small" style={{ margin: 0 }} />
-              <div style={{ fontWeight: 600, paddingLeft: 10 }}>
-                {repostAddress}
-              </div>
-            </div>
+            <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                    <img src={Pin} style={{ width: 15, marginTop: -4 }} />
+                    {repostAddress}
+                  </Link>
+                  {userName == post.owner && (
+                    <div
+                      style={{
+                        width: 60,
+                        height: 20,
+                        border: "1px black solid",
+                        borderRadius: 5,
+                        textAlign: "center",
+                        display: "inline-block",
+                        marginLeft: 6,
+                      }}
+                    >
+                      <p style={{ fontSize: 14 }}>My Post</p>
+                    </div>
+                  )}
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>

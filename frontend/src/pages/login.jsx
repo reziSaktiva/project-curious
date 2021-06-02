@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Form, Input, Alert } from 'antd';
+import { Form, Input, Alert, Button } from 'antd';
 
 import { useMutation } from '@apollo/client'
 import { LOGIN_USER } from '../GraphQL/Mutations'
@@ -41,7 +41,6 @@ const Login = (props) => {
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
     };
-
     return (
         <div>
             <div className="curious" style={{ marginLeft: 710, marginTop: 100 }} />
@@ -83,9 +82,9 @@ const Login = (props) => {
                         </Form.Item>
 
                         <Form.Item>
-                            <button className="ui facebook button" type="submit" style={{ backgroundColor: '#7F57FF', width: 359, height: 40 }}>
+                            <button disabled={loading? true : false} className="ui facebook button" type="submit" style={{ backgroundColor: '#7F57FF', width: 359, height: 40 }}>
                             {loading ? (<LoadingOutlined />): ("Sign in")} 
-    </button>
+                            </button>
                         </Form.Item>
                     </Form>
                     <Link to='/resetPassword'>

@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames';
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { chunk } from 'lodash';
-import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from '../GraphQL/Queries'
+import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from '../GraphQL/Queries';
+import { CHANGE_PP } from '../GraphQL/Mutations';
 import { AuthContext } from "../context/auth";
 import 'antd/dist/antd.css';
 import '../App.css'
-import {  Col, Row, Tabs } from 'antd';
+import {  Col, Row, Tabs, Upload } from 'antd';
 import { EditOutlined } from "@ant-design/icons";
+
+import ImgCrop from 'antd-img-crop';
 
 //assets
 import Pin from '../assets/pin-svg-25px.svg'
@@ -20,14 +23,53 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 
+// Init Firebase
+import firebase from 'firebase/app'
+import 'firebase/storage'
+const  storage = firebase.storage()
 
+const InitialState = {
+
+    url:'',
+    isFinishUpload: false,
+  };
 
 function Profile(props) {
     const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
     const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
+    const [changePPuser, { data }] = useMutation(CHANGE_PP);
     const { user, liked } = useContext(AuthContext);
-    const [gallery, setGallery] = useState([]); 
-    const [address, setAddress] = useState("");
+    const [gallery, setGallery] = useState([]);
+    const [address, setAddress] = useState(""); 
+    const [profilePicture, setProfilePicture] = useState(InitialState);
+    const { isFinishUpload, url} = profilePicture;
+
+    //change Photo Profile funtion
+
+    const handleChange = (value) => {
+            const uploadTask =  storage.ref(`proflePicture/${value.file.originFileObj.name}`).put(value.file.originFileObj)
+            uploadTask.on('state_changed',
+            () => {},
+            error => {
+              console.log(error);
+            },
+            async () => {
+              storage
+              .ref("proflePicture")
+              .child(value.file.originFileObj.name)
+              .getDownloadURL()
+              .then(url => setProfilePicture({url , isFinishUpload: true}))
+            }
+        )
+    }
+
+    useEffect(() => {
+        if(isFinishUpload){
+            console.log("dor");
+            changePPuser({variables: { url }})
+        }
+    }, [url, isFinishUpload])
+
     //set location
     const loc = localStorage.location;
 
@@ -65,7 +107,6 @@ function Profile(props) {
 const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc => doc.likeCount)
     const { TabPane } = Tabs;
 
-    console.log('gallery: ', gallery)
     const Demo = () => (
         <Tabs defaultActiveKey="1" centered>
             <TabPane tab="Posts" key="1">
@@ -160,7 +201,11 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
                         }}
                     />
                     <div style={{ backgroundColor: "#7f57ff", color: "white", borderRadius: "50%", width: 21, height: 21, position: 'absolute', bottom: 0, right : 0 }}>
-                    <EditOutlined />
+                        <ImgCrop rotate>
+                        <Upload onChange={handleChange} showUploadList={false}>
+                        <EditOutlined />
+                        </Upload>
+                        </ImgCrop>
                     </div>
                 </div>
             </div>

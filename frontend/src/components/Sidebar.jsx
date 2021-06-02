@@ -71,7 +71,7 @@ const Sidebar = () => {
       >
         <Sider
           className="site-layout-background"
-          width={windowWidth < 1200 ? 230 : 280}
+          width={windowWidth < 1200 ? 230 : 240}
           style={{ backgroundColor: "white" }}
           collapsed={windowWidth < 993 ? true : false}
         >

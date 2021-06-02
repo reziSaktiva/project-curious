@@ -18,10 +18,10 @@ export default function Grid({ children }) {
         return (
             <Container>
                 <Row>
-                    <Col xs={0} sm={0} md={3} lg={6} xl={6} >
+                    <Col xs={0} sm={0} md={3} lg={6} xl={5} >
                         {user && <Sidebar />}
                     </Col>
-                    <Col xs={24} sm={24} md={15} lg={12} xl={12} style={{borderRight: "1px #cccccc solid" }}>
+                    <Col xs={24} sm={24} md={15} lg={12} xl={13} style={{borderRight: "1px #cccccc solid" }}>
                         {children}
                     </Col>
                     <Col xs={0} sm={24} md={6} lg={6} xl={6}>
