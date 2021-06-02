@@ -1,3 +1,4 @@
+// Modules
 import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames';
 import { useMutation, useQuery } from '@apollo/client'
@@ -21,7 +22,7 @@ import Geocode from "react-geocode";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
-import PostCard from '../components/PostCard';
+
 
 // Init Firebase
 import firebase from 'firebase/app'
@@ -34,7 +35,12 @@ const InitialState = {
     isFinishUpload: false,
   };
 
-function Profile(props) {
+// Components
+import PostCard from '../components/PostCard';
+import { AuthContext } from "../context/auth";
+import AppBar from '../components/AppBar';
+
+function Profile() {
     const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
     const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
     const [changePPuser, { data }] = useMutation(CHANGE_PP);
@@ -104,7 +110,7 @@ function Profile(props) {
         }
     }, [loading, getProfilePosts]);
 
-const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc => doc.likeCount)
+    const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc => doc.likeCount)
     const { TabPane } = Tabs;
 
     const Demo = () => (
@@ -168,27 +174,10 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
             
         </Tabs>
     );
+
     return (
         <div>
-            <Row>
-                    <Col span={6}>
-                    <button class="ui inverted basic button" type="text" onClick={() => props.history.goBack()}>
-                            <i class="chevron left icon" style={{ color: 'black' }}></i>
-                    </button>
-                    </Col>
-                    <Col span={12} style={{textAlign: "center"}}>
-                    <h4>My profile</h4>
-                    </Col>
-                    <Col span={6} style={{textAlign: "right"}}>
-                    <button class="ui inverted basic button" type="text">
-                            <i class="ellipsis horizontal icon" style={{ color: 'black' }}></i>
-                    </button>
-                    </Col>
-                </Row>
-
-            <div style={{position:'fixed', width: "100%"}}>
-                <div class="ui divider" style={{ marginLeft: -14 }}/>
-            </div>
+            <AppBar title="My Profile" />
 
             <div style={{margin: "auto", width: 80, marginTop: 60, marginBottom: -10}}>
                 <div style={{position: "relative",textAlign: "center", width: 80}}>
@@ -210,41 +199,41 @@ const likeCounter = getProfilePosts && getProfilePosts.getProfilePosts.map(doc =
                 </div>
             </div>
 
-                <h4 style={{textAlign: "center"}}>{user.username}</h4>
-                <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
-                    <Link to="/"><img src={Pin} style={{width:20, marginTop: -5}} /><span style={{ fontSize: 12 }}>{address}</span></Link>
-                </div>
+            <h4 style={{textAlign: "center"}}>{user.username}</h4>
+            <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
+                <Link to="/"><img src={Pin} style={{width:20, marginTop: -5}} /><span style={{ fontSize: 12 }}>{address}</span></Link>
+            </div>
 
 
-                <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20 }}>
-                    <Row>
-                        <Col span={8}> 
-                            <h5>{getProfilePosts? getProfilePosts.getProfilePosts.length: 0}</h5>
-                            <p>Post</p>
-                        </Col>
-                        <Col span={8}> 
-                            <h5>12</h5>
-                            <p>Repost</p>
-                        </Col>
-                        <Col span={8}> 
-                            <h5>{getProfilePosts&& likeCounter.length >= 1 ? likeCounter.reduce((total, num) => total += num) : 0}</h5>
-                            <p>Likes</p>
-                        </Col>
-                    </Row>
-                </div>
-                
-                <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20, marginBottom: 40 }}>
+            <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20 }}>
+                <Row>
+                    <Col span={8}> 
+                        <h5>{getProfilePosts? getProfilePosts.getProfilePosts.length: 0}</h5>
+                        <p>Post</p>
+                    </Col>
+                    <Col span={8}> 
+                        <h5>12</h5>
+                        <p>Repost</p>
+                    </Col>
+                    <Col span={8}> 
+                        <h5>{getProfilePosts&& likeCounter.length >= 1 ? likeCounter.reduce((total, num) => total += num) : 0}</h5>
+                        <p>Likes</p>
+                    </Col>
+                </Row>
+            </div>
+            
+            <div style={{ textAlign: "center", margin: "auto", width: "50%", marginTop: 20, marginBottom: 40 }}>
                 <div class="ui action input"
                     style={{height: 25}}>
                     <input type="text" value="http://ww.short.url/c0opq" />
                     <button class="ui teal right icon button" style={{ backgroundColor: '#7F57FF', fontSize: 10 }}>
                         Copy
-                </button>
-                        </div>
+                    </button>
                 </div>
+            </div>
                 
-                        {Demo()}
-                    </div>
+            {Demo()}
+        </div>
     )
 }
 

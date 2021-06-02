@@ -105,7 +105,6 @@ module.exports = {
         },
         async getSubscribePosts(_, args, context) {
             const { username } = await fbAuthContext(context)
-            const posts = []
 
             try {
                 if (!username) {
@@ -115,9 +114,9 @@ module.exports = {
 
                 const docs = getPosts.docs.map(doc => doc.data())
 
-                return docs.map(async data => {
+                const result = docs.map(async data => {
                     const getSubscribes = await db.collection(`/posts/${data.id}/subscribes`).where('owner', '==', username).get()
-                    
+
                     const { repost: repostId } = data;
                     let repost = {}
 
@@ -138,7 +137,14 @@ module.exports = {
                     const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
                     const muted = mutedData.docs.map(doc => doc.data());
 
-                    if(!getSubscribes.empty) return { ...data, likes, comments, muted, repost }
+                    const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+                    const subscribe = subscribeData.docs.map(doc => doc.data());
+
+                    if (!getSubscribes.empty) return { ...data, likes, comments, muted, repost, subscribe }
+                })
+
+                return Promise.all(result).then(values => {
+                    return values.filter(item => item && item)
                 })
             }
             catch (err) {

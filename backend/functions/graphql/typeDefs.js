@@ -14,6 +14,7 @@ module.exports = gql`
         likes: [Like]
         muted: [Mute]
         repost: Repost
+        subscribe: [Subscribe]
     }
     type Repost {
         id: ID
@@ -85,11 +86,20 @@ module.exports = gql`
         owner: String!
         createdAt: String!
         postId: ID!
+        displayName: String!
+        displayImage: String!
+        colorCode: String!
+        isSubscribe: Boolean
+    },
+    type DataSubscribe {
+        owner: String!
+        createdAt: String!
+        postId: ID!
         isSubscribe: Boolean
     }
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!
-        getPopularPosts(lat: Float, lng: Float): [Post]!
+        getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
         getProfilePosts: [Post]!
         getProfileLikedPost: [Post]!
         getPost(id: ID!): Post!

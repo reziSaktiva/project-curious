@@ -41,7 +41,6 @@ function SubscribePosts() {
                 {!subscribePosts ? null
                     : subscribePosts.map((post, key) => post === null ? (null) : (
                         <div key={`posts${post.id} ${key}`}>
-                            {console.log(post)}
                         <PostCard post={post} loading={loading} />
                     </div>
                 ))}

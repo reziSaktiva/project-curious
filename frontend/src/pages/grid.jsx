@@ -16,7 +16,7 @@ export default function Grid({ children }) {
 
     if (user) {
         return (
-            <Container>
+            <Container className="app-page">
                 <Row>
                     <Col xs={0} sm={0} md={3} lg={6} xl={5} >
                         {user && <Sidebar />}

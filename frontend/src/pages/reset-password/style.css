@@ -1,0 +1,50 @@
+.header-page {
+  display: flex;
+  justify-content: center;
+}
+
+.header-page .curious {
+  margin-top: 100px;
+}
+
+.body-page {
+  width: 447px !important;
+  margin-top: 30px !important;
+  padding: 30px !important;
+}
+
+.body-page__wrapper {
+  text-align: center;
+}
+
+.body-page__btn-send {
+  border-radius: 10px !important;
+  width: 359px !important;
+  height: 40px !important;
+  background-color: #7F57FF !important;
+}
+
+.body-page__textfield {
+  width: 539px;
+}
+
+.body-page__textfield input {
+  border-radius: 5px;
+}
+
+.message-response {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .body-page__textfield {
+    width: 100%;
+  }
+
+  .body-page__btn-send {
+    width: 100% !important;
+  }
+}

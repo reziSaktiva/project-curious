@@ -21,8 +21,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        post: action.payload
-      }
+        post: action.payload,
+      };
     case "SET_MUTED_POST":
       return {
         ...state,
@@ -64,11 +64,12 @@ const reducer = (state, action) => {
         ...state,
         post: {
           ...state.post,
-          comments:[...state.post.comments, action.payload],
-          commentsCount: state.post.comments + 1
-        }
-      }
+          comments: [...state.post.comments, action.payload],
+          commentsCount: state.post.comments + 1,
+        },
+      };
     case "LIKE_POST":
+      console.log(state.post);
       return {
         ...state,
         posts: state.posts.map((post) => {
@@ -86,10 +87,9 @@ const reducer = (state, action) => {
         }),
         post: state.post && {
           ...state.post,
-          likes: [...state.post.likes, action.payload.data],
-          likeCount: state.post.likeCount + 1
-
-        }
+          likes: state.post.likes && [...state.post.likes, action.payload.data],
+          likeCount: state.post.likeCount + 1,
+        },
       };
     case "UNLIKE_POST":
       const data = action.payload.data;
@@ -110,24 +110,39 @@ const reducer = (state, action) => {
         post: state.post && {
           ...state.post,
           likes: state.post.likes.filter((like) => like.owner !== data.owner),
-          likeCount: state.post.likeCount - 1
-
-        }
+          likeCount: state.post.likeCount - 1,
+        },
       };
-    case 'SUBCRIBE_POST':
+    case "SUBCRIBE_POST":
       return {
         ...state,
-        posts: state.posts.map(post => {
+        posts: state.posts.map((post) => {
           if (post.id === action.payload.postId) {
-            const updatePosts = {
+            const update = {
               ...post,
-              subscribe: [...post.subscribe, action.payload]
-            }
-            return updatePosts
+              subscribe: [...post.subscribe, action.payload],
+            };
+            return update;
           }
 
-          return post
-        })
+          return post;
+        }),
+      };
+    case "UNSUBCRIBE_POST":
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const update = {
+              ...post,
+              subscribe: post.subscribe.filter(data => data.owner !== action.payload.owner),
+            };
+            return update;
+          }
+
+          return post;
+        }),
+        subscribePosts : state.subscribePosts.filter(post => post.id !== action.payload.postId)
       }
     case "MUTE_POST":
       return {
@@ -186,16 +201,16 @@ export const PostContext = createContext({
   subscribePosts: [],
   setComment: () => {},
   setPost: () => {},
-  setSubscribePosts: () => { },
-  setMutedPost: () => { },
-  subscribePost: () => { },
-  loadingData: () => { },
-  setPosts: (posts) => { },
-  morePosts: () => { },
-  createPost: () => { },
-  deletePost: () => { },
-  like: () => { },
-  mutePost: () => { },
+  setSubscribePosts: () => {},
+  setMutedPost: () => {},
+  subscribePost: () => {},
+  loadingData: () => {},
+  setPosts: (posts) => {},
+  morePosts: () => {},
+  createPost: () => {},
+  deletePost: () => {},
+  like: () => {},
+  mutePost: () => {},
 });
 
 const initialState = {
@@ -212,8 +227,17 @@ const initialState = {
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { posts, post, loading, lastIdPosts, isMorePost, isOpenNewPost, repost, mutedPost, subscribePosts } =
-    state;
+  const {
+    posts,
+    post,
+    loading,
+    lastIdPosts,
+    isMorePost,
+    isOpenNewPost,
+    repost,
+    mutedPost,
+    subscribePosts,
+  } = state;
 
   const loadingData = () => {
     dispatch({ type: "LOADING_DATA" });
@@ -228,17 +252,17 @@ export const PostProvider = (props) => {
 
   const setPost = (post) => {
     dispatch({
-      type: 'SET_POST',
-      payload: post
-    })
-  }
+      type: "SET_POST",
+      payload: post,
+    });
+  };
 
   const setComment = (data) => {
     dispatch({
       type: "SET_COMMENT",
-      payload: data
-    })
-  }
+      payload: data,
+    });
+  };
 
   const setMutedPost = (posts) => {
     if (posts.length > 0) {
@@ -256,28 +280,30 @@ export const PostProvider = (props) => {
         payload: posts,
       });
     }
-  }
+  };
 
   const subscribePost = (data) => {
     const subscribeData = {
       owner: data.owner,
-      createAt: data.createdAt,
+      createdAt: data.createdAt,
+      displayName: data.displayName,
+      displayImage: data.displayImage,
+      colorCode: data.colorCode,
       postId: data.postId,
     };
 
     if (data.isSubscribe) {
       dispatch({
         type: "SUBCRIBE_POST",
-        payload: subscribeData
-      })
+        payload: subscribeData,
+      });
     } else if (!data.isSubscribe) {
       dispatch({
         type: "UNSUBCRIBE_POST",
-        payload: subscribeData
-      })
+        payload: subscribeData,
+      });
     }
-
-  }
+  };
 
   const deletePost = (id) => {
     dispatch({

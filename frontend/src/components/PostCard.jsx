@@ -53,8 +53,11 @@ export default function PostCard({ post, loading }) {
   
 console.log("post", post.owner,"userName", userName, "repost", repost.owner);
 
-  const { muted } = post;
-  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
+  const { muted, subscribe } = post;
+  const isMuted =
+    user && muted && muted.find((mute) => mute.owner === user.username);
+  const isSubscribe =
+    user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   useEffect(() => {
     if (post.location) {
@@ -148,7 +151,7 @@ console.log("post", post.owner,"userName", userName, "repost", repost.owner);
                             subscribePost({ variables: { id: post.id } })
                           }
                         >
-                          Subscribe
+                          {isSubscribe ? "Unsubscribe" : "Subscribe"}
                         </Menu.Item>
                         <Menu.Item
                           key="1"
@@ -163,7 +166,7 @@ console.log("post", post.owner,"userName", userName, "repost", repost.owner);
                           <Menu.Item
                             key="4"
                             onClick={() =>
-                              deletePost({ variables: { id: post.Id } })
+                              deletePost({ variables: { id: post.id } })
                             }
                           >
                             Delete Post
@@ -185,11 +188,7 @@ console.log("post", post.owner,"userName", userName, "repost", repost.owner);
               </Row>
             </div>
           }
-          description={
-            <div>
-              {moment(post.createdAt).fromNow()}
-            </div>
-          }
+          description={<div>{moment(post.createdAt).fromNow()}</div>}
         ></List.Item.Meta>
         {isRepost && (
           <Card
@@ -226,14 +225,20 @@ console.log("post", post.owner,"userName", userName, "repost", repost.owner);
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>
-            {repost.media?(
+            {repost.media ? (
               repost.media.length == 1 ? (
                 <Image
-                  style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300, objectFit: "cover" }}
+                  style={{
+                    width: "100%",
+                    borderRadius: 10,
+                    objectFit: "cover",
+                    maxHeight: 300,
+                    objectFit: "cover",
+                  }}
                   src={repost.media}
                 />
               ) : null
-              ) : null}
+            ) : null}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
@@ -241,7 +246,12 @@ console.log("post", post.owner,"userName", userName, "repost", repost.owner);
         {post.media ? (
           post.media.length == 1 ? (
             <Image
-              style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300 }}
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                objectFit: "cover",
+                maxHeight: 300,
+              }}
               src={post.media}
             />
           ) : null

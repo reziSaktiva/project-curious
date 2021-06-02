@@ -198,7 +198,6 @@ export function AuthProvider(props) {
 
   function login(userData) {
     navigator.geolocation.getCurrentPosition(getGeoLocation, showError);
-    console.log("userdatanyaaaa", userData);
 
     localStorage.setItem(LS_TOKEN, userData);
 

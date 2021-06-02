@@ -112,6 +112,7 @@
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
+
 .curiouslanding {
   background-image: url('./assets/curiouslanding.png');
   background-repeat: no-repeat;
@@ -123,6 +124,7 @@
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
+
 .landingPage-input {
   text-align: center;
   padding-top: 30%;
@@ -363,4 +365,10 @@ transform: translate(-50%, 30%);
 }
 .notifContainer {
   padding: 4px;
+}
+@media only screen and (max-width: 767px) {
+  .ui.container {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
 }
