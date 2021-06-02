@@ -133,10 +133,12 @@ export default function SinglePost(props) {
     createComment({ variables: { id, text: comment } });
   };
 
-  return post ? (
+  return (
     <List itemLayout="vertical" size="large">
       <PostNavBar />
-      <List.Item
+     {post ? (
+       <div>
+          <List.Item
         key={post.id}
         actions={
           !loading && [
@@ -230,7 +232,7 @@ export default function SinglePost(props) {
           {post.text}
         </Skeleton>
       </List.Item>
-      {post.comments && post.comments.length == 0 ? null : (
+      {post.comments && post.comments.length == 0 ? (null) : (
         <List
           itemLayout="vertical"
           size="large"
@@ -361,6 +363,13 @@ export default function SinglePost(props) {
           </Col>
         </Row>
       </Form>
+       </div>
+     ) : (
+     <div style={{margin:20}}>
+       <Skeleton active  avatar paragraph={{ rows: 2 }} />
+     </div>
+     )}
     </List>
-  ) : <div>loading...</div>
+  )
+  
 }

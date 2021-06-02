@@ -1,16 +1,26 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse } from "antd";
+import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { get } from 'lodash';
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 // Styles
 import "../../App.css";
 
+//location
+import Geocode from "react-geocode";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
+
 // Context
 import { PostContext } from "../../context/posts";
+import Pin from "../../assets/pin-svg-25px.svg";
+import Gorila from "../../assets/gorila.jpg";
+import Bmw from "../../assets/bmw.jpg";
 
 // Query
 import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
@@ -19,6 +29,8 @@ import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
 import firebase from 'firebase/app'
 import 'firebase/storage'
 const  storage = firebase.storage()
+
+const { Panel } = Collapse;
 
 const InitialState = {
   previewVisible: false,
@@ -52,7 +64,25 @@ export default function ModalPost() {
 
   // Local State
   const [state, setState] = useState(InitialState);
+  const [address, setAddress] = useState("");
   const [form] = Form.useForm();
+  //set location
+
+  const loc = localStorage.location;
+
+  const location = loc ? JSON.parse(loc) : null;
+
+  if (location) {
+    Geocode.fromLatLng(location.lat, location.lng).then(
+      (response) => {
+        const address = response.results[0].address_components[1].short_name;
+        setAddress(address);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
@@ -200,13 +230,41 @@ export default function ModalPost() {
           visible={isOpenNewPost}
           title={[
             <p key="paragraf">{repost ? 'Repost' : 'Post to'}</p>,
-            <div key="location" style={{ position: "absolute", marginTop: 15, marginLeft: 60, width: 150 }}>
-              <h3 style={{ fontWeight: "bold" }}>Nearby</h3>
-              <a style={{ fontSize: 12 }}>Wild Park, Melbourne</a>
-            </div>,
-            <div key="location2"style={{ width: 45 }}>
-              <a href="/"><p className="location" style={{ marginTop: 10 }} /></a>
+            <div>
+              <Collapse ghost>
+                <Panel header={
+                  <div>
+                  <img src={Pin}  style={{display: 'inline-block',width: 40, marginTop: -26, marginBottom: "auto", }}/>
+                  <div style={{display: 'inline-block'}}>
+                    <h3 style={{ fontWeight: "bold"}}>Nearby</h3>
+                      <Link to='/maps'><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
+                  </div>
+                  <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
+                  </div>
+                } key="1" showArrow={false}>
+                  <p>Available Room</p>
+                  <div style={{marginBottom: 20}}>
+                    <img src={Gorila}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
+                    <div style={{display: 'inline-block'}}>
+                      <h4 style={{ fontWeight: "bold"}}>Insvire E-sport</h4>
+                      <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <img src={Bmw}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
+                    <div style={{display: 'inline-block'}}>
+                      <h4 style={{ fontWeight: "bold"}}>BMW Club Bandung</h4>
+                      <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>
+                    </div>
+                  </div>
+                </Panel>
+              </Collapse>
+              
             </div>
+            
+            
+            ,
           ]}
           onCancel={handleCancelModal}
           footer={null}
