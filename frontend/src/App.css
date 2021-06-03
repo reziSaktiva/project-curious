@@ -151,8 +151,12 @@
 
 }
 
+/* ADD POST */
+
 .location {
-  background-image: url('./assets/location.jpeg');
+  background-image: url('./assets/pin-svg-25px.svg');
+  background-size: 100%;
+  background-repeat: no-repeat;
   height: 48px;
   width: 48px;
 }
