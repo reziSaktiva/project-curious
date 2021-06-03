@@ -250,7 +250,6 @@ module.exports = {
         //fungsi ngambil koleksi likes
         return Promise.all(Post).then(docs => {
           return docs.map(async doc => {
-            let post
             if (doc) {
               const { repost: repostId } = doc;
               let repost = {}
@@ -266,15 +265,15 @@ module.exports = {
               const commentsData = await db.collection(`/posts/${doc.id}/comments`).get()
               const comments = commentsData.docs.map(doc => doc.data())
 
-              post = {
+              const post = {
                 ...doc,
                 likes,
                 comments,
                 repost
               }
-            }
 
-            return doc !== null && post
+              return post !== null && post
+            }
           })
         })
 
@@ -627,8 +626,10 @@ module.exports = {
       const likesCollection = db.collection(`/posts/${id}/likes`);
       const randomizedCollection = db.collection(`/posts/${id}/randomizedData`);
       const subcribeCollection = db.collection(`/posts/${id}/subscribes`);
+      const likesData = db.collection(`/posts/${id}/likes`);
 
-      try {
+      try {  
+
         await document.get().then((doc) => {
           if (!doc.exists) {
             throw new Error("Postingan tidak di temukan");
@@ -636,8 +637,13 @@ module.exports = {
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
-            return commentsCollection
-              .get()
+            return likesData.get()
+              .then(data => {
+                data.forEach(doc => {
+                  db.doc(`/users/${doc.data().owner}/liked/${doc.data().id}`).delete()
+                })
+                return commentsCollection.get()
+              })
               .then((data) => {
                 data.forEach((doc) => {
                   db.doc(`/posts/${id}/comments/${doc.data().id}`).delete();
@@ -652,9 +658,7 @@ module.exports = {
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(
-                    `/posts/${id}/randomizedData/${doc.data().id}`
-                  ).delete();
+                  db.doc(`/posts/${id}/randomizedData/${doc.data().id}`).delete();
                 });
                 return db
                   .collection(`/users/${username}/notifications`)
@@ -663,9 +667,7 @@ module.exports = {
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(
-                    `/users/${username}/notifications/${doc.data().id}/`
-                  ).delete();
+                  db.doc(`/users/${username}/notifications/${doc.data().id}/`).delete();
                 });
                 return subcribeCollection.get();
               })
