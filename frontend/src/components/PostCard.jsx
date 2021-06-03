@@ -50,8 +50,6 @@ export default function PostCard({ post, loading }) {
   const userName = user && user.username;
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
-  
-console.log("post", post.owner,"userName", userName, "repost", repost.owner);
 
   const { muted, subscribe } = post;
   const isMuted =

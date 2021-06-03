@@ -336,16 +336,6 @@ export const REGISTER_USER = gql`
         birthday: $birthday
         username: $username
       }
-    ) {
-      id
-      username
-      email
-      token
-      createdAt
-      profilePicture
-      gender
-      birthday
-      mobileNumber
-    }
+    )
   }
 `;
