@@ -95,7 +95,7 @@ const Sidebar = () => {
           
           <List.Item.Meta
             title={
-              <Link href="/maps">
+              <Link to="/maps">
                 {" "}
                 <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                 {address}
