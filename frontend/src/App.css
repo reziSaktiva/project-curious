@@ -170,6 +170,15 @@
   width: 30px;
 }
 
+.addpostRoom {
+  padding: 10px;
+  border: none;
+}
+
+.addpostRoom:hover {
+  padding: 10px;
+  background-color: #f5f5f5;
+}
 /* MIDDLE */
 .middle{
   margin-top: 25px;
