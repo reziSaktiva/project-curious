@@ -411,7 +411,7 @@ module.exports = {
                         return db.doc(`/users/${username}`).set(saveUserData)
                     })
 
-                return newUser
+                return newUser.token
             }
             catch (err) {
                 if (err.code === "auth/email-already-in-use") {

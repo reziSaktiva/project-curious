@@ -20,7 +20,9 @@ function Home() {
     const { location } = getSession();
     const range = getRangeSearch();
 
-    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS);
+    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS, {
+        fetchPolicy: "network-only"
+      });
     
     useEffect(() => {
         if (Object.keys(location).length) {

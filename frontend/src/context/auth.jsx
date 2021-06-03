@@ -20,7 +20,8 @@ import {
   LOGOUT,
   LS_LOCATION,
   LS_TOKEN,
-  NOTIFICATION_READ
+  NOTIFICATION_READ,
+  SET_PROFILE_PICTURE
 } from "./constant";
 
 const initialState = {
@@ -50,6 +51,14 @@ function authReducer(state, action) {
           location: action.payload,
         },
       };
+    case SET_PROFILE_PICTURE:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          profilePicture: action.payload
+        }
+      }
     case SET_NOTIFICATIONS:
       return {
         ...state,
@@ -196,6 +205,13 @@ export function AuthProvider(props) {
     });
   }
 
+  function changeProfilePicture(url) {
+    dispatch({
+      type: SET_PROFILE_PICTURE,
+      payload: url
+    })
+  }
+
   function login(userData) {
     navigator.geolocation.getCurrentPosition(getGeoLocation, showError);
 
@@ -239,6 +255,7 @@ export function AuthProvider(props) {
       googleData,
       liked,
       notifications,
+      changeProfilePicture,
       notificationRead,
       login,
       logout,
