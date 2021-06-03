@@ -157,6 +157,15 @@ module.exports = {
             .get()
             .then((data) => {
               return data.docs.forEach((doc) => {
+                const { repost: repostId } = doc;
+
+                const repostData = async () => {
+                  if (repostId) {
+                    const repostData = await db.doc(`/posts/${repostId}`).get()
+                    return repostData.data() || {}
+                  }
+                }
+
                 const likes = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/likes`)
@@ -213,7 +222,8 @@ module.exports = {
                   likes: likes(),
                   comments: comments(),
                   muted: muted(),
-                  subscribe: subscribe()
+                  subscribe: subscribe(),
+                  repost: repostData()
                 });
               });
             });
@@ -240,21 +250,31 @@ module.exports = {
         //fungsi ngambil koleksi likes
         return Promise.all(Post).then(docs => {
           return docs.map(async doc => {
+            let post
             if (doc) {
+              const { repost: repostId } = doc;
+              let repost = {}
+
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                repost = repostData.data() || {}
+              }
+
               const request = await db.collection(`/posts/${doc.id}/likes`).get()
               const likes = request.docs.map(doc => doc.data())
 
-            const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
-            const comments = commentsData.docs.map(doc => doc.data())
+              const commentsData = await db.collection(`/posts/${doc.id}/comments`).get()
+              const comments = commentsData.docs.map(doc => doc.data())
 
-              const post = {
+              post = {
                 ...doc,
                 likes,
-                comments
+                comments,
+                repost
               }
-
-              return post
             }
+
+            return doc !== null && post
           })
         })
 

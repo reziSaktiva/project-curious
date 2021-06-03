@@ -29,6 +29,12 @@ const reducer = (state, action) => {
         loading: false,
         mutedPost: action.payload,
       };
+    case "SET_LIKED_POSTS":
+      return {
+        ...state,
+        loading: false,
+        likedPosts: action.payload
+      }
     case "SET_SUBSCRIBE_POSTS":
       return {
         ...state,
@@ -71,6 +77,8 @@ const reducer = (state, action) => {
     case "LIKE_POST":
       let subcribePosts = state.subscribePosts.length !== 0
       let mutedPost = state.mutedPost.length !== 0
+      let likedPosts = state.likedPosts.length !== 0
+
       return {
         ...state,
         posts: state.posts.map((post) => {
@@ -112,6 +120,19 @@ const reducer = (state, action) => {
 
           return post;
         }),
+        likedPosts: likedPosts && state.likedPosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
         posts: state.posts.map((post) => {
           if (post.id === action.payload.postId) {
             const updatedPost = {
@@ -132,10 +153,50 @@ const reducer = (state, action) => {
         },
       };
     case "UNLIKE_POST":
+      let subcribe = state.subscribePosts.length !== 0
+      let muted = state.mutedPost.length !== 0
+      let liked = state.likedPosts.length !== 0
+
       const data = action.payload.data;
       return {
         ...state,
         posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter((like) => like.owner !== data.owner),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+        subscribePosts: subcribe && state.subscribePosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter((like) => like.owner !== data.owner),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+        mutedPost: muted && state.mutedPost.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter((like) => like.owner !== data.owner),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+        likedPosts: liked && state.likedPosts.map((post) => {
           if (post.id === action.payload.postId) {
             const updatedPosts = {
               ...post,
@@ -238,7 +299,9 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   mutedPost: [],
+  likedPosts: [],
   subscribePosts: [],
+  setLikedPosts: () => {},
   setComment: () => {},
   setPost: () => {},
   setSubscribePosts: () => {},
@@ -255,6 +318,7 @@ export const PostContext = createContext({
 
 const initialState = {
   posts: [],
+  likedPosts: [],
   post: null,
   mutedPost: [],
   isMorePost: true,
@@ -277,6 +341,7 @@ export const PostProvider = (props) => {
     repost,
     mutedPost,
     subscribePosts,
+    likedPosts,
   } = state;
 
   const loadingData = () => {
@@ -303,6 +368,15 @@ export const PostProvider = (props) => {
       payload: data,
     });
   };
+
+  const setLikedPosts = (posts) => {
+    if (posts.length > 0) {
+      dispatch({
+        type: "SET_LIKED_POSTS",
+        payload: posts,
+      });
+    }
+  }
 
   const setMutedPost = (posts) => {
     if (posts.length > 0) {
@@ -446,8 +520,10 @@ export const PostProvider = (props) => {
         mutePost,
         toggleOpenNewPost,
         setMutedPost,
+        setLikedPosts,
         subscribePost,
         setSubscribePosts,
+        likedPosts,
         subscribePosts,
         mutedPost,
         loading,

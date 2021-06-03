@@ -214,6 +214,17 @@ export const GET_PROFILE_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      repost {
+          id
+          owner
+          text
+          media
+          createdAt
+          location {
+            lat
+            lng
+          }
+        }
       location {
         lat
         lng
@@ -239,11 +250,23 @@ export const GET_PROFILE_LIKED_POSTS = gql`
 query{
   getProfileLikedPost{
       id
-      createdAt
       owner
+      text
+      media
+      createdAt
       commentCount
       likeCount
-      text
+      repost {
+          id
+          owner
+          text
+          media
+          createdAt
+          location {
+            lat
+            lng
+          }
+        }
       location {
         lat
         lng
