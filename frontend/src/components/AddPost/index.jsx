@@ -1,7 +1,7 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio } from "antd";
 import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -66,6 +66,22 @@ export default function ModalPost() {
   const [state, setState] = useState(InitialState);
   const [address, setAddress] = useState("");
   const [form] = Form.useForm();
+  const [Room, setRoom] = useState()
+  const [open, setOpen] = useState([])
+
+  //changeroom func
+  const handleCollapse = () => {
+    if(open.length) {
+      setOpen([])
+    } else {
+      setOpen([1])
+    }
+  }
+   const handleRoom = (e) => {
+     setRoom(e.target.value)
+      setOpen([])
+
+   }
   //set location
 
   const loc = localStorage.location;
@@ -231,33 +247,35 @@ export default function ModalPost() {
           title={[
             <p key="paragraf">{repost ? 'Repost' : 'Post to'}</p>,
             <div>
-              <Collapse ghost>
-                <Panel header={
+              <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
+                <Panel onChange={handleCollapse} header={
                   <div>
-                  <img src={Pin}  style={{display: 'inline-block',width: 40, marginTop: -26, marginBottom: "auto", }}/>
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{border: 'none',color: 'black', backgroundColor: 'none', height: 50, top: -15}}>
+                  <img src={Pin}  style={{display: 'inline-block',width: 40, marginBottom: "auto", }}/>
+                  </Radio.Button>
                   <div style={{display: 'inline-block'}}>
-                    <h3 style={{ fontWeight: "bold"}}>Nearby</h3>
+                    <h3 style={{ fontWeight: "bold"}}>{Room? Room :"Nearby"}</h3>
                       <Link to='/maps'><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
                   </div>
                   <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
                   </div>
                 } key="1" showArrow={false}>
                   <p>Available Room</p>
-                  <div style={{marginBottom: 20}}>
+                  <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-sport" style={{border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55}}>
                     <img src={Gorila}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
                     <div style={{display: 'inline-block'}}>
                       <h4 style={{ fontWeight: "bold"}}>Insvire E-sport</h4>
                       <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>
                     </div>
-                  </div>
+                  </Radio.Button>
 
-                  <div>
+                  <Radio.Button className='addpostRoom' onClick={handleRoom}  value="BMW Club Bandung"style={{border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55}}>
                     <img src={Bmw}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
                     <div style={{display: 'inline-block'}}>
                       <h4 style={{ fontWeight: "bold"}}>BMW Club Bandung</h4>
                       <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>
                     </div>
-                  </div>
+                  </Radio.Button>
                 </Panel>
               </Collapse>
               

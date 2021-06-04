@@ -65,6 +65,11 @@ export default function SinglePost(props) {
       getPost({ variables: { id } });
     }
   }, [id]);
+
+  //reply func
+  const handleReply =() => {
+    console.log('test');
+  }
   //input form
 
   useEffect(() => {
@@ -300,6 +305,7 @@ export default function SinglePost(props) {
                 <p>
                   {moment(item.createdAt).fromNow()}
                   <p
+                  onClick={handleReply}
                     style={{
                       fontWeight: "bold",
                       display: "inline-block",
