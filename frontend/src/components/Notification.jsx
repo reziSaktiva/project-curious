@@ -2,21 +2,29 @@ import React, { useContext } from "react";
 import { Card, Button } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { READ_NOTIFICATION } from "../GraphQL/Mutations";
 import { Row, Col, Dropdown, Menu} from 'antd';
 
 import { EllipsisOutlined } from "@ant-design/icons";
+import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
 
 export default function Notification() {
   const { notifications, notificationRead } = useContext(AuthContext);
+  const { clearNotifications } = useContext(AuthContext)
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
-      console.log(readNotification);
       notificationRead(readNotification);
     },
   });
+
+  const [ clearNotif ] = useMutation(CLEAR_ALL_NOTIF, {
+    update(_, { data: { clearAllNotif } }) {
+      clearNotifications()
+      alert(clearAllNotif)
+    }
+  })
 
   return (
     <div style={{ position: 'sticky', zIndex: 1}}>
@@ -28,7 +36,7 @@ export default function Notification() {
                       overlay={
                         <Menu>
                           <Menu.Item key="0">READ ALL</Menu.Item>
-                          <Menu.Item key="1" onClick={(e) => console.log(e)}>
+                          <Menu.Item key="1" onClick={clearNotif}>
                             CLEAR ALL
                           </Menu.Item>
                         </Menu>

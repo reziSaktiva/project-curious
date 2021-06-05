@@ -436,9 +436,8 @@ module.exports = {
       }
 
       return [];
-    },
+    }
   },
-
   Mutation: {
     async nextPosts(_, { id, lat, lng }, context) {
       if (!lat || !lng) {
@@ -644,7 +643,7 @@ module.exports = {
       const subcribeCollection = db.collection(`/posts/${id}/subscribes`);
       const likesData = db.collection(`/posts/${id}/likes`);
 
-      try {  
+      try {
 
         await document.get().then((doc) => {
           if (!doc.exists) {

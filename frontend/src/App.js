@@ -51,7 +51,7 @@ function App() {
             <UserRoute exact path="/visited" component={Visited} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
-            <UserRoute exact path="/map" component={map} />
+            <UserRoute exact path="/maps" component={map} />
           </Switch>
         </Grid>
       </Router>

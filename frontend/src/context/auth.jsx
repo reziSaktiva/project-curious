@@ -69,6 +69,11 @@ function authReducer(state, action) {
         ...state,
         liked: action.payload,
       };
+    case "CLEAR_ALL_NOTIFICATIONS":
+      return{
+        ...state,
+        notifications: []
+      }
     case SET_USER_DATA:
       return {
         ...state,
@@ -191,6 +196,12 @@ export function AuthProvider(props) {
     }
   }, [loading, data]);
 
+  function clearNotifications(){
+    dispatch({
+      type: "CLEAR_ALL_NOTIFICATIONS"
+    })
+  }
+
   function getGeoLocation(position) {
     const location = {
       lat: position.coords.latitude,
@@ -255,6 +266,7 @@ export function AuthProvider(props) {
       googleData,
       liked,
       notifications,
+      clearNotifications,
       changeProfilePicture,
       notificationRead,
       login,

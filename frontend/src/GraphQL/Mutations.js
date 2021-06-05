@@ -11,6 +11,12 @@ export const SUBSCRIBE_POST = gql`
   }
 `
 
+export const CLEAR_ALL_NOTIF = gql`
+  mutation clearNotif {
+  clearAllNotif
+}
+`
+
 export const CREATE_POST = gql`
   mutation createPost($text: String!, $lat: Float, $lng: Float) {
     createPost(text: $text, location: { lat: $lat, lng: $lng }) {
