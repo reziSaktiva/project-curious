@@ -1,0 +1,43 @@
+.gallery-location {
+  display: grid;
+  grid-template-columns: repeat(2, 45%);
+  grid-template-rows: repeat(3, 180px);
+  grid-gap: 10px;
+  justify-content: center;
+}
+.gallery-location__img {
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-location__item-right {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+
+.gallery-location__item-left {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+
+.gallery-location .ant-card .ant-card-cover {
+  height: 100%;
+}
+
+.VisitedClass div.ant-card-body{
+  display:none;
+}
+
+.ant-carousel .slick-prev, .ant-carousel .slick-next{
+  display: block;
+   background: red
+}
+.ant-carousel{
+  width: 300px;
+}

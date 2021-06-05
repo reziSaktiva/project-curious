@@ -28,6 +28,14 @@ module.exports = gql`
         lat: Float
         lng: Float
     }
+    type GeoLocation {
+        administrative_area_level_4: String
+        administrative_area_level_3: String
+        administrative_area_level_2: String
+        administrative_area_level_1: String
+        country: String
+        location: LatLong
+    }
     type User {
         id: ID!
         username: String!
@@ -100,6 +108,7 @@ module.exports = gql`
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!
         getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
+        getVisited: [GeoLocation]
         getProfilePosts: [Post]!
         getProfileLikedPost: [Post]!
         getPost(id: ID!): Post!

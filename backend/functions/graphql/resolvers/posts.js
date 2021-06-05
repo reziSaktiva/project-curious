@@ -63,7 +63,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= 1000) { // should be show in range 40 km
+            if ((distance / 1000) <= 40) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -607,6 +607,22 @@ module.exports = {
               newPost.id = doc.id;
               doc.update({ id: doc.id });
             });
+
+          if (Object.keys(location).length) {
+            const visited = await db.collection(`/users/${username}/visited`)
+              .where('lng', '==', location.lng)
+              .where('lat', '==', location.lat)
+              .get();
+            const hasSameLocation = visited.docs.map(doc => doc.data()).length
+
+            if (!hasSameLocation) {
+              // store visited location
+              await db.collection(`/users/${username}/visited`).add({
+                ...location,
+                createAt: new Date().toISOString()
+              });
+            }
+          }
 
           return {
             ...newPost,

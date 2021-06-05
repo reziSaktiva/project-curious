@@ -26,7 +26,7 @@ import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
-import Visited from './pages/Visited'
+import Visited from './pages/visited/index'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
