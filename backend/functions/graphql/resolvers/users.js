@@ -1,5 +1,8 @@
-const { UserInputError } = require('apollo-server-express')
-const encrypt = require('bcrypt')
+const { UserInputError } = require('apollo-server-express');
+const { Client } = require("@googlemaps/google-maps-services-js");
+const { get } = require('lodash');
+const encrypt = require('bcrypt');
+const axios = require('axios');
 
 const { db } = require('../../utility/admin')
 const firebase = require('firebase')
@@ -146,10 +149,68 @@ module.exports = {
                 return Promise.all(result).then(values => {
                     return values.filter(item => item && item)
                 })
+
+                return Promise.all(result).then(values => {
+                    return values.filter(item => item && item)
+                })
             }
             catch (err) {
                 throw new Error(err)
             }
+        },
+        async getVisited (_, args, ctx) {
+            const googleMapsClient = new Client({ axiosInstance: axios })
+            const { username } = await fbAuthContext(ctx);
+
+            const userVisit = await db.collection(`/users/${username}/visited`).get();
+            const visited = (await userVisit).docs.map(doc => doc.data());
+            
+            const promises = visited.map(async ({ lat, lng}) => {
+                const request = await googleMapsClient
+                    .reverseGeocode({
+                        params: {
+                            latlng: `${lat}, ${lng}`,
+                            language: 'en',
+                            result_type: 'street_address|administrative_area_level_4',
+                            location_type: 'APPROXIMATE',
+                            key: 'AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k'
+                        },
+                        timeout: 1000 // milliseconds
+                    }, axios)
+                    .then(r => {
+                        const { address_components } = r.data.results[0];
+                        const addressComponents = address_components;
+
+                        const geoResult = {}
+
+                        addressComponents.map(({ types, long_name }) => {
+                            const point = types[0];
+
+                            geoResult[point] = long_name;
+                        });
+
+                        return {...geoResult, location: { lat, lng }};
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        return e
+                    });
+                
+                return request;
+            });
+
+            const response = await Promise.all(promises);
+
+            const filterLocation = response.filter((value, idx) => {
+                const { administrative_area_level_3: currentArea } = value;
+                const prevArea = get(response[idx - 1], 'administrative_area_level_3') || '';
+
+                if (currentArea != prevArea) {
+                    return value
+                }
+            })
+
+            return filterLocation;
         }
     },
     Mutation: {
