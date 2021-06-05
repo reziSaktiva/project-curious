@@ -304,16 +304,20 @@ export default function SinglePost(props) {
               >
                 <p>
                   {moment(item.createdAt).fromNow()}
-                  <p
+                  
+                  <Button
+                  ghost
+                  type="link"
                   onClick={handleReply}
                     style={{
                       fontWeight: "bold",
                       display: "inline-block",
                       marginLeft: 10,
+                      color: "black"
                     }}
                   >
                     Reply
-                  </p>
+                  </Button>
                 </p>
               </div>
             </Card>
