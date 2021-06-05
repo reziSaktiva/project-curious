@@ -28,7 +28,7 @@ function Home() {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
 
-            getPosts({ variables: { ...loc, range: parseFloat(range) } });
+            getPosts({ variables: { ...loc, range: range ? parseFloat(range) : undefined } });
         }
     }, [location]);
 
@@ -53,7 +53,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts ? null
+                {!posts.length ? (<p>tidak ada postingan di sekitar anda</p>)
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)

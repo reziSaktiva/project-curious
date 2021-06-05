@@ -22,6 +22,7 @@ export default function Notification() {
     <div style={{ position: 'sticky', zIndex: 1}}>
       <div style={{ position: "absolute", left: 0, right: 0, width: '100%', }}>
         <Card
+        
           title="Notification"
           extra={
             <Dropdown
@@ -47,7 +48,7 @@ export default function Notification() {
           style={{ width: "100%" }}
           className="testttttt"
         >
-          <div style={{margin: -22}}>
+          <div style={{margin: -22, overflowY: "scroll", height:200}}>
 
           {notifications &&
             notifications.map((notif, key) => {

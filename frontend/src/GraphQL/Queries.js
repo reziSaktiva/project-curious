@@ -322,6 +322,10 @@ getPost(id: $id){
         displayImage
         photoProfile
         colorCode
+        replay {
+          username
+          id
+        }
         }
         repost {
           id

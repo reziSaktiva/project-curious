@@ -56,6 +56,16 @@ module.exports = gql`
         displayImage: String!
         photoProfile: String
         colorCode: String!
+        replay: ReplayData
+
+    },
+    input Replay {
+        username: String
+        id: ID
+    },
+    type ReplayData {
+        username: String
+        id: ID
     },
     type Like {
         id: ID!
@@ -172,7 +182,7 @@ module.exports = gql`
         likePost(id: ID!): Like
 
         # comments mutation
-        createComment( id:ID!, text: String! ): Comment!
+        createComment( id:ID!, text: String!, replay: Replay ): Comment!
         deleteComment( postId: ID!, commentId: ID! ): String!
     }
 `
