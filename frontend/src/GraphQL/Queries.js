@@ -476,3 +476,19 @@ export const CREATE_POST = gql`
     }
   }
 `
+
+export const GET_VISITED = gql`
+  query GetVisited {
+    getVisited {
+      administrative_area_level_1
+      administrative_area_level_2
+      administrative_area_level_3
+      administrative_area_level_4
+      country
+      location {
+        lat
+        lng
+      }
+    }
+  }
+`;

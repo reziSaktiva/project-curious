@@ -43,11 +43,12 @@ function Profile() {
     fetchPolicy: "network-only",
   });
   const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS, {
-    fetchPolicy: "network-only"
+    fetchPolicy: "network-only",
   });
   const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const { user, changeProfilePicture } = useContext(AuthContext);
-  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
+  const { posts, setPosts, likedPosts, setLikedPosts } =
+    useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
   const [profilePicture, setProfilePicture] = useState(InitialState);
@@ -148,15 +149,20 @@ function Profile() {
         )}
       </TabPane>
       <TabPane tab="Liked" key="2">
-        {!getProfileLikedPost ? <p>loading</p>
-                    : likedPosts.map((post, key) => {
-                        return post && (
-                            user && 
-                                <div key={`posts${post.id} ${key}`}>
-                                <PostCard post={post} loading={loading} />
-                            </div>
-                        )
-                    })}
+        {!getProfileLikedPost ? (
+          <p>loading</p>
+        ) : (
+          likedPosts.map((post, key) => {
+            return (
+              post &&
+              user && (
+                <div key={`posts${post.id} ${key}`}>
+                  <PostCard post={post} loading={loading} />
+                </div>
+              )
+            );
+          })
+        )}
       </TabPane>
 
       <TabPane tab="Media" key="3">
@@ -181,6 +187,7 @@ function Profile() {
                   });
                   return (
                     <img
+                      key={`Media${idx}`}
                       src={photo.media}
                       onError={(e) => {
                         e.target.onerror = null;
