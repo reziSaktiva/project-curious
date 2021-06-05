@@ -340,6 +340,7 @@ export default function SinglePost(props) {
               </div>
 
               {/* disini ka tempat buat ngerender reply comment nya */}
+              {/* nanti si text <p>betul</p> nya tinggal di ganti pake componene list lagi */}
               {item.id !== post.comments.filter(data => data.replay.id) && <p>betul</p>}
 
             </Card>
