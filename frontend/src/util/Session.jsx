@@ -45,7 +45,7 @@ export const destorySession = () => {
 
 export const getRangeSearch = () => {
   try {
-    const range = localStorage.getItem(R_SEARCH) || 10;
+    const range = localStorage.getItem(R_SEARCH) || undefined;
 
     return range;
   } catch (e) {

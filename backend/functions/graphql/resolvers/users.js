@@ -214,6 +214,52 @@ module.exports = {
         }
     },
     Mutation: {
+        async clearAllNotif(_, args, context) {
+            const { username } = await fbAuthContext(context)
+      
+            if (!username) {
+              throw new UserInputError("UnAuthorization")
+            } else {
+              const getNotification = await db.collection(`/users/${username}/notifications`).get()
+              const notification = getNotification.docs.map(doc => doc.data())
+      
+              try {
+                notification.map(doc => {
+                  db.doc(`/users/${username}/notifications/${doc.id}`).delete()
+                })
+                
+                return 'Notification Clear'
+              }
+              catch (err) {
+                console.log(err);
+                throw new Error(err);
+              }
+            }
+          },
+        async readAllNotification(_, args, context) {
+            const { username } = await fbAuthContext(context)
+
+            try{
+                const batch = db.batch()
+                
+                if (!username) {
+                    throw UserInputError("unauthorization")
+                } else {
+                    const getNotifications = await db.collection(`/users/${username}/notifications`).get()
+                    const notifications = getNotifications.docs.map(doc => doc.data())
+
+                    return notifications.map(notif => {
+                        const notification = db.doc(`/users/${username}/notifications/${notif.id}`)
+                        batch.update(notification, { read: true })
+
+                        return notif
+                    })
+                }
+            } 
+            catch (err) {
+                throw new Error(err)
+            }
+        },
         async readNotification(_, { id }, context) {
             const { username } = await fbAuthContext(context)
 
