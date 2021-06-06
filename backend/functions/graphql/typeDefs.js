@@ -14,8 +14,16 @@ module.exports = gql`
         likes: [Like]
         muted: [Mute]
         repost: Repost
-        subscribe: [Subscribe]
-        
+        subscribe: [Subscribe],
+        hastags: [String]
+    }
+    type Search {
+        hits: [Post]
+        page: Int
+        nbHits: Int
+        nbPages: Int
+        hitsPerPage: Int
+        processingTimeMS: Float
     }
     type Repost {
         id: ID
@@ -129,6 +137,8 @@ module.exports = gql`
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
+        textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
+        setRulesSearchAlgolia(index: String!, rank: [String]!): String
     },
     input RegisterInput {
         email: String!
