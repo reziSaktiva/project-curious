@@ -97,7 +97,10 @@ const Sidebar = () => {
             title={
               <Link to="/maps">
                 {" "}
-                <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                {windowWidth > 993 ? (
+                  <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                ) : null}
+                
                 {address}
               </Link>
             }
@@ -114,7 +117,7 @@ const Sidebar = () => {
               <Link to="/">Nearby</Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
-              Search
+              <Link to="/search">Search</Link>
             </Menu.Item>
 
             <SubMenu
@@ -140,7 +143,7 @@ const Sidebar = () => {
             </Menu.Item>
 
             <Menu.Item key="Settings" icon={<SettingOutlined />}>
-              Settings
+              <Link to="/settings">Settings</Link>
             </Menu.Item>
           </Menu>
         </Sider>

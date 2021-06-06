@@ -14,7 +14,16 @@ module.exports = gql`
         likes: [Like]
         muted: [Mute]
         repost: Repost
-        subscribe: [Subscribe]
+        subscribe: [Subscribe],
+        hastags: [String]
+    }
+    type Search {
+        hits: [Post]
+        page: Int
+        nbHits: Int
+        nbPages: Int
+        hitsPerPage: Int
+        processingTimeMS: Float
     }
     type Repost {
         id: ID
@@ -48,14 +57,27 @@ module.exports = gql`
         token: String
     },
     type Comment {
-        id: ID!
-        createdAt: String!
-        owner: String!
-        text: String!
-        displayName: String!
-        displayImage: String!
+        id: ID
+        createdAt: String
+        owner: String
+        text: String
         photoProfile: String
-        colorCode: String!
+        photo: String
+        displayName: String
+        displayImage: String
+        colorCode: String
+        replay: ReplayData
+        replayList: [Comment]!
+    },
+    
+    input Replay {
+        username: String
+        id: ID
+    },
+    
+    type ReplayData {
+        username: String
+        id: ID
     },
     type Like {
         id: ID!
@@ -117,6 +139,8 @@ module.exports = gql`
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
+        textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
+        setRulesSearchAlgolia(index: String!, rank: [String]!): String
     },
     input RegisterInput {
         email: String!
@@ -176,7 +200,7 @@ module.exports = gql`
         likePost(id: ID!): Like
 
         # comments mutation
-        createComment( id:ID!, text: String! ): Comment!
+        createComment( id:ID!, text: String!, replay: Replay, photo: String ): Comment!
         deleteComment( postId: ID!, commentId: ID! ): String!
     }
 `

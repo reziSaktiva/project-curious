@@ -137,8 +137,8 @@ export default function ModalPost() {
   }
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(showPosition)
-  }, []);
+    if (isOpenNewPost) navigator.geolocation.getCurrentPosition(showPosition)
+  }, [isOpenNewPost]);
 
   useEffect(() => {
     if (repost) {
@@ -159,7 +159,7 @@ export default function ModalPost() {
         repost: repost || '',
         room
       };
-      console.log(variables);
+      
       createPost({ variables });
     }
   }, [uploaded, isFinishUpload]);

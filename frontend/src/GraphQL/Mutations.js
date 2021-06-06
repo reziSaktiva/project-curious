@@ -43,16 +43,21 @@ export const CREATE_POST = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-mutation createComment($id: ID!, $text: String!) {
-  createComment(id : $id, text: $text) {
+mutation createComment($id: ID!, $text: String!, $replay: Replay, $photo: String) {
+  createComment(id : $id, text: $text, replay: $replay, photo: $photo) {
   id
   owner
   text
   createdAt
   colorCode
+  photo
   displayName
   displayImage
+  replay {
+    username
+    id
     }
+  }
 }
 `;
 
@@ -114,39 +119,7 @@ export const MUTE_POST = gql`
   }
 `
 
-export const GET_POST = gql`
-  mutation getPost($id: ID!) {
-    getPost(id: $id) {
-      id
-      owner
-      text
-      createdAt
-      location {
-        lat
-        lng
-      }
-      likeCount
-      commentCount
-      likes {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-      }
-      comments {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-        text
-      }
-    }
-  }
-`;
+
 
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {

@@ -5,7 +5,7 @@ import { GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard'
+import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
@@ -52,7 +52,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? <center><div>data tidak ditemukan</div></center>
+                {!posts.length ? (<p>tidak ada postingan di sekitar anda</p>)
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)

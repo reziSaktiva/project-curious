@@ -32,6 +32,11 @@ import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
 import Room from './pages/room'
 
+import settings from './pages/Settings'
+
+import Search from './pages/search/index';
+
+
 function App() {
   return (
     <Context>
@@ -52,8 +57,10 @@ function App() {
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
+            <UserRoute exact path="/search" component={Search} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
+            <UserRoute exact path="/settings" component={settings} />
             <UserRoute exact path="/maps" component={map} />
           </Switch>
         </Grid>

@@ -8,7 +8,7 @@
   margin-top: 25vh
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
   .landingPage-input .btn-wrapper {
     padding-left: 0px;
     padding-right: 0px;

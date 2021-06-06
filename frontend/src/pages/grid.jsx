@@ -20,7 +20,7 @@ export default function Grid({ children }) {
                     <Col xs={0} sm={0} md={3} lg={6} xl={5} >
                         {user && <Sidebar />}
                     </Col>
-                    <Col xs={24} sm={24} md={15} lg={12} xl={13} style={{borderRight: "1px #cccccc solid" }}>
+                    <Col xs={24} sm={24} md={15} lg={12} xl={13} style={{borderRight: "1px #cccccc solid", height: 'auto' }}>
                         {children}
                     </Col>
                     <Col xs={0} sm={24} md={6} lg={6} xl={6}>

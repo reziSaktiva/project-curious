@@ -5,6 +5,11 @@ const { AuthenticationError, UserInputError } = require('apollo-server-express')
 const fbAuthContext = require("../../utility/fbAuthContext");
 const randomGenerator = require("../../utility/randomGenerator");
 
+const ALGOLIA_ID = 'EIAYYZTM49';
+const ALGOLIA_ADMIN_KEY = '2a9c7905cd20fc8e32c70646ce563def';
+const algoliasearch = require('algoliasearch');
+const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+
 module.exports = {
   Query: {
     async getPosts(_, { lat, lng, range }) {
@@ -356,6 +361,66 @@ module.exports = {
         console.log(error);
       }
     },
+    async setRulesSearchAlgolia(_, { rank, index }, ctx) {
+      if (!index) {
+        throw new UserInputError('index search is required, check index name on algolia dashboard')
+      }
+      
+      if (!rang || rank.length) {
+        throw new UserInputError('rank is Required')
+      }
+
+      const algoIndex = client.initIndex(index);
+
+      return new Promise((resolve, reject) => {
+        algoIndex.setSettings({ customRanking: rank })
+          .then(() => {
+            resolve("Success");
+          })
+          .catch(() => {
+            reject("Failed set rules")
+          })
+      })
+    },
+    async textSearch(_, { search, perPage = 5, page, range = 40, location }, context) {
+      const { lat, lng } = location;
+      const index = client.initIndex('search_posts');
+
+      const defaultPayload = {
+        "attributesToRetrieve": "*",
+        "attributesToSnippet": "*:20",
+        "snippetEllipsisText": "…",
+        "responseFields": "*",
+        "getRankingInfo": true,
+        "analytics": false,
+        "enableABTest": false,
+        "explain": "*",
+        "facets": ["*"],
+        "customRanking": ['desc(likeCount)', 'desc(commentCount)', "words"] // ranking based on likeCount and commentCount
+      };
+      const geoLocPayload = {
+        "aroundLatLng": `${lat}, ${lng}`,
+        "aroundRadius": range * 1000,
+      };
+
+      const pagination = {
+        "hitsPerPage": perPage || 10,
+        "page": page || 0,
+      }
+
+      return new Promise((resolve, reject) => {
+        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
+          .then(res => {
+            const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
+            
+            // return following structure data algolia
+            resolve({ hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
+          }).catch(err => {
+            reject(err)
+            console.error(err)
+          });
+      });
+    },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
 
@@ -385,6 +450,18 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
+          const rootComment = comments.filter(item => item.replay.id == null && item)
+          
+          const replayList = rootComment.map(comment => {
+            const replay = comments.filter(item => item.replay.id == comment.id)
+            console.log(replay)
+            return {
+              ...comment,
+              replayList : replay
+            }
+          })
+
+
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
@@ -394,10 +471,9 @@ module.exports = {
           return {
             ...post,
             likes,
-            comments,
-            repost,
+            comments: replayList,
             muted,
-            subscribe
+            subscribe,
           }
         }
         catch (err) {
@@ -694,9 +770,16 @@ module.exports = {
       return [];
     },
     async createPost(_, { text, media, location, repost, room }, context) {
+
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
+          const regexpHastag = /(\s|^)\#\w\w+\b/gm
+          let hastags = text.match(regexpHastag) || [];
+          if (hastags) {
+            hastags = hastags.map((s) => s.trim());
+          }
+
           const newPost = room ? {
             owner: username,
             text,
@@ -705,6 +788,7 @@ module.exports = {
             likeCount: 0,
             commentCount: 0,
             location,
+            _tags: hastags,
             room
           } : {
             owner: username,
@@ -713,7 +797,8 @@ module.exports = {
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,
-            location
+            location,
+            _tags: hastags
           };
 
           if (repost) {
@@ -725,6 +810,20 @@ module.exports = {
             .add(newPost)
             .then((doc) => {
               newPost.id = doc.id;
+              const index = client.initIndex('search_posts');
+              index.saveObjects([
+                {
+                  ...newPost,
+                  objectID: doc.id,
+                  _geoloc: location
+                }], { autoGenerateObjectIDIfNotExist: false })
+                .then(({ objectIDs }) => {
+                  console.log(objectIDs);
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+
               doc.update({ id: doc.id });
             });
 

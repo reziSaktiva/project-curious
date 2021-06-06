@@ -336,6 +336,7 @@ query{
           owner
           text
           displayName
+          displayImage
           photoProfile
           colorCode
           }
@@ -365,14 +366,32 @@ getPost(id: $id){
         displayImage
       }
     comments{
+      replayList {
         id
         createdAt
         owner
         text
         displayName
+        photo
         displayImage
-        photoProfile
         colorCode
+          replay {
+            username
+            id 
+          }
+        }
+      id
+      owner
+      createdAt
+      colorCode
+      photo
+      displayName
+      displayImage
+      text
+      replay {
+        username
+        id
+      }
         }
         repost {
           id

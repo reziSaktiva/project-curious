@@ -6,6 +6,8 @@ import { concat } from 'apollo-link'
 import { onError } from 'apollo-link-error';
 import { isMobile } from "react-device-detect";
 
+import { destorySession } from './util/Session';
+
 // Importing styles
 import './index.css'
 
@@ -20,11 +22,15 @@ const errorLink = onError(
   ({ graphQLErrors, networkError, operation, forward }) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
+        console.log('error: ',err);
         switch (err.extensions.code) {
-          case 'UNAUTHENTICATED':
+          case "UNAUTHENTICATED":
             // error code is set to UNAUTHENTICATED
-            // when AuthenticationError thrown in resolver
-            console.log('do auto logout')
+            if (err.message.includes('Firebase ID token has expired')) {
+              destorySession();
+              
+              window.location.href = '/';
+            }
           default:
             console.log(err.extensions)
         }
