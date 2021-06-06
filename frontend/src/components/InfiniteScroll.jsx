@@ -27,13 +27,17 @@ function ScrollInfinite(props) {
         const loc = JSON.parse(location)
         nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng } })
     }
+    const isLoadingNextPost =!loading
     return (
         <div>
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
                 hasMore={isMorePost}
-                loader={(!loading || !isLoading) && posts.length < 1 ? <SkeletonLoading />  : <div className="centeringButton" ><LoadingOutlined /></div>}
+                loader={
+                    (!loading || !isLoading) && ( !loading ? <SkeletonLoading /> :  isLoadingNextPost  && <div className="centeringButton" ><LoadingOutlined /></div> )
+                    // (!loading || !isLoading) && isLoadingNextPost ? <SkeletonLoading />  : <div className="centeringButton" ><LoadingOutlined /></div>
+                }
                 scrollableTarget="scrollableDiv"
                 {...props}
             />

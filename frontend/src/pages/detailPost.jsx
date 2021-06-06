@@ -1,5 +1,5 @@
 //GQL
-import moment from "moment";
+import moment, { defaultFormatUtc } from "moment";
 import Geocode from "react-geocode";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "../GraphQL/Mutations";
@@ -41,19 +41,16 @@ import { PostContext } from "../context/posts";
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 Geocode.setLanguage("id");
 
-const IconText = ({ icon, text }) => (
-  <span>
-    {React.createElement(icon, { style: { marginRight: 8 } })}
-    {text}
-  </span>
-);
 
 export default function SinglePost(props) {
   const _isMounted = useRef(false)
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
+  const [replay, setReplay] = useState({username: null, id: null});
+  const [form] = Form.useForm()
 
+  
   let id = props.match.params.id;
 
   const [getPost, { data }] = useLazyQuery(GET_POST ,{
@@ -67,8 +64,17 @@ export default function SinglePost(props) {
   }, [id]);
 
   //reply func
-  const handleReply =() => {
-    console.log('test');
+  const handleReply =item => {
+    console.log(item);
+    setReplay({
+      username : item.displayName,
+      id: item.id
+    })
+
+    form.setFieldsValue({
+      comment : `Reply to ${item.displayName}: ` 
+    })
+
   }
   //input form
 
@@ -82,7 +88,9 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
-      console.log(post);
+
+
+      console.log("test boy", post.comments);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
@@ -102,10 +110,10 @@ export default function SinglePost(props) {
   }, [data, _isMounted]);
 
   //repost
+
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
 
-  console.log("repost", repost);
   useEffect(() => {
       if (isRepost) {
         const { location } = repost;
@@ -131,11 +139,16 @@ export default function SinglePost(props) {
   },
   });
 
+
   const onFinish = (values) => {
     const { comment } = values;
+    const newComment = comment.split(":")[1]
+    const finalComment = newComment == undefined ? comment : newComment
+    console.log("newComment", newComment);
     console.log("Success:", values);
 
-    createComment({ variables: { id, text: comment } });
+    createComment({ variables: { text: finalComment, id: id, replay: replay } });
+
   };
 
   return (
@@ -238,7 +251,8 @@ export default function SinglePost(props) {
         </Skeleton>
       </List.Item>
       {post.comments && post.comments.length == 0 ? (null) : (
-        <List
+        <div>
+          <List
           itemLayout="vertical"
           size="large"
           dataSource={post.comments}
@@ -253,7 +267,6 @@ export default function SinglePost(props) {
             >
               <Meta
                 avatar={
-                  <Link to="/profile">
                     <Avatar
                       size={50}
                       style={{
@@ -262,7 +275,6 @@ export default function SinglePost(props) {
                         backgroundSize: 50,
                       }}
                     />
-                  </Link>
                 }
                 title={
                   <Row>
@@ -306,9 +318,8 @@ export default function SinglePost(props) {
                   {moment(item.createdAt).fromNow()}
                   
                   <Button
-                  ghost
                   type="link"
-                  onClick={handleReply}
+                  onClick={() => handleReply(item)}
                     style={{
                       fontWeight: "bold",
                       display: "inline-block",
@@ -320,11 +331,16 @@ export default function SinglePost(props) {
                   </Button>
                 </p>
               </div>
+
             </Card>
-          )}
-        />
+          )}>
+          </List>
+        </div>
+        
+        
       )}
       <Form
+       form={form}
         style={{ marginTop: 21, paddingBottom: -20 }}
         name="basic"
       onFinish={onFinish}
@@ -350,6 +366,7 @@ export default function SinglePost(props) {
               ]}
             >
               <Input
+              name="comment"
                 placeholder="Write your comment..."
                 style={{ borderRadius: 20 }}
               />
