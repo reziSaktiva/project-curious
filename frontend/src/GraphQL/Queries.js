@@ -285,6 +285,7 @@ query{
           owner
           text
           displayName
+          displayImage
           photoProfile
           colorCode
           }
@@ -320,6 +321,8 @@ getPost(id: $id){
         owner
         text
         displayName
+        photo
+        displayImage
         colorCode
           replay {
             username
@@ -330,6 +333,7 @@ getPost(id: $id){
       owner
       createdAt
       colorCode
+      photo
       displayName
       displayImage
       text

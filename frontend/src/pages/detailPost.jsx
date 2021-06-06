@@ -22,7 +22,8 @@ import {
   Upload,
   Button,
   Form,
-  Image
+  Image,
+  Modal
 } from "antd";
 
 //component
@@ -30,17 +31,30 @@ import Pin from "../assets/pin-svg-25px.svg";
 import LikeButton from "../components/Buttons/LikeButton";
 import CommentButton from "../components/Buttons/CommentButton";
 import RepostButton from "../components/Buttons/RepostButton";
-import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined, UploadButton } from "@ant-design/icons";
 import PostNavBar from "../components/PostNavBar";
 
 // Query
 import { GET_POST } from "../GraphQL/Queries";
 import { PostContext } from "../context/posts";
 
+// Init Firebase
+import firebase from 'firebase/app'
+import 'firebase/storage'
+const  storage = firebase.storage()
+
 //location
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 Geocode.setLanguage("id");
 
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
 
 export default function SinglePost(props) {
   const _isMounted = useRef(false)
@@ -49,6 +63,40 @@ export default function SinglePost(props) {
   const [repostAddress, setRepostAddress] = useState("");
   const [replay, setReplay] = useState({username: null, id: null});
   const [form] = Form.useForm()
+  const [state, setState] = useState({
+    previewVisible: false,
+    previewImage: '',
+    previewTitle: '',
+    fileList: []
+  })
+  const { previewVisible, previewImage, fileList, previewTitle } = state;
+
+  // upload photo comment /////////////////////////////
+
+
+  const handlePreview = async file => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+
+    setState({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    });
+  };
+
+  const handleChange = ({ fileList }) => {
+    const newFiles = fileList.map(file => ({ ...file, status: 'done'}))
+    setState({
+      ...state, 
+      fileList: newFiles
+    });
+  };
+  
+
+
+  //akhir upload photo comentttttt //////////////////////////////////////////////////////////////////////
 
   
   let id = props.match.params.id;
@@ -88,9 +136,8 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
+      console.log(post.comments);
 
-
-      console.log("test boy", post.comments);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
@@ -140,14 +187,47 @@ export default function SinglePost(props) {
   });
 
 
-  const onFinish = (values) => {
-    const { comment } = values;
+  const onFinish = async value => {
+    const { comment } = value;
     const newComment = comment.split(":")[1]
     const finalComment = newComment == undefined ? comment : newComment
-    console.log("newComment", newComment);
-    console.log("Success:", values);
+    
+    
+    let uploaded = [];
+    ////////////////fungsi upload///////////////////
+    console.log(fileList);
+    if (fileList.length) {
+      uploaded = await Promise.all(fileList.map(async (elem) => {
+        const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
+  
+        const url = await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed',
+            () => {},
+            error => {
+              fileList.push({ ...elem, status: 'error' })
+              reject()
+            },
+            async () => {
+              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+  
+              resolve(downloadUrl);
+            }
+          )
+        })
+  
+        return url
+      }));
+      
 
-    createComment({ variables: { text: finalComment, id: id, replay: replay } });
+      setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
+      createComment({ variables: { text: finalComment, id: id, replay: replay, photo: uploaded[0] } });
+
+      return;
+    }
+
+
+    setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
+    createComment({ variables: { text: finalComment, id: id, replay: replay, photo: '' } });
 
   };
 
@@ -267,6 +347,106 @@ export default function SinglePost(props) {
             >
               <Meta
                 avatar={
+                  <div>
+                    <div className="commentContainer"/>
+                    <Avatar
+                      size={50}
+                      style={{
+                        backgroundColor: item.colorCode,
+                        backgroundImage: `url(${item.displayImage})`,
+                        backgroundSize: 50,
+                      }}
+                    />
+                  </div>
+                    
+                }
+                title={
+                  <Row>
+                    <Col span={12}>
+                      <p style={{ fontWeight: "bold" }}>{item.displayName}</p>
+                    </Col>
+                    <Col span={12} style={{ textAlign: "right" }}>
+                      <Dropdown
+                        overlay={
+                          <Menu>
+                            <Menu.Item key="0">Subscribe</Menu.Item>
+                            <Menu.Item key="1" onClick={(e) => console.log(e)}>
+                              Mute
+                            </Menu.Item>
+                            <Menu.Item key="3">Report</Menu.Item>
+                          </Menu>
+                        }
+                        trigger={["click"]}
+                        placement="bottomRight"
+                      >
+                        <a
+                          className="ant-dropdown-link"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <EllipsisOutlined />
+                        </a>
+                      </Dropdown>
+                    </Col>
+                  </Row>
+                }
+                description={<div>
+                  <p style={{ color: "black" }}>{item.text}</p>
+                  {item.photo ?(
+                    <Image
+                    style={{
+                      width: "80%",
+                      height: 220,
+                      borderRadius: 10,
+                      objectFit: "cover",
+                      maxHeight: 300,
+                      objectFit: "cover",
+                    }}
+                    src={item.photo}
+                  />
+                  ) : null}
+                  </div>}
+              />
+              <div
+                style={{
+                  marginTop: 20,
+                  display: "inline-block",
+                  marginBottom: -20,
+                }}
+              >
+                <p>
+                  {moment(item.createdAt).fromNow()}
+                  
+                  <Button
+                  type="link"
+                  onClick={() => handleReply(item)}
+                    style={{
+                      fontWeight: "bold",
+                      display: "inline-block",
+                      marginLeft: 10,
+                      color: "black"
+                    }}
+                  >
+                    Reply
+                  </Button>
+                </p>
+              </div>
+            <div>
+            <List
+            className="commentContainerReply"
+          itemLayout="vertical"
+          size="large"
+          dataSource={item.replayList}
+          renderItem={(item) => (
+            <Card
+              style={{
+                width: "100%",
+                backgroundColor: "#ececec",
+                marginBottom: -20,
+              }}
+              loading={loading}
+            >
+              <Meta
+                avatar={
                     <Avatar
                       size={50}
                       style={{
@@ -324,17 +504,23 @@ export default function SinglePost(props) {
                       fontWeight: "bold",
                       display: "inline-block",
                       marginLeft: 10,
-                      color: "black"
+                      color: "red"
                     }}
                   >
                     Reply
                   </Button>
                 </p>
               </div>
-
+            <div>
+            </div>
             </Card>
           )}>
           </List>
+            </div>
+            </Card>
+          )}>
+          </List>
+          
         </div>
         
         
@@ -346,10 +532,32 @@ export default function SinglePost(props) {
       onFinish={onFinish}
       onFinishFailed={onFinish}
       >
+        
+        {fileList.length > 0 && (
+          <div style={{backgroundColor: "#ececec"}}>
+          <div style={{height:120, borderTopRightRadius: 30, borderTopLeftRadius: 30, backgroundColor: "white"}}>
+            <Form.Item name="foto" style={{ marginBottom: 0 }} >
+              <div className="centeringButton" style={{ marginTop: -8}}>
+              <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture-card"
+                fileList={fileList}
+                accept="video/*, image/*"
+                onPreview={handlePreview}
+                onChange={handleChange}
+              >
+              </Upload>
+              </div>
+            </Form.Item>
+            </div>
+          </div>
+          
+          )}
+        
         <Row>
           <Col span={2}>
-            <Form.Item name="upload" className="centeringButton">
-              <Upload>
+            <Form.Item name="upload" className="centeringButton" >
+              <Upload onChange={handleChange} showUploadList={false}>
                 <Button
                   style={{ border: "none" }}
                   icon={<PlusOutlined style={{ color: "#7f57ff" }} />}
