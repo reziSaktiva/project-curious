@@ -21,6 +21,7 @@ import {
   LS_LOCATION,
   LS_TOKEN,
   NOTIFICATION_READ,
+  NOTIFICATIONS_READ,
   SET_PROFILE_PICTURE
 } from "./constant";
 
@@ -69,6 +70,11 @@ function authReducer(state, action) {
         ...state,
         liked: action.payload,
       };
+    case "CLEAR_ALL_NOTIFICATIONS":
+      return{
+        ...state,
+        notifications: []
+      }
     case SET_USER_DATA:
       return {
         ...state,
@@ -89,6 +95,11 @@ function authReducer(state, action) {
         ...state,
         user: null,
       };
+    case NOTIFICATIONS_READ:
+      return {
+        ...state,
+        notifications : action.payload
+      }
     case NOTIFICATION_READ:
       return {
         ...state,
@@ -191,6 +202,12 @@ export function AuthProvider(props) {
     }
   }, [loading, data]);
 
+  function clearNotifications(){
+    dispatch({
+      type: "CLEAR_ALL_NOTIFICATIONS"
+    })
+  }
+
   function getGeoLocation(position) {
     const location = {
       lat: position.coords.latitude,
@@ -244,6 +261,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function readAllNotificatons(data){
+    dispatch({
+      type: NOTIFICATIONS_READ,
+      payload: data
+    })
+  }
+
   function logout() {
     dispatch({ type: LOGOUT });
   }
@@ -255,8 +279,10 @@ export function AuthProvider(props) {
       googleData,
       liked,
       notifications,
+      clearNotifications,
       changeProfilePicture,
       notificationRead,
+      readAllNotificatons,
       login,
       logout,
       loadFacebookData, // functions context
