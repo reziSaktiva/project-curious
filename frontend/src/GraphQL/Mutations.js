@@ -56,6 +56,23 @@ mutation createComment($id: ID!, $text: String!) {
 }
 `;
 
+export const READ_ALL_NOTIFICATIONS = gql`
+  mutation readNotifications {
+    readAllNotification{
+      recipient
+      sender
+      read
+      postId
+      id
+      type
+      createdAt
+      displayName
+      displayImage
+      colorCode
+    }
+  }
+`
+
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
     readNotification(id: $id){

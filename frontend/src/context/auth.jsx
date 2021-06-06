@@ -21,6 +21,7 @@ import {
   LS_LOCATION,
   LS_TOKEN,
   NOTIFICATION_READ,
+  NOTIFICATIONS_READ,
   SET_PROFILE_PICTURE
 } from "./constant";
 
@@ -94,6 +95,11 @@ function authReducer(state, action) {
         ...state,
         user: null,
       };
+    case NOTIFICATIONS_READ:
+      return {
+        ...state,
+        notifications : action.payload
+      }
     case NOTIFICATION_READ:
       return {
         ...state,
@@ -255,6 +261,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function readAllNotificatons(data){
+    dispatch({
+      type: NOTIFICATIONS_READ,
+      payload: data
+    })
+  }
+
   function logout() {
     dispatch({ type: LOGOUT });
   }
@@ -269,6 +282,7 @@ export function AuthProvider(props) {
       clearNotifications,
       changeProfilePicture,
       notificationRead,
+      readAllNotificatons,
       login,
       logout,
       loadFacebookData, // functions context
