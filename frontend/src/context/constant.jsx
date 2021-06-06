@@ -8,6 +8,7 @@ export const SET_PROFILE_PICTURE = "SET_PROFILE_PICTURE";
 
 export const LOGOUT = 'LOGOUT';
 export const NOTIFICATION_READ = "NOTIFICATION_READ"
+export const NOTIFICATIONS_READ = "NOTIFICATIONS_READ"
 
 // Storage Keys
 export const LS_LOCATION = 'location';

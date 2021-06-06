@@ -248,12 +248,13 @@ module.exports = {
                     const getNotifications = await db.collection(`/users/${username}/notifications`).get()
                     const notifications = getNotifications.docs.map(doc => doc.data())
 
-                    return notifications.map(notif => {
-                        const notification = db.doc(`/users/${username}/notifications/${notif.id}`)
+                    notifications.forEach(notif => {
+                        const notification = db.doc(`/users/${username}/notifications/${notif.id}/`)
                         batch.update(notification, { read: true })
-
-                        return notif
                     })
+
+                    return batch.commit()
+                            .then(() => notifications)
                 }
             } 
             catch (err) {
