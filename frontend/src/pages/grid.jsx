@@ -13,7 +13,6 @@ import { Row, Col } from 'antd';
 
 export default function Grid({ children }) {
     const { user } = useContext(AuthContext)
-
     if (user) {
         return (
             <Container className="app-page">

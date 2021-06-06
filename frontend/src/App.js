@@ -30,6 +30,7 @@ import Visited from './pages/visited/index'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
+import Room from './pages/room'
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
             <UserRoute exact path="/popular" component={Popular} />
+            <UserRoute exact path="/Insvire E-Sport" component={Room} />
+            <UserRoute exact path="/BMW Club Bandung" component={Room} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />

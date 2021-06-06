@@ -51,6 +51,57 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_ROOM_POSTS = gql`
+  query getPosts($room: String!) {
+    getRoomPosts(room:$room){
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+      subscribe {
+          postId
+          owner
+          createdAt
+          displayName
+          displayImage
+          colorCode
+      }
+    }
+  }
+`
+
 export const GET_POPULAR_POSTS = gql`
   query getPosts($lat: Float, $lng: Float $range: Float) {
     getPopularPosts(lat: $lat, lng: $lng range: $range) {
@@ -431,12 +482,14 @@ export const CREATE_POST = gql`
     $media: [String]
     $location: Location!
     $repost: String
+    $room: String
   ) {
     createPost(
     text: $text
     media: $media
     location: $location
     repost: $repost
+    room: $room
   )
     {
       id
