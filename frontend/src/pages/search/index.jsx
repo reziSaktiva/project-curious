@@ -1,10 +1,15 @@
 import { Input, Row, Col } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
+import AppBar from '../../components/AppBar';
+
 import './style.css';
 
 const Search = () => {
   return (
+    <>
+    <AppBar title="Seach" />
+
     <div className="search_page">
       <Input placeholder="default size" prefix={<SearchOutlined />} />
       <div className="explore-place">
@@ -40,6 +45,7 @@ const Search = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
