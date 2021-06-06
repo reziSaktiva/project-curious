@@ -31,7 +31,9 @@ const BottomBar = () => {
           </Link>
         </div>
         <div className="bottom-bar__items">
-          <SearchOutlined style={{ fontSize: 20 }} />
+          <Link className={`${currentPath === 'search' ? 'active' : '' }`} to="/search">
+            <SearchOutlined style={{ fontSize: 20 }} />
+          </Link>
         </div>
         <div className="bottom-bar__items">
           <div className="ui circular outlined icon button fixed"
