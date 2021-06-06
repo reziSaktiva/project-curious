@@ -24,7 +24,7 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from "react-router-dom";
 
 // Components
-import PostCard from "../components/PostCard";
+import PostCard from "../components/PostCard/index";
 import AppBar from "../components/AppBar";
 
 // Init Firebase
