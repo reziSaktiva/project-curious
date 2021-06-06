@@ -1,0 +1,28 @@
+.btn-comment {
+  display: flex;
+}
+
+.btn-comment .btn-comment__icon {
+  z-index: 100;
+}
+
+.btn-comment .btn-comment__wrapper .btn-comment__label {
+  height: 25px;
+  border-radius: 5px;
+  border: 1px solid black;
+  position: relative;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-comment .btn-comment__wrapper {
+  width: 100%;
+  padding: 0px;
+  display: flex;
+  margin-left: -10px;
+  justify-content: center;
+  align-items: center
+}

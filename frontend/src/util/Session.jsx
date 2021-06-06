@@ -38,6 +38,7 @@ export const destorySession = () => {
         localStorage.removeItem(LS_TOKEN)
         localStorage.removeItem(LS_DATA_USER)
         localStorage.removeItem(LS_LOCATION)
+        localStorage.removeItem(R_SEARCH)
     } catch (e) {
         console.log('error destroy session: ', e);
     }

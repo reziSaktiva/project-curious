@@ -117,7 +117,7 @@ const Sidebar = () => {
               <Link to="/">Nearby</Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
-              Search
+              <Link to="/search">Search</Link>
             </Menu.Item>
 
             <SubMenu

@@ -30,7 +30,11 @@ import Visited from './pages/visited/index'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
+
 import settings from './pages/Settings'
+
+import Search from './pages/search/index';
+
 
 function App() {
   return (
@@ -50,6 +54,7 @@ function App() {
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
+            <UserRoute exact path="/search" component={Search} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <UserRoute exact path="/settings" component={settings} />

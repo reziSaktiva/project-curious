@@ -1,0 +1,26 @@
+.action-post {
+  display: grid;
+  grid-template-columns: 20% 24% 20%;
+  grid-column-gap: 10px;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .action-post {
+    display: grid;
+    grid-template-columns: 30% 34% 30%;
+    grid-column-gap: 10px;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .action-post {
+    display: grid;
+    grid-template-columns: 31% 38.5% 33%;
+    grid-column-gap: 5px;
+  }
+}
+
+.list-actions .ant-list-item-action li {
+  padding: 0px;
+  width: 100%;
+}

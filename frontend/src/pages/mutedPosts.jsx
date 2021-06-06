@@ -5,7 +5,7 @@ import { GET_MUTED_POSTS, GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard'
+import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
