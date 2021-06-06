@@ -314,18 +314,29 @@ getPost(id: $id){
         displayImage
       }
     comments{
+      replayList {
         id
         createdAt
         owner
         text
         displayName
-        displayImage
-        photoProfile
         colorCode
-        replay {
-          username
-          id
+          replay {
+            username
+            id 
+          }
         }
+      id
+      owner
+      createdAt
+      colorCode
+      displayName
+      displayImage
+      text
+      replay {
+        username
+        id
+      }
         }
         repost {
           id

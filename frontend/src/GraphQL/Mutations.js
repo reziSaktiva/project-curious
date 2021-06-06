@@ -95,55 +95,7 @@ export const MUTE_POST = gql`
   }
 `
 
-export const GET_POST = gql`
-  mutation getPost($id: ID!) {
-    getPost(id: $id) {
-      id
-      owner
-      text
-      createdAt
-      location {
-        lat
-        lng
-      }
-      likeCount
-      commentCount
-      likes {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-      }
-      comments {
-        replayList {
-          id
-          createdAt
-          owner
-          text
-          displayName
-          colorCode
-            replay {
-              username
-              id 
-            }
-          }
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-        text
-        replay {
-          username
-          id
-        }
-      }
-    }
-  }
-`;
+
 
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {

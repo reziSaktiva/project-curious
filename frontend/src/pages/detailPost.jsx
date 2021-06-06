@@ -90,7 +90,7 @@ export default function SinglePost(props) {
       setPost(post);
 
 
-      console.log("test boy", post.comments[0].replayList);
+      console.log("test boy", post.comments);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
