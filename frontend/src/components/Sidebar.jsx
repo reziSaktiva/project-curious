@@ -139,7 +139,7 @@ const Sidebar = () => {
             </Menu.Item>
 
             <Menu.Item key="Settings" icon={<SettingOutlined />}>
-              Settings
+              <Link to="/settings">Settings</Link>
             </Menu.Item>
           </Menu>
         </Sider>

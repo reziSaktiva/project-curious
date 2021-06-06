@@ -187,12 +187,18 @@ export default function SinglePost(props) {
   });
 
 
+
   const onFinish = async value => {
     const { comment } = value;
-    const newComment = comment.split(":")[1]
+    const newComment = comment ? comment.substring(comment.indexOf(':')+1) : ''
     const finalComment = newComment == undefined ? comment : newComment
     
-    
+    const isReplay = form.getFieldValue(["comment"]).includes(replay.username && replay.id)
+    console.log(isReplay);
+
+    if(!isReplay){
+      setReplay({username: null, id: null})
+    }
     let uploaded = [];
     ////////////////fungsi upload///////////////////
     console.log(fileList);
