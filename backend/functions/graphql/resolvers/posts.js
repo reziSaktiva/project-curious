@@ -332,6 +332,18 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
+          const rootComment = comments.filter(item => item.replay.id == null && item)
+          
+          const replayList = rootComment.map(comment => {
+            const replay = comments.filter(item => item.replay.id == comment.id)
+            console.log(replay)
+            return {
+              ...comment,
+              replayList : replay
+            }
+          })
+
+
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
@@ -341,10 +353,9 @@ module.exports = {
           return {
             ...post,
             likes,
-            comments,
-            repost,
+            comments: replayList,
             muted,
-            subscribe
+            subscribe,
           }
         }
         catch (err) {

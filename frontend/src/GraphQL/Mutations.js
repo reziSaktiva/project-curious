@@ -117,6 +117,18 @@ export const GET_POST = gql`
         displayImage
       }
       comments {
+        replayList {
+          id
+          createdAt
+          owner
+          text
+          displayName
+          colorCode
+            replay {
+              username
+              id 
+            }
+          }
         id
         owner
         createdAt
@@ -124,6 +136,10 @@ export const GET_POST = gql`
         displayName
         displayImage
         text
+        replay {
+          username
+          id
+        }
       }
     }
   }

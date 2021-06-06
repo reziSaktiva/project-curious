@@ -47,7 +47,7 @@ export default function SinglePost(props) {
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
-  const [replay, setReplay] = useState({});
+  const [replay, setReplay] = useState({username: null, id: null});
   const [form] = Form.useForm()
 
   
@@ -89,15 +89,8 @@ export default function SinglePost(props) {
       const post = data.getPost
       setPost(post);
 
-      //aku pusing disini gimana cara ngeluarin idnya biar keluar 1-1 bukan dalam bentuk array supaya bisa jadi pembanding
-      //kalau postingan ini adalah respostan dari id yang sesuai
-      //supaya hasil dari ini bisa di taro di line 342
-      console.log(post.comments.filter(data => data.replay.id).map(data => data.replay.id));
 
-      
-      const test3 = post.comments.filter(data => data.replay.username)
-
-      console.log("test boy", test3);
+      console.log("test boy", post.comments[0].replayList);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
@@ -339,16 +332,9 @@ export default function SinglePost(props) {
                 </p>
               </div>
 
-              {/* disini ka tempat buat ngerender reply comment nya */}
-              {/* nanti si text <p>betul</p> nya tinggal di ganti pake componene list lagi */}
-              {item.id !== post.comments.filter(data => data.replay.id) && <p>betul</p>}
-
             </Card>
           )}>
-            
           </List>
-        
-        
         </div>
         
         

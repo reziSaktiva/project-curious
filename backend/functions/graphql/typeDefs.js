@@ -15,6 +15,7 @@ module.exports = gql`
         muted: [Mute]
         repost: Repost
         subscribe: [Subscribe]
+        
     }
     type Repost {
         id: ID
@@ -48,21 +49,23 @@ module.exports = gql`
         token: String
     },
     type Comment {
-        id: ID!
-        createdAt: String!
-        owner: String!
-        text: String!
-        displayName: String!
-        displayImage: String!
+        id: ID
+        createdAt: String
+        owner: String
+        text: String
         photoProfile: String
-        colorCode: String!
+        displayName: String
+        displayImage: String
+        colorCode: String
         replay: ReplayData
-
+        replayList: [Comment]!
     },
+    
     input Replay {
         username: String
         id: ID
     },
+    
     type ReplayData {
         username: String
         id: ID
