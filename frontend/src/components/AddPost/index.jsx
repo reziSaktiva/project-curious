@@ -28,7 +28,8 @@ import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
-const  storage = firebase.storage()
+import { AuthContext } from "../../context/auth";
+const storage = firebase.storage()
 
 const { Panel } = Collapse;
 
@@ -38,10 +39,10 @@ const InitialState = {
   visible: false,
   previewImage: '',
   previewTitle: '',
-  fileList:[],
+  fileList: [],
   lat: '',
   lng: '',
-  uploaded:[],
+  uploaded: [],
   isFinishUpload: false,
   text: ''
 };
@@ -66,22 +67,22 @@ export default function ModalPost() {
   const [state, setState] = useState(InitialState);
   const [address, setAddress] = useState("");
   const [form] = Form.useForm();
-  const [Room, setRoom] = useState()
+  const { room, setRoom } = useContext(AuthContext)
   const [open, setOpen] = useState([])
 
   //changeroom func
   const handleCollapse = () => {
-    if(open.length) {
+    if (open.length) {
       setOpen([])
     } else {
       setOpen([1])
     }
   }
-   const handleRoom = (e) => {
-     setRoom(e.target.value)
-      setOpen([])
+  const handleRoom = (e) => {
+    setRoom(e.target.value)
+    setOpen([])
 
-   }
+  }
   //set location
 
   const loc = localStorage.location;
@@ -103,13 +104,13 @@ export default function ModalPost() {
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
-  
+
   const [createPost] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
         const { createPost } = data;
-        
+
         // Reset Form
         setState(InitialState);
         form.resetFields();
@@ -124,7 +125,7 @@ export default function ModalPost() {
     }
   )
 
-  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded} = state;
+  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded } = state;
 
   ///////// location /////////
   function showPosition(position) {
@@ -141,13 +142,13 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (repost) {
-      getRepost({ variables: { id: repost }});
+      getRepost({ variables: { id: repost } });
     }
   }, [repost]);
 
   useEffect(() => {
     if (isOpenNewPost && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
-      const { text= '' } = state;
+      const { text = '' } = state;
       const variables = {
         text,
         media: uploaded,
@@ -155,12 +156,11 @@ export default function ModalPost() {
           lat,
           lng
         },
-        repost: repost || ''
+        repost: repost || '',
+        room
       };
-
-      console.log('variables: ', variables);
-
-      createPost( { variables });
+      
+      createPost({ variables });
     }
   }, [uploaded, isFinishUpload]);
 
@@ -175,7 +175,7 @@ export default function ModalPost() {
     });
   }
 
-  const handleCancel = () => setState({...state, previewVisible: false });
+  const handleCancel = () => setState({ ...state, previewVisible: false });
 
   const handleCancelModal = () => {
     toggleOpenNewPost(false);
@@ -195,9 +195,9 @@ export default function ModalPost() {
   };
 
   const handleChange = ({ fileList }) => {
-    const newFiles = fileList.map(file => ({ ...file, status: 'done'}))
+    const newFiles = fileList.map(file => ({ ...file, status: 'done' }))
     setState({
-      ...state, 
+      ...state,
       fileList: newFiles
     });
   }
@@ -211,22 +211,22 @@ export default function ModalPost() {
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
         const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
-  
+
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
-            () => {},
+            () => { },
             error => {
               fileList.push({ ...elem, status: 'error' })
               reject()
             },
             async () => {
               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-  
+
               resolve(downloadUrl);
             }
           )
         })
-  
+
         return url
       }));
 
@@ -236,8 +236,8 @@ export default function ModalPost() {
     }
 
 
-    setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
-    
+    setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text })
+
     return;
   };
 
@@ -245,80 +245,80 @@ export default function ModalPost() {
     <div>
       <Modal
         key="addPost"
-          visible={isOpenNewPost}
-          title={[
-            <p key="paragraf">{repost ? 'Repost' : 'Post to'}</p>,
-            <div>
-              <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
-                <Panel onChange={handleCollapse} header={
-                  <div>
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{border: 'none',color: 'black', backgroundColor: 'none', height: 50, top: -15}}>
-                  <img src={Pin}  style={{display: 'inline-block',width: 40, marginBottom: "auto", }}/>
+        visible={isOpenNewPost}
+        title={[
+          <p key="paragraf">{repost ? 'Repost' : 'Post to'}</p>,
+          <div>
+            <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
+              <Panel onChange={handleCollapse} header={
+                <div>
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50, top: -15 }}>
+                    <img src={Pin} style={{ display: 'inline-block', width: 40, marginBottom: "auto", }} />
                   </Radio.Button>
-                  <div style={{display: 'inline-block'}}>
-                    <h3 style={{ fontWeight: "bold"}}>{Room? Room :"Nearby"}</h3>
-                      <Link to='/maps'><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
+                  <div style={{ display: 'inline-block' }}>
+                    <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
+                    <Link to='/maps'><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
                   </div>
                   <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
+                </div>
+              } key="1" showArrow={false}>
+                <p>Available Room</p>
+                <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
+                  <img src={Gorila} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <div style={{ display: 'inline-block' }}>
+                    <h4 style={{ fontWeight: "bold" }}>Insvire E-Sport</h4>
+                    <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>
                   </div>
-                } key="1" showArrow={false}>
-                  <p>Available Room</p>
-                  <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-sport" style={{border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55}}>
-                    <img src={Gorila}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
-                    <div style={{display: 'inline-block'}}>
-                      <h4 style={{ fontWeight: "bold"}}>Insvire E-sport</h4>
-                      <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>
-                    </div>
-                  </Radio.Button>
+                </Radio.Button>
 
-                  <Radio.Button className='addpostRoom' onClick={handleRoom}  value="BMW Club Bandung"style={{border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55}}>
-                    <img src={Bmw}  style={{display: 'inline-block',width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }}/>
-                    <div style={{display: 'inline-block'}}>
-                      <h4 style={{ fontWeight: "bold"}}>BMW Club Bandung</h4>
-                      <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>
-                    </div>
-                  </Radio.Button>
-                </Panel>
-              </Collapse>
-              
-            </div>
-            
-            
-            ,
-          ]}
-          onCancel={handleCancelModal}
-          footer={null}
-        >
-          {!!repost && (
-            <>
-             {loading ?
+                <Radio.Button className='addpostRoom' onClick={handleRoom} value="BMW Club Bandung" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
+                  <img src={Bmw} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <div style={{ display: 'inline-block' }}>
+                    <h4 style={{ fontWeight: "bold" }}>BMW Club Bandung</h4>
+                    <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>
+                  </div>
+                </Radio.Button>
+              </Panel>
+            </Collapse>
+
+          </div>
+
+
+          ,
+        ]}
+        onCancel={handleCancelModal}
+        footer={null}
+      >
+        {!!repost && (
+          <>
+            {loading ?
               (
                 <div style={{ marginBottom: 10 }}>
                   <Space>
-                    <Skeleton.Avatar active={true} size={"large"}/>
-                    <Skeleton.Button style={{ width: window.isMobile ? '200px' : '400px'}} size={"small"} />
+                    <Skeleton.Avatar active={true} size={"large"} />
+                    <Skeleton.Button style={{ width: window.isMobile ? '200px' : '400px' }} size={"small"} />
                   </Space>
-                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10}} size={"small"} />
+                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10 }} size={"small"} />
                 </div>
               )
-             : (
-              <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
-                <div style={{ display: 'flex'}}>
-                  <p className="ic-location-small" style={{ margin: 0}}/>
-                  <div style={{ fontWeight: 600, paddingLeft: 10 }}>Jakarta, Indonesia</div>
-                </div>
-                <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
-                <div style={{ marginTop: 5 }}>{getPost.text}</div>
-              </Card>
-             )}
-            </>
-          )}
+              : (
+                <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
+                  <div style={{ display: 'flex' }}>
+                    <p className="ic-location-small" style={{ margin: 0 }} />
+                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>Jakarta, Indonesia</div>
+                  </div>
+                  <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
+                  <div style={{ marginTop: 5 }}>{getPost.text}</div>
+                </Card>
+              )}
+          </>
+        )}
         <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
             <Input.TextArea bordered={false} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
-            <Form.Item name="foto" style={{ marginBottom: 0 }} > 
+            <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
@@ -331,7 +331,7 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
-          <div style={{ position: 'relative', width: '100%'}}>
+          <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
               border: 'none',
@@ -339,34 +339,34 @@ export default function ModalPost() {
               height: '0.2px'
             }} />
             <Col span={12}>
-              <Form.Item name="foto" style={{marginBottom: 0}}> 
+              <Form.Item name="foto" style={{ marginBottom: 0 }}>
                 <Upload
-                accept="video/*, image/*"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                showUploadList={null}
-                onChange={handleChange}
+                  accept="video/*, image/*"
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  showUploadList={null}
+                  onChange={handleChange}
                 >
                   <PictureOutlined />
                 </Upload>
               </Form.Item>
-              </Col>
-            <Button htmlType="submit" key="submit" type="primary" 
-              style={{ backgroundColor: '#7958f5', borderRadius: 20, position:"absolute",  bottom:"3%", right: 0, height:25, fontSize: 10}}>
+            </Col>
+            <Button htmlType="submit" key="submit" type="primary"
+              style={{ backgroundColor: '#7958f5', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
               Post
             </Button>
           </div>
-         
-          </Form>
-          <Modal
-            visible={previewVisible}
-            title={previewTitle}
-            footer={null}
-            onCancel={handleCancel}
-          >
-            <img alt="example" style={{ width: '100%' }} src={previewImage} />
-          </Modal>
+
+        </Form>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={handleCancel}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-        
+      </Modal>
+
     </div>
   );
 }

@@ -22,7 +22,8 @@ import {
   LS_TOKEN,
   NOTIFICATION_READ,
   NOTIFICATIONS_READ,
-  SET_PROFILE_PICTURE
+  SET_PROFILE_PICTURE,
+  SET_ROOM
 } from "./constant";
 
 const initialState = {
@@ -30,6 +31,7 @@ const initialState = {
   location: "",
   liked: [],
   notifications: [],
+  room: null,
   facebookData: null,
   googleData: null
 };
@@ -90,6 +92,11 @@ function authReducer(state, action) {
         ...state,
         googleData: action.payload,
       };
+    case SET_ROOM:
+      return {
+        ...state,
+        room: action.payload === "Nearby" ? null : action.payload
+      }
     case LOGOUT:
       return {
         ...state,
@@ -143,7 +150,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications } = state
+  const { user, facebookData, googleData, liked, notifications, room } = state
 
   // Mutations
   const [
@@ -221,6 +228,13 @@ export function AuthProvider(props) {
       payload: location,
     });
   }
+  
+  function setRoom(room){
+    dispatch({
+      type: SET_ROOM,
+      payload: room
+    })
+  }
 
   function changeProfilePicture(url) {
     dispatch({
@@ -279,6 +293,8 @@ export function AuthProvider(props) {
       googleData,
       liked,
       notifications,
+      room,
+      setRoom,
       clearNotifications,
       changeProfilePicture,
       notificationRead,

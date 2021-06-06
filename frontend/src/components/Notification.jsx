@@ -20,8 +20,9 @@ export default function Notification() {
   });
 
   const [ readNotifications ] = useMutation(READ_ALL_NOTIFICATIONS, {
-    update(_, { data: { readNotifications } }) {
-      readAllNotificatons(readNotifications);
+    update(_, { data: { readAllNotification } }) {
+      console.log(readAllNotification);
+      readAllNotificatons(readAllNotification);
     }
   })
 
