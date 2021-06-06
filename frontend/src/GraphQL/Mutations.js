@@ -43,13 +43,14 @@ export const CREATE_POST = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-mutation createComment($id: ID!, $text: String!, $replay: Replay) {
-  createComment(id : $id, text: $text, replay: $replay) {
+mutation createComment($id: ID!, $text: String!, $replay: Replay, $photo: String) {
+  createComment(id : $id, text: $text, replay: $replay, photo: $photo) {
   id
   owner
   text
   createdAt
   colorCode
+  photo
   displayName
   displayImage
   replay {
