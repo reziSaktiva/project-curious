@@ -16,10 +16,12 @@ function Room(props) {
     console.log();
     const room = props.match.path
     const _isMounted = useRef(false);
-    const { posts, setPosts, loadingData, loading } = useContext(PostContext)
+    const { room_1, setRoom, room_2, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
 
-    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_ROOM_POSTS);
+    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_ROOM_POSTS, {
+        fetchPolicy: "network-only",
+      });
     
     useEffect(() => {
         if (room) {
@@ -34,9 +36,11 @@ function Room(props) {
 
                 return;
             }
-            setPosts(data.getRoomPosts)
+            setRoom(data.getRoomPosts)
 
-            _isMounted.current = true
+            if(room_1.length && room_2.length){
+                _isMounted.current = true
+            }
             // set did mount react
 
             return;
@@ -46,8 +50,8 @@ function Room(props) {
     return (
         <div>
             <NavBar />
-            {user ? ( !posts ? null
-                    : posts.map((post, key) => {
+            {room === "/Insvire E-Sport" ? (user ? ( !room_1 ? null
+                    : room_1.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
@@ -56,7 +60,17 @@ function Room(props) {
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
                         )
-                    })) : null}
+                    })) : null) : (user ? ( !room_2 ? null
+                        : room_2.map((post, key) => {
+                            const { muted, id } = post;
+                            const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+                            
+                            return (
+                                <div key={`posts${id} ${key}`}>
+                                    {!isMuted && <PostCard post={post} loading={loading} />}
+                                </div>
+                            )
+                        })) : null)}
         </div>
     );
 }

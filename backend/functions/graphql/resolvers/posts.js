@@ -942,16 +942,17 @@ module.exports = {
         throw new Error(err);
       }
     },
-    async likePost(_, { id }, context) {
+    async likePost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context);
       const { name, displayImage, colorCode } = await randomGenerator(
         username,
-        id
+        id,
+        room
       );
-
-      const postDocument = db.doc(`/posts/${id}`);
-      const likeCollection = db.collection(`/posts/${id}/likes`);
-      const subscribeCollection = db.collection(`/posts/${id}/subscribes`);
+        console.log(room);
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
+      const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`);
 
       try {
         const { isLiked, likeId } = await likeCollection
@@ -993,7 +994,7 @@ module.exports = {
                 isLike: false,
               };
 
-              db.doc(`/posts/${id}/likes/${likeId}`).delete();
+              db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes/${likeId}`).delete();
               db.doc(`/users/${username}/liked/${likeId}`).delete();
 
               return subscribeCollection.get().then((data) => {
