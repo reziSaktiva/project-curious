@@ -8,8 +8,8 @@ import { get } from "lodash";
 
 import { AuthContext } from "../../context/auth";
 import Pin from "../../assets/pin-svg-25px.svg";
-import LikeButton from "../Buttons/LikeButton";
-import CommentButton from "../Buttons/CommentButton";
+import LikeButton from "../Buttons/LikeButton/index";
+import CommentButton from "../Buttons/CommentButton/index";
 import RepostButton from "../Buttons/RepostButton/index";
 
 import { EllipsisOutlined } from "@ant-design/icons";
@@ -96,25 +96,6 @@ export default function PostCard({ post, loading }) {
         actions={
           !loading && [
             <>
-              {/* <Row gutter={[48, 0]}>
-                <Col xs={6} sm={8} md={8} lg={8} xl={8}>
-                  <LikeButton
-                    likeCount={post.likeCount}
-                    likes={post.likes}
-                    id={post.id}
-                  />
-                </Col>
-
-                <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                  <Link to={`/post/${post.id}`}>
-                    <CommentButton commentCount={post.commentCount} />
-                  </Link>
-                </Col>
-
-                <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                  <RepostButton idPost={post.id} />
-                </Col>
-              </Row> */}
               <div className="action-post">
                 <div className="action-post__item">
                   <LikeButton
@@ -124,7 +105,9 @@ export default function PostCard({ post, loading }) {
                   />
                 </div>
                 <div className="action-post__item">
+                  <Link to={`/post/${post.id}`}>
                   <CommentButton commentCount={post.commentCount} />
+                  </Link>
                 </div>
                 <div className="action-post__item">
                   <RepostButton idPost={post.id} />

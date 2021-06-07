@@ -8,6 +8,7 @@ import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
+import SkeletonLoading from '../components/SkeletonLoading'
 
 
 function SubscribePosts() {
@@ -40,13 +41,14 @@ function SubscribePosts() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!subscribePosts ? null
-                    : subscribePosts.map((post, key) => post === null ? (null) : (
+                {!subscribePosts || subscribePosts.length ? (<SkeletonLoading />)
+                    : subscribePosts.map((post, key) => post === null ? (<SkeletonLoading />) : (
                         <div key={`posts${post.id} ${key}`}>
+                            {console.log("true")}
                         <PostCard post={post} loading={loading} />
                     </div>
                 ))}
-            </div>) : null}
+            </div>) : <SkeletonLoading />}
         </div>
     );
 }

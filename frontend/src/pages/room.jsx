@@ -5,7 +5,7 @@ import { GET_ROOM_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
-import PostCard from '../components/PostCard'
+import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
@@ -13,6 +13,7 @@ import { getSession } from '../util/Session';
 
 
 function Room(props) {
+    console.log();
     const room = props.match.path
     const _isMounted = useRef(false);
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)

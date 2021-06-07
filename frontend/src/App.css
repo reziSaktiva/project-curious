@@ -397,7 +397,7 @@ transform: translate(-50%, 30%);
 .notifContainer {
   padding: 4px;
 }
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 1200px) {
   .ui.container {
     margin-left: 0px !important;
     margin-right: 0px !important;

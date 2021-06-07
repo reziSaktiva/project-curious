@@ -42,6 +42,7 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
+  console.log(user.username);
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;
@@ -88,7 +89,7 @@ const Sidebar = () => {
               />
             </Link>
           </div>
-          <Link to="/profile">
+          <Link to={`/profile/${user.id}`}>
             <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.username ? user.username : "My Account"}
             </h3>
