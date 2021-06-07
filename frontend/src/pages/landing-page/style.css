@@ -1,24 +1,38 @@
+    .fonts {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 .landingPage-input .btn-wrapper {
-  padding-left: 70px;
-  padding-right: 70px;
-  position: relative;
+    padding-left: 70px;
+    padding-right: 70px;
+    position: relative;
 }
 
 .copy-right {
-  margin-top: 25vh
+    margin-top: 25vh;
+    font-size: 18px;
 }
 
-@media only screen and (max-width: 768px) {
-  .landingPage-input .btn-wrapper {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-  
-  .landingPage-input {
-    width: 65%;
-  }
-
-  .copy-right {
-    margin-top: 10vh
-  }
-}
+@media only screen and (max-width: 600px) {
+    .landingPage-input .btn-wrapper {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .landingPage-input {
+        width: 65%;
+    }
+    .copy-right {
+        margin-top: 10vh
+    }
+    @media only screen and (max-width: 768px) {
+        .landingPage-input .btn-wrapper {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .landingPage-input {
+            width: 65%;
+        }
+        .copy-right {
+            margin-top: 10vh
+        }
+    }

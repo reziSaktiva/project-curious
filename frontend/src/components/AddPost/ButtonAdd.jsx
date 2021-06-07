@@ -10,9 +10,9 @@ const ButtonAdd = () => {
   
   return (
     <div className="ui circular outlined icon button fixed"
-      style={{ position: 'fixed', backgroundColor: '#7958F5', borderRadius: '100%', right: '16%', bottom: '10%' }}
+      style={{ position: 'fixed', width:'60px', height:'60px', backgroundColor: '#7958F5', borderRadius: '100%', right: '16%', bottom: '10%' }}
       onClick={handleOpenAddPost}>
-      <i className="plus icon" style={{ color: 'white' }}></i>
+      <i className="big plus icon" style={{ color: 'white' }}></i>
     </div>
   )
 };
