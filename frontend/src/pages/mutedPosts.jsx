@@ -9,7 +9,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
-
+import Radius from '../assets/Radius.jpg'
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
 
@@ -38,7 +38,13 @@ function MutedPost() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!mutedPost || mutedPost.length < 1 ? <p className='centeringButton'>tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</p>
+                {!mutedPost || mutedPost.length < 1 ? (
+                    <div className="centeringButton">
+                        <img src={Radius} style={{ width: 300}} />
+                        <h4 style={{textAlign: 'center'}}>Here you can mute a post u dont like</h4>
+                        <h4 style={{textAlign: 'center'}}>and unmute to see it again</h4>
+                    </div>
+                )
                     : mutedPost.map((post, key) => {
                         return (
                                 <div key={`posts${post.id} ${key}`}>
