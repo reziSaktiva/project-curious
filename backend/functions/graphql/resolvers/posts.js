@@ -68,14 +68,65 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            console.log('id post: ', data.id,' distance: ', distance);
-
-            if ((distance / (range || 1000)) <= 40) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
             console.log('error : ', e)
           }
+        });
+
+        return nearby;
+      }
+
+      return [];
+    },
+    async getRoomPosts(_, { room }, context) {
+      const data = await db.collection(`/room${room}/posts`).orderBy('createdAt', 'desc').limit(8).get()
+      const docs = data.docs.map((doc) => doc.data())
+
+      if (docs.length) {
+        const nearby = []
+
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
+
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/room${room}/posts/${repostId}`).get()
+              return repostData.data() || {}
+            }
+          }
+
+          // Likes
+          const likes = async () => {
+
+            const likesData = await db.collection(`/room${room}/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/room${room}/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/room${room}/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/room${room}/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData)
         });
 
         return nearby;
@@ -588,6 +639,65 @@ module.exports = {
 
       return [];
     },
+    async nextRoomPosts(_, { room, id }, context) {
+      if (!lat || !lng) {
+        throw new UserInputError('Lat and Lng is Required')
+      }
+      const lastPosts = await db.doc(`/room/${room}/posts/${id}/`).get();
+      const doc = lastPosts
+
+      const data = await db.collection(`/room/${room}/posts`).orderBy("createdAt", "desc").startAfter(doc).limit(3).get()
+      const docs = data.docs.map(doc => doc.data())
+
+      if (docs.length) {
+        const nearby = []
+
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
+
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/room/${room}/posts/${repostId}`).get()
+              return repostData.data() || {}
+            }
+          }
+
+          // Likes
+          const likes = async () => {
+
+            const likesData = await db.collection(`/room/${room}/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/room/${room}/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/room/${room}/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/room/${room}/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData);
+        });
+
+        return nearby;
+      }
+
+      return [];
+    },
     async nextPopularPosts(_, { id, lat, lng }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -659,7 +769,7 @@ module.exports = {
 
       return [];
     },
-    async createPost(_, { text, media, location, repost }, context) {
+    async createPost(_, { text, media, location, repost, room }, context) {
 
       const { username } = await fbAuthContext(context);
       if (username) {
@@ -670,7 +780,17 @@ module.exports = {
             hastags = hastags.map((s) => s.trim());
           }
 
-          const newPost = {
+          const newPost = room ? {
+            owner: username,
+            text,
+            media,
+            createdAt: new Date().toISOString(),
+            likeCount: 0,
+            commentCount: 0,
+            location,
+            _tags: hastags,
+            room
+          } : {
             owner: username,
             text,
             media,
@@ -686,7 +806,7 @@ module.exports = {
           }
 
           await db
-            .collection("/posts")
+            .collection(`${room ? `/room/${room}/posts` : "posts"}`)
             .add(newPost)
             .then((doc) => {
               newPost.id = doc.id;

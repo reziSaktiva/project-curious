@@ -1,48 +1,42 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { GET_POSTS } from '../GraphQL/Queries'
+import { useLazyQuery } from '@apollo/client'
+import { GET_ROOM_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
-import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard/index'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import PostCard from '../components/PostCard'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
-import { getSession, getRangeSearch } from '../util/Session';
+import { getSession } from '../util/Session';
 
 
-function Home() {
+function Room(props) {
+    const room = props.match.path
     const _isMounted = useRef(false);
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
 
-    const { location } = getSession();
-    const range = getRangeSearch();
-
-    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS, {
-        fetchPolicy: "network-only"
-      });
+    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_ROOM_POSTS);
     
     useEffect(() => {
-        if (Object.keys(location).length) {
-            const loc = JSON.parse(location);
-            getPosts({ variables: { ...loc, range: range ? parseFloat(range) : undefined } });
+        if (room) {
+            getPosts({ variables: { room } });
         }
-    }, [location]);
+    }, [room]);
 
     useEffect(() => {
-        if (!_isMounted.current && data) { // check if doesn't fetch data
+        if (data  && !_isMounted.current) { // check if doesn't fetch data
             if (!data) {
                 loadingData();
 
                 return;
             }
+            setPosts(data.getRoomPosts)
 
-            setPosts(data.getPosts)
-            
+            _isMounted.current = true
             // set did mount react
-            _isMounted.current = true;
 
             return;
         }
@@ -51,8 +45,7 @@ function Home() {
     return (
         <div>
             <NavBar />
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? (<p>tidak ada postingan di sekitar anda</p>)
+            {user ? ( !posts ? null
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
@@ -62,12 +55,9 @@ function Home() {
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
                         )
-                    })}
-            </InfiniteScroll>) : null}
+                    })) : null}
         </div>
     );
 }
 
-export default Home
-
-
+export default Room

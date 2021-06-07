@@ -132,6 +132,7 @@ module.exports = gql`
         getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
         getVisited: [GeoLocation]
         getProfilePosts: [Post]!
+        getRoomPosts(room: String!):[Post]!
         getProfileLikedPost: [Post]!
         getPost(id: ID!): Post!
         getUserData: UserData
@@ -190,8 +191,9 @@ module.exports = gql`
         # posts mutation
         getPost( id:ID! ): Post!
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
+        nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
-        createPost(text:String, media: [String] location: Location!, repost: String): Post!
+        createPost(text:String, media: [String] location: Location!, repost: String, room: String): Post!
         subscribePost( postId: ID! ): Subscribe!
         mutePost ( postId:ID! ): Mute!
         deletePost(id:ID!): String!

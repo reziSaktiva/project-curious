@@ -45,7 +45,7 @@ module.exports = {
                             data.docs.forEach(doc => {
                                 dataUser.liked.push(doc.data())
                             })
-                            return db.collection(`/users/${username}/notifications`).get()
+                            return db.collection(`/users/${username}/notifications`).orderBy('createdAt', 'desc').get()
                         })
                         .then(data => {
                             data.docs.forEach(doc => {
