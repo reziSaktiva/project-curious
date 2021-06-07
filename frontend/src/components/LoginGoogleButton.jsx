@@ -51,7 +51,7 @@ export default function LoginGoogleButton({ props }) {
   }
 
   return (
-    <Button onClick={signInWithGoole} className="ui black basic button" style={{ width: "100%", height: 45, marginTop: 15, borderRadius: 5 }}>
+    <Button onClick={signInWithGoole} className="ui black basic button" style={{ width: "100%", fontSize: "18px" , height: 45, marginTop: 15, borderRadius: 5 }}>
       <i className="google icon" />
           Continue with Google
     </Button>

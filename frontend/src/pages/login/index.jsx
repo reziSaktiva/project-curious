@@ -87,7 +87,8 @@ const Login = (props) => {
             </Form.Item>
 
             <Form.Item>
-              <button className="ui facebook button body-page__btn-send" type="submit" >
+              <button className="ui facebook button body-page__btn-send" type="submit" 
+              style={{ fontSize: '18px',padding: 0 }}>
                 {loading ? (<LoadingOutlined />): ("Sign in")} 
               </button>
             </Form.Item>

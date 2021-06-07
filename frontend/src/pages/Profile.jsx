@@ -23,6 +23,9 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from 'react-router-dom';
 
+// Components
+import PostCard from '../components/PostCard';
+import AppBar from '../components/AppBar';
 
 // Init Firebase
 import firebase from 'firebase/app'
@@ -35,10 +38,6 @@ const InitialState = {
     isFinishUpload: false,
   };
 
-// Components
-import PostCard from '../components/PostCard';
-import { AuthContext } from "../context/auth";
-import AppBar from '../components/AppBar';
 
 function Profile() {
     const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
