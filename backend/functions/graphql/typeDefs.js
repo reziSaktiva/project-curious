@@ -16,6 +16,7 @@ module.exports = gql`
         repost: Repost
         subscribe: [Subscribe],
         hastags: [String]
+        room: String
     }
     type Search {
         hits: [Post]
@@ -197,7 +198,7 @@ module.exports = gql`
         subscribePost( postId: ID! ): Subscribe!
         mutePost ( postId:ID! ): Mute!
         deletePost(id:ID!): String!
-        likePost(id: ID!): Like
+        likePost(id: ID! room:String ): Like
 
         # comments mutation
         createComment( id:ID!, text: String!, replay: Replay, photo: String ): Comment!

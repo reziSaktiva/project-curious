@@ -8,18 +8,18 @@ import { AuthContext } from "../../../context/auth";
 
 import './style.css';
 
-export default function LikeButton({ likeCount, id, likes }) {
+export default function LikeButton({ likeCount, id, likes, room }) {
   const { like } = useContext(PostContext);
   const { user } = useContext(AuthContext);
 
   const [likePost] = useMutation(LIKE_POST, {
     update(_, { data: { likePost } }) {
-      like(likePost, id);
+      like(likePost, id, room);
     },
   });
 
   const onLike = () => {
-    likePost({ variables: { id } });
+    likePost({ variables: { id, room } });
   };
 
   return (
