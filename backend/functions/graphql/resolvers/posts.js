@@ -33,6 +33,15 @@ module.exports = {
             }
           }
 
+          const rrepostCount = async () => {
+
+            const likesData = await db.collection("posts").where('repost', '==', repostId).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+          console.log(rrepostCount());
+
           // Likes
           const likes = async () => {
 
@@ -180,11 +189,12 @@ module.exports = {
             const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
             return subscribeData.docs.map(doc => doc.data());
           }
-
+          
           const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
+            
             const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
             const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
 

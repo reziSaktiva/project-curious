@@ -13,6 +13,7 @@ import { getSession } from '../util/Session';
 
 
 function Room(props) {
+    console.log();
     const room = props.match.path
     const _isMounted = useRef(false);
     const { room_1, setRoom, room_2, loadingData, loading } = useContext(PostContext)

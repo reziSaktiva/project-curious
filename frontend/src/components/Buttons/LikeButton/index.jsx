@@ -24,7 +24,7 @@ export default function LikeButton({ likeCount, id, likes, room }) {
 
   return (
     <div className="ui labeled btn-like" tabIndex="0">
-      <div className="btn-like__icon">
+      <div className="btn-like__icon" >
         <Button
           onClick={onLike}
           shape="circle"

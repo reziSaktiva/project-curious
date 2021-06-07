@@ -22,6 +22,7 @@ import {
   SettingOutlined,
   SearchOutlined,
   StarOutlined,
+  AudioMutedOutlined
 } from "@ant-design/icons";
 
 const { SubMenu } = Menu;
@@ -41,6 +42,7 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
+  console.log(user.username);
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;
@@ -87,7 +89,7 @@ const Sidebar = () => {
               />
             </Link>
           </div>
-          <Link to="/profile">
+          <Link to={`/profile/${user.id}`}>
             <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.username ? user.username : "My Account"}
             </h3>
@@ -138,7 +140,7 @@ const Sidebar = () => {
             <Menu.Item key="Sub" icon={<NotificationOutlined />}>
               <Link to="/subscribePosts">Subscribed Posts</Link>
             </Menu.Item>
-            <Menu.Item key="Muted" icon={<SettingOutlined />}>
+            <Menu.Item key="Muted" icon={<AudioMutedOutlined />}>
               <Link to="/MutedPost" >Muted Posts</Link>
             </Menu.Item>
 

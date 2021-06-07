@@ -6,7 +6,9 @@ import { RightOutlined } from '@ant-design/icons'
 
 export default function Settings() {
 
-
+const handleLogout = () => {
+  localStorage.clear()
+}
 return(
  <div>
      <AppBar title="Settings"/>
@@ -46,14 +48,14 @@ return(
                 <div><RightOutlined /></div>
             </List.Item>
         </Link>
-        <Link to="/">
+        <a href="/"  onClick={handleLogout}>
             <List.Item key='3'>
                 <List.Item.Meta
                   title="Logout"
                 />
                 <div><RightOutlined /></div>
             </List.Item>
-        </Link>
+        </a>
         <Link to="/">
             <List.Item key='3'>
                 <List.Item.Meta

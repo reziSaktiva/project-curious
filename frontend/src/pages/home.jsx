@@ -11,6 +11,9 @@ import NavBar from '../components/NavBar'
 
 import { getSession, getRangeSearch } from '../util/Session';
 
+//gambar
+import Radius from '../assets/radius.png'
+
 
 function Home() {
     const _isMounted = useRef(false);
@@ -52,7 +55,12 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? (<p>tidak ada postingan di sekitar anda</p>)
+                {!posts.length ? (
+                <div>
+                    <img src={Radius} />
+                    <p> Tidak ada Postingan Disekitar Anda</p>
+                </div>
+                )
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)

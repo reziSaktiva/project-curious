@@ -166,15 +166,7 @@ function Profile() {
       </TabPane>
 
       <TabPane tab="Media" key="3">
-        {/* {!data ? null
-                    : data.getProfilePosts.map((post, key) => {
-                        return (
-                            user && 
-                                <div key={`posts${post.id} ${key}`}>
-                                <PhotoGallery post={post} loading={loading} />
-                            </div>
-                        )
-                    })} */}
+    
         {gallery.length &&
           gallery.map((media) => (
             <div className="gallery">
@@ -290,7 +282,7 @@ function Profile() {
         }}
       >
         <div className="ui action input" style={{ height: 25 }}>
-          <input type="text" value="http://ww.short.url/c0opq" />
+          <input type="text" value={`http://localhost:3000/profile/${user.id}`} />
           <button
             className="ui teal right icon button"
             style={{ backgroundColor: "#7F57FF", fontSize: 10 }}

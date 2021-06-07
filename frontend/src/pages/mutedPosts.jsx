@@ -38,7 +38,7 @@ function MutedPost() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!mutedPost ? null
+                {!mutedPost || mutedPost.length < 1 ? <p className='centeringButton'>tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</p>
                     : mutedPost.map((post, key) => {
                         return (
                                 <div key={`posts${post.id} ${key}`}>
@@ -47,7 +47,7 @@ function MutedPost() {
                             </div>
                         )
                     })}
-            </div>) : null}
+            </div>) : <p className='centeringButton'>test</p>}
         </div>
     );
 }
