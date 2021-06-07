@@ -1,18 +1,17 @@
-    .fonts {
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+.fonts {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .landingPage-input .btn-wrapper {
-    padding-left: 70px;
-    padding-right: 70px;
-    position: relative;
+  padding-left: 70px;
+  padding-right: 70px;
+  position: relative;
 }
 
 .copy-right {
-    margin-top: 25vh;
-    font-size: 18px;
+  margin-top: 25vh;
+  font-size: 18px;
 }
-
 
     @media only screen and (max-width: 768px) {
         .landingPage-input .btn-wrapper {
@@ -26,3 +25,4 @@
             margin-top: 10vh
         }
     }
+
