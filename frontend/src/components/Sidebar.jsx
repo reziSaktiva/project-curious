@@ -22,6 +22,7 @@ import {
   SettingOutlined,
   SearchOutlined,
   StarOutlined,
+  AudioMutedOutlined
 } from "@ant-design/icons";
 
 const { SubMenu } = Menu;
@@ -134,7 +135,7 @@ const Sidebar = () => {
             <Menu.Item key="Sub" icon={<NotificationOutlined />}>
               <Link to="/subscribePosts">Subscribed Posts</Link> 
             </Menu.Item>
-            <Menu.Item key="Muted" icon={<SettingOutlined />}>
+            <Menu.Item key="Muted" icon={<AudioMutedOutlined />}>
               <Link to="/MutedPost" >Muted Posts</Link>
             </Menu.Item>
 
