@@ -421,14 +421,14 @@ module.exports = {
           });
       });
     },
-    async getPost(_, { id }, context) {
+    async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
-
-      const postDocument = db.doc(`/posts/${id}`)
-      const commentCollection = db.collection(`/posts/${id}/comments`)
-      const likeCollection = db.collection(`/posts/${id}/likes`)
-      const mutedCollection = db.collection(`/posts/${id}/muted`)
-      const subscribeCollection = db.collection(`/posts/${id}/subscribes`)
+      
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
+      const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
+      const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`)
+      const mutedCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/muted`)
+      const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`)
 
       if (username) {
         try {
@@ -450,7 +450,7 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
-          const rootComment = comments.filter(item => item.replay.id == null && item)
+          const rootComment =  comments.filter(item => item.replay.id == null && item)
           
           const replayList = rootComment.map(comment => {
             const replay = comments.filter(item => item.replay.id == comment.id)

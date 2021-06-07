@@ -146,7 +146,7 @@ export default function PostCard({ post, loading }) {
             <div>
               <Row>
                 <Col span={12}>
-                  <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
+                  <Link to={`/${post.room ? post.room : "post"}/${post.id}`} style={{ fontSize: 15 }}>
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
                   </Link>

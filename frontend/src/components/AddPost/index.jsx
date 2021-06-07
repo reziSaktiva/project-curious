@@ -58,7 +58,7 @@ export default function ModalPost() {
   // Context
   const {
     isOpenNewPost,
-    repost = '',
+    repost = null,
     toggleOpenNewPost,
     createPost: updatePosts
   } = useContext(PostContext);
@@ -240,7 +240,7 @@ export default function ModalPost() {
 
     return;
   };
-
+  
   return (
     <div>
       <Modal
