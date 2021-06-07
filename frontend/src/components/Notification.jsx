@@ -8,6 +8,7 @@ import { Row, Col, Dropdown, Menu } from 'antd';
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
+import NoNotif from '../assets/NoNotif.jpg'
 
 export default function Notification() {
   const { notifications, notificationRead, readAllNotificatons } = useContext(AuthContext);
@@ -67,7 +68,8 @@ export default function Notification() {
           <div style={{margin: -22, overflowY: "scroll", height:200}}>
 
 
-            {notifications &&
+            {!notifications && <img src={NoNotif} />,
+            notifications &&
               notifications.map((notif, key) => {
                 let type = "";
                 let text = "";

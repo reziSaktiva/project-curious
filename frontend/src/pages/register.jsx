@@ -88,10 +88,14 @@ const Register = (props) => {
     return (
         <div>
             <div>
-                <div className="curious" style={{ marginLeft: 700, marginTop: 100 }} />
-                <div class="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
-                    <div class="content">
+                <div className="centeringImage">
+                <div className="curious centeringImage" style={{ marginTop: 50, }} />
+                </div>
+                <div>
 
+                </div>
+                <div class="ui card container centeringImage" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+                    <div class="content">
                         <Form
                             form={form}
                             name="register"
@@ -204,10 +208,10 @@ const Register = (props) => {
                 </Checkbox>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" style={{ marginTop: 10 }}>
+                                <Button type="primary" htmlType="submit" className='centeringButton' style={{ marginTop: 10, backgroundColor: '#7f57ff' }}>
                                     Register
                                 </Button>
-                                <p style={{ fontSize: 12, textAlign: 'center', marginTop: 30 }}>By signing up, you agree to our <span style={{ fontWeight: 'bold' }}>Terms & Privacy Policy</span></p>
+                                <p style={{ fontSize: 12, textAlign: 'center', marginTop: 60 }}>By signing up, you agree to our <span style={{ fontWeight: 'bold' }}>Terms & Privacy Policy</span></p>
                             </Form.Item>
                             {Object.keys(errors).length > 0 && (
                                 <Alert

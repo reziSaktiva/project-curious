@@ -227,7 +227,7 @@ export default function SinglePost(props) {
 
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
       createComment({ variables: { text: finalComment, id: id, replay: replay, photo: uploaded[0] } });
-
+      setState({...state, fileList: []})
       return;
     }
 

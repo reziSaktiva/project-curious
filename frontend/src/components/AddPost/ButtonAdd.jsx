@@ -12,7 +12,9 @@ const ButtonAdd = () => {
     <div className="ui circular outlined icon button fixed"
       style={{ position: 'fixed', width:'60px', height:'60px', backgroundColor: '#7958F5', borderRadius: '100%', right: '16%', bottom: '10%' }}
       onClick={handleOpenAddPost}>
-      <i className="big plus icon" style={{ color: 'white' }}></i>
+        <div style={{ marginTop: 5, marginLeft: 2}}>
+        <i className="big plus icon" style={{ color: 'white' }}></i>
+        </div>
     </div>
   )
 };
