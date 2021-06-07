@@ -55,7 +55,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? (
+                {!posts.length && !loading ? (
                 <div>
                     <img src={Radius} />
                     <p> Tidak ada Postingan Disekitar Anda</p>
