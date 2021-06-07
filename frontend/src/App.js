@@ -48,7 +48,7 @@ function App() {
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
-            <UserRoute exact path="/post/:id" component={SinglePost} />
+            <UserRoute exact path="/:room/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
             <UserRoute exact path="/popular" component={Popular} />
             <UserRoute exact path="/Insvire E-Sport" component={Room} />

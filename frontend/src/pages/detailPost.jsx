@@ -99,7 +99,8 @@ export default function SinglePost(props) {
   //akhir upload photo comentttttt //////////////////////////////////////////////////////////////////////
 
   
-  let id = props.match.params.id;
+  const id = props.match.params.id;
+  const room = props.match.params.room === "post" ? null : props.match.params.room
 
   const [getPost, { data }] = useLazyQuery(GET_POST ,{
     fetchPolicy: "network-only"
@@ -107,7 +108,7 @@ export default function SinglePost(props) {
 
   useEffect(() => {
     if (id) {
-      getPost({ variables: { id } });
+      getPost({ variables: { id, room } });
     }
   }, [id]);
 
@@ -136,7 +137,6 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
-      console.log(post.comments);
 
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(

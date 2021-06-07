@@ -135,7 +135,7 @@ module.exports = gql`
         getProfilePosts: [Post]!
         getRoomPosts(room: String!):[Post]!
         getProfileLikedPost: [Post]!
-        getPost(id: ID!): Post!
+        getPost(id: ID! room: String): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
@@ -190,7 +190,6 @@ module.exports = gql`
         clearAllNotif: String!
 
         # posts mutation
-        getPost( id:ID! ): Post!
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!

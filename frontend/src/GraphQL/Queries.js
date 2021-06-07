@@ -346,8 +346,8 @@ query{
 `;
 
 export const GET_POST = gql`
-query getPost($id: ID!){
-getPost(id: $id){
+query getPost($id: ID! $room: String){
+getPost(id: $id room: $room){
     id
     createdAt
     owner
