@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Card, Button } from "antd";
+import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { READ_ALL_NOTIFICATIONS, READ_NOTIFICATION } from "../GraphQL/Mutations";
 import { Row, Col, Dropdown, Menu } from 'antd';
 

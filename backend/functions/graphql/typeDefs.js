@@ -194,9 +194,9 @@ module.exports = gql`
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
         createPost(text:String, media: [String] location: Location!, repost: String, room: String): Post!
-        subscribePost( postId: ID! ): Subscribe!
-        mutePost ( postId:ID! ): Mute!
-        deletePost(id:ID!): String!
+        subscribePost( postId: ID! room: String ): Subscribe!
+        mutePost ( postId: ID! room: String ): Mute!
+        deletePost( id: ID! room: String ): String!
         likePost(id: ID! room:String ): Like
 
         # comments mutation

@@ -864,14 +864,14 @@ module.exports = {
         }
       }
     },
-    async deletePost(_, { id }, context) {
+    async deletePost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context);
-      const document = db.doc(`/posts/${id}`);
-      const commentsCollection = db.collection(`/posts/${id}/comments`);
-      const likesCollection = db.collection(`/posts/${id}/likes`);
-      const randomizedCollection = db.collection(`/posts/${id}/randomizedData`);
-      const subcribeCollection = db.collection(`/posts/${id}/subscribes`);
-      const likesData = db.collection(`/posts/${id}/likes`);
+      const document = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const commentsCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`);
+      const likesCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
+      const randomizedCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/randomizedData`);
+      const subcribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`);
+      const likesData = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
 
       try {
 
@@ -891,19 +891,19 @@ module.exports = {
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(`/posts/${id}/comments/${doc.data().id}`).delete();
+                  db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments/${doc.data().id}`).delete();
                 });
                 return likesCollection.get();
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(`/posts/${id}/likes/${doc.data().id}`).delete();
+                  db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes/${doc.data().id}`).delete();
                 });
                 return randomizedCollection.get();
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(`/posts/${id}/randomizedData/${doc.data().id}`).delete();
+                  db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/randomizedData/${doc.data().id}`).delete();
                 });
                 return db
                   .collection(`/users/${username}/notifications`)
@@ -920,7 +920,7 @@ module.exports = {
                 document.delete();
                 return data.docs.forEach((doc) => {
                   const docOwner = doc.data().owner;
-                  db.doc(`/posts/${id}/subscribes/${doc.data().id}/`).delete();
+                  db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes/${doc.data().id}/`).delete();
                   return db
                     .collection(`/users/${doc.data().owner}/notifications`)
                     .where("postId", "==", id)
@@ -1067,7 +1067,7 @@ module.exports = {
 
                   db.doc(`/users/${username}/liked/${data.id}`).set(likeData);
 
-                  if (post.owner !== username) {
+                  if (post.owner !== username && !room) {
                     db.collection(`/users/${post.owner}/notifications`)
                       .add({
                         recipient: post.owner,
@@ -1124,10 +1124,10 @@ module.exports = {
         console.log(err);
         throw new Error(err);
       }
-    }, async mutePost(_, { postId }, context) {
+    }, async mutePost(_, { postId, room }, context) {
       const { username } = await fbAuthContext(context)
-      const postDocument = db.doc(`/posts/${postId}`)
-      const muteDocument = db.collection(`/posts/${postId}/muted`)
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`)
+      const muteDocument = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/muted`)
 
       try {
         const { isMuted, muteId } = await muteDocument.where("owner", "==", username).limit(1).get()
@@ -1157,7 +1157,7 @@ module.exports = {
               throw new UserInputError('Postingan tidak di temukan')
             } else {
               if (!isMuted) {
-                db.doc(`/posts/${postId}/muted/${muteId}`).delete()
+                db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/muted/${muteId}`).delete()
                 db.doc(`/users/${username}/muted/${muteId}`).delete()
                 mute = {
                   ...mute,
@@ -1187,14 +1187,16 @@ module.exports = {
 
 
     },
-    async subscribePost(_, { postId }, context) {
+    async subscribePost(_, { postId, room }, context) {
       const { username } = await fbAuthContext(context);
       const { name, displayImage, colorCode } = await randomGenerator(
         username,
-        postId
+        postId,
+        room
       );
 
-      const subscribeCollection = db.collection(`/posts/${postId}/subscribes`);
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`);
 
       let postOwner;
       let subscribe;
@@ -1217,8 +1219,7 @@ module.exports = {
             };
           });
 
-        await db
-          .collection("posts")
+        await postDocument
           .where("id", "==", postId)
           .get()
           .then((data) => {
@@ -1238,7 +1239,7 @@ module.exports = {
                 postOwner = data.docs[0].data().owner;
 
                 return db
-                  .collection(`/posts/${postId}/subscribes`)
+                  .collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`)
                   .add(subscribe)
                   .then((data) => {
                     data.update({ id: data.id });
@@ -1262,7 +1263,7 @@ module.exports = {
                     }
                   });
               } else {
-                db.doc(`/posts/${postId}/subscribes/${subId}/`).delete();
+                db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes/${subId}/`).delete();
               }
             }
           });

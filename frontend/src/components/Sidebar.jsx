@@ -42,7 +42,7 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
-  console.log(user.username);
+  
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;

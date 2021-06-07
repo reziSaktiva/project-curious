@@ -101,6 +101,20 @@ const reducer = (state, action) => {
         ...state,
         posts: state.posts.filter((post) => post.id !== deleteId),
       };
+    case "DELETE_POST_ROOM_1":
+      const id = action.payload;
+
+      return {
+        ...state,
+        room_1: state.posts.filter((post) => post.id !== id),
+      };
+    case "DELETE_POST_ROOM_2":
+      const idDelete = action.payload;
+
+      return {
+        ...state,
+        room_2: state.posts.filter((post) => post.id !== idDelete),
+      };
     case "SET_COMMENT":
       return {
         ...state,
@@ -399,6 +413,70 @@ const reducer = (state, action) => {
           return post;
         }),
       };
+    case "MUTE_POST_ROOM_1":
+      return {
+        ...state,
+        room_1: state.room_1.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatePosts = {
+              ...post,
+              muted: [...post.muted, action.payload],
+            };
+            return updatePosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNMUTE_POST_ROOM_1":
+      return {
+        ...state,
+        room_1: state.room_1.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              muted: post.muted.filter(
+                (mute) => mute.owner !== action.payload.owner
+              ),
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "MUTE_POST_POST_ROOM_2":
+      return {
+        ...state,
+        room_2: state.room_2.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatePosts = {
+              ...post,
+              muted: [...post.muted, action.payload],
+            };
+            return updatePosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNMUTE_POST_POST_ROOM_2":
+      return {
+        ...state,
+        room_2: state.room_2.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              muted: post.muted.filter(
+                (mute) => mute.owner !== action.payload.owner
+              ),
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
     case "OPEN_POST_CARD":
       const { repost, isOpenNewPost } = action.payload;
       return {
@@ -557,9 +635,17 @@ export const PostProvider = (props) => {
     }
   };
 
-  const deletePost = (id) => {
+  const deletePost = (id, room) => {
+    let locationRoom;
+
+    if (room === "Insvire E-Sport") {
+      locationRoom = "ROOM_1";
+    } else if (room === "BMW Club Bandung") {
+      locationRoom = "ROOM_2";
+    }
+
     dispatch({
-      type: "DELETE_POST",
+      type: !room ? "DELETE_POST" : `DELETE_POST_${locationRoom}`,
       payload: id,
     });
   };
@@ -589,7 +675,7 @@ export const PostProvider = (props) => {
     }
   };
 
-  const mutePost = (data) => {
+  const mutePost = (data, room) => {
     const muteData = {
       owner: data.owner,
       id: data.id,
@@ -597,14 +683,22 @@ export const PostProvider = (props) => {
       postId: data.postId,
     };
 
+    let locationRoom;
+
+    if (room === "Insvire E-Sport") {
+      locationRoom = "ROOM_1";
+    } else if (room === "BMW Club Bandung") {
+      locationRoom = "ROOM_2";
+    }
+
     if (data.mute) {
       dispatch({
-        type: "MUTE_POST",
+        type: room ? `MUTE_POST_${locationRoom}` : "MUTE_POST",
         payload: muteData,
       });
     } else if (!data.mute) {
       dispatch({
-        type: "UNMUTE_POST",
+        type: room ? `UNMUTE_POST_${locationRoom}` : "UNMUTE_POST",
         payload: muteData,
       });
     }
