@@ -38,13 +38,13 @@ export default function PostCard({ post, loading }) {
   const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
       alert(deletePost);
-      postContext.deletePost(post.id);
+      postContext.deletePost(post.id, post.room);
     },
   });
 
   const [mutePost] = useMutation(MUTE_POST, {
     update(_, { data: { mutePost } }) {
-      postContext.mutePost(mutePost);
+      postContext.mutePost(mutePost, post.room);
     },
   });
 
@@ -153,28 +153,28 @@ export default function PostCard({ post, loading }) {
                   <Dropdown
                     overlay={
                       <Menu>
-                        <Menu.Item
+                        {!post.room && (<Menu.Item
                           key="0"
                           onClick={() =>
-                            subscribePost({ variables: { id: post.id } })
+                            subscribePost({ variables: { id: post.id, room: post.room } })
                           }
                         >
                           {isSubscribe ? "Unsubscribe" : "Subscribe"}
-                        </Menu.Item>
-                        <Menu.Item
+                        </Menu.Item>)}
+                        {!post.room && (<Menu.Item
                           key="1"
                           onClick={() =>
-                            mutePost({ variables: { id: post.id } })
+                            mutePost({ variables: { id: post.id, room: post.room} })
                           }
                         >
                           {isMuted ? "Unmute" : "Mute"}
-                        </Menu.Item>
+                        </Menu.Item>)}
                         <Menu.Item key="3">Report</Menu.Item>
                         {userName === post.owner ? (
                           <Menu.Item
                             key="4"
                             onClick={() =>
-                              deletePost({ variables: { id: post.id } })
+                              deletePost({ variables: { id: post.id, room: post.room } })
                             }
                           >
                             Delete Post

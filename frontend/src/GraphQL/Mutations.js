@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const SUBSCRIBE_POST = gql`
-  mutation subscribePost($id: ID!) {
-    subscribePost(postId: $id){
+  mutation subscribePost($id: ID! $room: String) {
+    subscribePost(postId: $id room:$room){
     postId
     owner
     createdAt
@@ -122,8 +122,8 @@ export const READ_NOTIFICATION = gql`
 `
 
 export const DELETE_POST = gql`
-  mutation deletePost($id: ID!) {
-    deletePost(id: $id)
+  mutation deletePost($id: ID! $room: String) {
+    deletePost(id: $id room: $room)
   }
 `
 
@@ -134,8 +134,8 @@ export const CHANGE_PP = gql`
 `
 
 export const MUTE_POST = gql`
-  mutation mutePost($id: ID!) {
-    mutePost( postId: $id ){
+  mutation mutePost($id: ID! $room: String) {
+    mutePost(id:$id room:$room){
       id
       owner
       createdAt
