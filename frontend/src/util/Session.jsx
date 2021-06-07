@@ -38,6 +38,7 @@ export const destorySession = () => {
         localStorage.removeItem(LS_TOKEN)
         localStorage.removeItem(LS_DATA_USER)
         localStorage.removeItem(LS_LOCATION)
+        localStorage.removeItem(R_SEARCH)
     } catch (e) {
         console.log('error destroy session: ', e);
     }
@@ -45,7 +46,7 @@ export const destorySession = () => {
 
 export const getRangeSearch = () => {
   try {
-    const range = localStorage.getItem(R_SEARCH) || 10;
+    const range = localStorage.getItem(R_SEARCH) || undefined;
 
     return range;
   } catch (e) {

@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { get } from "lodash";
 import { useQuery } from "@apollo/client";
-import PostCard from "../components/PostCard";
+import PostCard from "../components/PostCard/index";
 import InfiniteScroll from "../components/InfiniteScroll";
 
 import { GET_POSTS_BASED_ON_NEAREST_LOC } from "../GraphQL/Queries";

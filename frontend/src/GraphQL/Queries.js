@@ -51,6 +51,58 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const GET_ROOM_POSTS = gql`
+  query getPosts($room: String!) {
+    getRoomPosts(room:$room){
+      id
+      owner
+      text
+      media
+      createdAt
+      commentCount
+      likeCount
+      room
+      location {
+        lat
+        lng
+      }
+      likes {
+        id
+        owner
+        createdAt
+        colorCode
+        displayName
+        displayImage
+      }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+      subscribe {
+          postId
+          owner
+          createdAt
+          displayName
+          displayImage
+          colorCode
+      }
+    }
+  }
+`
+
 export const GET_POPULAR_POSTS = gql`
   query getPosts($lat: Float, $lng: Float $range: Float) {
     getPopularPosts(lat: $lat, lng: $lng range: $range) {
@@ -214,6 +266,17 @@ export const GET_PROFILE_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      repost {
+          id
+          owner
+          text
+          media
+          createdAt
+          location {
+            lat
+            lng
+          }
+        }
       location {
         lat
         lng
@@ -239,11 +302,23 @@ export const GET_PROFILE_LIKED_POSTS = gql`
 query{
   getProfileLikedPost{
       id
-      createdAt
       owner
+      text
+      media
+      createdAt
       commentCount
       likeCount
-      text
+      repost {
+          id
+          owner
+          text
+          media
+          createdAt
+          location {
+            lat
+            lng
+          }
+        }
       location {
         lat
         lng
@@ -262,6 +337,7 @@ query{
           owner
           text
           displayName
+          displayImage
           photoProfile
           colorCode
           }
@@ -291,14 +367,32 @@ getPost(id: $id){
         displayImage
       }
     comments{
+      replayList {
         id
         createdAt
         owner
         text
         displayName
+        photo
         displayImage
-        photoProfile
         colorCode
+          replay {
+            username
+            id 
+          }
+        }
+      id
+      owner
+      createdAt
+      colorCode
+      photo
+      displayName
+      displayImage
+      text
+      replay {
+        username
+        id
+      }
         }
         repost {
           id
@@ -408,12 +502,14 @@ export const CREATE_POST = gql`
     $media: [String]
     $location: Location!
     $repost: String
+    $room: String
   ) {
     createPost(
     text: $text
     media: $media
     location: $location
     repost: $repost
+    room: $room
   )
     {
       id
@@ -421,6 +517,7 @@ export const CREATE_POST = gql`
       text
       media
       createdAt
+      room
       location {
         lat
         lng
@@ -453,3 +550,19 @@ export const CREATE_POST = gql`
     }
   }
 `
+
+export const GET_VISITED = gql`
+  query GetVisited {
+    getVisited {
+      administrative_area_level_1
+      administrative_area_level_2
+      administrative_area_level_3
+      administrative_area_level_4
+      country
+      location {
+        lat
+        lng
+      }
+    }
+  }
+`;

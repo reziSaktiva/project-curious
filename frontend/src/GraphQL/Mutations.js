@@ -11,6 +11,12 @@ export const SUBSCRIBE_POST = gql`
   }
 `
 
+export const CLEAR_ALL_NOTIF = gql`
+  mutation clearNotif {
+  clearAllNotif
+}
+`
+
 export const CREATE_POST = gql`
   mutation createPost($text: String!, $lat: Float, $lng: Float) {
     createPost(text: $text, location: { lat: $lat, lng: $lng }) {
@@ -20,6 +26,7 @@ export const CREATE_POST = gql`
       createdAt
       likeCount
       commentCount
+      room
       location {
         lat
         lng
@@ -32,23 +39,70 @@ export const CREATE_POST = gql`
         displayName
         displayImage
       }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+      subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
   }
 `;
 
 export const CREATE_COMMENT = gql`
-mutation createComment($id: ID!, $text: String!) {
-  createComment(id : $id, text: $text) {
+mutation createComment($id: ID!, $text: String!, $replay: Replay, $photo: String) {
+  createComment(id : $id, text: $text, replay: $replay, photo: $photo) {
   id
   owner
   text
   createdAt
   colorCode
+  photo
   displayName
   displayImage
+  replay {
+    username
+    id
     }
+  }
 }
 `;
+
+export const READ_ALL_NOTIFICATIONS = gql`
+  mutation readNotifications {
+    readAllNotification{
+      recipient
+      sender
+      read
+      postId
+      id
+      type
+      createdAt
+      displayName
+      displayImage
+      colorCode
+    }
+  }
+`
 
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
@@ -91,39 +145,7 @@ export const MUTE_POST = gql`
   }
 `
 
-export const GET_POST = gql`
-  mutation getPost($id: ID!) {
-    getPost(id: $id) {
-      id
-      owner
-      text
-      createdAt
-      location {
-        lat
-        lng
-      }
-      likeCount
-      commentCount
-      likes {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-      }
-      comments {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-        text
-      }
-    }
-  }
-`;
+
 
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {
@@ -212,8 +234,8 @@ mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
 `;
 
 export const LIKE_POST = gql`
-  mutation likePost($id: ID!) {
-    likePost(id: $id) {
+  mutation likePost($id: ID! $room:String) {
+    likePost(id: $id room: $room) {
       id
       owner
       createdAt
@@ -336,16 +358,6 @@ export const REGISTER_USER = gql`
         birthday: $birthday
         username: $username
       }
-    ) {
-      id
-      username
-      email
-      token
-      createdAt
-      profilePicture
-      gender
-      birthday
-      mobileNumber
-    }
+    )
   }
 `;

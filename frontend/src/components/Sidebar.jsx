@@ -87,17 +87,20 @@ const Sidebar = () => {
               />
             </Link>
           </div>
-                <Link to="/profile">
-                <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
-            {user.username ? user.username : "My Account"}
-          </h3>
-                </Link>
-          
+          <Link to="/profile">
+            <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
+              {user.username ? user.username : "My Account"}
+            </h3>
+          </Link>
+
           <List.Item.Meta
             title={
-              <Link href="/maps">
+              <Link to="/maps">
                 {" "}
-                <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                {windowWidth > 993 ? (
+                  <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                ) : null}
+                
                 {address}
               </Link>
             }
@@ -114,7 +117,7 @@ const Sidebar = () => {
               <Link to="/">Nearby</Link>
             </Menu.Item>
             <Menu.Item key="Search" icon={<SearchOutlined />}>
-              Search
+              <Link to="/search">Search</Link>
             </Menu.Item>
 
             <SubMenu
@@ -122,21 +125,25 @@ const Sidebar = () => {
               icon={<LaptopOutlined />}
               title="Available Room"
             >
-              <Menu.Item key="Room1">April Mop</Menu.Item>
-              <Menu.Item key="Room2">Sad Story</Menu.Item>
+              <Menu.Item key="Room1">
+                <Link to="/Insvire E-Sport">Insvire E-Sport</Link>
+              </Menu.Item>
+              <Menu.Item key="Room2">
+                <Link to="/BMW Club Bandung">BMW Club Bandung</Link>
+                </Menu.Item>
             </SubMenu>
             <Menu.Item key="Visited" icon={<StarOutlined />}>
               <Link to="/visited">Visited Places</Link>
             </Menu.Item>
             <Menu.Item key="Sub" icon={<NotificationOutlined />}>
-              <Link to="/subscribePosts">Subscribed Posts</Link> 
+              <Link to="/subscribePosts">Subscribed Posts</Link>
             </Menu.Item>
             <Menu.Item key="Muted" icon={<SettingOutlined />}>
               <Link to="/MutedPost" >Muted Posts</Link>
             </Menu.Item>
 
             <Menu.Item key="Settings" icon={<SettingOutlined />}>
-              Settings
+              <Link to="/settings">Settings</Link>
             </Menu.Item>
           </Menu>
         </Sider>

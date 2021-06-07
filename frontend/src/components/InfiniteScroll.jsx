@@ -32,8 +32,9 @@ function ScrollInfinite(props) {
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
-                hasMore={isMorePost}
-                loader={(!loading || !isLoading) && posts.length < 1 ? <SkeletonLoading />  : <div className="centeringButton" ><LoadingOutlined /></div>}
+                hasMore={isMorePost && posts.length}
+                // loader={(!loading || !isLoading) && posts.length < 1 ? <SkeletonLoading />  : <div className="centeringButton" ><LoadingOutlined /></div>}
+                loader={(loading || isLoading) && loading ? <SkeletonLoading />  : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>)}
                 scrollableTarget="scrollableDiv"
                 {...props}
             />

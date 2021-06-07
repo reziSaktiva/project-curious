@@ -6,16 +6,22 @@ import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
 import { get } from "lodash";
 
-import { AuthContext } from "../context/auth";
-import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "./Buttons/LikeButton";
-import CommentButton from "./Buttons/CommentButton";
-import RepostButton from "./Buttons/RepostButton/index";
+import { AuthContext } from "../../context/auth";
+import Pin from "../../assets/pin-svg-25px.svg";
+import LikeButton from "../Buttons/LikeButton";
+import CommentButton from "../Buttons/CommentButton";
+import RepostButton from "../Buttons/RepostButton/index";
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { useMutation } from "@apollo/client";
-import { DELETE_POST, MUTE_POST, SUBSCRIBE_POST } from "../GraphQL/Mutations";
-import { PostContext } from "../context/posts";
+import {
+  DELETE_POST,
+  MUTE_POST,
+  SUBSCRIBE_POST,
+} from "../../GraphQL/Mutations";
+import { PostContext } from "../../context/posts";
+
+import "./style.css";
 
 Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 
@@ -76,7 +82,7 @@ export default function PostCard({ post, loading }) {
             const address =
               response.results[0].address_components[1].short_name;
             setRepostAddress(address);
-            setRepostData(repost)
+            setRepostData(repost);
           },
           (error) => {
             console.error(error);
@@ -90,10 +96,11 @@ export default function PostCard({ post, loading }) {
     <List itemLayout="vertical" size="large">
       <List.Item
         key={post.id}
+        className="list-actions"
         actions={
           !loading && [
             <>
-              <Row gutter={[48, 0]}>
+              {/* <Row gutter={[48, 0]}>
                 <Col xs={6} sm={8} md={8} lg={8} xl={8}>
                   <LikeButton
                     likeCount={post.likeCount}
@@ -111,17 +118,26 @@ export default function PostCard({ post, loading }) {
                 <Col xs={8} sm={8} md={8} lg={8} xl={8}>
                   <RepostButton idPost={post.id} />
                 </Col>
-              </Row>
+              </Row> */}
               <div className="action-post">
                 <div className="action-post__item">
                   <LikeButton
                     likeCount={post.likeCount}
                     likes={post.likes}
                     id={post.id}
+                    room={post.room}
                   />
                 </div>
+                <div className="action-post__item">
+                  <Link to={`/post/${post.id}`}>
+                    <CommentButton commentCount={post.commentCount} />
+                  </Link>
+                </div>
+                <div className="action-post__item">
+                  <RepostButton idPost={post.id} />
+                </div>
               </div>
-            </>
+            </>,
           ]
         }
       >
@@ -213,24 +229,24 @@ export default function PostCard({ post, loading }) {
             }}
           >
             <Link to={`/post/${post.id}`} style={{ fontSize: 15 }}>
-                    <img src={Pin} style={{ width: 15, marginTop: -4 }} />
-                    {repostAddress}
-                  </Link>
-                  {userName == post.owner && (
-                    <div
-                      style={{
-                        width: 60,
-                        height: 20,
-                        border: "1px black solid",
-                        borderRadius: 5,
-                        textAlign: "center",
-                        display: "inline-block",
-                        marginLeft: 6,
-                      }}
-                    >
-                      <p style={{ fontSize: 14 }}>My Post</p>
-                    </div>
-                  )}
+              <img src={Pin} style={{ width: 15, marginTop: -4 }} />
+              {repostAddress}
+            </Link>
+            {userName == post.owner && (
+              <div
+                style={{
+                  width: 60,
+                  height: 20,
+                  border: "1px black solid",
+                  borderRadius: 5,
+                  textAlign: "center",
+                  display: "inline-block",
+                  marginLeft: 6,
+                }}
+              >
+                <p style={{ fontSize: 14 }}>My Post</p>
+              </div>
+            )}
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>

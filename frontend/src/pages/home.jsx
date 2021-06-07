@@ -5,7 +5,7 @@ import { GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard'
+import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
@@ -20,13 +20,14 @@ function Home() {
     const { location } = getSession();
     const range = getRangeSearch();
 
-    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS);
+    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS, {
+        fetchPolicy: "network-only"
+      });
     
     useEffect(() => {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
-
-            getPosts({ variables: { ...loc, range: parseFloat(range) } });
+            getPosts({ variables: { ...loc, range: range ? parseFloat(range) : undefined } });
         }
     }, [location]);
 
@@ -51,7 +52,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts ? null
+                {!posts.length ? (<p>tidak ada postingan di sekitar anda</p>)
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)

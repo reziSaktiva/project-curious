@@ -26,10 +26,16 @@ import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile'
-import Visited from './pages/Visited'
+import Visited from './pages/visited/index'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
+import Room from './pages/room'
+
+import settings from './pages/Settings'
+
+import Search from './pages/search/index';
+
 
 function App() {
   return (
@@ -45,13 +51,17 @@ function App() {
             <UserRoute exact path="/post/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
             <UserRoute exact path="/popular" component={Popular} />
+            <UserRoute exact path="/Insvire E-Sport" component={Room} />
+            <UserRoute exact path="/BMW Club Bandung" component={Room} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/profile" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
+            <UserRoute exact path="/search" component={Search} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
-            <UserRoute exact path="/map" component={map} />
+            <UserRoute exact path="/settings" component={settings} />
+            <UserRoute exact path="/maps" component={map} />
           </Switch>
         </Grid>
       </Router>

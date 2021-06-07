@@ -14,7 +14,17 @@ module.exports = gql`
         likes: [Like]
         muted: [Mute]
         repost: Repost
-        subscribe: [Subscribe]
+        subscribe: [Subscribe],
+        hastags: [String]
+        room: String
+    }
+    type Search {
+        hits: [Post]
+        page: Int
+        nbHits: Int
+        nbPages: Int
+        hitsPerPage: Int
+        processingTimeMS: Float
     }
     type Repost {
         id: ID
@@ -28,6 +38,14 @@ module.exports = gql`
         lat: Float
         lng: Float
     }
+    type GeoLocation {
+        administrative_area_level_4: String
+        administrative_area_level_3: String
+        administrative_area_level_2: String
+        administrative_area_level_1: String
+        country: String
+        location: LatLong
+    }
     type User {
         id: ID!
         username: String!
@@ -40,14 +58,27 @@ module.exports = gql`
         token: String
     },
     type Comment {
-        id: ID!
-        createdAt: String!
-        owner: String!
-        text: String!
-        displayName: String!
-        displayImage: String!
+        id: ID
+        createdAt: String
+        owner: String
+        text: String
         photoProfile: String
-        colorCode: String!
+        photo: String
+        displayName: String
+        displayImage: String
+        colorCode: String
+        replay: ReplayData
+        replayList: [Comment]!
+    },
+    
+    input Replay {
+        username: String
+        id: ID
+    },
+    
+    type ReplayData {
+        username: String
+        id: ID
     },
     type Like {
         id: ID!
@@ -100,13 +131,17 @@ module.exports = gql`
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!
         getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
+        getVisited: [GeoLocation]
         getProfilePosts: [Post]!
+        getRoomPosts(room: String!):[Post]!
         getProfileLikedPost: [Post]!
         getPost(id: ID!): Post!
         getUserData: UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
+        textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
+        setRulesSearchAlgolia(index: String!, rank: [String]!): String
     },
     input RegisterInput {
         email: String!
@@ -142,7 +177,7 @@ module.exports = gql`
     }
     type Mutation {
         # users mutation
-        registerUser(registerInput: RegisterInput): User!
+        registerUser(registerInput: RegisterInput): String!
         login(username: String!, password: String!): String!
         loginWithFacebook(username: String!, token: String!): User!
         registerUserWithFacebook(facebookData: FacebookData): User!
@@ -150,20 +185,23 @@ module.exports = gql`
         checkUserWithFacebook(username: String!): Boolean!
         checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
+        readAllNotification: [Notification]
         changePPUser( url : String! ): String!
+        clearAllNotif: String!
 
         # posts mutation
         getPost( id:ID! ): Post!
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
+        nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
-        createPost(text:String, media: [String] location: Location!, repost: String): Post!
+        createPost(text:String, media: [String] location: Location!, repost: String, room: String): Post!
         subscribePost( postId: ID! ): Subscribe!
         mutePost ( postId:ID! ): Mute!
         deletePost(id:ID!): String!
-        likePost(id: ID!): Like
+        likePost(id: ID! room:String ): Like
 
         # comments mutation
-        createComment( id:ID!, text: String! ): Comment!
+        createComment( id:ID!, text: String!, replay: Replay, photo: String ): Comment!
         deleteComment( postId: ID!, commentId: ID! ): String!
     }
 `

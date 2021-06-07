@@ -5,13 +5,15 @@ import { GET_SUBSCRIBED_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard'
+import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
 
 function SubscribePosts() {
-    const { data } = useQuery(GET_SUBSCRIBED_POSTS);
+    const { data } = useQuery(GET_SUBSCRIBED_POSTS, {
+        fetchPolicy: "network-only"
+      });
 
     const _isMounted = useRef(false);
     const { subscribePosts, setSubscribePosts, loadingData, loading } = useContext(PostContext)

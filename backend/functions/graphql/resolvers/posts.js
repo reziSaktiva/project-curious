@@ -5,6 +5,11 @@ const { AuthenticationError, UserInputError } = require('apollo-server-express')
 const fbAuthContext = require("../../utility/fbAuthContext");
 const randomGenerator = require("../../utility/randomGenerator");
 
+const ALGOLIA_ID = 'EIAYYZTM49';
+const ALGOLIA_ADMIN_KEY = '2a9c7905cd20fc8e32c70646ce563def';
+const algoliasearch = require('algoliasearch');
+const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+
 module.exports = {
   Query: {
     async getPosts(_, { lat, lng, range }) {
@@ -63,12 +68,65 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= 1000) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
             console.log('error : ', e)
           }
+        });
+
+        return nearby;
+      }
+
+      return [];
+    },
+    async getRoomPosts(_, { room }, context) {
+      const data = await db.collection(`/room${room}/posts`).orderBy('createdAt', 'desc').limit(8).get()
+      const docs = data.docs.map((doc) => doc.data())
+
+      if (docs.length) {
+        const nearby = []
+
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
+
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/room${room}/posts/${repostId}`).get()
+              return repostData.data() || {}
+            }
+          }
+
+          // Likes
+          const likes = async () => {
+
+            const likesData = await db.collection(`/room${room}/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/room${room}/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/room${room}/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/room${room}/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData)
         });
 
         return nearby;
@@ -157,6 +215,15 @@ module.exports = {
             .get()
             .then((data) => {
               return data.docs.forEach((doc) => {
+                const { repost: repostId } = doc;
+
+                const repostData = async () => {
+                  if (repostId) {
+                    const repostData = await db.doc(`/posts/${repostId}`).get()
+                    return repostData.data() || {}
+                  }
+                }
+
                 const likes = () => {
                   return db
                     .collection(`/posts/${doc.data().id}/likes`)
@@ -213,7 +280,8 @@ module.exports = {
                   likes: likes(),
                   comments: comments(),
                   muted: muted(),
-                  subscribe: subscribe()
+                  subscribe: subscribe(),
+                  repost: repostData()
                 });
               });
             });
@@ -231,20 +299,49 @@ module.exports = {
 
       try {
         //fungsi ngambil postingan yang sudah di like
-        const likesData = likes.map(data => data.postId)
-        const likePost = await db.collection("/posts").where("id", "in", likesData).get()
-        const Post = likePost.docs.map(doc => doc.data())
+        const Post = likes.map(doc => {
+          return db.doc(`/posts/${doc.postId}`).get()
+            .then(doc => doc.data())
+        })
+
 
         //fungsi ngambil koleksi likes
+        return Promise.all(Post).then(docs => {
+          return docs.map(async doc => {
+            if (doc) {
+              const { repost: repostId } = doc;
+              let repost = {}
 
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                repost = repostData.data() || {}
+              }
+
+              const request = await db.collection(`/posts/${doc.id}/likes`).get()
+              const likes = request.docs.map(doc => doc.data())
+
+              const commentsData = await db.collection(`/posts/${doc.id}/comments`).get()
+              const comments = commentsData.docs.map(doc => doc.data())
+
+              const post = {
+                ...doc,
+                likes,
+                comments,
+                repost
+              }
+
+              return post !== null && post
+            }
+          })
+        })
 
         // Cara 1
-        return Post.map(async doc => {
-          const request = await db.collection(`/posts/${doc.id}/likes`).get()
-          const likes = request.docs.map(doc => doc.data())
+        // return Post.map(async doc => {
+        //   const request = await db.collection(`/posts/${doc.id}/likes`).get()
+        //   const likes = request.docs.map(doc => doc.data())
 
-          return { ...doc, likes }
-        })
+        //   return { ...doc, likes }
+        // })
 
 
         // Cara 2
@@ -263,6 +360,66 @@ module.exports = {
       } catch (error) {
         console.log(error);
       }
+    },
+    async setRulesSearchAlgolia(_, { rank, index }, ctx) {
+      if (!index) {
+        throw new UserInputError('index search is required, check index name on algolia dashboard')
+      }
+      
+      if (!rang || rank.length) {
+        throw new UserInputError('rank is Required')
+      }
+
+      const algoIndex = client.initIndex(index);
+
+      return new Promise((resolve, reject) => {
+        algoIndex.setSettings({ customRanking: rank })
+          .then(() => {
+            resolve("Success");
+          })
+          .catch(() => {
+            reject("Failed set rules")
+          })
+      })
+    },
+    async textSearch(_, { search, perPage = 5, page, range = 40, location }, context) {
+      const { lat, lng } = location;
+      const index = client.initIndex('search_posts');
+
+      const defaultPayload = {
+        "attributesToRetrieve": "*",
+        "attributesToSnippet": "*:20",
+        "snippetEllipsisText": "…",
+        "responseFields": "*",
+        "getRankingInfo": true,
+        "analytics": false,
+        "enableABTest": false,
+        "explain": "*",
+        "facets": ["*"],
+        "customRanking": ['desc(likeCount)', 'desc(commentCount)', "words"] // ranking based on likeCount and commentCount
+      };
+      const geoLocPayload = {
+        "aroundLatLng": `${lat}, ${lng}`,
+        "aroundRadius": range * 1000,
+      };
+
+      const pagination = {
+        "hitsPerPage": perPage || 10,
+        "page": page || 0,
+      }
+
+      return new Promise((resolve, reject) => {
+        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
+          .then(res => {
+            const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
+            
+            // return following structure data algolia
+            resolve({ hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
+          }).catch(err => {
+            reject(err)
+            console.error(err)
+          });
+      });
     },
     async getPost(_, { id }, context) {
       const { username } = await fbAuthContext(context)
@@ -293,6 +450,18 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
+          const rootComment = comments.filter(item => item.replay.id == null && item)
+          
+          const replayList = rootComment.map(comment => {
+            const replay = comments.filter(item => item.replay.id == comment.id)
+            console.log(replay)
+            return {
+              ...comment,
+              replayList : replay
+            }
+          })
+
+
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
@@ -302,10 +471,9 @@ module.exports = {
           return {
             ...post,
             likes,
-            comments,
-            repost,
+            comments: replayList,
             muted,
-            subscribe
+            subscribe,
           }
         }
         catch (err) {
@@ -397,9 +565,8 @@ module.exports = {
       }
 
       return [];
-    },
+    }
   },
-
   Mutation: {
     async nextPosts(_, { id, lat, lng }, context) {
       if (!lat || !lng) {
@@ -465,6 +632,65 @@ module.exports = {
           } catch (e) {
             console.log('error : ', e)
           }
+        });
+
+        return nearby;
+      }
+
+      return [];
+    },
+    async nextRoomPosts(_, { room, id }, context) {
+      if (!lat || !lng) {
+        throw new UserInputError('Lat and Lng is Required')
+      }
+      const lastPosts = await db.doc(`/room/${room}/posts/${id}/`).get();
+      const doc = lastPosts
+
+      const data = await db.collection(`/room/${room}/posts`).orderBy("createdAt", "desc").startAfter(doc).limit(3).get()
+      const docs = data.docs.map(doc => doc.data())
+
+      if (docs.length) {
+        const nearby = []
+
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
+
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/room/${room}/posts/${repostId}`).get()
+              return repostData.data() || {}
+            }
+          }
+
+          // Likes
+          const likes = async () => {
+
+            const likesData = await db.collection(`/room/${room}/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/room/${room}/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/room/${room}/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/room/${room}/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData);
         });
 
         return nearby;
@@ -543,18 +769,36 @@ module.exports = {
 
       return [];
     },
-    async createPost(_, { text, media, location, repost }, context) {
+    async createPost(_, { text, media, location, repost, room }, context) {
+
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
-          const newPost = {
+          const regexpHastag = /(\s|^)\#\w\w+\b/gm
+          let hastags = text.match(regexpHastag) || [];
+          if (hastags) {
+            hastags = hastags.map((s) => s.trim());
+          }
+
+          const newPost = room ? {
             owner: username,
             text,
             media,
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,
-            location
+            location,
+            _tags: hastags,
+            room
+          } : {
+            owner: username,
+            text,
+            media,
+            createdAt: new Date().toISOString(),
+            likeCount: 0,
+            commentCount: 0,
+            location,
+            _tags: hastags
           };
 
           if (repost) {
@@ -562,12 +806,42 @@ module.exports = {
           }
 
           await db
-            .collection("/posts")
+            .collection(`${room ? `/room/${room}/posts` : "posts"}`)
             .add(newPost)
             .then((doc) => {
               newPost.id = doc.id;
+              const index = client.initIndex('search_posts');
+              index.saveObjects([
+                {
+                  ...newPost,
+                  objectID: doc.id,
+                  _geoloc: location
+                }], { autoGenerateObjectIDIfNotExist: false })
+                .then(({ objectIDs }) => {
+                  console.log(objectIDs);
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+
               doc.update({ id: doc.id });
             });
+
+          if (Object.keys(location).length) {
+            const visited = await db.collection(`/users/${username}/visited`)
+              .where('lng', '==', location.lng)
+              .where('lat', '==', location.lat)
+              .get();
+            const hasSameLocation = visited.docs.map(doc => doc.data()).length
+
+            if (!hasSameLocation) {
+              // store visited location
+              await db.collection(`/users/${username}/visited`).add({
+                ...location,
+                createAt: new Date().toISOString()
+              });
+            }
+          }
 
           return {
             ...newPost,
@@ -587,8 +861,10 @@ module.exports = {
       const likesCollection = db.collection(`/posts/${id}/likes`);
       const randomizedCollection = db.collection(`/posts/${id}/randomizedData`);
       const subcribeCollection = db.collection(`/posts/${id}/subscribes`);
+      const likesData = db.collection(`/posts/${id}/likes`);
 
       try {
+
         await document.get().then((doc) => {
           if (!doc.exists) {
             throw new Error("Postingan tidak di temukan");
@@ -596,8 +872,13 @@ module.exports = {
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
-            return commentsCollection
-              .get()
+            return likesData.get()
+              .then(data => {
+                data.forEach(doc => {
+                  db.doc(`/users/${doc.data().owner}/liked/${doc.data().id}`).delete()
+                })
+                return commentsCollection.get()
+              })
               .then((data) => {
                 data.forEach((doc) => {
                   db.doc(`/posts/${id}/comments/${doc.data().id}`).delete();
@@ -612,9 +893,7 @@ module.exports = {
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(
-                    `/posts/${id}/randomizedData/${doc.data().id}`
-                  ).delete();
+                  db.doc(`/posts/${id}/randomizedData/${doc.data().id}`).delete();
                 });
                 return db
                   .collection(`/users/${username}/notifications`)
@@ -623,9 +902,7 @@ module.exports = {
               })
               .then((data) => {
                 data.forEach((doc) => {
-                  db.doc(
-                    `/users/${username}/notifications/${doc.data().id}/`
-                  ).delete();
+                  db.doc(`/users/${username}/notifications/${doc.data().id}/`).delete();
                 });
                 return subcribeCollection.get();
               })
@@ -655,16 +932,17 @@ module.exports = {
         throw new Error(err);
       }
     },
-    async likePost(_, { id }, context) {
+    async likePost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context);
       const { name, displayImage, colorCode } = await randomGenerator(
         username,
-        id
+        id,
+        room
       );
-
-      const postDocument = db.doc(`/posts/${id}`);
-      const likeCollection = db.collection(`/posts/${id}/likes`);
-      const subscribeCollection = db.collection(`/posts/${id}/subscribes`);
+        console.log(room);
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
+      const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`);
 
       try {
         const { isLiked, likeId } = await likeCollection
@@ -706,7 +984,7 @@ module.exports = {
                 isLike: false,
               };
 
-              db.doc(`/posts/${id}/likes/${likeId}`).delete();
+              db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes/${likeId}`).delete();
               db.doc(`/users/${username}/liked/${likeId}`).delete();
 
               return subscribeCollection.get().then((data) => {

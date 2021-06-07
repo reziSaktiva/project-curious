@@ -20,7 +20,10 @@ import {
   LOGOUT,
   LS_LOCATION,
   LS_TOKEN,
-  NOTIFICATION_READ
+  NOTIFICATION_READ,
+  NOTIFICATIONS_READ,
+  SET_PROFILE_PICTURE,
+  SET_ROOM
 } from "./constant";
 
 const initialState = {
@@ -28,6 +31,7 @@ const initialState = {
   location: "",
   liked: [],
   notifications: [],
+  room: null,
   facebookData: null,
   googleData: null
 };
@@ -50,6 +54,14 @@ function authReducer(state, action) {
           location: action.payload,
         },
       };
+    case SET_PROFILE_PICTURE:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          profilePicture: action.payload
+        }
+      }
     case SET_NOTIFICATIONS:
       return {
         ...state,
@@ -60,6 +72,11 @@ function authReducer(state, action) {
         ...state,
         liked: action.payload,
       };
+    case "CLEAR_ALL_NOTIFICATIONS":
+      return{
+        ...state,
+        notifications: []
+      }
     case SET_USER_DATA:
       return {
         ...state,
@@ -75,11 +92,21 @@ function authReducer(state, action) {
         ...state,
         googleData: action.payload,
       };
+    case SET_ROOM:
+      return {
+        ...state,
+        room: action.payload === "Nearby" ? null : action.payload
+      }
     case LOGOUT:
       return {
         ...state,
         user: null,
       };
+    case NOTIFICATIONS_READ:
+      return {
+        ...state,
+        notifications : action.payload
+      }
     case NOTIFICATION_READ:
       return {
         ...state,
@@ -123,7 +150,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications } = state
+  const { user, facebookData, googleData, liked, notifications, room } = state
 
   // Mutations
   const [
@@ -182,6 +209,12 @@ export function AuthProvider(props) {
     }
   }, [loading, data]);
 
+  function clearNotifications(){
+    dispatch({
+      type: "CLEAR_ALL_NOTIFICATIONS"
+    })
+  }
+
   function getGeoLocation(position) {
     const location = {
       lat: position.coords.latitude,
@@ -194,6 +227,20 @@ export function AuthProvider(props) {
       type: GET_LOCATION,
       payload: location,
     });
+  }
+  
+  function setRoom(room){
+    dispatch({
+      type: SET_ROOM,
+      payload: room
+    })
+  }
+
+  function changeProfilePicture(url) {
+    dispatch({
+      type: SET_PROFILE_PICTURE,
+      payload: url
+    })
   }
 
   function login(userData) {
@@ -228,6 +275,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function readAllNotificatons(data){
+    dispatch({
+      type: NOTIFICATIONS_READ,
+      payload: data
+    })
+  }
+
   function logout() {
     dispatch({ type: LOGOUT });
   }
@@ -239,7 +293,12 @@ export function AuthProvider(props) {
       googleData,
       liked,
       notifications,
+      room,
+      setRoom,
+      clearNotifications,
+      changeProfilePicture,
       notificationRead,
+      readAllNotificatons,
       login,
       logout,
       loadFacebookData, // functions context
