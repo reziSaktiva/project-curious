@@ -61,6 +61,7 @@ export const GET_ROOM_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      room
       location {
         lat
         lng
@@ -516,6 +517,7 @@ export const CREATE_POST = gql`
       text
       media
       createdAt
+      room
       location {
         lat
         lng

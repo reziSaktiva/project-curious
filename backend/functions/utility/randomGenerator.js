@@ -1,7 +1,7 @@
 const { UserInputError } = require('apollo-server-express')
 const { db } = require('./admin')
 
-module.exports = async (username, postId) => {
+module.exports = async (username, postId, room) => {
     const benda = [
     "Hammer", "Ball", "Cow","Monkey","Dolphin",
     "Horse", "Bowl", "Scissor","Camera","Glass",
@@ -155,8 +155,8 @@ module.exports = async (username, postId) => {
 
     const randomNama = `${ajektif[randomNumber]} ${warnaRandom.namaWarna} ${bendaRandom}`
 
-    const postDocument = db.doc(`/posts/${postId}`)
-    const randomNameCollection = db.collection(`/posts/${postId}/randomizedData`)
+    const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`)
+    const randomNameCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/randomizedData`)
     const randomNameData = {
         displayName: '',
         owner: username

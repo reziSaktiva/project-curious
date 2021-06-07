@@ -26,6 +26,7 @@ export const CREATE_POST = gql`
       createdAt
       likeCount
       commentCount
+      room
       location {
         lat
         lng
@@ -38,6 +39,31 @@ export const CREATE_POST = gql`
         displayName
         displayImage
       }
+      muted {
+        id
+        owner
+        postId
+        createdAt
+      }
+      repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+      }
+      subscribe {
+        postId
+        owner
+        createdAt
+        displayName
+        displayImage
+        colorCode
+    }
     }
   }
 `;
@@ -208,8 +234,8 @@ mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
 `;
 
 export const LIKE_POST = gql`
-  mutation likePost($id: ID!) {
-    likePost(id: $id) {
+  mutation likePost($id: ID! $room:String) {
+    likePost(id: $id room: $room) {
       id
       owner
       createdAt
