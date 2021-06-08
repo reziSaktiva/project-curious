@@ -10,6 +10,7 @@ module.exports = gql`
         location: LatLong
         likeCount: Int!
         commentCount: Int!
+        repostCount: Int!
         comments: [Comment]
         likes: [Like]
         muted: [Mute]

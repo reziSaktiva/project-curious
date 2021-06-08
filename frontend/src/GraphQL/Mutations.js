@@ -24,6 +24,7 @@ export const CREATE_POST = gql`
       text
       owner
       createdAt
+      repostCount
       likeCount
       commentCount
       room
@@ -156,6 +157,7 @@ export const GET_MORE_POSTS = gql`
       media
       createdAt
       commentCount
+      repostCount
       likeCount
       location {
         lat
@@ -200,6 +202,7 @@ mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
     createdAt
     commentCount
     likeCount
+    repostCount
     location {
       lat
       lng

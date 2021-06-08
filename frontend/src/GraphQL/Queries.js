@@ -9,6 +9,7 @@ export const GET_POSTS = gql`
       media
       createdAt
       commentCount
+      repostCount
       likeCount
       location {
         lat
@@ -61,6 +62,7 @@ export const GET_ROOM_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      repostCount
       room
       location {
         lat
@@ -113,6 +115,7 @@ export const GET_POPULAR_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      repostCount
       location {
         lat
         lng
@@ -164,6 +167,7 @@ query {
       createdAt
       commentCount
       likeCount
+      repostCount
       location {
         lat
         lng
@@ -214,6 +218,7 @@ query {
       media
       createdAt
       commentCount
+      repostCount
       likeCount
       location {
         lat
@@ -266,6 +271,7 @@ export const GET_PROFILE_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      repostCount
       repost {
           id
           owner
@@ -308,6 +314,7 @@ query{
       createdAt
       commentCount
       likeCount
+      repostCount
       repost {
           id
           owner
@@ -353,6 +360,7 @@ getPost(id: $id room: $room){
     owner
     commentCount
     likeCount
+    repostCount
     text
     location {
       lat
@@ -426,6 +434,7 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
       createdAt
       commentCount
       likeCount
+      repostCount
       location {
         lat
         lng
@@ -524,6 +533,7 @@ export const CREATE_POST = gql`
       }
       commentCount
       likeCount
+      repostCount
       likes {
         id
         owner
