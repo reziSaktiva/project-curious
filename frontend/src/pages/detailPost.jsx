@@ -94,11 +94,6 @@ export default function SinglePost(props) {
     });
   };
   
-
-
-  //akhir upload photo comentttttt //////////////////////////////////////////////////////////////////////
-
-  
   const id = props.match.params.id;
   const room = props.match.params.room === "post" ? null : props.match.params.room
 
@@ -114,7 +109,6 @@ export default function SinglePost(props) {
 
   //reply func
   const handleReply =item => {
-    console.log(item);
     setReplay({
       username : item.displayName,
       id: item.id
@@ -157,7 +151,7 @@ export default function SinglePost(props) {
   }, [data, _isMounted]);
 
   //repost
-
+  
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || "";
 
@@ -258,7 +252,7 @@ export default function SinglePost(props) {
                 <CommentButton commentCount={post.commentCount} />
               </Col>
               <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                <RepostButton />
+                <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount}  />
               </Col>
             </Row>,
           ]

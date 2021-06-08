@@ -55,7 +55,7 @@ function App() {
             <UserRoute exact path="/BMW Club Bandung" component={Room} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
-            <UserRoute exact path="/profile/:id" component={Profile} />
+            <UserRoute exact path="/profile" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />

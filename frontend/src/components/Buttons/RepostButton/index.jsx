@@ -5,11 +5,11 @@ import { Button } from 'antd';
 
 import './style.css';
 
-export default function RepostButton({ idPost }) {
+export default function RepostButton({ idPost, room, repostCount }) {
   const { toggleOpenNewPost } = useContext(PostContext);
 
   const handleOpenAddPost = () => {
-    toggleOpenNewPost(idPost);
+    toggleOpenNewPost(idPost, room);
   }
 
   return (
@@ -20,7 +20,7 @@ export default function RepostButton({ idPost }) {
       
       <div className="btn-repost__wrapper">
         <div className="ui basic label float btn-repost__label">
-          <p>12 repost</p>
+          <p>{repostCount} repost</p>
         </div>
       </div>
     </div>

@@ -347,29 +347,31 @@ const reducer = (state, action) => {
         },
       };
     case "SUBCRIBE_POST":
+      const { subscribeData, post } = action.payload
       return {
         ...state,
         posts: state.posts.map((post) => {
-          if (post.id === action.payload.postId) {
+          if (post.id === subscribeData.postId) {
             const update = {
               ...post,
-              subscribe: [...post.subscribe, action.payload],
+              subscribe: [...post.subscribe, subscribeData],
             };
             return update;
           }
 
           return post;
         }),
+        subscribePosts: [...state.subcribePosts, post]
       };
     case "UNSUBCRIBE_POST":
       return {
         ...state,
         posts: state.posts.map((post) => {
-          if (post.id === action.payload.postId) {
+          if (post.id === action.payload.subscribeData.postId) {
             const update = {
               ...post,
               subscribe: post.subscribe.filter(
-                (data) => data.owner !== action.payload.owner
+                (data) => data.owner !== action.payload.subscribeData.owner
               ),
             };
             return update;
@@ -378,7 +380,7 @@ const reducer = (state, action) => {
           return post;
         }),
         subscribePosts: state.subscribePosts.filter(
-          (post) => post.id !== action.payload.postId
+          (post) => post.id !== action.payload.subscribeData.postId
         ),
       };
     case "MUTE_POST":
@@ -612,7 +614,7 @@ export const PostProvider = (props) => {
     }
   };
 
-  const subscribePost = (data) => {
+  const subscribePost = (data, post) => {
     const subscribeData = {
       owner: data.owner,
       createdAt: data.createdAt,
@@ -625,12 +627,18 @@ export const PostProvider = (props) => {
     if (data.isSubscribe) {
       dispatch({
         type: "SUBCRIBE_POST",
-        payload: subscribeData,
+        payload: {
+          subscribeData,
+          post,
+        },
       });
     } else if (!data.isSubscribe) {
       dispatch({
         type: "UNSUBCRIBE_POST",
-        payload: subscribeData,
+        payload: {
+          subscribeData,
+          post,
+        },
       });
     }
   };
@@ -713,12 +721,15 @@ export const PostProvider = (props) => {
     }, 2000);
   };
 
-  const toggleOpenNewPost = (repost = false) => {
+  const toggleOpenNewPost = (repost = false, room = false) => {
     dispatch({
       type: "OPEN_POST_CARD",
       payload: {
         isOpenNewPost: !isOpenNewPost,
-        repost,
+        repost: repost && {
+          repost,
+          room
+        }
       },
     });
   };
