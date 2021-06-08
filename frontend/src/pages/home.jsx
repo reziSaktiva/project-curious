@@ -56,10 +56,12 @@ function Home() {
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!posts.length ? (
-                <div>
-                    <img src={Radius} />
-                    <p> Tidak ada Postingan Disekitar Anda</p>
-                </div>
+                <div className="centeringButton">
+                <img src={Radius} style={{ width: 300}} />
+                <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+                <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+                <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+            </div>
                 )
                     : posts.map((post, key) => {
                         const { muted, id } = post;

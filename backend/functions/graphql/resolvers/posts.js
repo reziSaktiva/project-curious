@@ -27,7 +27,7 @@ module.exports = {
           const { repost: repostId } = data;
 
           const repostData = async () => {
-            if (repostId.repost) {
+            if (repostId) {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
@@ -442,7 +442,7 @@ module.exports = {
           const post = dataPost.data();
 
           const { repost: repostId } = post;
-          if (repostId.repost) {
+          if (repostId) {
             const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
             repost = repostData.data();

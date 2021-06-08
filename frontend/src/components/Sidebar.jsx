@@ -42,6 +42,8 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
+
+  console.log(user.profilePicture? true : false);
   
   const loc = localStorage.location;
 
@@ -78,14 +80,10 @@ const Sidebar = () => {
           collapsed={windowWidth < 993 ? true : false}
         >
           <div style={{ width: 60 }}>
-            <Link to="/profile">
+            <Link to={`/profile/user/${user.id}`}>
               <div
                 className="profilefoto"
-                style={
-                  user.profilePicture
-                    ? { backgroundImage: `url(${user.profilePicture}` }
-                    : { backgroundImage: `url(${Blank})` }
-                }
+                style={{ backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}
               />
             </Link>
           </div>
