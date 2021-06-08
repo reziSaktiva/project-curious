@@ -460,17 +460,25 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
-          const rootComment =  comments.filter(item => item.replay.id == null && item)
-          
-          const replayList = rootComment.map(comment => {
-            const replay = comments.filter(item => item.replay.id == comment.id)
-            console.log(replay)
-            return {
-              ...comment,
-              replayList : replay
-            }
-          })
+          const recursive = (listOfItem, listFilter, idx) => {
+            const roots = listFilter.filter(i => {
+                if (idx === 0 && i.replay.id === null || idx > 0 && i.replay.id) {
+                    return i
+                }
+            });
+            
+            return roots.map((comment, idx) => {
+                const r = listOfItem.filter(item => item.replay.id === comment.id);
+                
+                return {
+                  ...comment,
+                  replyList: recursive(listOfItem, r, idx + 1)
+                }
+                
+            })
+          }
 
+          const restructureComment = recursive(comments, comments, 0) || [];
 
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
@@ -480,8 +488,10 @@ module.exports = {
 
           return {
             ...post,
+            repost,
             likes,
-            comments: replayList,
+            // comments: await comments(),
+            comments: restructureComment,
             muted,
             subscribe,
           }
