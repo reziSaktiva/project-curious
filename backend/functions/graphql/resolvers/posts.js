@@ -27,7 +27,7 @@ module.exports = {
           const { repost: repostId } = data;
 
           const repostData = async () => {
-            if (repostId.repost) {
+            if (repostId) {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
@@ -442,7 +442,7 @@ module.exports = {
           const post = dataPost.data();
 
           const { repost: repostId } = post;
-          if (repostId.repost) {
+          if (repostId) {
             const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
             repost = repostData.data();
@@ -1229,7 +1229,7 @@ module.exports = {
         room
       );
 
-      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`);
       const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`);
 
       let postOwner;
@@ -1254,10 +1254,9 @@ module.exports = {
           });
 
         await postDocument
-          .where("id", "==", postId)
           .get()
-          .then((data) => {
-            if (data.empty) {
+          .then((doc) => {
+            if (!doc.exists) {
               throw new UserInputError("post tidak di temukan");
             } else {
               subscribe = {
@@ -1270,7 +1269,7 @@ module.exports = {
               };
 
               if (isSubscribed) {
-                postOwner = data.docs[0].data().owner;
+                postOwner = doc.data().owner;
 
                 return db
                   .collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`)

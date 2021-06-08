@@ -197,6 +197,7 @@ module.exports = gql`
         readAllNotification: [Notification]
         changePPUser( url : String! ): String!
         clearAllNotif: String!
+        deleteAccount( id: ID! ): String!
 
         # posts mutation
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
