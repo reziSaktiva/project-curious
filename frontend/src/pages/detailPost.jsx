@@ -239,7 +239,7 @@ export default function SinglePost(props) {
      {post ? (
        <div>
           <List.Item
-        key={post.id}
+        key={post.id || ''}
         actions={
           !loading && [
             <>
@@ -340,12 +340,12 @@ export default function SinglePost(props) {
           {post.text}
         </Skeleton>
       </List.Item>
-      {post.comments && post.comments.length == 0 ? (null) : (
+      {post && post.comments && post.comments.length == 0 ? (null) : (
         <div>
           <List
           itemLayout="vertical"
           size="large"
-          dataSource={post.comments}
+          dataSource={post.comments || []}
           renderItem={(item) => (
             <Card
               style={{
@@ -445,7 +445,7 @@ export default function SinglePost(props) {
             className="commentContainerReply"
           itemLayout="vertical"
           size="large"
-          dataSource={item.replayList}
+          dataSource={item.replayList || []}
           renderItem={(item) => (
             <Card
               style={{

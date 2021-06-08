@@ -1,4 +1,5 @@
 const { db } = require('../../utility/admin');
+const { get } = require('lodash');
 const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
@@ -436,12 +437,11 @@ module.exports = {
 
       if (username) {
         try {
-          let repost = {}
-
           const dataPost = await postDocument.get();
           const post = dataPost.data();
 
-          const { repost: repostId } = post;
+          let repost = {}
+          const repostId = get(post, 'repost') || {};
           if (repostId) {
             const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
