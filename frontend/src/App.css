@@ -411,3 +411,7 @@ transform: translate(-50%, 30%);
     margin-right: 0px !important;
   }
 }
+
+.ant-list-item-action li {
+  width: 100%;
+}
