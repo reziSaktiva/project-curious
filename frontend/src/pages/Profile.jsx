@@ -42,9 +42,11 @@ function Profile() {
   const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
     fetchPolicy: "network-only",
   });
+
   const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS, {
     fetchPolicy: "network-only",
   });
+
   const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const { user, changeProfilePicture } = useContext(AuthContext);
   const { posts, setPosts, likedPosts, setLikedPosts } =
@@ -88,7 +90,6 @@ function Profile() {
 
   useEffect(() => {
     if (isFinishUpload) {
-      console.log("dor");
       changePPuser({ variables: { url } });
     }
   }, [url, isFinishUpload]);
@@ -166,7 +167,6 @@ function Profile() {
       </TabPane>
 
       <TabPane tab="Media" key="3">
-    
         {gallery.length &&
           gallery.map((media) => (
             <div className="gallery">
@@ -195,6 +195,12 @@ function Profile() {
       </TabPane>
     </Tabs>
   );
+
+  let repostCount = posts
+    ? posts.reduce((accumulator, current) => {
+        return accumulator + current.repostCount;
+      }, 0)
+    : 0;
 
   return (
     <div>
@@ -258,7 +264,7 @@ function Profile() {
             <p>Post</p>
           </Col>
           <Col span={8}>
-            <h5>12</h5>
+            <h5>{repostCount}</h5>
             <p>Repost</p>
           </Col>
           <Col span={8}>
@@ -282,7 +288,10 @@ function Profile() {
         }}
       >
         <div className="ui action input" style={{ height: 25 }}>
-          <input type="text" value={`http://localhost:3000/profile/${user.id}`} />
+          <input
+            type="text"
+            value={`http://localhost:3000/profile/${user.id}`}
+          />
           <button
             className="ui teal right icon button"
             style={{ backgroundColor: "#7F57FF", fontSize: 10 }}

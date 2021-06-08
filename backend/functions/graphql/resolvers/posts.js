@@ -27,8 +27,8 @@ module.exports = {
           const { repost: repostId } = data;
 
           const repostData = async () => {
-            if (repostId) {
-              const repostData = await db.doc(`/posts/${repostId}`).get()
+            if (repostId.repost) {
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
           }
@@ -189,12 +189,12 @@ module.exports = {
             const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
             return subscribeData.docs.map(doc => doc.data());
           }
-          
+
           const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
           const { lat: lattitude, lng: longtitude } = newData.location;
           try {
-            
+
             const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
             const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
 
@@ -287,6 +287,7 @@ module.exports = {
                   likeCount: doc.data().likeCount,
                   commentCount: doc.data().commentCount,
                   location: doc.data().location,
+                  repostCount: doc.data().repostCount,
                   likes: likes(),
                   comments: comments(),
                   muted: muted(),
@@ -375,7 +376,7 @@ module.exports = {
       if (!index) {
         throw new UserInputError('index search is required, check index name on algolia dashboard')
       }
-      
+
       if (!rang || rank.length) {
         throw new UserInputError('rank is Required')
       }
@@ -419,10 +420,10 @@ module.exports = {
       }
 
       return new Promise((resolve, reject) => {
-        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
+        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination })
           .then(res => {
             const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
-            
+
             // return following structure data algolia
             resolve({ hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
           }).catch(err => {
@@ -433,7 +434,7 @@ module.exports = {
     },
     async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
-      
+
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
       const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`)
@@ -448,8 +449,8 @@ module.exports = {
           const post = dataPost.data();
 
           const { repost: repostId } = post;
-          if (repostId) {
-            const repostData = await db.doc(`/posts/${repostId}`).get();
+          if (repostId.repost) {
+            const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
             repost = repostData.data();
           }
@@ -494,6 +495,7 @@ module.exports = {
             comments: restructureComment,
             muted,
             subscribe,
+            repost
           }
         }
         catch (err) {
@@ -794,7 +796,7 @@ module.exports = {
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
-          const regexpHastag = /(\s|^)\#\w\w+\b/gm
+          const regexpHastag = /(\s|^)\#\w\w+\b/
           let hastags = text.match(regexpHastag) || [];
           if (hastags) {
             hastags = hastags.map((s) => s.trim());
@@ -825,6 +827,33 @@ module.exports = {
 
           if (repost) {
             newPost.repost = repost
+            db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
+              .then(async doc => {
+                doc.ref.update({ repostCount: doc.data().repostCount + 1 })
+                if (doc.data().owner !== username) {
+                  const { name, displayImage, colorCode } = await randomGenerator(
+                    username,
+                    repost.repost,
+                    repost.room
+                  )
+
+                  db.collection(`/users/${doc.data().owner}/notifications`)
+                    .add({
+                      recipient: post.owner,
+                      sender: username,
+                      read: false,
+                      postId: id,
+                      type: "REPOST",
+                      createdAt: new Date().toISOString(),
+                      displayName: name,
+                      displayImage,
+                      colorCode,
+                    })
+                    .then((data) => {
+                      data.update({ id: data.id });
+                    });
+                }
+              })
           }
 
           await db
@@ -961,7 +990,7 @@ module.exports = {
         id,
         room
       );
-        console.log(room);
+      console.log(room);
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
       const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`);
