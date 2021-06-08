@@ -144,7 +144,7 @@ function Profile() {
             return (
               user && (
                 <div key={`posts${post.id} ${key}`}>
-                  <PostCard post={post} loading={loading} />
+                  <PostCard post={post} type="nearby" loading={loading} />
                 </div>
               )
             );
@@ -161,7 +161,7 @@ function Profile() {
                 post &&
                 user && (
                   <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} loading={loading} />
+                    <PostCard post={post} type='liked_posts' loading={loading} />
                   </div>
                 )
               );

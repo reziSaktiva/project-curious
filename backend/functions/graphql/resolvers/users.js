@@ -74,7 +74,7 @@ module.exports = {
                 const getMuteData = await muteData.get();
                 const postId = getMuteData.docs.map(doc => doc.data().postId) || [];
 
-                const data = await db.collection('posts').where('id', '==', postId).get()
+                const data = await db.collection('posts').where('id', 'in', postId).get()
                 const docs = data.docs.map(doc => doc.data())
 
                 return docs.map(async data => {
@@ -231,6 +231,14 @@ module.exports = {
 
                 const getAllPost = await db.collection(`/posts`).where('owner', "==", username).get()
                 const allPost = getAllPost.docs.map(doc => doc.data())
+
+                const getAllRoomPost = await db.collection(`/room`).get()
+                const roomPost = getAllRoomPost.docs.map( async doc => {
+                    const getPostRoom = await db.collection(`/room/${doc.id}/posts`).get()
+                    const postRoom = getPostRoom.docs.map(doc => doc.data())
+
+                    return postRoom
+                })
               }
         },
         async clearAllNotif(_, args, context) {

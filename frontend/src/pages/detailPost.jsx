@@ -250,6 +250,7 @@ export default function SinglePost(props) {
                     likes={post.likes}
                     id={post.id}
                     room={post.room}
+                    type="detail_post"
                   />
                 </div>
                 <div className="action-post__item">
