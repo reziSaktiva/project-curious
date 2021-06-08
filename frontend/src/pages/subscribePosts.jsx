@@ -40,7 +40,7 @@ function SubscribePosts() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!subscribePosts || subscribePosts.length ? (
+                {subscribePosts || subscribePosts.length ? (
                 <div className="centeringButton">
                 <img src={Radius} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>Subcribe to a Post that goes fire</h4>

@@ -33,14 +33,7 @@ module.exports = {
             }
           }
 
-          const rrepostCount = async () => {
-
-            const likesData = await db.collection("posts").where('repost', '==', repostId).get()
-            const likes = likesData.docs.map(doc => doc.data())
-
-            return likes;
-          };
-          console.log(rrepostCount());
+  
 
           // Likes
           const likes = async () => {
@@ -825,7 +818,7 @@ module.exports = {
             _tags: hastags
           };
 
-          if (repost) {
+          if (repost.repost) {
             newPost.repost = repost
             db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
               .then(async doc => {

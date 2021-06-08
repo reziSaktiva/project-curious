@@ -70,9 +70,7 @@ export default function Notification() {
           className="testttttt"
         >
           <div style={{ margin: -22, overflowY: "scroll", height: 200 }}>
-            {
-              (!notifications && <img src={NoNotif} />,
-              notifications &&
+            {(notifications && notifications.length ? (
                 notifications.map((notif, key) => {
                   let type = "";
                   let text = "";
@@ -121,7 +119,11 @@ export default function Notification() {
                       </div>
                     </Link>
                   );
-                }))
+                })
+              ) : (
+              <img src={NoNotif} className="centeringButton" style={{height: 200}} />
+              )
+            )
             }
           </div>
         </Card>
