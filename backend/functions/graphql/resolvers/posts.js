@@ -797,6 +797,7 @@ module.exports = {
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,
+            repostCount: 0,
             location,
             _tags: hastags,
             room
@@ -807,6 +808,7 @@ module.exports = {
             createdAt: new Date().toISOString(),
             likeCount: 0,
             commentCount: 0,
+            repostCount: 0,
             location,
             _tags: hastags
           };
