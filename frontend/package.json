@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "homepage": "https://insvire-curious-app.firebaseapp.com/",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.6",
