@@ -178,6 +178,7 @@ export default function ModalPost() {
 
   const handleCancel = () => setState({ ...state, previewVisible: false });
 
+  
   const handleCancelModal = () => {
     toggleOpenNewPost(false);
   };
@@ -201,6 +202,15 @@ export default function ModalPost() {
       ...state,
       fileList: newFiles
     });
+    console.log(fileList);
+  }
+  const handleRemove = file => {
+    const newFile = fileList.filter(item => item != file);
+    console.log("teteteee",newFile);
+    setState({
+      ...state,
+      fileList: newFile
+    })
   }
 
 
@@ -321,6 +331,7 @@ export default function ModalPost() {
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
+              onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
@@ -351,9 +362,9 @@ export default function ModalPost() {
                 </Upload>
               </Form.Item>
             </Col>
-            <Button htmlType="submit" key="submit" type="primary" disabled={loadingCreatePost}
+            <Button htmlType="submit" key="submit" type="primary" loading={loadingCreatePost}
               style={{ backgroundColor: '#7958f5', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
-              {loadingCreatePost && <LoadingOutlined />}Post
+              Post
             </Button>
           </div>
 

@@ -14,13 +14,13 @@ const SignIn = (props) => {
   return (
   <div>
     <Row>
-      <Col xs={0} sm={12} md={12} lg={12} xl={12}>
+      <Col xs={0} sm={0} md={12} lg={12} xl={12}>
         <div className="landingimage" />
         <div className="container-landing">
           <div className="curiouslanding" />
         </div>
       </Col>
-      <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+      <Col xs={24} sm={24} md={12} lg={12} xl={12}>
         <div className="landingPage-input">
           {window.isMobile && <img src={BGLanding} width="250px" />}
           <h1  style={{ fontSize: "40px", color: "#352A39", textAlign:"left", paddingLeft:"68px"}}>Welcome to </h1>
