@@ -106,14 +106,14 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        room_1: state.posts.filter((post) => post.id !== id),
+        room_1: state.room_1.filter((post) => post.id !== id),
       };
     case "DELETE_POST_ROOM_2":
       const idDelete = action.payload;
 
       return {
         ...state,
-        room_2: state.posts.filter((post) => post.id !== idDelete),
+        room_2: state.room_2.filter((post) => post.id !== idDelete),
       };
     case "SET_COMMENT":
       return {
@@ -348,9 +348,11 @@ const reducer = (state, action) => {
       };
     case "SUBCRIBE_POST":
       const { subscribeData, post } = action.payload
+
+      const subscribePosts = [...state.subscribePost, post]
       return {
         ...state,
-        posts: state.posts.map((post) => {
+        posts: state.posts.map((post) => {  
           if (post.id === subscribeData.postId) {
             const update = {
               ...post,
@@ -361,7 +363,7 @@ const reducer = (state, action) => {
 
           return post;
         }),
-        subscribePosts: [...state.subcribePosts, post]
+        subscribePosts
       };
     case "UNSUBCRIBE_POST":
       return {
@@ -495,6 +497,9 @@ export const PostContext = createContext({
   posts: [],
   room_1: [],
   room_2: [],
+  mutedPost: [],
+  likedPosts: [],
+  subscribePosts: [],
   post: null,
   newPosts: null,
   loading: false,
@@ -502,9 +507,6 @@ export const PostContext = createContext({
   isMorePost: true,
   isOpenNewPost: false,
   repost: false,
-  mutedPost: [],
-  likedPosts: [],
-  subscribePosts: [],
   setRoom: () => {},
   setLikedPosts: () => {},
   setComment: () => {},
