@@ -349,7 +349,7 @@ const reducer = (state, action) => {
     case "SUBCRIBE_POST":
       const { subscribeData, post } = action.payload
 
-      const subscribePosts = [...state.subscribePost, post]
+      const subscribePosts = [...state.subscribePosts, post]
       return {
         ...state,
         posts: state.posts.map((post) => {  
