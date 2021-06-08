@@ -5,6 +5,9 @@ const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers/index')
 
+// Global Config
+require('dotenv').config()
+
 const server = new ApolloServer( {
     typeDefs, 
     resolvers,
