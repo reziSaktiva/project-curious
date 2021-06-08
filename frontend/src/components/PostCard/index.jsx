@@ -58,10 +58,9 @@ export default function PostCard({ post, loading }) {
   const isRepost = get(repost, "id") || "";
 
   const { muted, subscribe } = post;
-  const isMuted =
-    user && muted && muted.find((mute) => mute.owner === user.username);
-  const isSubscribe =
-    user && subscribe && subscribe.find((sub) => sub.owner === user.username);
+  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
+
+  const isSubscribe = user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   useEffect(() => {
     if (post.location) {
@@ -164,7 +163,7 @@ export default function PostCard({ post, loading }) {
                         {!post.room && (<Menu.Item
                           key="1"
                           onClick={() =>
-                            mutePost({ variables: { id: post.id, room: post.room} })
+                            mutePost({ variables: { postId: post.id, room: post.room} })
                           }
                         >
                           {isMuted ? "Unmute" : "Mute"}

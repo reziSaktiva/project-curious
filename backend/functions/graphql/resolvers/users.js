@@ -74,7 +74,7 @@ module.exports = {
                 const getMuteData = await muteData.get();
                 const postId = getMuteData.docs.map(doc => doc.data().postId) || [];
 
-                const data = await db.collection('posts').where('id', 'in', postId).get()
+                const data = await db.collection('posts').where('id', '==', postId).get()
                 const docs = data.docs.map(doc => doc.data())
 
                 return docs.map(async data => {
@@ -82,7 +82,7 @@ module.exports = {
                     let repost = {}
 
                     if (repostId) {
-                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
                         repost = repostData.data() || {}
                     }
 
@@ -124,7 +124,7 @@ module.exports = {
                     let repost = {}
 
                     if (repostId) {
-                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
                         repost = repostData.data() || {}
                     }
 
@@ -214,6 +214,25 @@ module.exports = {
         }
     },
     Mutation: {
+        async deleteAccount(_, { id }, context){
+            const { username } = await fbAuthContext(context)
+
+            if (!username) {
+                throw new UserInputError("UnAuthorization")
+              } else {
+                const getNotification = await db.collection(`/users/${username}/notifications`).get()
+                const notification = getNotification.docs.map(doc => doc.data())
+
+                const getLiked = await db.collection(`/users/${username}/liked`).get()
+                const liked = getLiked.docs.map(doc => doc.data())
+
+                const getVisited = await db.collection(`/users/${username}/visited`).get()
+                const visited = getVisited.docs.map(doc => doc.data())
+
+                const getAllPost = await db.collection(`/posts`).where('owner', "==", username).get()
+                const allPost = getAllPost.docs.map(doc => doc.data())
+              }
+        },
         async clearAllNotif(_, args, context) {
             const { username } = await fbAuthContext(context)
       

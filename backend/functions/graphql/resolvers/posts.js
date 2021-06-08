@@ -1229,7 +1229,7 @@ module.exports = {
         room
       );
 
-      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
+      const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`);
       const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`);
 
       let postOwner;
@@ -1254,10 +1254,9 @@ module.exports = {
           });
 
         await postDocument
-          .where("id", "==", postId)
           .get()
-          .then((data) => {
-            if (data.empty) {
+          .then((doc) => {
+            if (!doc.exists) {
               throw new UserInputError("post tidak di temukan");
             } else {
               subscribe = {
@@ -1270,7 +1269,7 @@ module.exports = {
               };
 
               if (isSubscribed) {
-                postOwner = data.docs[0].data().owner;
+                postOwner = doc.data().owner;
 
                 return db
                   .collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`)

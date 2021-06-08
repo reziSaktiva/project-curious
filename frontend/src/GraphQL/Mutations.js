@@ -135,8 +135,8 @@ export const CHANGE_PP = gql`
 `
 
 export const MUTE_POST = gql`
-  mutation mutePost($id: ID! $room: String) {
-    mutePost(id:$id room:$room){
+  mutation mutePost($postId: ID! $room: String) {
+    mutePost(postId:$postId room:$room){
       id
       owner
       createdAt
