@@ -511,13 +511,17 @@ export const CREATE_POST = gql`
     $media: [String]
     $location: Location!
     $repost: String
+    $roomRepost: String
     $room: String
   ) {
     createPost(
     text: $text
     media: $media
     location: $location
-    repost: $repost
+    repost: {
+      repost: $repost
+      room: $roomRepost
+    }
     room: $room
   )
     {

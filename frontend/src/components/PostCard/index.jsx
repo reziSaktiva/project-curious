@@ -50,7 +50,7 @@ export default function PostCard({ post, loading }) {
 
   const [subscribePost] = useMutation(SUBSCRIBE_POST, {
     update(_, { data: { subscribePost } }) {
-      postContext.subscribePost(subscribePost);
+      postContext.subscribePost(subscribePost, post);
     },
   });
   const userName = user && user.username;
@@ -117,7 +117,7 @@ export default function PostCard({ post, loading }) {
                   </Link>
                 </div>
                 <div className="action-post__item">
-                  <RepostButton idPost={post.id} />
+                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} />
                 </div>
               </div>
             </>,

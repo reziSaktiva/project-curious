@@ -150,9 +150,9 @@ module.exports = {
                     return values.filter(item => item && item)
                 })
 
-                return Promise.all(result).then(values => {
-                    return values.filter(item => item && item)
-                })
+                // return Promise.all(result).then(values => {
+                //     return values.filter(item => item && item)
+                // })
             }
             catch (err) {
                 throw new Error(err)

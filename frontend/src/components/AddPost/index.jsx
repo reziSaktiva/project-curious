@@ -142,7 +142,7 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (repost) {
-      getRepost({ variables: { id: repost } });
+      getRepost({ variables: { id: repost.repost } });
     }
   }, [repost]);
 
@@ -156,7 +156,8 @@ export default function ModalPost() {
           lat,
           lng
         },
-        repost: repost || '',
+        repost: repost.repost || '',
+        roomRepost: repost.room || '',
         room
       };
       

@@ -27,6 +27,10 @@ module.exports = gql`
         hitsPerPage: Int
         processingTimeMS: Float
     }
+    # type Repost {
+    #     repost: String
+    #     room: String
+    # }
     type Repost {
         id: ID
         owner: String
@@ -176,6 +180,10 @@ module.exports = gql`
         lat: Float
         lng: Float
     }
+    input Data {
+        repost: String
+        room: String
+    }
     type Mutation {
         # users mutation
         registerUser(registerInput: RegisterInput): String!
@@ -194,7 +202,7 @@ module.exports = gql`
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
-        createPost(text:String, media: [String] location: Location!, repost: String, room: String): Post!
+        createPost(text:String, media: [String] location: Location! repost: Data room: String): Post!
         subscribePost( postId: ID! room: String ): Subscribe!
         mutePost ( postId: ID! room: String ): Mute!
         deletePost( id: ID! room: String ): String!
