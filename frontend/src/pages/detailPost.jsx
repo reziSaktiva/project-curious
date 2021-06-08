@@ -8,6 +8,8 @@ import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { get } from "lodash";
 
+import '../components/PostCard/style.css';
+
 //antd
 import {
   Skeleton,
@@ -28,9 +30,9 @@ import {
 
 //component
 import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "../components/Buttons/LikeButton";
-import CommentButton from "../components/Buttons/CommentButton";
-import RepostButton from "../components/Buttons/RepostButton";
+import LikeButton from "../components/Buttons/LikeButton/index";
+import CommentButton from "../components/Buttons/CommentButton/index";
+import RepostButton from "../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined, UploadButton } from "@ant-design/icons";
 import PostNavBar from "../components/PostNavBar";
 
@@ -240,21 +242,28 @@ export default function SinglePost(props) {
         key={post.id}
         actions={
           !loading && [
-            <Row gutter={[48, 0]}>
-              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                <LikeButton
-                  likeCount={post.likeCount}
-                  likes={post.likes}
-                  id={post.id}
-                />
-              </Col>
-              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                <CommentButton commentCount={post.commentCount} />
-              </Col>
-              <Col xs={8} sm={8} md={8} lg={8} xl={8}>
-                <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount}  />
-              </Col>
-            </Row>,
+            <>
+              <div className="action-post">
+                <div className="action-post__item">
+                  <LikeButton
+                    likeCount={post.likeCount}
+                    likes={post.likes}
+                    id={post.id}
+                    room={post.room}
+                  />
+                </div>
+                <div className="action-post__item">
+                  <Link to={`/post/${post.id}`}>
+
+                  <CommentButton commentCount={post.commentCount} />
+
+                  </Link>
+                </div>
+                <div className="action-post__item">
+                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} />
+                </div>
+              </div>
+            </>,
           ]
         }
       >
