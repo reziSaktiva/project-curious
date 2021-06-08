@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
 import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio } from "antd";
 import { DownOutlined } from '@ant-design/icons'
-import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
+import { PlusOutlined, PictureOutlined, LoadingOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { get } from 'lodash';
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -105,7 +105,7 @@ export default function ModalPost() {
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
 
-  const [createPost] = useMutation(
+  const [createPost, {data, loading : loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
@@ -351,9 +351,9 @@ export default function ModalPost() {
                 </Upload>
               </Form.Item>
             </Col>
-            <Button htmlType="submit" key="submit" type="primary"
+            <Button htmlType="submit" key="submit" type="primary" disabled={loadingCreatePost}
               style={{ backgroundColor: '#7958f5', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
-              Post
+              {loadingCreatePost && <LoadingOutlined />}Post
             </Button>
           </div>
 

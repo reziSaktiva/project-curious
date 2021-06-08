@@ -354,74 +354,72 @@ query{
 
 export const GET_POST = gql`
 query getPost($id: ID! $room: String){
-getPost(id: $id room: $room){
+  getPost(id: $id, room: $room) {
     id
     createdAt
     owner
     commentCount
     likeCount
-    repostCount
     text
     location {
       lat
       lng
     }
     likes {
+      id
+      owner
+      createdAt
+      colorCode
+      displayName
+      displayImage
+    }
+    comments {
+      id
+      createdAt
+      owner
+      text
+      displayName
+      photoProfile
+      colorCode
+      replay {
         id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
+        username
       }
-    comments{
       replayList {
         id
         createdAt
         owner
         text
         displayName
-        photo
-        displayImage
-        colorCode
-          replay {
-            username
-            id 
-          }
-        }
-      id
-      owner
-      createdAt
-      colorCode
-      photo
-      displayName
-      displayImage
-      text
-      replay {
-        username
-        id
-      }
-        }
-        repost {
-          id
-          owner
-          text
-          media
-          createdAt
-          location {
-            lat
-            lng
-          }
-        }
-    subscribe {
-        postId
-        owner
-        createdAt
-        displayName
-        displayImage
+        photoProfile
         colorCode
       }
     }
+    repost {
+        id
+        owner
+        text
+        media
+        createdAt
+        location {
+          lat
+          lng
+        }
+    }
+    hastags
+    # notifications {
+    #   recipient
+    #   sender
+    #   read
+    #   postId
+    #   id
+    #   type
+    #   createdAt
+    #   displayName
+    #   displayImage
+    #   colorCode
+    # }
+  }
 }
 `;
 export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`

@@ -205,7 +205,6 @@ function Profile() {
   return (
     <div>
       <AppBar title="My Profile" />
-
       <div
         style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10 }}
       >
@@ -290,7 +289,7 @@ function Profile() {
         <div className="ui action input" style={{ height: 25 }}>
           <input
             type="text"
-            value={`http://localhost:3000/profile/${user.id}`}
+            value={`http://localhost:3000/profile/user/${user.id}`}
           />
           <button
             className="ui teal right icon button"
