@@ -42,6 +42,8 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
+
+  console.log(user.profilePicture? true : false);
   
   const loc = localStorage.location;
 
@@ -81,11 +83,7 @@ const Sidebar = () => {
             <Link to={`/profile/user/${user.id}`}>
               <div
                 className="profilefoto"
-                style={
-                  user.profilePicture
-                    ? { backgroundImage: `url(${user.profilePicture}` }
-                    : { backgroundImage: `url(${Blank})` }
-                }
+                style={{ backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}
               />
             </Link>
           </div>

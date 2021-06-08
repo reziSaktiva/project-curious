@@ -15,7 +15,7 @@ import './index.css'
 import App from './App'
 
 const link = from([
-  new HttpLink({uri: 'http://localhost:5000/insvire-curious-app/us-central1/graphql'})
+  new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
 ])
 
 const errorLink = onError(

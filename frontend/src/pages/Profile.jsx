@@ -16,6 +16,7 @@ import ImgCrop from "antd-img-crop";
 //assets
 import Pin from "../assets/pin-svg-25px.svg";
 import IconCrash from "../assets/ic-crash.png";
+import Radius from '../assets/radius.png'
 
 //location
 import Geocode from "react-geocode";
@@ -31,6 +32,7 @@ import AppBar from "../components/AppBar";
 import firebase from "firebase/app";
 import "firebase/storage";
 import { PostContext } from "../context/posts";
+import SkeletonLoading from "../components/SkeletonLoading";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -136,7 +138,7 @@ function Profile() {
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
         {!getProfilePosts ? (
-          <p>loading...</p>
+          <SkeletonLoading />
         ) : (
           posts.map((post, key) => {
             return (
@@ -151,23 +153,32 @@ function Profile() {
       </TabPane>
       <TabPane tab="Liked" key="2">
         {!getProfileLikedPost ? (
-          <p>loading</p>
+          <SkeletonLoading />
         ) : (
-          likedPosts.map((post, key) => {
-            return (
-              post &&
-              user && (
-                <div key={`posts${post.id} ${key}`}>
-                  <PostCard post={post} loading={loading} />
-                </div>
-              )
-            );
-          })
+          getProfileLikedPost.getProfileLikedPost.length ? (
+            likedPosts.map((post, key) => {
+              return (
+                post &&
+                user && (
+                  <div key={`posts${post.id} ${key}`}>
+                    <PostCard post={post} loading={loading} />
+                  </div>
+                )
+              );
+            })
+          ) : (
+            <div className="centeringButton">
+                <img src={Radius} style={{ width: 300}} />
+                <h4 style={{textAlign: 'center'}}>Try Upload a Photo when posting</h4>
+                <h4 style={{textAlign: 'center'}}>and make your post more atractive</h4>
+                <h4 style={{textAlign: 'center'}}>and your photo colection will shown up here</h4>
+            </div>
+          )
         )}
       </TabPane>
 
       <TabPane tab="Media" key="3">
-        {gallery.length &&
+        {gallery.length ? (
           gallery.map((media) => (
             <div className="gallery">
               {media.length &&
@@ -177,7 +188,7 @@ function Profile() {
                     gallery_item_left: idx == 2,
                     gallery__img: idx != 1 || idx != 2,
                   });
-                  return (
+                  return  (
                     <img
                       key={`Media${idx}`}
                       src={photo.media}
@@ -188,10 +199,18 @@ function Profile() {
                       className={imgClass}
                       alt="Image 1"
                     />
-                  );
+                  )
                 })}
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="centeringButton">
+                <img src={Radius} style={{ width: 300}} />
+                <h4 style={{textAlign: 'center'}}>Try Upload a Photo when posting</h4>
+                <h4 style={{textAlign: 'center'}}>and make your post more atractive</h4>
+                <h4 style={{textAlign: 'center'}}>and your photo colection will shown up here</h4>
+            </div>
+        )}
       </TabPane>
     </Tabs>
   );
