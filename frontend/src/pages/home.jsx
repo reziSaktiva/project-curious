@@ -69,7 +69,7 @@ function Home() {
                         
                         return (
                             <div key={`posts${id} ${key}`}>
-                                {!isMuted && <PostCard post={post} loading={loading} />}
+                                {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )
                     })}

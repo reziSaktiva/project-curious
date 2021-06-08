@@ -50,7 +50,7 @@ function SubscribePosts() {
                 )
                     : subscribePosts.map((post, key) => (
                         <div key={`posts subscribe ${key}`}>
-                        <PostCard post={post} loading={loading} />
+                        <PostCard post={post} type="subscribe_posts" loading={loading} />
                     </div>
                 ))}
             </div>) : <SkeletonLoading />}

@@ -27,7 +27,7 @@ Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
 
 Geocode.setLanguage("id");
 
-export default function PostCard({ post, loading }) {
+export default function PostCard({ post, loading, type }) {
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
@@ -106,6 +106,7 @@ export default function PostCard({ post, loading }) {
                     likes={post.likes}
                     id={post.id}
                     room={post.room}
+                    type={type}
                   />
                 </div>
                 <div className="action-post__item">
