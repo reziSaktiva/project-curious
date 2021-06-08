@@ -55,7 +55,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? (
+                {!posts.length && !loading ? (
                 <div className="centeringButton">
                 <img src={Radius} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
