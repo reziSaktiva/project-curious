@@ -126,7 +126,7 @@ const reducer = (state, action) => {
           const recursive = (list) => {
             return list.map(itm => {
               if (itm.id === payload.reply.id) {
-                return { ...itm, replyList: itm.replyList.concat(payload)}
+                return { ...itm, replyList: itm.replyList.length && itm.replyList.concat(payload)}
               } else {
                 if (!itm.replyList) return itm
 

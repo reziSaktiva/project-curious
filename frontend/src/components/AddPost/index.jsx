@@ -79,7 +79,7 @@ export default function ModalPost() {
     }
   }
   const handleRoom = (e) => {
-    setRoom(e.target.value)
+    setRoom('Nearby')
     setOpen([])
 
   }
@@ -273,6 +273,7 @@ export default function ModalPost() {
                   <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
                 </div>
               } key="1" showArrow={false}>
+                <p onClick={handleRoom}>Nearby</p>
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
                   <img src={Gorila} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />

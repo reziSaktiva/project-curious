@@ -345,7 +345,166 @@ export default function SinglePost(props) {
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
+
           {post.text}
+          {/* mediaaaaaaaaaaaaaa */}
+
+          {post.media ? (
+          post.media.length == 1 ? (
+            <Image
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                objectFit: "cover",
+                maxHeight: 300,
+              }}
+              src={post.media}
+            />
+          ) : null
+        ) : null}
+
+        {post.media ? (
+          post.media.length == 2 ? (
+            <table className="row-card-2">
+              <tbody>
+                <tr>
+                  <Image.PreviewGroup>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={post.media[0]}
+                      />
+                    </td>
+                    <td>
+                      <Image
+                        style={{ borderRadius: "0px 10px 10px 0px" }}
+                        src={post.media[1]}
+                      />
+                    </td>
+                  </Image.PreviewGroup>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+
+        {post.media ? (
+          post.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <Image.PreviewGroup>
+                <tbody>
+                  <tr style={{ margin: 0, padding: 0 }}>
+                    <td
+                      rowspan="2"
+                      style={{ width: "50%", verticalAlign: "top" }}
+                    >
+                      <Image
+                        className="pict1-3"
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={post.media[0]}
+                      />
+                    </td>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        className="pict2-3"
+                        style={{ borderRadius: "0px 10px 0px 0px" }}
+                        src={post.media[1]}
+                      />
+                      <div
+                        className="text-container"
+                        style={{ marginTop: "-6px" }}
+                      >
+                        <Image
+                          className="pict3-3"
+                          style={
+                            post.media.length > 3
+                              ? {
+                                  borderRadius: "0px 0px 10px 0px",
+                                  filter: "blur(2px)",
+                                }
+                              : { borderRadius: "0px 0px 10px 0px" }
+                          }
+                          src={post.media[2]}
+                        />
+                        <div className="text-center">
+                          {post.media.length > 3
+                            ? "+" + (post.media.length - 3)
+                            : null}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {post.media.length > 3 ? (
+                    <div>
+                      <Image
+                        className="pict3-3"
+                        style={{ display: "none" }}
+                        src={post.media[3]}
+                      />
+                      {post.media.length > 4 ? (
+                        <Image
+                          className="pict3-3"
+                          style={{ display: "none" }}
+                          src={post.media[4]}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null}
+                </tbody>
+              </Image.PreviewGroup>
+            </table>
+          ) : null
+        ) : null}
+
+        {post.media ? (
+          post.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <tbody>
+                <tr>
+                  <td rowSpan="2" style={{ width: "50%" }}>
+                    <img
+                      className="pict1-3"
+                      src={post.media[0]}
+                      style={{ borderRadius: "10px 0px 0px 10px" }}
+                    />
+                  </td>
+                  <td style={{ width: "50%" }}>
+                    <img
+                      className="pict2-3"
+                      src={post.media[1]}
+                      style={{ borderRadius: "0px 10px 0px 0px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "50%" }}>
+                    <div className="text-container">
+                      <img
+                        className="pict3-3"
+                        src={post.media[2]}
+                        style={
+                          post.media.length > 3
+                            ? {
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
+                            : { borderRadius: "0px 0px 10px 0px" }
+                        }
+                      />
+                      <div className="text-center">
+                        {post.media.length > 3
+                          ? "+" + (post.media.length - 3)
+                          : null}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+
+          {/* mediaaaaaaaaaaaa end */}
         </Skeleton>
       </List.Item>
       {post && post.comments && post.comments.length == 0 ? (null) : (
@@ -370,8 +529,8 @@ export default function SinglePost(props) {
                     <Avatar
                       size={50}
                       style={{
+                        backgroundImage: `url('${comment.displayImage}')`,
                         backgroundColor: comment.colorCode,
-                        backgroundImage: `url(${comment.displayImage})`,
                         backgroundSize: 50,
                       }}
                     />
@@ -392,6 +551,7 @@ export default function SinglePost(props) {
                               Mute
                             </Menu.Item>
                             <Menu.Item key="3">Report</Menu.Item>
+                            <Menu.Item key="4">Delete</Menu.Item>
                           </Menu>
                         }
                         trigger={["click"]}

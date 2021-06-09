@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_POSTS } from '../GraphQL/Queries'
@@ -13,12 +13,39 @@ import { getSession, getRangeSearch } from '../util/Session';
 
 //gambar
 import Radius from '../assets/radius.png'
+import SidebarMobile from '../components/SidebarMobile'
+import BackDrop from '../components/BackDrop'
+import NotificationMobile from '../components/NotificationMobile'
 
 
 function Home() {
+    const [burger, setBurger] = useState({
+        toggle : false
+    })
+    const [notif, setNotif] = useState({
+        toggle : false
+    })
     const _isMounted = useRef(false);
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
+
+    const handleBurger = () => {
+        setBurger(prevState => {
+            return {
+                toggle : !prevState.toggle
+            }
+        })
+    }
+    const handleNotif = () => {
+        setNotif(prevState => {
+            return {
+                toggle : !prevState.toggle
+            }
+        })
+    }
+    const handleBackdropClose = () => {
+        setBurger({toggle: false})
+    }
 
     const { location } = getSession();
     const range = getRangeSearch();
@@ -51,9 +78,13 @@ function Home() {
         }
     }, [data, _isMounted])
 
+
     return (
         <div>
-            <NavBar />
+            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
+            <NotificationMobile show={notif.toggle} />
+            <SidebarMobile show={burger.toggle} />
+            {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {_isMounted.current && !loading && !posts.length ? (
                 <div className="centeringButton">
@@ -68,7 +99,7 @@ function Home() {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`}>
+                            <div key={`posts${id} ${key}`} style={{marginTop: 40}}>
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )

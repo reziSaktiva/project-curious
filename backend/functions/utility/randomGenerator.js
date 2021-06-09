@@ -176,12 +176,12 @@ module.exports = async (username, postId, room) => {
                             } else {
                                 if (username === doc.data().owner) {
                                     randomNameData.displayName = 'Author'
-                                    randomNameData.colorCode = '#fff'
-                                    randomNameData.displayImage = `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/image%2FAuthor.png?alt=media`
+                                    randomNameData.colorCode = warnaRandom.kode
+                                    randomNameData.displayImage = `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot.com/o/images%2FAuthor.png?alt=media`
                                 } else {
                                     randomNameData.displayName = randomNama
                                     randomNameData.colorCode = warnaRandom.kode
-                                    randomNameData.displayImage =  `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/image%2F${bendaRandom}.png?alt=media`
+                                    randomNameData.displayImage =  `https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot.com/o/images%2F${bendaRandom}.png?alt=media`
                                 }
                                 return randomNameCollection.add(randomNameData)
                             }
