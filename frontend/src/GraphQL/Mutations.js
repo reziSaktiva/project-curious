@@ -70,8 +70,8 @@ export const CREATE_POST = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-mutation createComment($id: ID!, $text: String!, $reply: Reply, $photo: String) {
-  createComment(id : $id, text: $text, reply: $reply, photo: $photo) {
+mutation createComment($id: ID!, $text: String!, $reply: Reply, $photo: String, $room:String) {
+  createComment(id : $id, text: $text, reply: $reply, photo: $photo, room: $room) {
   id
   owner
   text
@@ -87,6 +87,25 @@ mutation createComment($id: ID!, $text: String!, $reply: Reply, $photo: String) 
   }
 }
 `;
+
+export const DELETE_COMMENT = gql`
+  mutation deleteComment($postId: ID!, $commentId: ID!, $room: String) {
+      deleteComment(postId: $postId, commentId: $commentId, room: $room) {
+      id
+      owner
+      text
+      createdAt
+      colorCode
+      photo
+      displayName
+      displayImage
+      reply {
+        username
+        id
+        }
+      }
+  }
+`
 
 export const READ_ALL_NOTIFICATIONS = gql`
   mutation readNotifications {

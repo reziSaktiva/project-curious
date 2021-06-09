@@ -118,26 +118,27 @@ const reducer = (state, action) => {
     case "SET_COMMENT":
       const { payload } = action;
       const hasReply = payload.reply && payload.reply.id;
-      
+
       if (hasReply) {
-        const match = state.post.comments.findIndex(itm => itm.id == payload.reply.id);
-        
+        const match = state.post.comments.findIndex(
+          (itm) => itm.id == payload.reply.id
+        );
+
         if (!match) {
           const recursive = (list) => {
-            return list.map(itm => {
+            return list.map((itm) => {
               if (itm.id === payload.reply.id) {
-                return { ...itm, replyList: itm.replyList.concat(payload)}
+                return { ...itm, replyList: itm.replyList.concat(payload) };
               } else {
-                if (!itm.replyList) return itm
+                if (!itm.replyList) return itm;
 
-                return recursive(itm.replyList)
-                
+                return recursive(itm.replyList);
               }
-            })
-          }
+            });
+          };
 
           const newComments = recursive(state.post.comments);
-          
+
           return {
             ...state,
             post: {
@@ -148,13 +149,47 @@ const reducer = (state, action) => {
           };
         }
       }
-      
+
       return {
         ...state,
         post: {
           ...state.post,
           comments: [...state.post.comments, action.payload],
           commentsCount: state.post.comments + 1,
+        },
+      };
+    case "DELETE_COMMENT":
+      if (action.payload.reply && action.payload.reply.id) {
+        const find = state.post.comments.findIndex(
+          (itm) => itm.id == action.payload.reply.id
+        );
+
+        if (!find) {
+          const recursive = (list) => {
+            return list.map((itm) => {
+              return { ...itm, replyList: itm.replyList.filter(list => list !== action.payload.id) };
+            });
+          };
+
+          const newComments = recursive(state.post.comments);
+
+          return {
+            ...state,
+            post: {
+              ...state.post,
+              comments: newComments,
+              commentsCount: state.post.comments + 1,
+            },
+          };
+        }
+      }
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            (comment) => comment.id !== action.payload
+          ),
         },
       };
     case "LIKE_POST":
@@ -562,6 +597,7 @@ export const PostContext = createContext({
   deletePost: () => {},
   like: () => {},
   mutePost: () => {},
+  commentDelete: () => {},
 });
 
 const initialState = {
@@ -626,6 +662,13 @@ export const PostProvider = (props) => {
   const setComment = (data) => {
     dispatch({
       type: "SET_COMMENT",
+      payload: data,
+    });
+  };
+
+  const commentDelete = (data) => {
+    dispatch({
+      type: "DELETE_COMMENT",
       payload: data,
     });
   };
@@ -851,6 +894,7 @@ export const PostProvider = (props) => {
         subscribePost,
         setSubscribePosts,
         setRoom,
+        commentDelete,
         likedPosts,
         subscribePosts,
         mutedPost,

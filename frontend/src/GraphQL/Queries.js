@@ -360,6 +360,8 @@ query getPost($id: ID! $room: String){
     owner
     commentCount
     likeCount
+    repostCount
+    room
     text
     location {
       lat
