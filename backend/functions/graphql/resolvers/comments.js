@@ -6,13 +6,13 @@ const randomGenerator = require('../../utility/randomGenerator')
 
 module.exports = {
     Mutation: {
-        async createComment(_, { id, text, reply, photo }, context) {
+        async createComment(_, { id, text, reply, photo, room }, context) {
             const { username } = await fbAuthContext(context)
-            const { name, displayImage, colorCode } = await randomGenerator(username, id)
+            const { name, displayImage, colorCode } = await randomGenerator(username, id, room)
 
-            const postDocument = db.doc(`/posts/${id}`)
-            const commentCollection = db.collection(`/posts/${id}/comments`)
-            const subscribeCollection = db.collection(`/posts/${id}/subscribes`)
+            const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
+            const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
+            const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`)
 
             if (text.trim() === '') {
                 throw new UserInputError('kamu tidak bisa membuat comment tanpa text', { error: { text: 'kamu tidak bisa membuat comment tanpa text' } })
@@ -24,7 +24,7 @@ module.exports = {
                     text,
                     reply,
                     photo
-                    
+
                 }
 
                 let postOwner;
@@ -97,23 +97,23 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async deleteComment(_, { postId, commentId }, context) {
+        async deleteComment(_, { postId, commentId, room }, context) {
             const { username } = await fbAuthContext(context)
-            const postDocument = db.doc(`/posts/${postId}`)
+            const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`)
 
-            const commentCollection = db.collection("posts").doc(postId).collection('comments').doc(commentId)
-            const subscribeCollection = db.collection(`/posts/${postId
-            }/subscribes`)
-
+            const commentCollection = db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId)
+            const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`)
 
             try {
                 let postOwner;
+                let comment;
 
                 await postDocument.get()
                     .then(doc => {
                         if (!doc.exists) {
                             throw new UserInputError("postingan tidak di temukan/sudah di hapus")
                         } else {
+                            comment = doc.data()
                             postOwner = doc.data().owner;
 
                             return commentCollection.get()
@@ -173,7 +173,7 @@ module.exports = {
                         }
                     })
 
-                return 'Comment sudah di hapus'
+                return comment
             }
             catch (err) {
                 console.log(err);

@@ -361,6 +361,8 @@ query getPost($id: ID! $room: String){
     media
     commentCount
     likeCount
+    repostCount
+    room
     text
     location {
       lat

@@ -428,7 +428,7 @@ module.exports = {
     },
     async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
-
+      
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
       const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`)
@@ -439,7 +439,7 @@ module.exports = {
         try {
           const dataPost = await postDocument.get();
           const post = dataPost.data();
-
+          
           let repost = {}
           const repostId = get(post, 'repost') || {};
           if (repostId) {

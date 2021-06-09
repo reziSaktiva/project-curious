@@ -2,7 +2,7 @@
 import moment, { defaultFormatUtc } from "moment";
 import Geocode from "react-geocode";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { CREATE_COMMENT } from "../GraphQL/Mutations";
+import { CREATE_COMMENT, DELETE_COMMENT } from "../GraphQL/Mutations";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Meta from "antd/lib/card/Meta";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -43,6 +43,8 @@ import { PostContext } from "../context/posts";
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import { User } from "tabler-icons-react";
+import { AuthContext } from "../context/auth";
 const  storage = firebase.storage()
 
 //location
@@ -60,7 +62,8 @@ function getBase64(file) {
 
 export default function SinglePost(props) {
   const _isMounted = useRef(false)
-  const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
+  const { post, setPost, loading, loadingData, setComment, commentDelete } = useContext(PostContext);
+  const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [reply, setReply] = useState({username: null, id: null});
@@ -178,8 +181,6 @@ export default function SinglePost(props) {
     onError(err) {
       console.log(err.message);
     },update(_, { data: { createComment: commentData } }){
-
-      console.log(commentData);
       // const idReply = commentData.reply.id
 
       // if (idReply) {
@@ -190,7 +191,14 @@ export default function SinglePost(props) {
   },
   });
 
+  const [deleteComment] = useMutation(DELETE_COMMENT, {
+    onError(err) {
+      console.log(err.message);
+    },update(_, { data: { deleteComment: commentData } }){
 
+      commentDelete(commentData)
+  },
+  })
 
   const onFinish = async value => {
     const { comment } = value;
@@ -198,14 +206,12 @@ export default function SinglePost(props) {
     const finalComment = newComment == undefined ? comment : newComment
     
     const isReply = form.getFieldValue(["comment"]).includes(reply.username && reply.id)
-    console.log(isReply);
 
     if(!isReply){
       setReply({username: null, id: null})
     }
     let uploaded = [];
     ////////////////fungsi upload///////////////////
-    console.log(fileList);
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
         const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
@@ -228,16 +234,15 @@ export default function SinglePost(props) {
         return url
       }));
       
-
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
-      createComment({ variables: { text: finalComment, id: id, reply: reply, photo: uploaded[0] } });
+      createComment({ variables: { text: finalComment, id: id, reply: reply, photo: uploaded[0], room: post.room } });
       setState({...state, fileList: []})
       return;
     }
 
 
     setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
-    createComment({ variables: { text: finalComment, id: id, reply: reply, photo: '' } });
+    createComment({ variables: { text: finalComment, id: id, reply: reply, photo: '' , room: post.room } });
 
   };
 
@@ -546,10 +551,9 @@ export default function SinglePost(props) {
                       <Dropdown
                         overlay={
                           <Menu>
-                            <Menu.Item key="0">Subscribe</Menu.Item>
-                            <Menu.Item key="1" onClick={(e) => console.log(e)}>
-                              Mute
-                            </Menu.Item>
+                            {comment.owner === user.username ? (
+                              <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: comment.id, room: post.room } })}>Delete Comment</Menu.Item>
+                            ) : null}
                             <Menu.Item key="3">Report</Menu.Item>
                             <Menu.Item key="4">Delete</Menu.Item>
                           </Menu>
@@ -646,10 +650,9 @@ export default function SinglePost(props) {
                       <Dropdown
                         overlay={
                           <Menu>
-                            <Menu.Item key="0">Subscribe</Menu.Item>
-                            <Menu.Item key="1" onClick={(e) => console.log(e)}>
-                              Mute
-                            </Menu.Item>
+                            {item.owner === user.username ? (
+                              <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: item.id, room: post.room } })}>Delete Comment</Menu.Item>
+                            ) : null}
                             <Menu.Item key="3">Report</Menu.Item>
                           </Menu>
                         }
