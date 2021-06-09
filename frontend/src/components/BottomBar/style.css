@@ -6,6 +6,7 @@
   right: 0;
   padding: 5px 0px 10px;
   border-top: 0.1em solid #bdbdbd;
+  z-index: 102;
 }
 
 .bottom-bar__wrapper {

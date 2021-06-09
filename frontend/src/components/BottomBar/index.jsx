@@ -11,10 +11,15 @@ import { PostContext } from "../../context/posts";
 
 
 import './style.css';
+import { AuthContext } from '../../context/auth';
 
 const BottomBar = () => {
+  
+  const { user } = useContext(AuthContext);
   const { toggleOpenNewPost } = useContext(PostContext);
   const history = useHistory();
+
+  console.log("user bottom bar", user);
 
   const handleOpenAddPost = () => {
     toggleOpenNewPost()
@@ -43,10 +48,13 @@ const BottomBar = () => {
           </div>
         </div>
         <div className="bottom-bar__items">
+          <Link to='/chat'>
           <MessageOutlined style={{ fontSize: 20 }} />
+          </Link>
+          
         </div>
         <div className="bottom-bar__items">
-          <Link className={`${currentPath === 'profile' ? 'active' : '' }`} to="/profile">
+          <Link className={`${currentPath === 'profile' ? 'active' : '' }`} to={`/profile/user/${user.id}`}>
             <UserOutlined style={{ fontSize: 20 }} />
           </Link>
         </div>

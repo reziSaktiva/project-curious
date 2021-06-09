@@ -13,7 +13,7 @@ import { EllipsisOutlined } from "@ant-design/icons";
 import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
 import NoNotif from "../assets/NoNotif.jpg";
 
-export default function Notification() {
+export default function NotificationMobile(props) {
   const { notifications, notificationRead, readAllNotificatons } =
     useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
@@ -37,11 +37,16 @@ export default function Notification() {
       alert(clearAllNotif);
     },
   });
-
+  let notifClasses = 'notifmobilecoy'
+  
+  if(props.show) {
+    notifClasses = 'notifmobilecoy open' 
+  }
   return (
-    <div style={{ position: "sticky", zIndex: 102 }}>
+    <div className={notifClasses} style={{ position: "sticky", zIndex: 102, height: '100%' }}>
       <div style={{ position: "absolute", left: 0, right: 0, width: "100%" }}>
         <Card
+        
           title="Notification"
           extra={
             <Dropdown
@@ -69,7 +74,7 @@ export default function Notification() {
           style={{ width: "100%" }}
           className="testttttt"
         >
-          <div style={{ margin: -22, overflowY: "scroll", height: 200 }}>
+          <div style={{ margin: -22, height: '100vh' }}>
             {(notifications && notifications.length ? (
                 notifications.map((notif, key) => {
                   let type = "";
@@ -107,7 +112,7 @@ export default function Notification() {
                       <div className="notifContainer">
                         <Row>
                           <Col span={22}>
-                            <p style={{ marginBottom: 5 }}>
+                            <p style={{ marginBottom: 15 }}>
                               {notif.displayName}{" "}
                               <span>{`${type} your post.`}</span>{" "}
                             </p>

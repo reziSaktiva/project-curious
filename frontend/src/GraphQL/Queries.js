@@ -358,6 +358,7 @@ query getPost($id: ID! $room: String){
     id
     createdAt
     owner
+    media
     commentCount
     likeCount
     repostCount

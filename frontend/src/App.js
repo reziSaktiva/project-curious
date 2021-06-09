@@ -31,8 +31,8 @@ import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
 import Room from './pages/room'
-
-import settings from './pages/Settings'
+import Chat from './components/chat';
+import settings from './pages/Settings';
 
 import Search from './pages/search/index';
 
@@ -58,6 +58,7 @@ function App() {
             <UserRoute exact path="/profile/user/:id" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
+            <UserRoute exact path="/chat" component={Chat} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
             <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <UserRoute exact path="/settings" component={settings} />

@@ -128,7 +128,7 @@ export default function PostCard({ post, loading, type }) {
           title={
             <div>
               <Row>
-                <Col span={12}>
+                <Col span={20}>
                   <Link to={`/${post.room ? post.room : "post"}/${post.id}`} style={{ fontSize: 15 }}>
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
@@ -149,7 +149,7 @@ export default function PostCard({ post, loading, type }) {
                     </div>
                   )}
                 </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
+                <Col span={4} style={{ textAlign: "right" }}>
                   <Dropdown
                     overlay={
                       <Menu>
