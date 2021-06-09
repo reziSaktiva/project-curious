@@ -14,8 +14,12 @@ import './index.css'
 // Importing components
 import App from './App'
 
+// const link = from([
+//   new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
+// ])
+
 const link = from([
-  new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
+  new HttpLink({uri: 'http://localhost:5000/insvire-curious-app/us-central1/graphql'})
 ])
 
 const errorLink = onError(

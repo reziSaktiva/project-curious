@@ -110,7 +110,7 @@ export default function PostCard({ post, loading, type }) {
                   />
                 </div>
                 <div className="action-post__item">
-                  <Link to={`/post/${post.id}`}>
+                  <Link to={`/${post.room ? post.room : "post"}/${post.id}`}>
 
                   <CommentButton commentCount={post.commentCount} />
 
