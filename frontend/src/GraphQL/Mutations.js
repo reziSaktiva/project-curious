@@ -1,5 +1,11 @@
 import { gql } from "@apollo/client";
 
+export const DELETE_ACCOUNT = gql`
+  mutation deleteAccount($id: ID!) {
+  deleteAccount(id: $id)
+}
+`
+
 export const SUBSCRIBE_POST = gql`
   mutation subscribePost($id: ID! $room: String) {
     subscribePost(postId: $id room:$room){

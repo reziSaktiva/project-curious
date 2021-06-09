@@ -4,7 +4,7 @@ const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { db } = require('../../utility/admin')
+const { db, auth } = require('../../utility/admin')
 const firebase = require('firebase')
 const config = require('../../utility/config')
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -445,17 +445,16 @@ module.exports = {
                         })
                     })
 
-                    const user = firebase.auth().currentUser;
-
-                    user.delete().then(doc => {
-                        console.log(doc);
+                    auth.deleteUser(id).then(() => {
+                        console.log("success");
+                        db.doc(`/users/${username}`).delete()
                     })
                 }
 
                 return 'account deleted'
 
             } catch (err) {
-
+                console.log(err);
             }
         },
         async clearAllNotif(_, args, context) {
