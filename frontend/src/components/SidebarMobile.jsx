@@ -24,11 +24,12 @@ import {
   StarOutlined,
   AudioMutedOutlined
 } from "@ant-design/icons";
+import { OmitProps } from "antd/lib/transfer/ListBody";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
-const Sidebar = () => {
+export default function SidebarMobile(props) {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [address, setAddress] = useState("");
 
@@ -58,24 +59,21 @@ const Sidebar = () => {
       }
     );
   }
+
+  let siderClasses = 'sidebarmobilecoy'
+  
+  if(props.show) {
+    siderClasses = 'sidebarmobilecoy open' 
+  }
   return (
     <React.Fragment>
       {/* Sidebar */}
-      <div
-        className="sidebarcoy"
-        style={{
-          position: "fixed",
-          backgroundColor: "white",
-          zIndex: 102,
-          height: "100%",
-          borderRight: "1px #cccccc solid",
-        }}
-      >
+      <div className={siderClasses}>
         <Sider
+          width='100%'
           className="site-layout-background"
-          width={windowWidth < 1200 ? 230 : 240}
           style={{ backgroundColor: "white" }}
-          collapsed={windowWidth < 993 ? true : false}
+          collapsed={false}
         >
           <div style={{ width: 60 }}>
             <Link to={`/profile/user/${user.id}`}>
@@ -151,4 +149,3 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;

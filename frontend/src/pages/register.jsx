@@ -11,7 +11,7 @@ import {
 } from 'antd';
 import { useMutation } from '@apollo/client'
 import { REGISTER_USER } from '../GraphQL/Mutations'
-
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth'
 
 
@@ -88,9 +88,12 @@ const Register = (props) => {
     return (
         <div>
             <div>
+                <Link to ='/'>
                 <div className="centeringImage">
                 <div className="curious centeringImage" style={{ marginTop: 50, }} />
                 </div>
+                </Link>
+                
                 <div>
 
                 </div>
@@ -176,7 +179,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <DatePicker placeholder="birthday" style={{ width: 359 }} />
+                                <DatePicker placeholder="birthday" style={{ width: 285 }} />
                             </Form.Item>
 
                             <Form.Item
@@ -203,9 +206,9 @@ const Register = (props) => {
                                 {...tailFormItemLayout}
                                 style={{ marginRight: 160 }}
                             >
-                                <Checkbox >
+                                <Checkbox  style={{width: 200}}>
                                     I have read the agreement
-                </Checkbox>
+                                </Checkbox>
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className='centeringButton' style={{ marginTop: 10, backgroundColor: '#7f57ff' }}>
