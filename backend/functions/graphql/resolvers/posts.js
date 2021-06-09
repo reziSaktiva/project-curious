@@ -456,13 +456,13 @@ module.exports = {
 
           const recursive = (listOfItem, listFilter, idx) => {
             const roots = listFilter.filter(i => {
-                if (idx === 0 && i.replay.id === null || idx > 0 && i.replay.id) {
+                if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
                     return i
                 }
             });
             
             return roots.map((comment, idx) => {
-                const r = listOfItem.filter(item => item.replay.id === comment.id);
+                const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
                 
                 return {
                   ...comment,
@@ -472,7 +472,7 @@ module.exports = {
             })
           }
 
-          const restructureComment = recursive(comments, comments, 0) || [];
+          const restructureComment = recursive(comments, comments, 0) || comments;
 
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
@@ -480,6 +480,7 @@ module.exports = {
           const subscribePost = await subscribeCollection.get();
           const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
+          console.log('comments: ', restructureComment);
           return {
             ...post,
             repost,

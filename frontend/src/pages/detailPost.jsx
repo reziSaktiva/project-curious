@@ -63,7 +63,7 @@ export default function SinglePost(props) {
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
-  const [replay, setReplay] = useState({username: null, id: null});
+  const [reply, setReply] = useState({username: null, id: null});
   const [form] = Form.useForm()
   const [state, setState] = useState({
     previewVisible: false,
@@ -111,7 +111,7 @@ export default function SinglePost(props) {
 
   //reply func
   const handleReply =item => {
-    setReplay({
+    setReply({
       username : item.displayName,
       id: item.id
     })
@@ -178,6 +178,14 @@ export default function SinglePost(props) {
     onError(err) {
       console.log(err.message);
     },update(_, { data: { createComment: commentData } }){
+
+      console.log(commentData);
+      // const idReply = commentData.reply.id
+
+      // if (idReply) {
+
+      // }
+
       setComment(commentData)
   },
   });
@@ -189,11 +197,11 @@ export default function SinglePost(props) {
     const newComment = comment ? comment.substring(comment.indexOf(':')+1) : ''
     const finalComment = newComment == undefined ? comment : newComment
     
-    const isReplay = form.getFieldValue(["comment"]).includes(replay.username && replay.id)
-    console.log(isReplay);
+    const isReply = form.getFieldValue(["comment"]).includes(reply.username && reply.id)
+    console.log(isReply);
 
-    if(!isReplay){
-      setReplay({username: null, id: null})
+    if(!isReply){
+      setReply({username: null, id: null})
     }
     let uploaded = [];
     ////////////////fungsi upload///////////////////
@@ -222,14 +230,14 @@ export default function SinglePost(props) {
       
 
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
-      createComment({ variables: { text: finalComment, id: id, replay: replay, photo: uploaded[0] } });
+      createComment({ variables: { text: finalComment, id: id, reply: reply, photo: uploaded[0] } });
       setState({...state, fileList: []})
       return;
     }
 
 
     setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
-    createComment({ variables: { text: finalComment, id: id, replay: replay, photo: '' } });
+    createComment({ variables: { text: finalComment, id: id, reply: reply, photo: '' } });
 
   };
 
@@ -346,7 +354,7 @@ export default function SinglePost(props) {
           itemLayout="vertical"
           size="large"
           dataSource={post.comments || []}
-          renderItem={(item) => (
+          renderItem={(comment) => (
             <Card
               style={{
                 width: "100%",
@@ -358,12 +366,12 @@ export default function SinglePost(props) {
               <Meta
                 avatar={
                   <div>
-                    <div className="commentContainer"/>
+                    {comment.replyList && comment.replyList.length && <div className="commentContainer"/>}
                     <Avatar
                       size={50}
                       style={{
-                        backgroundColor: item.colorCode,
-                        backgroundImage: `url(${item.displayImage})`,
+                        backgroundColor: comment.colorCode,
+                        backgroundImage: `url(${comment.displayImage})`,
                         backgroundSize: 50,
                       }}
                     />
@@ -373,7 +381,7 @@ export default function SinglePost(props) {
                 title={
                   <Row>
                     <Col span={12}>
-                      <p style={{ fontWeight: "bold" }}>{item.displayName}</p>
+                      <p style={{ fontWeight: "bold" }}>{comment.displayName}</p>
                     </Col>
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Dropdown
@@ -400,8 +408,8 @@ export default function SinglePost(props) {
                   </Row>
                 }
                 description={<div>
-                  <p style={{ color: "black" }}>{item.text}</p>
-                  {item.photo ?(
+                  <p style={{ color: "black" }}>{comment.text}</p>
+                  {comment.photo ?(
                     <Image
                     style={{
                       width: "80%",
@@ -411,7 +419,7 @@ export default function SinglePost(props) {
                       maxHeight: 300,
                       objectFit: "cover",
                     }}
-                    src={item.photo}
+                    src={comment.photo}
                   />
                   ) : null}
                   </div>}
@@ -424,11 +432,11 @@ export default function SinglePost(props) {
                 }}
               >
                 <p>
-                  {moment(item.createdAt).fromNow()}
+                  {moment(comment.createdAt).fromNow()}
                   
                   <Button
                   type="link"
-                  onClick={() => handleReply(item)}
+                  onClick={() => handleReply(comment)}
                     style={{
                       fontWeight: "bold",
                       display: "inline-block",
@@ -445,8 +453,8 @@ export default function SinglePost(props) {
             className="commentContainerReply"
           itemLayout="vertical"
           size="large"
-          dataSource={item.replayList || []}
-          renderItem={(item) => (
+          dataSource={comment.replyList || []}
+          renderItem={(item, key) => (
             <Card
               style={{
                 width: "100%",
@@ -457,6 +465,8 @@ export default function SinglePost(props) {
             >
               <Meta
                 avatar={
+                  <>
+                    {comment && comment.replyList.length !== key + 1 && <div className="commentContainer"/>}
                     <Avatar
                       size={50}
                       style={{
@@ -465,6 +475,7 @@ export default function SinglePost(props) {
                         backgroundSize: 50,
                       }}
                     />
+                  </>
                 }
                 title={
                   <Row>
