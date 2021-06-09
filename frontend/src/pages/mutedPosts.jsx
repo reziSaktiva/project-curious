@@ -49,7 +49,7 @@ function MutedPost() {
                         return (
                                 <div key={`posts${post.id} ${key}`}>
                                     {console.log(post)}
-                                <PostCard post={post} loading={loading} />
+                                <PostCard post={post} type="muted_posts" loading={loading} />
                             </div>
                         )
                     })}

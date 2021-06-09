@@ -55,7 +55,7 @@ function Home() {
         <div>
             <NavBar />
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts.length ? (
+                {_isMounted.current && !loading && !posts.length ? (
                 <div className="centeringButton">
                 <img src={Radius} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
@@ -69,7 +69,7 @@ function Home() {
                         
                         return (
                             <div key={`posts${id} ${key}`}>
-                                {!isMuted && <PostCard post={post} loading={loading} />}
+                                {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )
                     })}

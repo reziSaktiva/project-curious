@@ -42,8 +42,6 @@ const Sidebar = () => {
   }, []);
 
   const { user } = useContext(AuthContext);
-
-  console.log(user.profilePicture? true : false);
   
   const loc = localStorage.location;
 

@@ -116,6 +116,39 @@ const reducer = (state, action) => {
         room_2: state.room_2.filter((post) => post.id !== idDelete),
       };
     case "SET_COMMENT":
+      const { payload } = action;
+      const hasReply = payload.reply && payload.reply.id;
+      
+      if (hasReply) {
+        const match = state.post.comments.findIndex(itm => itm.id == payload.reply.id);
+        
+        if (!match) {
+          const recursive = (list) => {
+            return list.map(itm => {
+              if (itm.id === payload.reply.id) {
+                return { ...itm, replyList: itm.replyList.concat(payload)}
+              } else {
+                if (!itm.replyList) return itm
+
+                return recursive(itm.replyList)
+                
+              }
+            })
+          }
+
+          const newComments = recursive(state.post.comments);
+          
+          return {
+            ...state,
+            post: {
+              ...state.post,
+              comments: newComments,
+              commentsCount: state.post.comments + 1,
+            },
+          };
+        }
+      }
+      
       return {
         ...state,
         post: {
@@ -125,10 +158,6 @@ const reducer = (state, action) => {
         },
       };
     case "LIKE_POST":
-      let subcribePosts = state.subscribePosts.length !== 0;
-      let mutedPost = state.mutedPost.length !== 0;
-      let likedPosts = state.likedPosts.length !== 0;
-
       return {
         ...state,
         posts: state.posts.map((post) => {
@@ -144,52 +173,11 @@ const reducer = (state, action) => {
 
           return post;
         }),
-        subscribePosts:
-          subcribePosts &&
-          state.subscribePosts.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPost = {
-                ...post,
-                likes: [...post.likes, action.payload.data],
-                likeCount: post.likeCount + 1,
-              };
-
-              return updatedPost;
-            }
-
-            return post;
-          }),
-        mutedPost:
-          mutedPost &&
-          state.mutedPost.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPost = {
-                ...post,
-                likes: [...post.likes, action.payload.data],
-                likeCount: post.likeCount + 1,
-              };
-
-              return updatedPost;
-            }
-
-            return post;
-          }),
-        likedPosts:
-          likedPosts &&
-          state.likedPosts.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPost = {
-                ...post,
-                likes: [...post.likes, action.payload.data],
-                likeCount: post.likeCount + 1,
-              };
-
-              return updatedPost;
-            }
-
-            return post;
-          }),
-        posts: state.posts.map((post) => {
+      };
+    case "LIKE_SUBSCRIBE":
+      return {
+        ...state,
+        subscribePosts: state.subscribePosts.map((post) => {
           if (post.id === action.payload.postId) {
             const updatedPost = {
               ...post,
@@ -202,10 +190,131 @@ const reducer = (state, action) => {
 
           return post;
         }),
+      };
+    case "LIKE_MUTED":
+      return {
+        ...state,
+        mutedPost: state.mutedPost.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
+      };
+    case "LIKE_LIKED":
+      return {
+        ...state,
+        likedPosts: state.likedPosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPost = {
+              ...post,
+              likes: [...post.likes, action.payload.data],
+              likeCount: post.likeCount + 1,
+            };
+
+            return updatedPost;
+          }
+
+          return post;
+        }),
+      };
+    case "LIKE_DETAIL":
+      return {
+        ...state,
         post: state.post && {
           ...state.post,
           likes: state.post.likes && [...state.post.likes, action.payload.data],
           likeCount: state.post.likeCount + 1,
+        },
+      };
+    case "UNLIKE_POST":
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter(
+                (like) => like.owner !== action.payload.data.owner
+              ),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNLIKE_SUBSCRIBE":
+      return {
+        ...state,
+        subscribePosts: state.subscribePosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter(
+                (like) => like.owner !== action.payload.data.owner
+              ),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNLIKE_MUTED":
+      return {
+        ...state,
+        mutedPost: state.mutedPost.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter(
+                (like) => like.owner !== action.payload.data.owner
+              ),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNLIKE_LIKED":
+      return {
+        ...state,
+        likedPosts: state.likedPosts.map((post) => {
+          if (post.id === action.payload.postId) {
+            const updatedPosts = {
+              ...post,
+              likes: post.likes.filter(
+                (like) => like.owner !== action.payload.data.owner
+              ),
+              likeCount: post.likeCount - 1,
+            };
+            return updatedPosts;
+          }
+
+          return post;
+        }),
+      };
+    case "UNLIKE_DETAIL":
+      return {
+        ...state,
+        post: state.post && {
+          ...state.post,
+          likes: state.post.likes.filter(
+            (like) => like.owner !== action.payload.data.owner
+          ),
+          likeCount: state.post.likeCount - 1,
         },
       };
     case "LIKE_POST_ROOM_1":
@@ -278,81 +387,13 @@ const reducer = (state, action) => {
           return post;
         }),
       };
-    case "UNLIKE_POST":
-      let subcribe = state.subscribePosts.length !== 0;
-      let muted = state.mutedPost.length !== 0;
-      let liked = state.likedPosts.length !== 0;
+    case "SUBCRIBE_POST":
+      const { subscribeData, post } = action.payload;
 
-      const data = action.payload.data;
+      const subscribePosts = [...state.subscribePosts, post];
       return {
         ...state,
         posts: state.posts.map((post) => {
-          if (post.id === action.payload.postId) {
-            const updatedPosts = {
-              ...post,
-              likes: post.likes.filter((like) => like.owner !== data.owner),
-              likeCount: post.likeCount - 1,
-            };
-            return updatedPosts;
-          }
-
-          return post;
-        }),
-        subscribePosts:
-          subcribe &&
-          state.subscribePosts.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPosts = {
-                ...post,
-                likes: post.likes.filter((like) => like.owner !== data.owner),
-                likeCount: post.likeCount - 1,
-              };
-              return updatedPosts;
-            }
-
-            return post;
-          }),
-        mutedPost:
-          muted &&
-          state.mutedPost.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPosts = {
-                ...post,
-                likes: post.likes.filter((like) => like.owner !== data.owner),
-                likeCount: post.likeCount - 1,
-              };
-              return updatedPosts;
-            }
-
-            return post;
-          }),
-        likedPosts:
-          liked &&
-          state.likedPosts.map((post) => {
-            if (post.id === action.payload.postId) {
-              const updatedPosts = {
-                ...post,
-                likes: post.likes.filter((like) => like.owner !== data.owner),
-                likeCount: post.likeCount - 1,
-              };
-              return updatedPosts;
-            }
-
-            return post;
-          }),
-        post: state.post && {
-          ...state.post,
-          likes: state.post.likes.filter((like) => like.owner !== data.owner),
-          likeCount: state.post.likeCount - 1,
-        },
-      };
-    case "SUBCRIBE_POST":
-      const { subscribeData, post } = action.payload
-
-      const subscribePosts = [...state.subscribePosts, post]
-      return {
-        ...state,
-        posts: state.posts.map((post) => {  
           if (post.id === subscribeData.postId) {
             const update = {
               ...post,
@@ -363,7 +404,7 @@ const reducer = (state, action) => {
 
           return post;
         }),
-        subscribePosts
+        subscribePosts,
       };
     case "UNSUBCRIBE_POST":
       return {
@@ -730,13 +771,13 @@ export const PostProvider = (props) => {
         isOpenNewPost: !isOpenNewPost,
         repost: repost && {
           repost,
-          room
-        }
+          room,
+        },
       },
     });
   };
 
-  const like = (likeData, postId, room) => {
+  const like = (likeData, postId, room, type) => {
     const data = {
       id: likeData.id,
       owner: likeData.owner,
@@ -747,6 +788,7 @@ export const PostProvider = (props) => {
     };
 
     let locationRoom;
+    let name;
 
     if (room === "Insvire E-Sport") {
       locationRoom = "ROOM_1";
@@ -754,17 +796,31 @@ export const PostProvider = (props) => {
       locationRoom = "ROOM_2";
     }
 
+    if (type == "subscribe_posts") {
+      name = "LIKE_SUBSCRIBE";
+    } else if (type == "muted_posts") {
+      name = "LIKE_MUTED";
+    } else if (type == "liked_posts") {
+      name = "LIKE_LIKED";
+    } else if (type == "nearby") {
+      name = "LIKE_POST";
+    } else if (type == "detail_post") {
+      name = "LIKE_DETAIL";
+    }
+
     if (likeData.isLike) {
       dispatch({
-        type: room ? `LIKE_POST_${locationRoom}` : "LIKE_POST",
+        type: room ? `LIKE_POST_${locationRoom}` : name,
         payload: {
           data,
           postId,
         },
       });
+
+      return;
     } else if (!likeData.isLike) {
       dispatch({
-        type: room ? `UNLIKE_POST_${locationRoom}` : "UNLIKE_POST",
+        type: room ? `UNLIKE_POST_${locationRoom}` : `UN${name}`,
         payload: {
           data,
           postId,
