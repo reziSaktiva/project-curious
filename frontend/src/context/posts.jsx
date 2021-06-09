@@ -125,30 +125,46 @@ const reducer = (state, action) => {
         );
 
         if (!match) {
-          const recursive = (list) => {
-            return list.map((itm) => {
-              if (itm.id === payload.reply.id) {
+          if (state.post.comments.length > 1) {
+            const recursive = (list) => {
+              return list.map((itm) => {
+                if (itm.id === payload.reply.id) {
+  
+                  return { ...itm, replyList: itm.replyList.concat(payload) };
+  
+                } else {
+                  if (!itm.replyList) return itm;
+  
+                  return recursive(itm.replyList);
+                }
+              });
+            };
+  
+            const newComments = recursive(state.post.comments);
+  
+            return {
+              ...state,
+              post: {
+                ...state.post,
+                comments: newComments,
+                commentsCount: state.post.comments + 1,
+              },
+            };
+          }
 
-                return { ...itm, replyList: itm.replyList.concat(payload) };
+          if (state.post.comments.length === 1) {
+            const newComments = state.post.comments;
+            newComments[0].replyList = [action.payload];
 
-              } else {
-                if (!itm.replyList) return itm;
-
-                return recursive(itm.replyList);
-              }
-            });
-          };
-
-          const newComments = recursive(state.post.comments);
-
-          return {
-            ...state,
-            post: {
-              ...state.post,
-              comments: newComments,
-              commentsCount: state.post.comments + 1,
-            },
-          };
+            return {
+              ...state,
+              post: {
+                ...state.post,
+                comments: newComments,
+                commentsCount: state.post.comments + 1,
+              },
+            }
+          }
         }
       }
 
