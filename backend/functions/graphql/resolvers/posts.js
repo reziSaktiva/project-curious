@@ -1,4 +1,5 @@
 const { db } = require('../../utility/admin');
+const { get } = require('lodash');
 const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
@@ -436,12 +437,11 @@ module.exports = {
 
       if (username) {
         try {
-          let repost = {}
-
           const dataPost = await postDocument.get();
           const post = dataPost.data();
 
-          const { repost: repostId } = post;
+          let repost = {}
+          const repostId = get(post, 'repost') || {};
           if (repostId) {
             const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
@@ -456,13 +456,13 @@ module.exports = {
 
           const recursive = (listOfItem, listFilter, idx) => {
             const roots = listFilter.filter(i => {
-                if (idx === 0 && i.replay.id === null || idx > 0 && i.replay.id) {
+                if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
                     return i
                 }
             });
             
             return roots.map((comment, idx) => {
-                const r = listOfItem.filter(item => item.replay.id === comment.id);
+                const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
                 
                 return {
                   ...comment,
@@ -472,7 +472,7 @@ module.exports = {
             })
           }
 
-          const restructureComment = recursive(comments, comments, 0) || [];
+          const restructureComment = recursive(comments, comments, 0) || comments;
 
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
@@ -480,6 +480,7 @@ module.exports = {
           const subscribePost = await subscribeCollection.get();
           const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
+          console.log('comments: ', restructureComment);
           return {
             ...post,
             repost,

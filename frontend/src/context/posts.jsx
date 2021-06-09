@@ -116,6 +116,39 @@ const reducer = (state, action) => {
         room_2: state.room_2.filter((post) => post.id !== idDelete),
       };
     case "SET_COMMENT":
+      const { payload } = action;
+      const hasReply = payload.reply && payload.reply.id;
+      
+      if (hasReply) {
+        const match = state.post.comments.findIndex(itm => itm.id == payload.reply.id);
+        
+        if (!match) {
+          const recursive = (list) => {
+            return list.map(itm => {
+              if (itm.id === payload.reply.id) {
+                return { ...itm, replyList: itm.replyList.concat(payload)}
+              } else {
+                if (!itm.replyList) return itm
+
+                return recursive(itm.replyList)
+                
+              }
+            })
+          }
+
+          const newComments = recursive(state.post.comments);
+          
+          return {
+            ...state,
+            post: {
+              ...state.post,
+              comments: newComments,
+              commentsCount: state.post.comments + 1,
+            },
+          };
+        }
+      }
+      
       return {
         ...state,
         post: {

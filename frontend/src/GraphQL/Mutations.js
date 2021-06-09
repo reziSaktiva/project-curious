@@ -70,8 +70,8 @@ export const CREATE_POST = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-mutation createComment($id: ID!, $text: String!, $replay: Replay, $photo: String) {
-  createComment(id : $id, text: $text, replay: $replay, photo: $photo) {
+mutation createComment($id: ID!, $text: String!, $reply: Reply, $photo: String) {
+  createComment(id : $id, text: $text, reply: $reply, photo: $photo) {
   id
   owner
   text
@@ -80,7 +80,7 @@ mutation createComment($id: ID!, $text: String!, $replay: Replay, $photo: String
   photo
   displayName
   displayImage
-  replay {
+  reply {
     username
     id
     }

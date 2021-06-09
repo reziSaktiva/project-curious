@@ -6,8 +6,7 @@ const randomGenerator = require('../../utility/randomGenerator')
 
 module.exports = {
     Mutation: {
-        async createComment(_, { id, text, replay, photo }, context) {
-            console.log("photo", photo);
+        async createComment(_, { id, text, reply, photo }, context) {
             const { username } = await fbAuthContext(context)
             const { name, displayImage, colorCode } = await randomGenerator(username, id)
 
@@ -23,7 +22,7 @@ module.exports = {
                     owner: username,
                     createdAt: new Date().toISOString(),
                     text,
-                    replay,
+                    reply,
                     photo
                     
                 }

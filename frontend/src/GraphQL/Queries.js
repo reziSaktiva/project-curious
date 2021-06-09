@@ -381,11 +381,11 @@ query getPost($id: ID! $room: String){
       displayName
       photoProfile
       colorCode
-      replay {
+      reply {
         id
         username
       }
-      replayList {
+      replyList {
         id
         createdAt
         owner
