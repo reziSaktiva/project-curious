@@ -14,7 +14,8 @@ import { REGISTER_USER } from '../GraphQL/Mutations'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth'
 
-
+import {dial} from './Countries'
+console.log(dial);
 const { Option } = Select;
 const gender = [
     {
@@ -71,7 +72,9 @@ const Register = (props) => {
         console.log(e, 'I was closed.');
     };
 
-    console.log(loading, data);
+   const dialData = dial.map(item => {
+    return <Option value={item.dial_code}>{item.dial_code}</Option>
+   })
     const phoneCode = (
         <Form.Item name="phoneCode" noStyle>
             <Select
@@ -79,8 +82,10 @@ const Register = (props) => {
                     width: 70,
                 }}
             >
-                <Option value="+62">+62</Option>
-                <Option value="+87">+87</Option>
+               {dialData}
+                
+                
+                
             </Select>
         </Form.Item>
     );

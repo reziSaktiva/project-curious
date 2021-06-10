@@ -67,6 +67,7 @@ function Profile() {
 
   //change Photo Profile funtion
 
+  
   const handleChange = (value) => {
     const uploadTask = storage
       .ref(`proflePicture/${value.file.originFileObj.name}`)
@@ -220,7 +221,7 @@ function Profile() {
         return accumulator + current.repostCount;
       }, 0)
     : 0;
-
+    console.log(user.username, posts);
   return (
     <div>
       <AppBar title="My Profile" />
@@ -250,6 +251,7 @@ function Profile() {
             }}
           >
             <ImgCrop rotate>
+
               <Upload onChange={handleChange} showUploadList={false}>
                 <EditOutlined  style={{ color: 'white'}}/>
               </Upload>
