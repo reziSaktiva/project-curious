@@ -382,6 +382,7 @@ query getPost($id: ID! $room: String){
       owner
       text
       displayName
+      displayImage  
       photoProfile
       colorCode
       reply {
@@ -394,6 +395,7 @@ query getPost($id: ID! $room: String){
         owner
         text
         displayName
+        displayImage
         photoProfile
         colorCode
       }
