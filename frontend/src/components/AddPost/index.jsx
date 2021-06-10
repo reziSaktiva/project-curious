@@ -1,7 +1,7 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Image } from "antd";
 import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined, LoadingOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -66,6 +66,7 @@ export default function ModalPost() {
   // Local State
   const [state, setState] = useState(InitialState);
   const [address, setAddress] = useState("");
+  const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
   const { room, setRoom } = useContext(AuthContext)
   const [open, setOpen] = useState([])
@@ -100,10 +101,26 @@ export default function ModalPost() {
       }
     );
   }
+  
+
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
+
+  console.log("teeeeeeeeeeeeeeeeeeeeeeeeeeeee",getPost);
+
+  if (getPost.location) {
+    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
+      (response) => {
+        const address = response.results[0].address_components[1].short_name;
+        setAddressRepost(address);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
   const [createPost, {data, loading : loadingCreatePost }] = useMutation(
     CREATE_POST,
@@ -202,7 +219,6 @@ export default function ModalPost() {
       ...state,
       fileList: newFiles
     });
-    console.log(fileList);
   }
   const handleRemove = file => {
     const newFile = fileList.filter(item => item != file);
@@ -251,6 +267,7 @@ export default function ModalPost() {
 
     return;
   };
+
   
   return (
     <div>
@@ -317,10 +334,166 @@ export default function ModalPost() {
                 <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
                   <div style={{ display: 'flex' }}>
                     <p className="ic-location-small" style={{ margin: 0 }} />
-                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>Jakarta, Indonesia</div>
+                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{addressRepost}</div>
                   </div>
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
+                  
+                  {getPost.media ? (
+          getPost.media.length == 1 ? (
+            <Image
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                objectFit: "cover",
+                maxHeight: 300,
+              }}
+              src={getPost.media}
+            />
+          ) : null
+        ) : null}
+
+        {getPost.media ? (
+          getPost.media.length == 2 ? (
+            <table className="row-card-2">
+              <tbody>
+                <tr>
+                  <Image.PreviewGroup>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={getPost.media[0]}
+                      />
+                    </td>
+                    <td>
+                      <Image
+                        style={{ borderRadius: "0px 10px 10px 0px" }}
+                        src={getPost.media[1]}
+                      />
+                    </td>
+                  </Image.PreviewGroup>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+
+        {getPost.media ? (
+          getPost.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <Image.PreviewGroup>
+                <tbody>
+                  <tr style={{ margin: 0, padding: 0 }}>
+                    <td
+                      rowspan="2"
+                      style={{ width: "50%", verticalAlign: "top" }}
+                    >
+                      <Image
+                        className="pict1-3"
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={getPost.media[0]}
+                      />
+                    </td>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        className="pict2-3"
+                        style={{ borderRadius: "0px 10px 0px 0px" }}
+                        src={getPost.media[1]}
+                      />
+                      <div
+                        className="text-container"
+                        style={{ marginTop: "-6px" }}
+                      >
+                        <Image
+                          className="pict3-3"
+                          style={
+                            getPost.media.length > 3
+                              ? {
+                                  borderRadius: "0px 0px 10px 0px",
+                                  filter: "blur(2px)",
+                                }
+                              : { borderRadius: "0px 0px 10px 0px" }
+                          }
+                          src={getPost.media[2]}
+                        />
+                        <div className="text-center">
+                          {getPost.media.length > 3
+                            ? "+" + (getPost.media.length - 3)
+                            : null}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {getPost.media.length > 3 ? (
+                    <div>
+                      <Image
+                        className="pict3-3"
+                        style={{ display: "none" }}
+                        src={getPost.media[3]}
+                      />
+                      {getPost.media.length > 4 ? (
+                        <Image
+                          className="pict3-3"
+                          style={{ display: "none" }}
+                          src={getPost.media[4]}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null}
+                </tbody>
+              </Image.PreviewGroup>
+            </table>
+          ) : null
+        ) : null}
+
+        {getPost.media ? (
+          getPost.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <tbody>
+                <tr>
+                  <td rowSpan="2" style={{ width: "50%" }}>
+                    <img
+                      className="pict1-3"
+                      src={getPost.media[0]}
+                      style={{ borderRadius: "10px 0px 0px 10px" }}
+                    />
+                  </td>
+                  <td style={{ width: "50%" }}>
+                    <img
+                      className="pict2-3"
+                      src={getPost.media[1]}
+                      style={{ borderRadius: "0px 10px 0px 0px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "50%" }}>
+                    <div className="text-container">
+                      <img
+                        className="pict3-3"
+                        src={getPost.media[2]}
+                        style={
+                          getPost.media.length > 3
+                            ? {
+                                borderRadius: "0px 0px 10px 0px",
+                                filter: "blur(2px)",
+                              }
+                            : { borderRadius: "0px 0px 10px 0px" }
+                        }
+                      />
+                      <div className="text-center">
+                        {getPost.media.length > 3
+                          ? "+" + (getPost.media.length - 3)
+                          : null}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+                  
                 </Card>
               )}
           </>

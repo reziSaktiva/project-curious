@@ -688,7 +688,7 @@ export default function SinglePost(props) {
                       fontWeight: "bold",
                       display: "inline-block",
                       marginLeft: 10,
-                      color: "red"
+                      color: "black"
                     }}
                   >
                     Reply
