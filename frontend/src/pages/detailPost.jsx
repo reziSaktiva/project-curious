@@ -33,7 +33,7 @@ import Pin from "../assets/pin-svg-25px.svg";
 import LikeButton from "../components/Buttons/LikeButton/index";
 import CommentButton from "../components/Buttons/CommentButton/index";
 import RepostButton from "../components/Buttons/RepostButton/index";
-import { EllipsisOutlined, PlusOutlined, UploadButton } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined,  LoadingOutlined } from "@ant-design/icons";
 import PostNavBar from "../components/PostNavBar";
 
 // Query
@@ -177,7 +177,7 @@ export default function SinglePost(props) {
   }, [post, isRepost]);
 
 
-  const [createComment] = useMutation(CREATE_COMMENT, {
+  const [createComment, {loading : loadingCreate}] = useMutation(CREATE_COMMENT, {
     onError(err) {
       console.log(err.message);
     },update(_, { data: { createComment: commentData } }){
@@ -464,54 +464,6 @@ export default function SinglePost(props) {
           ) : null
         ) : null}
 
-        {post.media ? (
-          post.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <tbody>
-                <tr>
-                  <td rowSpan="2" style={{ width: "50%" }}>
-                    <img
-                      className="pict1-3"
-                      src={post.media[0]}
-                      style={{ borderRadius: "10px 0px 0px 10px" }}
-                    />
-                  </td>
-                  <td style={{ width: "50%" }}>
-                    <img
-                      className="pict2-3"
-                      src={post.media[1]}
-                      style={{ borderRadius: "0px 10px 0px 0px" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ width: "50%" }}>
-                    <div className="text-container">
-                      <img
-                        className="pict3-3"
-                        src={post.media[2]}
-                        style={
-                          post.media.length > 3
-                            ? {
-                                borderRadius: "0px 0px 10px 0px",
-                                filter: "blur(2px)",
-                              }
-                            : { borderRadius: "0px 0px 10px 0px" }
-                        }
-                      />
-                      <div className="text-center">
-                        {post.media.length > 3
-                          ? "+" + (post.media.length - 3)
-                          : null}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
-
           {/* mediaaaaaaaaaaaa end */}
         </Skeleton>
       </List.Item>
@@ -746,7 +698,14 @@ export default function SinglePost(props) {
         <Row>
           <Col span={2}>
             <Form.Item name="upload" className="centeringButton" >
-              <Upload onChange={handleChange} showUploadList={false}>
+              <Upload
+              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              fileList={fileList}
+              accept="video/*, image/*"
+              onPreview={handlePreview}
+              onChange={handleChange}
+              showUploadList={false}
+              >
                 <Button
                   style={{ border: "none" }}
                   icon={<PlusOutlined style={{ color: "#7f57ff" }} />}
@@ -782,7 +741,8 @@ export default function SinglePost(props) {
                   color: "white",
                 }}
               >
-                Post
+                {loadingCreate ? <LoadingOutlined />: 'Post'}
+                
               </Button>
             </Form.Item>
           </Col>

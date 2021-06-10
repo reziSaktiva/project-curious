@@ -79,19 +79,19 @@ export default function SidebarMobile(props) {
             <Link to={`/profile/user/${user.id}`}>
               <div
                 className="profilefoto"
-                style={{ backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}
+                style={{marginLeft: 4, backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}
               />
             </Link>
           </div>
           <Link to={`/profile/user/${user.id}`}>
-            <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
+            <h3 style={{marginLeft: 4, marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.username ? user.username : "My Account"}
             </h3>
           </Link>
 
           <List.Item.Meta
             title={
-              <Link to="/maps">
+              <Link to="/maps" style={{marginLeft: 4,}}>
                 {" "}
                 {windowWidth > 993 ? (
                   <img src={Pin} style={{ width: 20, marginTop: -5 }} />

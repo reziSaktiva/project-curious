@@ -108,7 +108,6 @@ export default function ModalPost() {
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
 
-  console.log("teeeeeeeeeeeeeeeeeeeeeeeeeeeee",getPost);
 
   if (getPost.location) {
     Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
@@ -213,21 +212,24 @@ export default function ModalPost() {
   };
 
   const handleChange = ({ fileList }) => {
+    console.log("filelist di handle change",fileList);
     const newFiles = fileList.map(file => ({ ...file, status: 'done' }))
     setState({
       ...state,
       fileList: newFiles
     });
+
+    
   }
   const handleRemove = file => {
-    const newFile = fileList.filter(item => item != file);
-    console.log("teteteee",newFile);
+    const newFile = fileList.filter(item => item !== file);
     setState({
       ...state,
       fileList: newFile
     })
-  }
 
+    console.log('filelist di remove', fileList);
+  }
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
 
@@ -445,53 +447,6 @@ export default function ModalPost() {
           ) : null
         ) : null}
 
-        {getPost.media ? (
-          getPost.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <tbody>
-                <tr>
-                  <td rowSpan="2" style={{ width: "50%" }}>
-                    <img
-                      className="pict1-3"
-                      src={getPost.media[0]}
-                      style={{ borderRadius: "10px 0px 0px 10px" }}
-                    />
-                  </td>
-                  <td style={{ width: "50%" }}>
-                    <img
-                      className="pict2-3"
-                      src={getPost.media[1]}
-                      style={{ borderRadius: "0px 10px 0px 0px" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ width: "50%" }}>
-                    <div className="text-container">
-                      <img
-                        className="pict3-3"
-                        src={getPost.media[2]}
-                        style={
-                          getPost.media.length > 3
-                            ? {
-                                borderRadius: "0px 0px 10px 0px",
-                                filter: "blur(2px)",
-                              }
-                            : { borderRadius: "0px 0px 10px 0px" }
-                        }
-                      />
-                      <div className="text-center">
-                        {getPost.media.length > 3
-                          ? "+" + (getPost.media.length - 3)
-                          : null}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
                   
                 </Card>
               )}
@@ -504,7 +459,7 @@ export default function ModalPost() {
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
-              onRemove={handleRemove}
+                onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
@@ -516,6 +471,7 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
+          
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
@@ -528,8 +484,10 @@ export default function ModalPost() {
                 <Upload
                   accept="video/*, image/*"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  fileList={fileList}
                   showUploadList={null}
                   onChange={handleChange}
+                  onRemove={handleRemove}
                 >
                   <PictureOutlined />
                 </Upload>
