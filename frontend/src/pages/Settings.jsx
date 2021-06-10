@@ -33,6 +33,7 @@ export default function Settings() {
       <AppBar title="Settings" />
 
       <List
+      style={{marginTop: -15}}
         size="large"
         bordered>
         <Link to="/">

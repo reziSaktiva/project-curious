@@ -237,14 +237,17 @@ export default function SinglePost(props) {
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
       createComment({ variables: { text: finalComment, id: id, reply: reply, photo: uploaded[0], room: post.room } });
       setState({...state, fileList: []})
+      form.resetFields()
       return;
     }
 
 
     setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text})
     createComment({ variables: { text: finalComment, id: id, reply: reply, photo: '' , room: post.room } });
-
+    form.resetFields()
   };
+
+
 
   return (
     <List itemLayout="vertical" size="large">
@@ -534,7 +537,7 @@ export default function SinglePost(props) {
                     <Avatar
                       size={50}
                       style={{
-                        backgroundImage: `url('${comment.displayImage}')`,
+                        backgroundImage: `url(${comment.displayImage})`,
                         backgroundColor: comment.colorCode,
                         backgroundSize: 50,
                       }}
@@ -574,9 +577,9 @@ export default function SinglePost(props) {
                 description={<div>
                   <p style={{ color: "black" }}>{comment.text}</p>
                   {comment.photo ?(
+                    <div style={{width: '80%'}}>
                     <Image
                     style={{
-                      width: "80%",
                       height: 220,
                       borderRadius: 10,
                       objectFit: "cover",
@@ -585,6 +588,8 @@ export default function SinglePost(props) {
                     }}
                     src={comment.photo}
                   />
+                    </div>
+                    
                   ) : null}
                   </div>}
               />
@@ -635,7 +640,7 @@ export default function SinglePost(props) {
                       size={50}
                       style={{
                         backgroundColor: item.colorCode,
-                        backgroundImage: `url(${item.displayImage})`,
+                        backgroundImage: `url('${item.displayImage}')`,
                         backgroundSize: 50,
                       }}
                     />
@@ -688,7 +693,7 @@ export default function SinglePost(props) {
                       fontWeight: "bold",
                       display: "inline-block",
                       marginLeft: 10,
-                      color: "red"
+                      color: "black"
                     }}
                   >
                     Reply
@@ -719,9 +724,9 @@ export default function SinglePost(props) {
         
         {fileList.length > 0 && (
           <div style={{backgroundColor: "#ececec"}}>
-          <div style={{height:120, borderTopRightRadius: 30, borderTopLeftRadius: 30, backgroundColor: "white"}}>
+          <div style={{height:120, borderTopRightRadius: 30, borderTopLeftRadius: 30, backgroundColor: "white", padding: 10}}>
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
-              <div className="centeringButton" style={{ marginTop: -8}}>
+              <div className="centeringButton" style={{ marginTop: -38}}>
               <Upload
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
@@ -759,6 +764,7 @@ export default function SinglePost(props) {
             >
               <Input
               name="comment"
+
                 placeholder="Write your comment..."
                 style={{ borderRadius: 20 }}
               />

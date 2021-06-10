@@ -21,9 +21,7 @@ const AppBar = props => {
             <h4>{title}</h4>
           </Col>
           <Col span={6} style={{textAlign: "right"}}>
-            <button class="ui inverted basic button" type="text">
-              <i class="ellipsis horizontal icon" style={{ color: 'black' }}></i>
-            </button>
+            
           </Col>
       </Row>
       <div style={{width: "100%"}}>

@@ -251,7 +251,7 @@ function Profile() {
           >
             <ImgCrop rotate>
               <Upload onChange={handleChange} showUploadList={false}>
-                <EditOutlined />
+                <EditOutlined  style={{ color: 'white'}}/>
               </Upload>
             </ImgCrop>
           </div>

@@ -15,12 +15,6 @@ export default function NavBar(props) {
   const parentTab = history.location.pathname == '/populer' ? 'populer' : 'latest'
   const [nav, setNav] = useState({ value2: '/' })
 
-  const onChange2 = e => {
-    setNav({
-      value2: e.target.value,
-    });
-  };
-
   const { value2 } = nav;
 
   return (
@@ -67,15 +61,7 @@ export default function NavBar(props) {
         </Row>
       </nav>
     </header>
-    // <StickyContainer style={{ position: "center" }}>
-    //   <Menu pointing secondary size='massive' style={{position: 'fixed', zIndex: 101}}>
-        
-    //     <div className="centeredButton">
-          
-          
-          
-    //     </div>
-    //   </Menu>
-    // </StickyContainer>
+
+
   )
 }

@@ -3,10 +3,12 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import React from 'react'
 import PlayStore from '../assets/buttonGoogle.png'
 import Radius from '../assets/Radius.jpg'
+import AppBar from './AppBar';
 export default function Chat() {
 
     return (
         <div  style={{padding: 20}}>
+            <AppBar title="Chat" />
             <div className="centeringImage">
             <img src={Radius} style={{ width: 300}} />
             </div>
