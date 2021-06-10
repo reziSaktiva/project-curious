@@ -82,6 +82,7 @@ function Home() {
     return (
         <div>
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
+            <div style={{marginBottpm : 30}} />
             <NotificationMobile show={notif.toggle} />
             <SidebarMobile show={burger.toggle} />
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
@@ -99,7 +100,7 @@ function Home() {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`} style={{marginTop: 40}}>
+                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 40 }: { marginTop: 0 }} >
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )
