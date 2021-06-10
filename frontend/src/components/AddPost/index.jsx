@@ -195,7 +195,6 @@ export default function ModalPost() {
 
   const handleCancel = () => setState({ ...state, previewVisible: false });
 
-  
   const handleCancelModal = () => {
     toggleOpenNewPost(false);
   };
