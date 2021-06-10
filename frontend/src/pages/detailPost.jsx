@@ -33,7 +33,7 @@ import Pin from "../assets/pin-svg-25px.svg";
 import LikeButton from "../components/Buttons/LikeButton/index";
 import CommentButton from "../components/Buttons/CommentButton/index";
 import RepostButton from "../components/Buttons/RepostButton/index";
-import { EllipsisOutlined, PlusOutlined, UploadButton } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined,  LoadingOutlined } from "@ant-design/icons";
 import PostNavBar from "../components/PostNavBar";
 
 // Query
