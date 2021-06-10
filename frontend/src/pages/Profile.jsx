@@ -67,6 +67,7 @@ function Profile() {
 
   //change Photo Profile funtion
 
+  
   const handleChange = (value) => {
     const uploadTask = storage
       .ref(`proflePicture/${value.file.originFileObj.name}`)
@@ -220,7 +221,7 @@ function Profile() {
         return accumulator + current.repostCount;
       }, 0)
     : 0;
-
+    console.log(user.username, posts);
   return (
     <div>
       <AppBar title="My Profile" />
@@ -250,6 +251,7 @@ function Profile() {
             }}
           >
             <ImgCrop rotate>
+
               <Upload onChange={handleChange} showUploadList={false}>
                 <EditOutlined  style={{ color: 'white'}}/>
               </Upload>
@@ -308,7 +310,7 @@ function Profile() {
         <div className="ui action input" style={{ height: 25 }}>
           <input
             type="text"
-            value={`http://localhost:3000/profile/user/${user.id}`}
+            value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
           />
           <button
             className="ui teal right icon button"
