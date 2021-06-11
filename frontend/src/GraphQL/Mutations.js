@@ -283,17 +283,7 @@ export const LOGIN_USER = gql`
 
 export const LOGIN_USER_FACEBOOK = gql`
   mutation loginFacebook($username: String!, $token: String!) {
-    loginWithFacebook(username: $username, token: $token) {
-      id
-      username
-      email
-      token
-      createdAt
-      profilePicture
-      gender
-      birthday
-      mobileNumber
-    }
+    loginWithFacebook(username: $username, token: $token) 
   }
 `;
 
@@ -319,17 +309,7 @@ export const REGISTER_USER_FACEBOOK = gql`
         birthday: $birthday
         username: $username
       }
-    ) {
-      id
-      username
-      email
-      token
-      createdAt
-      profilePicture
-      gender
-      birthday
-      mobileNumber
-    }
+    ) 
   }
 `;
 export const REGISTER_USER_GOOGLE = gql`
@@ -354,17 +334,7 @@ export const REGISTER_USER_GOOGLE = gql`
         birthday: $birthday
         username: $username
       }
-    ) {
-      id
-      username
-      email
-      token
-      createdAt
-      profilePicture
-      gender
-      birthday
-      mobileNumber
-    }
+    ) 
   }
 `;
 

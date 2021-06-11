@@ -5,5 +5,5 @@ module.exports = {
   storageBucket: "insvire-curious-app.appspot.com",
   messagingSenderId: "32784977098",
   appId: "1:32784977098:web:66ff9a0b1a3d4c00457833",
-  measurementId: "G-6VPVBYFZZW",
+  measurementId: "G-6VPVBYFZZW"
 };

@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth'
 
 import {dial} from './Countries'
-console.log(dial);
+
 const { Option } = Select;
 const gender = [
     {
