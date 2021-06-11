@@ -71,7 +71,7 @@ const RegisterGoogle = (props) => {
 
     const [registerUserGoogle] = useMutation(REGISTER_USER_GOOGLE, {
         update(_, { data: { registerUserWithGoogle: userData } }){
-            context.login(userData.token)
+            context.login(userData)
             props.history.push('/')
         },
         onError(err) {

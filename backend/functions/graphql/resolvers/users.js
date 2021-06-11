@@ -668,10 +668,7 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).set(newUser)
 
-                return {
-                    ...newUser,
-                    token
-                }
+                return token
             }
             catch (err) {
                 console.log(err);
@@ -694,10 +691,7 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).set(newUser)
 
-                return {
-                    ...newUser,
-                    token
-                }
+                return token
             }
             catch (err) {
                 console.log(err);
