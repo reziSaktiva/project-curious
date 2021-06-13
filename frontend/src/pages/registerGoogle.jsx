@@ -105,7 +105,7 @@ const RegisterGoogle = (props) => {
     return (
         <div>
             <div>
-                <div className="curious" style={{ display: "block", marginLeft: "auto", marginRight: "auto", backgroundRepeat: 'no-repeat' }} />
+                <div className="curious" />
                 <div class="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
                     <div class="content">
 

@@ -45,7 +45,7 @@ const Login = (props) => {
   };
 
   return (
-    <div>
+    <div style={{height: '100%', background: 'white'}}>
       <Link to='/' className="header-page">
         <div className="curious"/>
       </Link>

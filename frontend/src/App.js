@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
+import styles from './index.css'
 import 'antd/dist/antd.css'
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
@@ -41,7 +42,7 @@ function App() {
   return (
     <Context>
       <Router>
-        <Grid>
+        <Grid className={styles.container}>
           <Switch>
             <HomeRoute exact path="/" component={LandingPage} />
             <AuthRoute exact path="/login" component={login} />

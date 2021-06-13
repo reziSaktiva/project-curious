@@ -39,10 +39,17 @@ export default function Notification() {
   });
 
   return (
-    <div style={{ position: "sticky", zIndex: 102 }}>
-      <div style={{ position: "absolute", left: 0, right: 0, width: "100%" }}>
+    <div className="notif__fixed">
+      <div className="notif__width">
         <Card
-          title="Notification"
+          title={
+        <h3 style={{textAlign: 'center'}}>Notification {
+          notificationRead.length > 1 && <p className="notifCounter">
+              {notifications.length > 99 ?
+               ('99+') :
+                (notifications.length)}
+                </p>}</h3>
+          }
           extra={
             <Dropdown
               overlay={
@@ -69,7 +76,7 @@ export default function Notification() {
           style={{ width: "100%" }}
           className="testttttt"
         >
-          <div style={{ margin: -22, overflowY: "scroll", height: 200 }}>
+          <div style={{ margin: -22, overflowY: "auto", overflowX :'hidden', height: 342 }}>
             {(notifications && notifications.length ? (
                 notifications.map((notif, key) => {
                   let type = "";
@@ -121,7 +128,7 @@ export default function Notification() {
                   );
                 })
               ) : (
-              <img src={NoNotif} className="centeringButton" style={{height: 200}} />
+                <div className="noNotif"/>
               )
             )
             }

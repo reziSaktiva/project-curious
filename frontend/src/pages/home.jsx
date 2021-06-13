@@ -100,7 +100,7 @@ function Home() {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 40 }: { marginTop: 0 }} >
+                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 56 }: { marginTop: 0 }} >
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )

@@ -19,7 +19,10 @@ export default function NavBar(props) {
 
   return (
     <header className="toolbar">
-      <nav className="toolbar__nav">
+      <div className="toolbar__nav">
+        <div className="toolbar__nav2" />
+      </div>
+      <nav >
         <Row>
           <Col span={3}>
           <button className="toggle-button" onClick={props.toggleOpen}>
@@ -31,17 +34,18 @@ export default function NavBar(props) {
           <Col span={18}>
             <div  className="centeringButton adtional__nav">
             <Radio.Group
-            style={{width:151}}
+            style={{width:151, zIndex: 200}}
             size="medium"
               value={value2}
               optionType="button"
               buttonStyle="solid"
               defaultValue="/"
+              
               >
-                <Radio.Button  value="/">
+                <Radio.Button  value="/" style={{zIndex: 200}}>
                   <Link to='/' style={{color: 'white'}}>Latest</Link>
                   </Radio.Button>
-                <Radio.Button value="/popular">
+                <Radio.Button value="/popular" style={{zIndex: 200}}>
                   <Link to='/popular' style={{color: '#7958f5'}}>Popular</Link>
                 </Radio.Button>
             </Radio.Group>

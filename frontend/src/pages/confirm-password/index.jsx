@@ -85,7 +85,7 @@ export default function ReserPassword(props) {
   };
   
   return (
-    <div>
+    <div style={{background: 'white'}}>
       <Link to='/' className="header-page">
         <div className="curious"/>
         </Link>

@@ -20,7 +20,7 @@ const SignIn = (props) => {
           <div className="curiouslanding" />
         </div>
       </Col>
-      <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <Col xs={24} sm={24} md={12} lg={12} xl={12} style={{background: 'white'}}>
         <div className="landingPage-input">
           {window.isMobile && <img src={BGLanding} width="250px" />}
           <h1  style={{ fontSize: "40px", color: "#352A39", textAlign:"left", paddingLeft:"68px"}}>Welcome to </h1>
