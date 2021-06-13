@@ -250,8 +250,9 @@ export default function SinglePost(props) {
 
 
   return (
-    <List itemLayout="vertical" size="large">
-      <PostNavBar />
+    <div>
+    <PostNavBar />
+    <List itemLayout="vertical" size="large" style={{ background: 'white', margin: 10, borderRadius: 5}}>
      {post ? (
        <div>
           <List.Item
@@ -327,8 +328,7 @@ export default function SinglePost(props) {
               width: "100%",
               height: "100%",
               borderRadius: 10,
-              backgroundColor: "#f5f5f5",
-              borderColor: "#ededed",
+              background: "white",
               padding: 0,
               marginBottom: 20,
             }}
@@ -675,7 +675,7 @@ export default function SinglePost(props) {
       >
         
         {fileList.length > 0 && (
-          <div style={{backgroundColor: "#ececec"}}>
+          <div style={{backgroundColor: "white"}}>
           <div style={{height:120, borderTopRightRadius: 30, borderTopLeftRadius: 30, backgroundColor: "white", padding: 10}}>
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <div className="centeringButton" style={{ marginTop: -38}}>
@@ -697,7 +697,7 @@ export default function SinglePost(props) {
         
         <Row>
           <Col span={2}>
-            <Form.Item name="upload" className="centeringButton" >
+            <Form.Item name="upload" className="centeringButton" style={{marginTop: -6}} >
               <Upload
               action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
               fileList={fileList}
@@ -731,7 +731,7 @@ export default function SinglePost(props) {
           </Col>
 
           <Col span={3}>
-            <Form.Item className="centeringButton">
+            <Form.Item className="centeringButton" style={{ marginTop: -6}}>
               <Button
                 htmlType="submit"
                 style={{
@@ -755,6 +755,7 @@ export default function SinglePost(props) {
      </div>
      )}
     </List>
+    </div>
   )
   
 }

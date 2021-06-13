@@ -92,7 +92,13 @@ export default function PostCard({ post, loading, type }) {
   }, [post, isRepost]);
 
   return (
-    <List itemLayout="vertical" size="large">
+    <List itemLayout="vertical" size="large" style={{
+      background: 'white',
+      marginBottom: '16px',
+      marginLeft: '16px',
+      marginRight: '16px',
+      borderRadius: 5
+      }}>
       <List.Item
         key={post.id}
         className="list-actions"

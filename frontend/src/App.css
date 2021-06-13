@@ -1,3 +1,10 @@
+body {
+  background: #FAFAFA !important
+}
+#root {
+  background: #FAFAFA;
+  height: 100% auto;
+}
 /* assetes */
 .centeringButton {
     margin: 0;
@@ -216,6 +223,10 @@
 }
 
 /* SIDE BAR */
+ant-menu ant-menu-light ant-menu-root ant-menu-inline{
+  background-color: #FAFAFA;
+}
+
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected, .ant-menu-item-selected a, .ant-menu-item-selected a:hover {
   background-color:#7f57ff;
   color: white;
@@ -252,9 +263,22 @@
   left: 0;
   width: 100%;
   height: 45px;
-  background-color: white;
+  background-color: #FAFAFA;
   z-index: 101;
-  border-bottom: 1px solid #cecece;
+  
+}
+.toolbar__nav {
+  position: fixed;
+  height: 0;
+  margin-top: 45px;
+  z-index: 102;
+  width: 100%;
+}
+.toolbar__nav2 {
+  width: 33.8%;
+  margin-left: 30%;
+  margin-right: auto;
+  border-top: 1px solid #cecece;
 }
 .toolbar__button {
   margin: auto;
@@ -338,6 +362,7 @@ transform: translate(-50%, 30%);
 .ant-list-vertical .ant-list-item-meta-title{
   margin-bottom: 0;
 }
+
 /* POST CARD IMAGE LAYOUT */
 
 .row-card-2 {
@@ -461,7 +486,35 @@ transform: translate(-50%, 30%);
   border-left: thick solid #3333;
 }
 /* NOTIFICATION */
+.noNotif {
+background-image: url('./assets/NoNotif.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  object-fit: cover;
+  width: 249px;
+  height: 200px;
+  margin: auto;
+}
+ .notif__fixed {
+  position: fixed;
+  width: 373px;
+  z-index: 102;
+  top: 20px;
+}
 
+.notif__width {
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+.notifCounter {
+  display: inline;
+  background: #7958f5;
+  border-radius: 50%;
+  padding: 4px 2px;
+  font-size: 13px;
+  color: white;
+}
 .notifContainer :hover {
   background-color: #7958f5;
   color: white;
@@ -470,13 +523,44 @@ transform: translate(-50%, 30%);
 .notifContainer {
   padding: 4px;
 }
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 760px) {
   .ui.container {
     margin-left: 0px !important;
     margin-right: 0px !important;
   }
+  .ant-col-md-3 {
+    max-width: 11%;
+  }
 }
+@media only screen and (max-width: 990px) {
+  .notif__fixed {
+    width: 270x;
+  }
+  .ant-col-md-3 {
+    max-width: 11%;
+  }
+  .toolbar__nav2 {
+    width: 47.2%;
+    height: 45px;
+    margin-left: 20%;
+    margin-right: auto;
+    border-bottom: 1px solid #cecece;
+    z-index: 102;
+  }
+  
+}
+@media only screen and (max-width: 1188px) {
+  .notif__fixed {
+    width: 270px;
+  }
 
+}
+@media only screen and (max-width: 894px) {
+  .notif__fixed {
+    width: 250px;
+  }
+
+}
 .ant-list-item-action li {
   width: 100%;
 }

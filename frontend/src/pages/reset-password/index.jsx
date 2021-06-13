@@ -68,7 +68,7 @@ export default function ReserPassword(props) {
   console.log('message: ', !!(message && alert));
   console.log('alert : ', alert)
   return (
-    <div>
+    <div style={{background: 'white'}}>
       <Link to='/' className="header-page">
         <div className="curious"/>
       </Link>

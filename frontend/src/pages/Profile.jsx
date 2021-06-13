@@ -226,9 +226,9 @@ function Profile() {
     <div>
       <AppBar title="My Profile" />
       <div
-        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10 }}
+        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10, backgroundColor: 'white' }}
       >
-        <div style={{ position: "relative", textAlign: "center", width: 80 }}>
+        <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
           <img
             src={user.profilePicture}
             style={{

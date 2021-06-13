@@ -65,19 +65,18 @@ const Sidebar = () => {
         className="sidebarcoy"
         style={{
           position: "fixed",
-          backgroundColor: "white",
+          backgroundColor: "#FAFAFA",
           zIndex: 102,
           height: "100%",
-          borderRight: "1px #cccccc solid",
         }}
       >
         <Sider
           className="site-layout-background"
           width={windowWidth < 1200 ? 230 : 240}
-          style={{ backgroundColor: "white" }}
-          collapsed={windowWidth < 993 ? true : false}
+          style={{ backgroundColor: "#FAFAFA" }}
+          collapsed={windowWidth < 992 ? true : false}
         >
-          <div style={{ width: 60 }}>
+          <div style={{ width: 60, backgroundColor: "#FAFAFA" }}>
             <Link to={`/profile/user/${user.id}`}>
               <div
                 className="profilefoto"
@@ -86,7 +85,7 @@ const Sidebar = () => {
             </Link>
           </div>
           <Link to={`/profile/user/${user.id}`}>
-            <h3 style={{ marginTop: 15, marginBottom: -1, fontSize: 15 }}>
+            <h3 style={{backgroundColor: "#FAFAFA", marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.username ? user.username : "My Account"}
             </h3>
           </Link>
@@ -107,7 +106,7 @@ const Sidebar = () => {
             mode="inline"
             defaultSelectedKeys={["NearBy"]}
             defaultOpenKeys={["NearBy"]}
-            style={{ height: "100%", border: "none" }}
+            style={{ height: "100%", border: "none", backgroundColor: '#FAFAFA' }}
             inlineCollapsed="false"
           >
             <Menu.Divider />

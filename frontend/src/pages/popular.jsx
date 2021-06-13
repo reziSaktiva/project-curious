@@ -54,7 +54,7 @@ function Popular() {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`}>
+                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 56 } : { marginTop: 0 }}>
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
                         )
