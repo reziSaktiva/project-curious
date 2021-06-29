@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Button } from 'antd'
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { AuthContext } from '../context/auth'
 import { GoogleProvider, auth } from '../util/Firebase'
 import { gql, useMutation } from '@apollo/client'
@@ -12,16 +12,19 @@ const CHECK_USER_BY_GOOGLE = gql`
 `
 
 export default function LoginGoogleButton({ props }) {
+  let history = useHistory()
   const { loadGoogleData, login } = useContext(AuthContext)
   const [dataGoogle, setGoogleData] = useState({})
 
   const [check] = useMutation(CHECK_USER_BY_GOOGLE, {
     update(_, { data: { checkUserWithGoogle } }) {
+      console.log("checkUserWithGoogle", checkUserWithGoogle);
       if (!checkUserWithGoogle) {
         loadGoogleData(dataGoogle)
         props.history.push('/register/google')
       } else {
         const { token } = dataGoogle
+        console.log();
         // loginFacebook({ variables: { username, token } })
         login(token)
         props.history.push('/')
@@ -45,6 +48,7 @@ export default function LoginGoogleButton({ props }) {
         token: user._lat
       }
       setGoogleData(googleData)
+      history.push('/register/google')
 
       check({ variables: { username: user.displayName } })
     })

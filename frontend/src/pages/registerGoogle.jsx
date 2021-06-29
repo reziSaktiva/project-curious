@@ -10,7 +10,7 @@ import {
     DatePicker,
     Alert
 } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {dial} from './Countries'
 import { useMutation } from '@apollo/client'
 import { REGISTER_USER_GOOGLE } from '../GraphQL/Mutations'
 
@@ -20,36 +20,19 @@ import { AuthContext } from '../context/auth'
 const { Option } = Select;
 const gender = [
     {
-        value: 'male',
-        label: 'male',
+        value: 'Male',
+        label: 'Male',
     },
     {
-        value: 'female',
-        label: 'female',
+        value: 'Female',
+        label: 'Female',
     },
     {
-        value: 'other',
-        label: 'other',
+        value: 'Other',
+        label: 'Other',
     },
 ];
-const formItemLayout = {
-    labelCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 8,
-        },
-    },
-    wrapperCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 16,
-        },
-    },
-};
+
 const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -89,23 +72,26 @@ const RegisterGoogle = (props) => {
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
     };
-    const phoneCode = (
-        <Form.Item name="phoneCode" noStyle>
-            <Select
-                style={{
-                    width: 70,
-                }}
-            >
-                <Option value="+62">+62</Option>
-                <Option value="+87">+87</Option>
-            </Select>
-        </Form.Item>
-    );
+    
+    const dialData = dial.map(item => {
+        return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
+       })
+        const phoneCode = (
+            <Form.Item name="phoneCode" noStyle>
+                <Select
+                    defaultValue="+62"
+                    style={{
+                        width: 70,
+                    }}>
+                   {dialData}
+                </Select>
+            </Form.Item>
+        );
 
     return (
         <div>
-            <div>
-                <div className="curious" />
+            <div style={{background: 'white'}}>
+                <div className="curious centeringImage" style={{ marginTop: 50 }} />
                 <div class="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
                     <div class="content">
 
@@ -114,7 +100,6 @@ const RegisterGoogle = (props) => {
                             name="register"
                             onFinish={onFinish}
                             initialValues={{
-                                residence: ['zhejiang', 'hangzhou', 'xihu'],
                                 prefix: '86',
                             }}
                             scrollToFirstError
@@ -124,7 +109,7 @@ const RegisterGoogle = (props) => {
 
             <Form.Item
                 name="gender"
-                label="chose gender"
+                
                 rules={[
                     {
                         type: 'array',
@@ -133,12 +118,11 @@ const RegisterGoogle = (props) => {
                     },
                 ]}
             >
-                <Cascader options={gender} />
+                <Cascader placeholder="Chose gender" options={gender} />
             </Form.Item>
 
             <Form.Item
                 name="phone"
-                label="Phone Number"
                 rules={[
                     {
                         required: true,
@@ -147,6 +131,7 @@ const RegisterGoogle = (props) => {
                 ]}
             >
                 <Input
+                placeholder="Your Phone Number Here"
                     addonBefore={phoneCode}
                     style={{
                         width: '100%',
@@ -155,7 +140,7 @@ const RegisterGoogle = (props) => {
             </Form.Item>
 
             <Form.Item
-                label="birthday"
+            style={{width: '100%'}}
                 name="birthday"
                 rules={[
                     {

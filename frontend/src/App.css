@@ -1,9 +1,12 @@
+html {
+  background: white;
+}
 body {
   background: #FAFAFA !important
 }
 #root {
   background: #FAFAFA;
-  height: 100% auto;
+  height: auto;
 }
 /* assetes */
 .centeringButton {
@@ -223,9 +226,10 @@ body {
 }
 
 /* SIDE BAR */
-ant-menu ant-menu-light ant-menu-root ant-menu-inline{
-  background-color: #FAFAFA;
-}
+.ant-menu-item:hover a {
+  color: #7f57ff;
+} 
+
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected, .ant-menu-item-selected a, .ant-menu-item-selected a:hover {
   background-color:#7f57ff;
@@ -241,8 +245,8 @@ ant-menu ant-menu-light ant-menu-root ant-menu-inline{
   color: white;
 }
 
-.ant-menu-item:hover a{
-  color: #7f57ff;
+.ant-menu-item.ant-menu-item-active.ant-menu-item-selected:hover a{
+  color: white;
 }
 
 .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
@@ -257,6 +261,19 @@ ant-menu ant-menu-light ant-menu-root ant-menu-inline{
 }
 
 /* NAV BAR */
+.ant-radio-button.ant-radio-button-checked{
+  background: #7958f5;
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  color: white;
+}
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+  color: white;
+}
+.ant-radio-button-wrapper:hover {
+  color: black;
+}
 .toolbar {
   position: fixed;
   top: 0;
@@ -341,7 +358,7 @@ ant-menu ant-menu-light ant-menu-root ant-menu-inline{
   -ms-transform: translate(-50%, 30%);
 transform: translate(-50%, 30%);
 }
-.ant-radio-button-wrapper{
+/* .ant-radio-button-wrapper{
   color: #7f57ff;
   border: 1px solid #7f57ff;
 }
@@ -356,7 +373,7 @@ transform: translate(-50%, 30%);
 }
 .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover{
   background: #7f57ff;
-}
+} */
 
 /* POST CARD */
 .ant-list-vertical .ant-list-item-meta-title{

@@ -195,7 +195,7 @@ module.exports = gql`
         checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
         readAllNotification: [Notification]
-        changePPUser( url : String! ): String!
+        changePPUser( url: String! ): String!
         clearAllNotif: String!
         deleteAccount( id: ID! ): String!
 

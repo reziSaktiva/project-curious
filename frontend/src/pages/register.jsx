@@ -73,26 +73,24 @@ const Register = (props) => {
     };
 
    const dialData = dial.map(item => {
-    return <Option value={item.dial_code}>{item.dial_code}</Option>
+    return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
    })
     const phoneCode = (
         <Form.Item name="phoneCode" noStyle>
             <Select
+            defaultValue="+62"
                 style={{
                     width: 70,
                 }}
             >
                {dialData}
-                
-                
-                
             </Select>
         </Form.Item>
     );
 
     return (
-        <div>
-            <div>
+        <div >
+            <div style={{height: '100vh', background: 'white'}}>
                 <Link to ='/'>
                 <div className="centeringImage">
                 <div className="curious centeringImage" style={{ marginTop: 50, }} />
@@ -109,8 +107,7 @@ const Register = (props) => {
                             name="register"
                             onFinish={onFinish}
                             initialValues={{
-                                residence: ['zhejiang', 'hangzhou', 'xihu'],
-                                prefix: '86',
+                                prefix: '+62'
                             }}
                             scrollToFirstError
                         >
@@ -131,7 +128,6 @@ const Register = (props) => {
                                 <Input placeholder="Email adress" />
                             </Form.Item>
                             <Form.Item
-
                                 name="phone"
                                 rules={[
                                     {

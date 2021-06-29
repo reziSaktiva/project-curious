@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Col, Row, Button } from 'antd'
 
 import LoginFacebook from '../../components/LoginFacebookButton';
@@ -9,8 +9,12 @@ import BGLanding from '../../assets/bg-landing.png';
 
 import './style.css';
 import { Bold } from 'tabler-icons-react';
+import { AuthContext } from '../../context/auth'
 
 const SignIn = (props) => {
+  const { googleData } = useContext(AuthContext)
+
+  console.log(googleData);
   return (
   <div>
     <Row>

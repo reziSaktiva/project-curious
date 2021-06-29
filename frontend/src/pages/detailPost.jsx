@@ -290,11 +290,11 @@ export default function SinglePost(props) {
             title={
               <div>
                 <Row>
-                  <Col span={12}>
+                  <Col span={18}>
                     <img src={Pin} style={{ width: 20, position: "center" }} />
                     {address}
                   </Col>
-                  <Col span={12} style={{ textAlign: "right" }}>
+                  <Col span={6} style={{ textAlign: "right" }}>
                     <Dropdown
                       overlay={
                         <Menu>

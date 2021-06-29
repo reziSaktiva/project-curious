@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import styles from './index.css'
 import 'antd/dist/antd.css'
@@ -45,6 +45,8 @@ function App() {
         <Grid className={styles.container}>
           <Switch>
             <HomeRoute exact path="/" component={LandingPage} />
+            <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
+            <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <AuthRoute exact path="/login" component={login} />
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
@@ -60,8 +62,6 @@ function App() {
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
             <UserRoute exact path="/chat" component={Chat} />
-            <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
-            <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <UserRoute exact path="/settings" component={settings} />
             <UserRoute exact path="/maps" component={map} />
           </Switch>
