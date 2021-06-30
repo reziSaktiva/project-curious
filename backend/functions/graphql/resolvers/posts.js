@@ -1,4 +1,4 @@
-const { db } = require('../../utility/admin');
+const { db, pubSub, NOTIFICATION_ADDED } = require('../../utility/admin');
 const { get } = require('lodash');
 const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
@@ -33,8 +33,6 @@ module.exports = {
               return repostData.data() || {}
             }
           }
-
-  
 
           // Likes
           const likes = async () => {
@@ -339,29 +337,6 @@ module.exports = {
             }
           })
         })
-
-        // Cara 1
-        // return Post.map(async doc => {
-        //   const request = await db.collection(`/posts/${doc.id}/likes`).get()
-        //   const likes = request.docs.map(doc => doc.data())
-
-        //   return { ...doc, likes }
-        // })
-
-
-        // Cara 2
-        // const Likesnya = likesData.map(async doc => await db.collection(`/posts/${doc}/likes`).get());
-
-        // return Promise.all(Likesnya).then(req => { // pakai promise.all karna di `Likesnya` ini isinya array of Promise, jadi perlu di ambil semua requestnya
-        //   return req.map((v, idx) => {
-        //     const like = v.docs.map(doc => doc.data())
-        //     return {
-        //       ...Post[idx],
-        //       likes: like
-        //     }
-        //   });
-        // });
-
       } catch (error) {
         console.log(error);
       }
@@ -428,7 +403,7 @@ module.exports = {
     },
     async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
-      
+
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
       const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`)
@@ -439,7 +414,7 @@ module.exports = {
         try {
           const dataPost = await postDocument.get();
           const post = dataPost.data();
-          
+
           let repost = {}
           const repostId = get(post, 'repost') || {};
           if (repostId) {
@@ -456,19 +431,19 @@ module.exports = {
 
           const recursive = (listOfItem, listFilter, idx) => {
             const roots = listFilter.filter(i => {
-                if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
-                    return i
-                }
+              if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
+                return i
+              }
             });
-            
+
             return roots.map((comment, idx) => {
-                const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
-                
-                return {
-                  ...comment,
-                  replyList: recursive(listOfItem, r, idx + 1)
-                }
-                
+              const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
+
+              return {
+                ...comment,
+                replyList: recursive(listOfItem, r, idx + 1)
+              }
+
             })
           }
 
@@ -480,7 +455,7 @@ module.exports = {
           const subscribePost = await subscribeCollection.get();
           const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
-          console.log('comments: ', restructureComment);
+          ('comments: ', restructureComment);
           return {
             ...post,
             repost,
@@ -825,26 +800,26 @@ module.exports = {
               .then(async doc => {
                 doc.ref.update({ repostCount: doc.data().repostCount + 1 })
                 if (doc.data().owner !== username) {
-                  const { name, displayImage, colorCode } = await randomGenerator(
-                    username,
-                    repost.repost,
-                    repost.room
-                  )
+                  const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
 
+                  const notification = {
+                    owner: doc.data().owner,
+                    recipient: doc.data().owner,
+                    sender: username,
+                    read: false,
+                    postId: doc.data().id,
+                    type: "REPOST",
+                    createdAt: new Date().toISOString(),
+                    displayName: name,
+                    displayImage,
+                    colorCode,
+                  }
+                  // FIX ME (done)
                   db.collection(`/users/${doc.data().owner}/notifications`)
-                    .add({
-                      recipient: post.owner,
-                      sender: username,
-                      read: false,
-                      postId: id,
-                      type: "REPOST",
-                      createdAt: new Date().toISOString(),
-                      displayName: name,
-                      displayImage,
-                      colorCode,
-                    })
+                    .add(notification)
                     .then((data) => {
                       data.update({ id: data.id });
+                      pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
                     });
                 }
               })
@@ -910,13 +885,18 @@ module.exports = {
 
       try {
 
-        await document.get().then((doc) => {
+        await document.get().then(async (doc) => {
           if (!doc.exists) {
             throw new Error("Postingan tidak di temukan");
           }
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
+            if (doc.data().repost.repost) {
+              const { repost } = doc.data()
+              db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
+                .then(doc => doc.ref.update({repostCount: doc.data().repostCount - 1}))
+            }
             return likesData.get()
               .then(data => {
                 data.forEach(doc => {
@@ -984,7 +964,7 @@ module.exports = {
         id,
         room
       );
-      console.log(room);
+
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);
       const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`);
@@ -1042,10 +1022,7 @@ module.exports = {
                       .get()
                       .then((data) => {
                         return data.docs.forEach((doc) => {
-                          db.doc(
-                            `/users/${doc.data().owner}/notifications/${doc.data().id
-                            }`
-                          ).delete();
+                          db.doc(`/users/${doc.data().owner}/notifications/${doc.data().id}`).delete();
 
                           if (post.owner !== username) {
                             db.collection(`/users/${post.owner}/notifications`)
@@ -1053,9 +1030,7 @@ module.exports = {
                               .where("sender", "==", username)
                               .get()
                               .then((data) => {
-                                db.doc(
-                                  `/users/${post.owner}/notifications/${data.docs[0].id}`
-                                ).delete();
+                                db.doc(`/users/${post.owner}/notifications/${data.docs[0].id}`).delete();
                               });
                           }
                         });
@@ -1068,9 +1043,7 @@ module.exports = {
                       .where("sender", "==", username)
                       .get()
                       .then((data) => {
-                        db.doc(
-                          `/users/${post.owner}/notifications/${data.docs[0].id}`
-                        ).delete();
+                        db.doc(`/users/${post.owner}/notifications/${data.docs[0].id}`).delete();
                       });
                   }
                 }
@@ -1103,20 +1076,24 @@ module.exports = {
                   db.doc(`/users/${username}/liked/${data.id}`).set(likeData);
 
                   if (post.owner !== username && !room) {
+                    const notification = {
+                      owner: post.owner,
+                      recipient: post.owner,
+                      sender: username,
+                      read: false,
+                      postId: post.id,
+                      type: "LIKE",
+                      createdAt: new Date().toISOString(),
+                      displayName: name,
+                      displayImage,
+                      colorCode,
+                    }
+                    //FIX ME
                     db.collection(`/users/${post.owner}/notifications`)
-                      .add({
-                        recipient: post.owner,
-                        sender: username,
-                        read: false,
-                        postId: id,
-                        type: "LIKE",
-                        createdAt: new Date().toISOString(),
-                        displayName: name,
-                        displayImage,
-                        colorCode,
-                      })
+                      .add(notification)
                       .then((data) => {
                         data.update({ id: data.id });
+                        pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
                       });
                   }
 
@@ -1124,24 +1101,27 @@ module.exports = {
                     if (!data.empty) {
                       return data.docs.forEach((doc) => {
                         if (doc.data().owner !== username) {
+                          const subNotif = {
+                            owner: doc.data().owner,
+                            recipient: post.owner,
+                            sender: username,
+                            read: false,
+                            postId: post.id,
+                            type: "LIKE",
+                            createdAt: new Date().toISOString(),
+                            owner: doc.data().owner,
+                            displayName: name,
+                            displayImage,
+                            colorCode,
+                          }
+
+                          // FIX ME
                           return db
-                            .collection(
-                              `/users/${doc.data().owner}/notifications`
-                            )
-                            .add({
-                              recipient: post.owner,
-                              sender: username,
-                              read: false,
-                              postId: id,
-                              type: "LIKE",
-                              createdAt: new Date().toISOString(),
-                              owner: doc.data().owner,
-                              displayName: name,
-                              displayImage,
-                              colorCode,
-                            })
+                            .collection(`/users/${doc.data().owner}/notifications`)
+                            .add(subNotif)
                             .then((data) => {
                               data.update({ id: data.id });
+                              pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...subNotif, id: data.id } })
                             });
                         }
                       });
@@ -1279,20 +1259,24 @@ module.exports = {
                     data.update({ id: data.id });
 
                     if (postOwner !== username) {
+                      const notification = {
+                        owner: postOwner,
+                        recipient: postOwner,
+                        sender: username,
+                        read: false,
+                        postId: postId,
+                        type: "SUBSCRIBE",
+                        createdAt: new Date().toISOString(),
+                        displayName: name,
+                        displayImage,
+                        colorCode,
+                      }
+                      // FIX ME
                       db.collection(`/users/${postOwner}/notifications`)
-                        .add({
-                          recipient: postOwner,
-                          sender: username,
-                          read: false,
-                          postId: postId,
-                          type: "SUBSCRIBE",
-                          createdAt: new Date().toISOString(),
-                          displayName: name,
-                          displayImage,
-                          colorCode,
-                        })
+                        .add(notification)
                         .then((data) => {
                           data.update({ id: data.id });
+                          pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
                         });
                     }
                   });

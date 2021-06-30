@@ -2,7 +2,8 @@ const { AuthenticationError } = require('apollo-server-express');
 const { admin, db } = require('./admin')
 
 module.exports = async (context) => {
-    const AuthHeader = context.req.headers.authorization;
+    // console.log("in fbAuth", context);
+    const AuthHeader = context.connection ? context.connection.context.Authorization : context.req.headers.authorization;
 
     if(AuthHeader){
         // Bearer [token]

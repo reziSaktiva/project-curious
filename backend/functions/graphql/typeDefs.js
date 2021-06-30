@@ -8,9 +8,9 @@ module.exports = gql`
         media: [String]
         createdAt: String!
         location: LatLong
-        likeCount: Int!
-        commentCount: Int!
-        repostCount: Int!
+        likeCount: Int
+        commentCount: Int
+        repostCount: Int
         comments: [Comment]
         likes: [Like]
         muted: [Mute]
@@ -95,6 +95,7 @@ module.exports = gql`
         isLike: Boolean
     },
     type Notification {
+        owner: String
         recipient: String!
         sender: String!
         read: Boolean!
@@ -132,6 +133,9 @@ module.exports = gql`
         createdAt: String!
         postId: ID!
         isSubscribe: Boolean
+    }
+    type Subscription {
+        notificationAdded: Notification
     }
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!

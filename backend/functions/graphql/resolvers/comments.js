@@ -1,4 +1,4 @@
-const { db } = require('../../utility/admin')
+const { db, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
 const { UserInputError } = require('apollo-server-express');
 
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -49,7 +49,9 @@ module.exports = {
                         doc.update({ id: doc.id, displayName: name, displayImage: displayImage, colorCode })
 
                         if (postOwner !== username) {
-                            return db.collection(`/users/${postOwner}/notifications`).add({
+                            // FIX ME (done)
+                            const notifData = {
+                                owner: postOwner,
                                 recipient: postOwner,
                                 sender: username,
                                 read: false,
@@ -59,29 +61,54 @@ module.exports = {
                                 displayName: name,
                                 displayImage,
                                 colorCode
-                            })
+                            }
+                            return db.collection(`/users/${postOwner}/notifications`).add(notifData)
                                 .then(data => {
                                     data.update({ id: data.id })
+                                    pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifData, id: data.id}})
 
                                     return subscribeCollection.get()
                                         .then(data => {
                                             if (!data.empty) {
                                                 return data.docs.forEach(doc => {
                                                     if (doc.data().owner !== username) {
-                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add({
+                                                        // FIX ME
+                                                        const notifSubscribe = {
+                                                            owner: doc.data().owner,
                                                             recipient: postOwner,
                                                             sender: username,
                                                             read: false,
                                                             postId: id,
                                                             type: 'COMMENT',
                                                             createdAt: new Date().toISOString(),
-                                                            owner: doc.data().owner,
                                                             displayName: name,
                                                             displayImage,
                                                             colorCode
-                                                        })
+                                                        }
+                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add(notifSubscribe)
                                                             .then(data => {
                                                                 data.update({ id: data.id })
+                                                                pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifSubscribe, id: data.id}})
+                                                                if(newComment.reply.owner && newComment.reply.owner !== username) {
+                                                                    const notifReply = {
+                                                                        owner: newComment.reply.owner,
+                                                                        recipient: newComment.reply.owner,
+                                                                        sender: username,
+                                                                        read: false,
+                                                                        postId: id,
+                                                                        type: 'REPLY_COMMENT',
+                                                                        createdAt: new Date().toISOString(),
+                                                                        displayName: name,
+                                                                        displayImage,
+                                                                        colorCode
+                                                                    }
+                                                                    return db.collection(`/users/${newComment.reply.owner}/notifications`).add(notifReply)
+                                                                        .then(data => {
+                                                                            data.update({ id: data.id })
+                                                                            pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifReply, id: data.id}})
+                                                                        })
+
+                                                                }
                                                             })
                                                     }
                                                 })
