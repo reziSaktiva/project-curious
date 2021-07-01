@@ -23,7 +23,8 @@ import Gorila from "../../assets/gorila.jpg";
 import Bmw from "../../assets/bmw.jpg";
 
 // Query
-import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
+import { GET_POST } from '../../GraphQL/Queries';
+import { CREATE_POST } from '../../GraphQL/Mutations'
 
 // Init Firebase
 import firebase from 'firebase/app'
@@ -212,7 +213,6 @@ export default function ModalPost() {
   };
 
   const handleChange = ({ fileList }) => {
-    console.log("filelist di handle change",fileList);
     const newFiles = fileList.map(file => ({ ...file, status: 'done' }))
     setState({
       ...state,
@@ -227,8 +227,6 @@ export default function ModalPost() {
       ...state,
       fileList: newFile
     })
-
-    console.log('filelist di remove', fileList);
   }
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////

@@ -2,21 +2,23 @@ import React, { useContext } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import {
-  READ_ALL_NOTIFICATIONS,
-  READ_NOTIFICATION,
-} from "../GraphQL/Mutations";
+import { useMutation, useSubscription } from "@apollo/client";
+import { READ_ALL_NOTIFICATIONS, READ_NOTIFICATION } from "../GraphQL/Mutations";
+import { NOTIFICATION_ADDED } from "../GraphQL/Subsriptions";
 import { Row, Col, Dropdown, Menu } from "antd";
 
 import { EllipsisOutlined } from "@ant-design/icons";
 import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
-import NoNotif from "../assets/NoNotif.jpg";
 
 export default function Notification() {
-  const { notifications, notificationRead, readAllNotificatons } =
-    useContext(AuthContext);
+  const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
+
+  useSubscription(NOTIFICATION_ADDED, {
+    onSubscriptionData: (data) => {
+      console.log(data);
+    }
+  })
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {

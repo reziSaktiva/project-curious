@@ -45,10 +45,11 @@ import firebase from 'firebase/app'
 import 'firebase/storage'
 import { User } from "tabler-icons-react";
 import { AuthContext } from "../context/auth";
+import { MAP_API_KEY } from "../util/ConfigMap";
 const  storage = firebase.storage()
 
 //location
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
+Geocode.setApiKey(MAP_API_KEY);
 Geocode.setLanguage("id");
 
 function getBase64(file) {
@@ -136,7 +137,7 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
-
+      console.log(post);
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
