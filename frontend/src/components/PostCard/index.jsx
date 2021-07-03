@@ -275,7 +275,6 @@ export default function PostCard({ post, loading, type }) {
         {post.media ? (
           post.media.length == 2 ? (
             <table className="row-card-2">
-              <tbody>
                 <tr>
                   <Image.PreviewGroup>
                     <td style={{ width: "50%" }}>
@@ -292,7 +291,6 @@ export default function PostCard({ post, loading, type }) {
                     </td>
                   </Image.PreviewGroup>
                 </tr>
-              </tbody>
             </table>
           ) : null
         ) : null}
@@ -304,7 +302,7 @@ export default function PostCard({ post, loading, type }) {
                 <tbody>
                   <tr style={{ margin: 0, padding: 0 }}>
                     <td
-                      rowspan="2"
+                      rowSpan="2"
                       style={{ width: "50%", verticalAlign: "top" }}
                     >
                       <Image

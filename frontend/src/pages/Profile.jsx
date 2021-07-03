@@ -219,9 +219,8 @@ function Profile() {
   let repostCount = posts
     ? posts.reduce((accumulator, current) => {
         return accumulator + current.repostCount;
-      }, 0)
-    : 0;
-    console.log(user.username, posts);
+      }, 0) : 0;
+      
   return (
     <div>
       <AppBar title="My Profile" />

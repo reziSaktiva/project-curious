@@ -405,7 +405,7 @@ module.exports = {
       const { username } = await fbAuthContext(context)
 
       const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
-      const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
+      const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`).orderBy('createdAt', 'asc')
       const likeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`)
       const mutedCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/muted`)
       const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`)
@@ -429,25 +429,25 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
-          const recursive = (listOfItem, listFilter, idx) => {
-            const roots = listFilter.filter(i => {
-              if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
-                return i
-              }
-            });
+          // const recursive = (listOfItem, listFilter, idx) => {
+          //   const roots = listFilter.filter(i => {
+          //     if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
+          //       return i
+          //     }
+          //   });
 
-            return roots.map((comment, idx) => {
-              const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
+          //   return roots.map((comment, idx) => {
+          //     const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
 
-              return {
-                ...comment,
-                replyList: recursive(listOfItem, r, idx + 1)
-              }
+          //     return {
+          //       ...comment,
+          //       replyList: recursive(listOfItem, r, idx + 1)
+          //     }
 
-            })
-          }
+          //   })
+          // }
 
-          const restructureComment = recursive(comments, comments, 0) || comments;
+          // const restructureComment = recursive(comments, comments, 0) || comments;
 
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
@@ -455,13 +455,13 @@ module.exports = {
           const subscribePost = await subscribeCollection.get();
           const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
-          ('comments: ', restructureComment);
+          // ('comments: ', restructureComment);
           return {
             ...post,
             repost,
             likes,
             // comments: await comments(),
-            comments: restructureComment,
+            comments: comments,
             muted,
             subscribe,
             repost

@@ -103,21 +103,6 @@ export const postDetailFragment = gql`
           id
           username
         }
-        replyList {
-          id
-          createdAt
-          owner
-          text
-          photoProfile
-          photo
-          displayName
-          displayImage
-          colorCode
-          reply {
-            id
-            username
-          }
-        }
       }
       muted {
         id
