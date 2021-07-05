@@ -41,7 +41,7 @@ const httpLink = ApolloLink.from([
 
 
 const errorLink = onError(
-  ({ graphQLErrors, networkError, operation, forward }) => {
+  ({ graphQLErrors, networkError}) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
         console.log('error: ',err);
@@ -73,8 +73,8 @@ const wsLink = new WebSocketLink({
     connectionParams: () => ({
       accessToken: localStorage.token
     }),
-    lazy: true,
-    reconnect: true
+    reconnect: true,
+    lazy: true
   }
 })
 

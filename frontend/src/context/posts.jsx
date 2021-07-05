@@ -177,36 +177,15 @@ const reducer = (state, action) => {
         },
       };
     case "DELETE_COMMENT":
-      // if (action.payload.reply && action.payload.reply.id) {
-      //   const find = state.post.comments.findIndex(
-      //     (itm) => itm.id == action.payload.reply.id
-      //   );
-
-      //   if (!find) {
-      //     const recursive = (list) => {
-      //       return list.map((itm) => {
-      //         return { ...itm, replyList: itm.replyList.filter(list => list !== action.payload.id) };
-      //       });
-      //     };
-
-      //     const newComments = recursive(state.post.comments);
-
-      //     return {
-      //       ...state,
-      //       post: {
-      //         ...state.post,
-      //         comments: newComments,
-      //         commentsCount: state.post.comments + 1,
-      //       },
-      //     };
-      //   }
-      // }
+      console.log(state.post.comments.filter(
+        (comment) => comment.id !== action.payload.id
+      ));
       return {
         ...state,
         post: {
           ...state.post,
           comments: state.post.comments.filter(
-            (comment) => comment.id !== action.payload
+            (comment) => comment.id !== action.payload.id
           ),
         },
       };
@@ -689,6 +668,8 @@ export const PostProvider = (props) => {
       type: "DELETE_COMMENT",
       payload: data,
     });
+
+    console.log(data);
   };
 
   const setLikedPosts = (posts) => {

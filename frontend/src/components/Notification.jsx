@@ -15,9 +15,7 @@ export default function Notification() {
   const { clearNotifications } = useContext(AuthContext);
 
   useSubscription(NOTIFICATION_ADDED, {
-    onSubscriptionData: (data) => {
-      console.log(data);
-    }
+    subscription : ({subscriptionData}) => console.log(subscriptionData)
   })
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
@@ -83,6 +81,7 @@ export default function Notification() {
                 notifications.map((notif, key) => {
                   let type = "";
                   let text = "";
+
                   switch (notif.type) {
                     case "LIKE":
                       type = "liked";
@@ -95,6 +94,11 @@ export default function Notification() {
                     case "COMMENT":
                       type = "commented";
                       text = "comment";
+                      break;
+                    case "REPLY_COMMENT":
+                      type = "reply";
+                      text = "reply";
+                    break;
                     default:
                       break;
                   }
@@ -118,7 +122,7 @@ export default function Notification() {
                           <Col span={22}>
                             <p style={{ marginBottom: 5 }}>
                               {notif.displayName}{" "}
-                              <span>{`${type} your post.`}</span>{" "}
+                              <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
                             </p>
                           </Col>
                           <Col span={2} style={{ color: "#7958f5" }}>

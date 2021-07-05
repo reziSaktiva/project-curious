@@ -27,7 +27,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
         onError(err) {
             console.log(err.message);
         }, update(_, { data: { deleteComment: commentData } }) {
-
+            
             commentDelete(commentData)
         },
     })
@@ -35,7 +35,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
     //reply func
     const handleReply = item => {
         setReply({
-            username: item.displayName,
+            username: item.owner,
             id: item.id
         })
 
@@ -222,7 +222,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
 
                                                 <Button
                                                     type="link"
-                                                    onClick={() => handleReply(item)}
+                                                    onClick={() => handleReply({ displayName: item.displayName, id: comment.id, username: item.owner })}
                                                     style={{
                                                         fontWeight: "bold",
                                                         display: "inline-block",
