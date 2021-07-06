@@ -73,13 +73,14 @@ const wsLink = new WebSocketLink({
     connectionParams: () => ({
       accessToken: localStorage.token
     }),
-    reconnect: true,
-    lazy: true
+    reconnect: true
   }
 })
 
 function isSubscription(operation) {
   const definition = getMainDefinition(operation.query);
+  console.log(definition.operation, "operation");
+  console.log(definition.kind, "kind");
   return definition.kind === 'OperationDefinition' 
     && definition.operation === 'subscription'
 }
