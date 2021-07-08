@@ -66,8 +66,7 @@ const Register = (props) => {
 
     const onFinish = (values) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
-
-        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}` } })
+        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || dial[0].dial_code) + phone}` } })
         console.log('Received values of form: ', values);
     };
     const onCloseErr = (e) => {
@@ -80,7 +79,9 @@ const Register = (props) => {
     const phoneCode = (
         <Form.Item name="phoneCode" noStyle>
             <Select
-            defaultValue="+62"
+
+                defaultValue={dial[0].dial_code}
+
                 style={{
                     width: 70,
                 }}
