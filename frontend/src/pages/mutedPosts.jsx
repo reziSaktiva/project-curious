@@ -10,12 +10,21 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
 import Radius from '../assets/Radius.jpg'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
 
     const _isMounted = useRef(false);
     const { mutedPost, setMutedPost, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
+
+    const path = useHistory().location.pathname
+
+    const { setPathname } = useContext(AuthContext)
+  
+      useEffect(() => {
+          setPathname(path)
+      }, [])
 
     useEffect(() => {
         if (!_isMounted.current && data) { // check if doesn't fetch data

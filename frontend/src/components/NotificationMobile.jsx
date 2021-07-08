@@ -26,7 +26,6 @@ export default function NotificationMobile(props) {
 
   const [readNotifications] = useMutation(READ_ALL_NOTIFICATIONS, {
     update(_, { data: { readAllNotification } }) {
-      console.log(readAllNotification);
       readAllNotificatons(readAllNotification);
     },
   });

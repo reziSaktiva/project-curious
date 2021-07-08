@@ -1,19 +1,62 @@
-.fonts {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+.landing-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 92vh 8vh;
+}
+.left-grid__wrapper {
+  grid-row: 1 / 3;
 }
 
-.landingPage-input .btn-wrapper {
-  padding-left:   0px;
-  padding-right: 0px;
-  position: relative;
+.right-grid__wrapper {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+}
+.content__wrapper{
+  width: 343px;
+  margin: auto;
 }
 
-.copy-right {
-  margin-top: 25vh; 
-  font-size: 18px;
+.btn-wrapper {
+  max-width: 343px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.landing-sm-button {
+  width: 100%;
+  height: 45px;
+  border-radius: 8px;
+  border: 1px solid #352A39;
+}
+.landing-tittle__wrapper {
+  color: #352A39;
+  text-align:left;
+  max-width: 343px;
+  margin: 0 auto 20px auto;
+
+  font-family: SF Pro Display;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 40px;
+}
+
+.landing-bg__mobile {
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
 }
 
     @media only screen and (max-width: 768px) {
+      .left-grid__wrapper {
+        display: none;
+      }
+      .landing-container {
+        grid-template-columns: 1fr;
+      }
+      .landing-bg__mobile {
+        display:flex;
+        width: 220px;
+      }
         .landingPage-input .btn-wrapper {
             padding-left: 0px;
             padding-right: 0px;
@@ -22,7 +65,7 @@
             width: 65%;
         }
         .copy-right {
-            margin-top: 10vh
+            margin-top: 62px
         }
     }
 

@@ -1,7 +1,6 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
-import styles from './index.css'
 import 'antd/dist/antd.css'
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
@@ -21,7 +20,7 @@ import map from './pages/map/index'
 import RegisterFacebook from './pages/registerFacebook';
 import RegisterGoogle from './pages/registerGoogle';
 import LandingPage from './pages/landing-page';
-import Grid from './pages/grid';
+import Grid from './pages/grid/grid';
 import SinglePost from './pages/detailPost';
 import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
@@ -42,7 +41,7 @@ function App() {
   return (
     <Context>
       <Router>
-        <Grid className={styles.container}>
+        <Grid>
           <Switch>
             <HomeRoute exact path="/" component={LandingPage} />
             <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />

@@ -33,7 +33,8 @@ const initialState = {
   notifications: [],
   room: null,
   facebookData: null,
-  googleData: null
+  googleData: null,
+  pathname: ''
 };
 
 const { location, user } = Session({ onLogout: () => {} });
@@ -122,6 +123,11 @@ function authReducer(state, action) {
           return notif;
         })
       }
+    case "SET_PATHNAME":
+      return {
+        ...state,
+        pathname: action.payload
+      }
     default:
       return state;
   }
@@ -150,7 +156,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications, room } = state
+  const { user, facebookData, googleData, liked, notifications, room, pathname } = state
 
   // Mutations
   const [
@@ -286,6 +292,13 @@ export function AuthProvider(props) {
     dispatch({ type: LOGOUT });
   }
 
+  function setPathname(pathname) {
+    dispatch({
+      type: "SET_PATHNAME",
+      payload: pathname
+    })
+  }
+
   const authProps = useMemo(
     () => ({
       user,
@@ -294,7 +307,9 @@ export function AuthProvider(props) {
       liked,
       notifications,
       room,
+      pathname,
       setRoom,
+      setPathname,
       clearNotifications,
       changeProfilePicture,
       notificationRead,

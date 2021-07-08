@@ -59,7 +59,7 @@ export default function LoginFacebookButton({ props }) {
   }
 
   return (
-    <Button onClick={signInWithFacebook} className="ui button" style={{ width: 300, height: 45, fontSize: '18px', color: 'white', background: '#7F57FF', borderRadius: 5 }}>
+    <Button onClick={signInWithFacebook} className="landing-big-button" style={{fontSize: '18px', color: 'white', background: '#7F57FF' }}>
       <i className="facebook icon" />
           Continue with Facebook
     </Button>

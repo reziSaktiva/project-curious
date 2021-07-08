@@ -18,13 +18,11 @@ export default function LoginGoogleButton({ props }) {
 
   const [check] = useMutation(CHECK_USER_BY_GOOGLE, {
     update(_, { data: { checkUserWithGoogle } }) {
-      console.log("checkUserWithGoogle", checkUserWithGoogle);
       if (!checkUserWithGoogle) {
         loadGoogleData(dataGoogle)
         props.history.push('/register/google')
       } else {
         const { token } = dataGoogle
-        console.log();
         // loginFacebook({ variables: { username, token } })
         login(token)
         props.history.push('/')
@@ -37,8 +35,6 @@ export default function LoginGoogleButton({ props }) {
 
   const signInWithGoole = async () => {
     auth.signInWithPopup(GoogleProvider).then(function (result) {
-      console.log("result", result);
-      console.log("result", result.user._lat, typeof(result.user._lat));
       let user = result.user;
       let googleData = {
         username: user.displayName,
@@ -55,7 +51,7 @@ export default function LoginGoogleButton({ props }) {
   }
 
   return (
-    <Button onClick={signInWithGoole} className="ui black basic button" style={{ width: 300, fontSize: "18px" , height: 45, marginTop: 15, borderRadius: 5 }}>
+    <Button onClick={signInWithGoole} className="landing-big-button" style={{ fontSize: "18px" ,  marginTop: 15, }}>
       <i className="google icon" />
           Continue with Google
     </Button>

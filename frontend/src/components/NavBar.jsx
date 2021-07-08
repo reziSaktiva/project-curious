@@ -1,99 +1,73 @@
-import { Button, Col, Radio, Row, Tabs } from 'antd';
-import React, { useContext, useState } from 'react'
-import { useHistory, Link } from 'react-router-dom';
+import React, { useContext } from 'react'
 import { BellOutlined } from '@ant-design/icons';
-
-// Semantic
-import { Menu } from 'semantic-ui-react'
-
+import { Link } from 'react-router-dom'
 import '../App.css'
-
-const options = [
-  { label: 'Latest', value: '/' },
-  { label: 'Popular', value: '/popular' },
-];
+import { PostContext } from '../context/posts';
+import { AuthContext } from '../context/auth';
 
 export default function NavBar(props) {
-  const history = useHistory();
-  const parentTab = history.location.pathname == '/populer' ? 'populer' : 'latest'
-  const [nav, setNav] = useState({ value: '/' })
-
-  const { value } = nav
-  const handleNav = e => {
-    setNav({value: e.target.value})
-    history.push(e.target.value)
+  const { notifications } = useContext(AuthContext);
+  const { setNav, active } = useContext(PostContext)
+  console.log("nyaa",active);
+  const handleToggle = e => {
+    setNav(e.target.value)
   }
-
-  console.log(value);
-
-
 
   return (
     <header className="toolbar">
       <div className="toolbar__nav">
-        <div className="toolbar__nav2" />
-      </div>
+      
       <nav >
-        <Row>
-          <Col span={3}>
+        <div style={{
+          display: 'flex',
+          width: '100vw',
+          justifyContent: 'space-between'
+        }}>
+          <div>
           <button className="toggle-button" onClick={props.toggleOpen}>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
         </button>
-          </Col>
-          <Col span={18}>
-            <div  className="centeringButton adtional__nav">
-            {/* <Radio.Group
-            style={{width:151, zIndex: 200}}
-            size="medium"
-            onClick={handleNav}
-            value={value}
-              optionType="button"
-              buttonStyle="solid"
-              defaultValue="/"
-              
-              >
-                <Radio.Button  value="/" style={{zIndex: 200}}>
-                  <Link to='/' style={{color: 'white'}}>Latest</Link>
-                  </Radio.Button>
-                <Radio.Button value="/popular" style={{zIndex: 200}}>
-                  <Link to='/popular' style={{color: '#7958f5'}}>Popular</Link>
-                </Radio.Button>
-            </Radio.Group> */}
-            <Radio.Group
-              style={{width:151, zIndex: 200}}
-              size="medium"
-              onChange={handleNav}
-              value={value}
-              defaultValue="/"
-              optionType="button"
-            >
-              <Radio.Button value="/">
-                  Latest
-                  </Radio.Button>
-                <Radio.Button value="/popular">
-                  Popular
-                </Radio.Button>
-
-            </Radio.Group>
+          </div>
+          <div>
+            <div className="radio-center">
+              <Link to='/'>
+              <button className={ active == 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
+                onClick={handleToggle}
+               value="latest">Latest</button>
+              </Link>
+              <Link to='/popular'>
+              <button className={ active == 'popular' ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
+                onClick={handleToggle}
+               value="popular">Popular</button>
+              </Link>
             </div>
             
-          </Col>
-          <Col span={3}>
+          </div>
+          <div className='notif'>
             <div className="toggle-button">
             <BellOutlined style={{
+              marginLeft: -10,
               fontSize: "25px",
               color: "black",
-              strokeWidth: "30", // --> higher value === more thickness the filled area
+              strokeWidth: "30",
               }} onClick={props.toggleOpenNotif} />
+              {
+          notifications.length > 1 && <div className="notifCounter__mobile">
+            <p style={{fontSize:10,display: 'flex', justifyContent: 'center'}}> {notifications.length > 99 ?
+               ('99+') :
+                (notifications.length)}</p>
+              
+                </div>}
+              
             </div>
           
-          </Col>
-        </Row>
+          </div>
+        </div>
       </nav>
+      <div className="toolbar__nav2" />
+      </div>
     </header>
-
-
-  )
+   )
 }

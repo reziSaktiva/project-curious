@@ -9,8 +9,18 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import SkeletonLoading from '../components/SkeletonLoading'
 import Radius from '../assets/Radius.jpg'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 function SubscribePosts() {
+
+    const path = useHistory().location.pathname
+
+    const { setPathname } = useContext(AuthContext)
+  
+      useEffect(() => {
+          setPathname(path)
+      }, [])
+
     const { data } = useQuery(GET_SUBSCRIBED_POSTS, {
         fetchPolicy: "network-only"
       });
