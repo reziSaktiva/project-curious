@@ -1,0 +1,65 @@
+/* NOTIFICATION */
+.noNotif {
+    background-image: url('../../assets/NoNotif.png');
+      background-repeat: no-repeat;
+      background-size: 100%;
+      object-fit: cover;
+      width: 249px;
+      height: 200px;
+      margin: auto;
+    }
+     .notif__fixed {
+      position: fixed;
+      top: 20px;
+      z-index: 105;
+    }
+    
+    .notif__width {
+      left: 0;
+      right: 0;
+      width: 371px;
+      min-width: 251px;
+    }
+    .notifCounter {
+      display: inline;
+      background: #7958f5;
+      position: absolute;
+      margin-left: 5px;
+      width: 22px;
+      height: 22px;
+      border-radius: 11px;
+      font-size: 13px;
+      color: white;
+    }
+    .notifCounter__mobile {
+      display: inline;
+      background: #7958f5;
+      position: absolute;
+      right: 0;
+      top: 0;
+      margin-left: 5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 11px;
+      font-size: 13px;
+      color: white;
+    }
+    .notifContainer :hover {
+      background-color: #7958f5;
+      color: white;
+      padding: 2px;
+    }
+    .notifContainer {
+      padding: 4px;
+    }
+
+@media only screen and (max-width: 1024px) {
+    .notif__width {
+        width: 315px;
+      }
+}
+@media only screen and (max-width: 768px) {
+    .notif__width {
+        width: 220px;
+      }
+}

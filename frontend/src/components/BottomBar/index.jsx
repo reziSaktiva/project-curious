@@ -19,7 +19,6 @@ const BottomBar = () => {
   const { toggleOpenNewPost } = useContext(PostContext);
   const history = useHistory();
 
-  console.log("user bottom bar", user);
 
   const handleOpenAddPost = () => {
     toggleOpenNewPost()

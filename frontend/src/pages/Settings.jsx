@@ -6,8 +6,18 @@ import { RightOutlined } from '@ant-design/icons'
 import { useMutation } from '@apollo/client';
 import { DELETE_ACCOUNT } from '../GraphQL/Mutations';
 import { AuthContext } from '../context/auth'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 export default function Settings() {
+
+  const path = useHistory().location.pathname
+
+  const { setPathname } = useContext(AuthContext)
+
+    useEffect(() => {
+        setPathname(path)
+    }, [])
+
   const { user } = useContext(AuthContext)
   const [deleteAccount] = useMutation(DELETE_ACCOUNT ,{
     update(){

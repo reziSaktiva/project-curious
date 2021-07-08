@@ -45,11 +45,11 @@ const Login = (props) => {
   };
 
   return (
-    <div style={{height: '100%', background: 'white'}}>
+    <div style={{height: '100vh', background: 'white'}}>
       <Link to='/' className="header-page">
         <div className="curious"/>
       </Link>
-      <div className="body-page ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+      <div className="body-page ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30, height: 341 }}>
         <div className="body-page__wrapper content">
           <h1>Sign in</h1>
           <Form
@@ -70,7 +70,8 @@ const Login = (props) => {
               ]}
               className="body-page__textfield"
             >
-              <Input placeholder="Email / Username" />
+              <Input 
+             placeholder="Email / Username" />
             </Form.Item>
 
             <Form.Item
@@ -83,7 +84,9 @@ const Login = (props) => {
               ]}
               className="body-page__textfield"
             >
-              <Input.Password placeholder="Password" />
+              <Input.Password 
+            style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: 343}}
+             placeholder="Password" />
             </Form.Item>
 
             <Form.Item>

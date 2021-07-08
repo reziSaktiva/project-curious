@@ -4,8 +4,19 @@ import { SearchOutlined } from '@ant-design/icons';
 import AppBar from '../../components/AppBar';
 
 import './style.css';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../../context/auth';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const Search = () => {
+  const history = useHistory().location.pathname
+
+  const { setPathname } = useContext(AuthContext)
+
+    useEffect(() => {
+        setPathname(history)
+    }, [])
+
   return (
     <>
     <AppBar title="Seach" />

@@ -11,16 +11,6 @@
   align-items: center;
 }
 
-/* .btn-like .btn-like__wrapper .btn-like__label {
-  height: 25px;
-  border-radius: 5px;
-  position: relative;
-  top: -3px;
-  margin-left: -10px;
-  margin-right: 20px;
-  background-color: white;
-  width: 70px;
-} */
 .btn-like .btn-like__wrapper .btn-like__label {
   height: 25px;
   border-radius: 5px;

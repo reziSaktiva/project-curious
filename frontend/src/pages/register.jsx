@@ -14,6 +14,8 @@ import { REGISTER_USER } from '../GraphQL/Mutations'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth'
 
+import { LoadingOutlined } from "@ant-design/icons";
+
 import {dial} from './Countries'
 
 const { Option } = Select;
@@ -72,12 +74,14 @@ const Register = (props) => {
     };
 
    const dialData = dial.map(item => {
-    return <Option value={item.dial_code}>{item.dial_code}</Option>
+    return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
    })
     const phoneCode = (
         <Form.Item name="phoneCode" noStyle>
             <Select
+
                 defaultValue={dial[0].dial_code}
+
                 style={{
                     width: 70,
                 }}
@@ -88,8 +92,8 @@ const Register = (props) => {
     );
 
     return (
-        <div>
-            <div>
+        <div >
+            <div >
                 <Link to ='/'>
                 <div className="centeringImage">
                 <div className="curious centeringImage" style={{ marginTop: 50, }} />
@@ -106,8 +110,7 @@ const Register = (props) => {
                             name="register"
                             onFinish={onFinish}
                             initialValues={{
-                                residence: ['zhejiang', 'hangzhou', 'xihu'],
-                                prefix: '86',
+                                prefix: '+62'
                             }}
                             scrollToFirstError
                         >
@@ -128,7 +131,6 @@ const Register = (props) => {
                                 <Input placeholder="Email adress" />
                             </Form.Item>
                             <Form.Item
-
                                 name="phone"
                                 rules={[
                                     {
@@ -142,9 +144,7 @@ const Register = (props) => {
                                 <Input
                                     addonBefore={phoneCode}
                                     placeholder="Phone number"
-                                    style={{
-                                        width: '100%',
-                                    }}
+                                    style={{width: 343}}
                                 />
                             </Form.Item>
                             <Form.Item
@@ -170,7 +170,7 @@ const Register = (props) => {
                                 ]}
                                 hasFeedback
                             >
-                                <Input.Password placeholder="Password" />
+                                <Input.Password style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: 343}} placeholder="Password" />
                             </Form.Item>
                             <Form.Item
                                 name="birthday"
@@ -181,7 +181,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <DatePicker placeholder="birthday" style={{ width: 285 }} />
+                                <DatePicker placeholder="birthday"  />
                             </Form.Item>
 
                             <Form.Item
@@ -194,7 +194,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Cascader options={gender} />
+                                <Cascader style={{backgroundColor: '#FAFAFF', width: 343}} options={gender} />
                             </Form.Item>
                             <Form.Item
                                 name="agreement"
@@ -213,9 +213,10 @@ const Register = (props) => {
                                 </Checkbox>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" className='centeringButton' style={{ marginTop: 10, backgroundColor: '#7f57ff' }}>
-                                    Register
-                                </Button>
+                            <button className="ui facebook button body-page__btn-send" type="submit" 
+                                style={{ fontSize: '18px',padding: 0 }}>
+                                    {loading ? (<LoadingOutlined />): ("Register")} 
+                                </button>
                                 <p style={{ fontSize: 12, textAlign: 'center', marginTop: 60 }}>By signing up, you agree to our <span style={{ fontWeight: 'bold' }}>Terms & Privacy Policy</span></p>
                             </Form.Item>
                             {Object.keys(errors).length > 0 && (

@@ -1,0 +1,36 @@
+.grid-container {
+    background-color: #FAFAFA;
+    display: grid;
+    grid-template-columns: 215px 600px 371px;
+    gap: 16px;
+}
+.grid-content {
+    background-color: #FAFAFA;
+    height: 100%;
+}
+.grid-notif {
+    background-color: #FAFAFA;
+    height: 100%; 
+}
+
+@media screen and (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: 8vw 60vw 32vw;
+        width: 100%;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: 100vw;
+        grid-template-rows: 100vh;
+        width: 100%;
+    }
+    .grid-sidebar {
+        display: none;
+    }
+    .grid-notif {
+        display: none;
+    }
+}

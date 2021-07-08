@@ -17,6 +17,13 @@ const reducer = (state, action) => {
         posts: action.payload,
         lastIdPosts,
       };
+
+      case "SET_NAV":
+
+      return {
+        ...state,
+        active: action.payload,
+      };
     case "SET_Insvire E-Sport":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
 
@@ -601,10 +608,12 @@ export const PostContext = createContext({
   isMorePost: true,
   isOpenNewPost: false,
   repost: false,
+  active: "latest",
   setRoom: () => {},
   setLikedPosts: () => {},
   setComment: () => {},
   setPost: () => {},
+  setNav: () => {},
   setSubscribePosts: () => {},
   setMutedPost: () => {},
   subscribePost: () => {},
@@ -622,6 +631,7 @@ const initialState = {
   posts: [],
   room_1: [],
   room_2: [],
+  active: "latest",
   likedPosts: [],
   post: null,
   mutedPost: [],
@@ -637,6 +647,7 @@ export const PostProvider = (props) => {
 
   const {
     posts,
+    active,
     post,
     loading,
     lastIdPosts,
@@ -787,6 +798,13 @@ export const PostProvider = (props) => {
     }
   };
 
+  const setNav = (active) => {
+    dispatch({
+      type: "SET_NAV",
+      payload: active
+    })
+  }
+
   const mutePost = (data, room) => {
     const muteData = {
       owner: data.owner,
@@ -897,7 +915,9 @@ export const PostProvider = (props) => {
         post,
         room_1,
         room_2,
+        active,
         setPosts,
+        setNav,
         setPost,
         setComment,
         loadingData,
