@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useQuery } from "@apollo/client";
 import { useHistory } from 'react-router-dom'
 import cn from 'classnames';
@@ -18,12 +18,22 @@ import { GET_VISITED } from '../../GraphQL/Queries';
 import { LS_LOCATION } from '../../context/constant'
 
 import './style.css';
+import { AuthContext } from '../../context/auth';
 
 export default function Visited() {
   const [location, setLocation] = useState([]);
   const history = useHistory();
   const { data, loading } = useQuery(GET_VISITED);
   const visited = data?.getVisited || [];
+
+  const path = useHistory().location.pathname
+
+  const { setPathname } = useContext(AuthContext)
+
+    useEffect(() => {
+        setPathname(path)
+    }, [])
+
 
   useEffect(() => {
     if (!loading && visited.length) {

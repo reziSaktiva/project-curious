@@ -23,7 +23,7 @@ import {
   Upload,
   Button,
   Form,
-  Image
+  Image,
 } from "antd";
 
 //component
@@ -31,7 +31,7 @@ import Pin from "../../assets/pin-svg-25px.svg";
 import LikeButton from "../../components/Buttons/LikeButton/index";
 import CommentButton from "../../components/Buttons/CommentButton/index";
 import RepostButton from "../../components/Buttons/RepostButton/index";
-import { EllipsisOutlined, PlusOutlined,  LoadingOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined,  LoadingOutlined, MessageOutlined } from "@ant-design/icons";
 import PostNavBar from "../../components/PostNavBar";
 
 // Query
@@ -166,11 +166,6 @@ export default function SinglePost(props) {
     onError(err) {
       console.log(err.message);
     },update(_, { data: { createComment: commentData } }){
-      // const idReply = commentData.reply.id
-
-      // if (idReply) {
-
-      // }
 
       setComment(commentData)
   },
@@ -249,7 +244,7 @@ export default function SinglePost(props) {
                 <div className="action-post__item">
                   <Link to={`/post/${post.id}`}>
 
-                  <CommentButton commentCount={post.commentCount} />
+                  <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
 
                   </Link>
                 </div>
@@ -266,11 +261,11 @@ export default function SinglePost(props) {
             title={
               <div>
                 <Row>
-                  <Col span={12}>
+                  <Col span={18}>
                     <img src={Pin} style={{ width: 20, position: "center" }} />
                     {address}
                   </Col>
-                  <Col span={12} style={{ textAlign: "right" }}>
+                  <Col span={6} style={{ textAlign: "right" }}>
                     <Dropdown
                       overlay={
                         <Menu>

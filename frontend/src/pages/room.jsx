@@ -4,16 +4,22 @@ import { useLazyQuery } from '@apollo/client'
 import { GET_ROOM_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
-import InfiniteScroll from 'react-infinite-scroll-component'
 import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
-import { getSession } from '../util/Session';
 
 
 function Room(props) {
-    console.log();
+    const history = useHistory().location.pathname
+
+    const { setPathname } = useContext(AuthContext)
+  
+      useEffect(() => {
+          setPathname(history)
+      }, [history])
+
     const room = props.match.path
     const _isMounted = useRef(false);
     const { room_1, setRoom, room_2, loadingData, loading } = useContext(PostContext)

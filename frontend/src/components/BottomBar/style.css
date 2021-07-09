@@ -31,3 +31,9 @@
 .bottom-bar__items .active {
   color: #7f57ff;
 }
+
+@media screen and (min-width: 600px) {
+  .bottom-bar {
+    display: none;
+  }
+}

@@ -1,3 +1,9 @@
+.ant-input {
+  background-color: #FAFAFF;
+  height: 40px;
+  width: 343px;
+  border-radius: 10px;
+}
 .header-page {
   display: flex;
   justify-content: center;

@@ -1,14 +1,19 @@
 import React, { useContext } from "react";
 import { Card } from "antd";
-import { AuthContext } from "../context/auth";
+import { AuthContext } from "../../context/auth";
 import { Link } from "react-router-dom";
 import { useMutation, useSubscription } from "@apollo/client";
-import { READ_ALL_NOTIFICATIONS, READ_NOTIFICATION } from "../GraphQL/Mutations";
-import { NOTIFICATION_ADDED } from "../GraphQL/Subsriptions";
+import {
+  READ_ALL_NOTIFICATIONS,
+  READ_NOTIFICATION,
+} from "../../GraphQL/Mutations";
+import { NOTIFICATION_ADDED } from '../../GraphQL/Subsriptions'
 import { Row, Col, Dropdown, Menu } from "antd";
 
-import { EllipsisOutlined } from "@ant-design/icons";
-import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
+import { CLEAR_ALL_NOTIF } from "../../GraphQL/Mutations";
+import { DropIcon } from "../../library/Icon";
+
+import './notif-style.css'
 
 export default function Notification() {
   const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
@@ -27,7 +32,6 @@ export default function Notification() {
 
   const [readNotifications] = useMutation(READ_ALL_NOTIFICATIONS, {
     update(_, { data: { readAllNotification } }) {
-      console.log(readAllNotification);
       readAllNotificatons(readAllNotification);
     },
   });
@@ -44,22 +48,22 @@ export default function Notification() {
       <div className="notif__width">
         <Card
           title={
-        <h3 style={{textAlign: 'center'}}>Notification {
-          notificationRead.length > 1 && <p className="notifCounter">
-              {notifications.length > 99 ?
+        <h3 style={{textAlign: 'center'}}>Notification  {
+          notifications.length > 1 && <div className="notifCounter">
+              <p style={{display: 'flex',justifyContent: 'center', marginTop: 2}}>{notifications.length > 99 ?
                ('99+') :
-                (notifications.length)}
-                </p>}</h3>
+                (notifications.length)}</p>
+                </div>}</h3>
           }
           extra={
             <Dropdown
               overlay={
                 <Menu>
                   <Menu.Item key="0" onClick={readNotifications}>
-                    READ ALL
+                    Read All
                   </Menu.Item>
                   <Menu.Item key="1" onClick={clearNotif}>
-                    CLEAR ALL
+                    Clear All
                   </Menu.Item>
                 </Menu>
               }
@@ -70,7 +74,7 @@ export default function Notification() {
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >
-                <EllipsisOutlined />
+                <DropIcon />
               </a>
             </Dropdown>
           }
@@ -119,7 +123,7 @@ export default function Notification() {
                       }
                     >
                       <div className="notifContainer">
-                        <Row>
+                        <Row style={{paddingLeft: 5, paddingRight: 5}}>
                           <Col span={22}>
                             <p style={{ marginBottom: 5 }}>
                               {notif.displayName}{" "}
@@ -127,7 +131,7 @@ export default function Notification() {
                             </p>
                           </Col>
                           <Col span={2} style={{ color: "#7958f5" }}>
-                            {!notif.read && <p>&#8226;</p>}
+                            {!notif.read && <p style={{textAlign: 'right'}}>&#8226;</p>}
                           </Col>
                         </Row>
                       </div>

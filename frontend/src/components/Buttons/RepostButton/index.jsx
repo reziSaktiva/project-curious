@@ -5,7 +5,7 @@ import { Button } from 'antd';
 
 import './style.css';
 
-export default function RepostButton({ idPost, room, repostCount }) {
+export default function RepostButton({ idPost, room, repostCount, ...rest }) {
   const { toggleOpenNewPost } = useContext(PostContext);
 
   const handleOpenAddPost = () => {

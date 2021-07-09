@@ -4,6 +4,9 @@
 
 .btn-comment .btn-comment__icon {
   z-index: 100;
+  border: 1px solid black; 
+  border-radius: 25px;  
+
 }
 
 .btn-comment .btn-comment__wrapper .btn-comment__label {

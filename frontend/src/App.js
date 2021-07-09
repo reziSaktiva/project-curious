@@ -1,7 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
-import styles from './index.css'
 import 'antd/dist/antd.css'
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
@@ -21,7 +20,7 @@ import map from './pages/map/index'
 import RegisterFacebook from './pages/registerFacebook';
 import RegisterGoogle from './pages/registerGoogle';
 import LandingPage from './pages/landing-page';
-import Grid from './pages/grid';
+import Grid from './pages/grid/grid';
 import SinglePost from './pages/detailPost/detailPost';
 import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
@@ -42,9 +41,11 @@ function App() {
   return (
     <Context>
       <Router>
-        <Grid className={styles.container}>
+        <Grid>
           <Switch>
             <HomeRoute exact path="/" component={LandingPage} />
+            <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
+            <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <AuthRoute exact path="/login" component={login} />
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
@@ -60,8 +61,6 @@ function App() {
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
             <UserRoute exact path="/chat" component={Chat} />
-            <FacebookAuthRoute exact path="/register/facebook" component={RegisterFacebook} />
-            <GoogleAuthRoute exact path="/register/google" component={RegisterGoogle} />
             <UserRoute exact path="/settings" component={settings} />
             <UserRoute exact path="/maps" component={map} />
           </Switch>

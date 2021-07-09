@@ -11,8 +11,11 @@ import Pin from "../../assets/pin-svg-25px.svg";
 import LikeButton from "../Buttons/LikeButton/index";
 import CommentButton from "../Buttons/CommentButton/index";
 import RepostButton from "../Buttons/RepostButton/index";
+import Photo from '../Photo'
 
-import { EllipsisOutlined } from "@ant-design/icons";
+import { DropIcon } from "../../library/Icon";
+import { MessageOutlined, RetweetOutlined } from '@ant-design/icons';
+
 import { useMutation } from "@apollo/client";
 import {
   DELETE_POST,
@@ -92,12 +95,12 @@ export default function PostCard({ post, loading, type }) {
     }
   }, [post, isRepost]);
 
+
   return (
     <List itemLayout="vertical" size="large" style={{
       background: 'white',
       marginBottom: '16px',
-      marginLeft: '16px',
-      marginRight: '16px',
+
       borderRadius: 5
       }}>
       <List.Item
@@ -118,13 +121,11 @@ export default function PostCard({ post, loading, type }) {
                 </div>
                 <div className="action-post__item">
                   <Link to={`/${post.room ? post.room : "post"}/${post.id}`}>
-
-                  <CommentButton commentCount={post.commentCount} />
-
+                  <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
                   </Link>
                 </div>
                 <div className="action-post__item">
-                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} />
+                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} icon={<RetweetOutlined />} />
                 </div>
               </div>
             </>,
@@ -196,7 +197,7 @@ export default function PostCard({ post, loading, type }) {
                       className="ant-dropdown-link"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <EllipsisOutlined />
+                      <DropIcon style={{background: 'red'}} />
                     </a>
                   </Dropdown>
                 </Col>
@@ -238,130 +239,14 @@ export default function PostCard({ post, loading, type }) {
               </div>
             )}
             <span style={{ fontSize: 12 }}>
-              {moment(repost.createdAt).fromNow()}
+              {<div style={{marginBottom: 16}}>{moment(repost.createdAt).fromNow()}</div>}
             </span>
-            {repost.media ? (
-              repost.media.length == 1 ? (
-                <Image
-                  style={{
-                    width: "100%",
-                    borderRadius: 10,
-                    objectFit: "cover",
-                    maxHeight: 300,
-                    objectFit: "cover",
-                  }}
-                  src={repost.media}
-                />
-              ) : null
-            ) : null}
+            {repost.media && <Photo photo={repost.media} />}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
         <p style={{ marginTop: -9 }}>{post.text}</p>
-        {post.media ? (
-          post.media.length == 1 ? (
-            <Image
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
-              src={post.media}
-            />
-          ) : null
-        ) : null}
-
-        {post.media ? (
-          post.media.length == 2 ? (
-            <table className="row-card-2">
-                <tr>
-                  <Image.PreviewGroup>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td>
-                      <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
-                        src={post.media[1]}
-                      />
-                    </td>
-                  </Image.PreviewGroup>
-                </tr>
-            </table>
-          ) : null
-        ) : null}
-
-{post.media ? (
-          post.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <Image.PreviewGroup>
-                <tbody>
-                  <tr style={{ margin: 0, padding: 0 }}>
-                    <td
-                      rowSpan="2"
-                      style={{ width: "50%", verticalAlign: "top" }}
-                    >
-                      <Image
-                        className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
-                        src={post.media[1]}
-                      />
-                      <div
-                        className="text-container"
-                        style={{ marginTop: "-6px" }}
-                      >
-                        <Image
-                          className="pict3-3"
-                          style={
-                            post.media.length > 3
-                              ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
-                              : { borderRadius: "0px 0px 10px 0px" }
-                          }
-                          src={post.media[2]}
-                        />
-                        <div className="text-center">
-                          {post.media.length > 3
-                            ? "+" + (post.media.length - 3)
-                            : null}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {post.media.length > 3 ? (
-                    <div>
-                      <Image
-                        className="pict3-3"
-                        style={{ display: "none" }}
-                        src={post.media[3]}
-                      />
-                      {post.media.length > 4 ? (
-                        <Image
-                          className="pict3-3"
-                          style={{ display: "none" }}
-                          src={post.media[4]}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null}
-                </tbody>
-              </Image.PreviewGroup>
-            </table>
-          ) : null
-        ) : null}
+        <Photo photo={post.media} />
 
       </List.Item>
     </List>

@@ -279,8 +279,8 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50, top: -15 }}>
-                    <img src={Pin} style={{ display: 'inline-block', width: 40, marginBottom: "auto", }} />
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50   }}>
+                    <img src={Pin} style={{ display: 'inline-block', width: 40,  }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>

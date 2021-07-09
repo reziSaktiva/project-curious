@@ -20,7 +20,6 @@ export default function PhotoGalerry({ post, loading }) {
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
 
-  console.log(address);
   const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
       alert(deletePost);

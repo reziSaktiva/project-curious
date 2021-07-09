@@ -5,11 +5,10 @@ import { AuthContext } from '../context/auth'
 
 function GoogleAuthRoute({ component: Component, ...rest }) {
     const { googleData } = useContext(AuthContext);
-    console.log(googleData);
     return (
         <Route
             {...rest}
-            render={props =>
+            render={props => 
                 !googleData ? <Redirect to='/' /> : <Component {...props} /> 
             }
         />
