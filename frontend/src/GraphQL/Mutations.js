@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { commentDetailFragment, notificationDetailFragment, postDetailFragment } from "./Fragment";
 
 export const DELETE_ACCOUNT = gql`
   mutation deleteAccount($id: ID!) {
@@ -21,131 +22,68 @@ export const CLEAR_ALL_NOTIF = gql`
   mutation clearNotif {
   clearAllNotif
 }
-`
+`;
 
 export const CREATE_POST = gql`
-  mutation createPost($text: String!, $lat: Float, $lng: Float) {
-    createPost(text: $text, location: { lat: $lat, lng: $lng }) {
-      id
-      text
-      owner
-      createdAt
-      repostCount
-      likeCount
-      commentCount
-      room
-      location {
-        lat
-        lng
-      }
-      likes {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-      }
-      muted {
-        id
-        owner
-        postId
-        createdAt
-      }
-      repost {
-        id
-        owner
-        text
-        media
-        createdAt
-        location {
-          lat
-          lng
-        }
-      }
-      subscribe {
-        postId
-        owner
-        createdAt
-        displayName
-        displayImage
-        colorCode
+  mutation createPost(
+    $text: String
+    $media: [String]
+    $location: Location!
+    $repost: String
+    $roomRepost: String
+    $room: String
+  ) {
+    createPost(
+    text: $text
+    media: $media
+    location: $location
+    repost: {
+      repost: $repost
+      room: $roomRepost
     }
+    room: $room
+  ) {
+      ...PostDetail
     }
   }
+  ${postDetailFragment}
 `;
 
 export const CREATE_COMMENT = gql`
 mutation createComment($id: ID!, $text: String!, $reply: Reply, $photo: String, $room:String) {
   createComment(id : $id, text: $text, reply: $reply, photo: $photo, room: $room) {
-  id
-  owner
-  text
-  createdAt
-  colorCode
-  photo
-  displayName
-  displayImage
-  reply {
-    username
-    id
+      ...CommentDetail
     }
   }
-}
+  ${commentDetailFragment}
 `;
 
 export const DELETE_COMMENT = gql`
   mutation deleteComment($postId: ID!, $commentId: ID!, $room: String) {
       deleteComment(postId: $postId, commentId: $commentId, room: $room) {
-      id
-      owner
-      text
-      createdAt
-      colorCode
-      photo
-      displayName
-      displayImage
-      reply {
-        username
-        id
-        }
-      }
+      ...CommentDetail
+    }
   }
-`
+  ${commentDetailFragment}
+`;
 
 export const READ_ALL_NOTIFICATIONS = gql`
   mutation readNotifications {
-    readAllNotification{
-      recipient
-      sender
-      read
-      postId
-      id
-      type
-      createdAt
-      displayName
-      displayImage
-      colorCode
+    readAllNotification {
+      ...NotificationDetail
     }
   }
-`
+  ${notificationDetailFragment}
+`;
 
 export const READ_NOTIFICATION = gql`
   mutation readNotification($id: ID!) {
     readNotification(id: $id){
-      recipient
-      sender
-      read
-      postId
-      id
-      type
-      createdAt
-      displayName
-      displayImage
-      colorCode
+      ...NotificationDetail
+    }
   }
-}
-`
+  ${notificationDetailFragment}
+`;
 
 export const DELETE_POST = gql`
   mutation deletePost($id: ID! $room: String) {
@@ -176,89 +114,19 @@ export const MUTE_POST = gql`
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {
     nextPosts(id: $id, lat:$lat ,lng: $lng) {
-      id
-      owner
-      text
-      media
-      createdAt
-      commentCount
-      repostCount
-      likeCount
-      location {
-        lat
-        lng
-      }
-      likes {
-        id
-        owner
-        createdAt
-        colorCode
-        displayName
-        displayImage
-      }
-      muted {
-        id
-        owner
-        postId
-        createdAt
-      }
-      repost {
-        id
-        owner
-        text
-        media
-        createdAt
-        location {
-          lat
-          lng
-        }
-      }
+      ...PostDetail
     }
   }
+  ${postDetailFragment}
 `;
 
 export const GET_MORE_POPULAR = gql`
 mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
   nextPopularPosts(id: $id, lat:$lat ,lng: $lng) {
-    id
-    owner
-    text
-    media
-    createdAt
-    commentCount
-    likeCount
-    repostCount
-    location {
-      lat
-      lng
-    }
-    likes {
-      id
-      owner
-      createdAt
-      colorCode
-      displayName
-      displayImage
-    }
-    muted {
-      id
-      owner
-      postId
-      createdAt
-    }
-    repost {
-      id
-      owner
-      text
-      media
-      createdAt
-      location {
-        lat
-        lng
-      }
+      ...PostDetail
     }
   }
-}
+  ${postDetailFragment}
 `;
 
 export const LIKE_POST = gql`
