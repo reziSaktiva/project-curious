@@ -1,10 +1,10 @@
-const { UserInputError } = require('apollo-server-express');
+const { UserInputError, withFilter } = require('apollo-server-express');
 const { Client } = require("@googlemaps/google-maps-services-js");
 const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { db, auth } = require('../../utility/admin')
+const { db, auth, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
 const firebase = require('firebase')
 const config = require('../../utility/config')
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -14,6 +14,14 @@ const { validateRegisterInput, validateLoginInput } = require('../../utility/val
 firebase.initializeApp(config)
 
 module.exports = {
+    Subscription: {
+        notificationAdded: {
+            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), async (payload, _variables, context) => {
+                const { username } = await fbAuthContext(context)
+                return payload.notificationAdded.owner === username
+            })
+        }
+    },
     Query: {
         async getUserData(_, args, context) {
             const { username } = await fbAuthContext(context)

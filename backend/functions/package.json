@@ -2,10 +2,10 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
+    "serve": "firebase emulators:start functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy functions",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -25,6 +25,8 @@
     "firebase-functions": "^3.11.0",
     "firebase-tools": "^9.10.2",
     "graphql": "^15.4.0",
+    "graphql-subscriptions": "^1.2.1",
+    "http": "0.0.1-security",
     "spherical-geometry-js": "^2.0.0"
   },
   "devDependencies": {
