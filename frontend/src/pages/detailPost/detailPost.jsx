@@ -32,7 +32,8 @@ import LikeButton from "../../components/Buttons/LikeButton/index";
 import CommentButton from "../../components/Buttons/CommentButton/index";
 import RepostButton from "../../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined,  LoadingOutlined, MessageOutlined } from "@ant-design/icons";
-import PostNavBar from "../../components/PostNavBar";
+import Photo from "../components/Photo";
+import PostNavBar from "../components/PostNavBar";
 
 // Query
 import { GET_POST } from "../../GraphQL/Queries";
@@ -299,7 +300,8 @@ export default function SinglePost(props) {
               width: "100%",
               height: "100%",
               borderRadius: 10,
-              background: "white",
+              backgroundColor: "#f5f5f5",
+              borderColor: "#ededed",
               padding: 0,
               marginBottom: 20,
             }}
@@ -313,129 +315,14 @@ export default function SinglePost(props) {
             <span style={{ fontSize: 12 }}>
               {moment(repost.createdAt).fromNow()}
             </span>
-            {repost.media?(
-              repost.media.length == 1 ? (
-                <Image
-                  style={{ width: "100%", borderRadius: 10, objectFit: "cover", maxHeight: 300, objectFit: "cover" }}
-                  src={repost.media}
-                />
-              ) : null
-              ) : null}
+            <Photo photo={repost.media} />
+            
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
-
           {post.text}
-          {/* mediaaaaaaaaaaaaaa */}
+          <Photo photo={post.media} />
 
-          {post.media ? (
-          post.media.length == 1 ? (
-            <Image
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
-              src={post.media}
-            />
-          ) : null
-        ) : null}
-
-        {post.media ? (
-          post.media.length == 2 ? (
-            <table className="row-card-2">
-              <tbody>
-                <tr>
-                  <Image.PreviewGroup>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td>
-                      <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
-                        src={post.media[1]}
-                      />
-                    </td>
-                  </Image.PreviewGroup>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
-
-        {post.media ? (
-          post.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <Image.PreviewGroup>
-                <tbody>
-                  <tr style={{ margin: 0, padding: 0 }}>
-                    <td
-                      rowSpan="2"
-                      style={{ width: "50%", verticalAlign: "top" }}
-                    >
-                      <Image
-                        className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
-                        src={post.media[1]}
-                      />
-                      <div
-                        className="text-container"
-                        style={{ marginTop: "-6px" }}
-                      >
-                        <Image
-                          className="pict3-3"
-                          style={
-                            post.media.length > 3
-                              ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
-                              : { borderRadius: "0px 0px 10px 0px" }
-                          }
-                          src={post.media[2]}
-                        />
-                        <div className="text-center">
-                          {post.media.length > 3
-                            ? "+" + (post.media.length - 3)
-                            : null}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {post.media.length > 3 ? (
-                    <div>
-                      <Image
-                        className="pict3-3"
-                        style={{ display: "none" }}
-                        src={post.media[3]}
-                      />
-                      {post.media.length > 4 ? (
-                        <Image
-                          className="pict3-3"
-                          style={{ display: "none" }}
-                          src={post.media[4]}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null}
-                </tbody>
-              </Image.PreviewGroup>
-            </table>
-          ) : null
-        ) : null}
-
-          {/* mediaaaaaaaaaaaa end */}
         </Skeleton>
       </List.Item>
       {post && post.comments && post.comments.length == 0 ? (null) : <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
@@ -498,7 +385,7 @@ export default function SinglePost(props) {
               name="comment"
 
                 placeholder="Write your comment..."
-                style={{ borderRadius: 20 }}
+                style={{ borderRadius: 15, width:'100%', height:30 }}
               />
             </Form.Item>
           </Col>
@@ -530,5 +417,4 @@ export default function SinglePost(props) {
     </List>
     </div>
   )
-  
 }

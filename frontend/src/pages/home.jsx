@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 
@@ -26,13 +26,10 @@ function Home() {
     const [burger, setBurger] = useState({
         toggle : false
     })
-    const [notif, setNotif] = useState({
-        toggle : false
-    })
 
     const _isMounted = useRef(false);
     
-    const { posts, setPosts, loadingData, loading } = useContext(PostContext)
+    const { posts, setPosts, setNavMobileOpen,  loadingData, loading } = useContext(PostContext)
     const { user, setPathname } = useContext(AuthContext)
 
     useEffect(() => {
@@ -47,11 +44,7 @@ function Home() {
         })
     }
     const handleNotif = () => {
-        setNotif(prevState => {
-            return {
-                toggle : !prevState.toggle
-            }
-        })
+        setNavMobileOpen(true)
     }
     const handleBackdropClose = () => {
         setBurger({toggle: false})
@@ -94,7 +87,7 @@ function Home() {
     return (
         <div style={{height: "100%"}}>
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
-            <NotificationMobile show={notif.toggle} />
+            <NotificationMobile />
             <SidebarMobile show={burger.toggle} />
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 

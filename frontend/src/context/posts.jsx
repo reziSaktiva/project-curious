@@ -24,6 +24,12 @@ const reducer = (state, action) => {
         ...state,
         active: action.payload,
       };
+      case "SET_NAV_MOBILE_OPEN":
+
+      return {
+        ...state,
+        isNavMobileOpen: action.payload,
+      };
     case "SET_Insvire E-Sport":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
 
@@ -585,6 +591,8 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   active: "latest",
+  isNavMobileOpen: false,
+  setNavMobileOpen: () => {},
   setRoom: () => {},
   setLikedPosts: () => {},
   setComment: () => {},
@@ -608,6 +616,7 @@ const initialState = {
   room_1: [],
   room_2: [],
   active: "latest",
+  isNavMobileOpen: false,
   likedPosts: [],
   post: null,
   mutedPost: [],
@@ -622,6 +631,7 @@ export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
+    isNavMobileOpen,
     posts,
     active,
     post,
@@ -780,6 +790,12 @@ export const PostProvider = (props) => {
       payload: active
     })
   }
+  const setNavMobileOpen = (isNavMobileOpen) => {
+    dispatch({
+      type: "SET_NAV_MOBILE_OPEN",
+      payload: isNavMobileOpen
+    })
+  }
 
   const mutePost = (data, room) => {
     const muteData = {
@@ -892,6 +908,7 @@ export const PostProvider = (props) => {
         room_1,
         room_2,
         active,
+        isNavMobileOpen,
         setPosts,
         setNav,
         setPost,
@@ -909,6 +926,7 @@ export const PostProvider = (props) => {
         setSubscribePosts,
         setRoom,
         commentDelete,
+        setNavMobileOpen,
         likedPosts,
         subscribePosts,
         mutedPost,

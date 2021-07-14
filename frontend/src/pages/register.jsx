@@ -101,8 +101,8 @@ const Register = (props) => {
                 <div>
 
                 </div>
-                <div class="ui card container centeringImage" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
-                    <div class="content">
+                <div className="landing-card">
+                    <div className="content">
                         <Form
                             form={form}
                             name="register"
@@ -126,7 +126,7 @@ const Register = (props) => {
                                 ]}
                             >
 
-                                <Input placeholder="Email adress" />
+                                <Input placeholder="Email adress" style={{width:"100%"}} />
                             </Form.Item>
                             <Form.Item
                                 name="phone"
@@ -142,7 +142,7 @@ const Register = (props) => {
                                 <Input
                                     addonBefore={phoneCode}
                                     placeholder="Phone number"
-                                    style={{width: 343}}
+                                    style={{width: "100%"}}
                                 />
                             </Form.Item>
                             <Form.Item
@@ -156,7 +156,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Input placeholder="Username" />
+                                <Input placeholder="Username"  style={{width:"100%"}}/>
                             </Form.Item>
                             <Form.Item
                                 name="password"
@@ -168,7 +168,7 @@ const Register = (props) => {
                                 ]}
                                 hasFeedback
                             >
-                                <Input.Password style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: 343}} placeholder="Password" />
+                                <Input.Password style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: "100%"}} placeholder="Password" />
                             </Form.Item>
                             <Form.Item
                                 name="birthday"
@@ -179,7 +179,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <DatePicker placeholder="birthday"  />
+                                <DatePicker placeholder="birthday" style={{width:"100%"}}  />
                             </Form.Item>
 
                             <Form.Item
@@ -192,7 +192,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Cascader style={{backgroundColor: '#FAFAFF', width: 343}} options={gender} />
+                                <Cascader style={{backgroundColor: '#FAFAFF', width: "100%"}} options={gender} />
                             </Form.Item>
                             <Form.Item
                                 name="agreement"
