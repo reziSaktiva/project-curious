@@ -342,10 +342,9 @@ export default function SinglePost(props) {
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
-
           {post.text}
           <Photo photo={post.media} />
-          
+
         </Skeleton>
       </List.Item>
       {post && post.comments && post.comments.length == 0 ? (null) : (
