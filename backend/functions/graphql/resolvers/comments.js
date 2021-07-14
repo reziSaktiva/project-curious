@@ -48,6 +48,55 @@ module.exports = {
 
                         doc.update({ id: doc.id, displayName: name, displayImage: displayImage, colorCode })
 
+                        if(newComment.reply.username && newComment.reply.id && newComment.reply.username !== username) {
+                            const notifReply = {
+                                owner: newComment.reply.username,
+                                recipient: newComment.reply.username,
+                                sender: username,
+                                read: false,
+                                postId: id,
+                                type: 'REPLY_COMMENT',
+                                createdAt: new Date().toISOString(),
+                                displayName: name,
+                                displayImage,
+                                colorCode
+                            }
+                            return db.collection(`/users/${newComment.reply.username}/notifications`).add(notifReply)
+                                .then(data => {
+                                    data.update({ id: data.id })
+                                    pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifReply, id: data.id}})
+
+                                    return subscribeCollection.get()
+                                        .then(data => {
+                                            if (!data.empty) {
+                                                return data.docs.forEach(doc => {
+                                                    if (doc.data().owner !== username) {
+                                                        // FIX ME
+                                                        const notifSubscribe = {
+                                                            owner: doc.data().owner,
+                                                            recipient: postOwner,
+                                                            sender: username,
+                                                            read: false,
+                                                            postId: id,
+                                                            type: 'COMMENT',
+                                                            createdAt: new Date().toISOString(),
+                                                            displayName: name,
+                                                            displayImage,
+                                                            colorCode
+                                                        }
+                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add(notifSubscribe)
+                                                            .then(data => {
+                                                                data.update({ id: data.id })
+                                                                pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifSubscribe, id: data.id}})
+                                                            })
+                                                    }
+                                                })
+                                            }
+                                        })
+                                })
+
+                        }
+
                         if (postOwner !== username) {
                             // FIX ME (done)
                             const notifData = {
@@ -89,26 +138,6 @@ module.exports = {
                                                             .then(data => {
                                                                 data.update({ id: data.id })
                                                                 pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifSubscribe, id: data.id}})
-                                                                if(newComment.reply.owner && newComment.reply.owner !== username) {
-                                                                    const notifReply = {
-                                                                        owner: newComment.reply.owner,
-                                                                        recipient: newComment.reply.owner,
-                                                                        sender: username,
-                                                                        read: false,
-                                                                        postId: id,
-                                                                        type: 'REPLY_COMMENT',
-                                                                        createdAt: new Date().toISOString(),
-                                                                        displayName: name,
-                                                                        displayImage,
-                                                                        colorCode
-                                                                    }
-                                                                    return db.collection(`/users/${newComment.reply.owner}/notifications`).add(notifReply)
-                                                                        .then(data => {
-                                                                            data.update({ id: data.id })
-                                                                            pubSub.publish(NOTIFICATION_ADDED, {notificationAdded: {...notifReply, id: data.id}})
-                                                                        })
-
-                                                                }
                                                             })
                                                     }
                                                 })
@@ -130,7 +159,7 @@ module.exports = {
 
             const commentCollection = db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId)
             const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`)
-
+            
             try {
                 let postOwner;
                 let comment;
@@ -140,7 +169,6 @@ module.exports = {
                         if (!doc.exists) {
                             throw new UserInputError("postingan tidak di temukan/sudah di hapus")
                         } else {
-                            comment = doc.data()
                             postOwner = doc.data().owner;
 
                             return commentCollection.get()
@@ -148,6 +176,7 @@ module.exports = {
                                     if (!doc.exists) {
                                         throw new UserInputError('Comment tidak tersedia')
                                     } else {
+                                        comment = doc.data()
                                         if (username !== doc.data().owner) {
                                             throw new UserInputError('Anda tidak boleh menghapus comment ini')
                                         } else {

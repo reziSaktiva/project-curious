@@ -9,8 +9,9 @@ import { AuthContext } from "../context/auth";
 import { useMutation } from "@apollo/client";
 import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
+import { MAP_API_KEY } from "../util/ConfigMap";
 
-Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
+Geocode.setApiKey(MAP_API_KEY);
 
 Geocode.setLanguage("id");
 

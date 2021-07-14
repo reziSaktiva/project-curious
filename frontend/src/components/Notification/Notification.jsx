@@ -2,11 +2,12 @@ import React, { useContext } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+import { useMutation, useSubscription } from "@apollo/client";
 import {
   READ_ALL_NOTIFICATIONS,
   READ_NOTIFICATION,
 } from "../../GraphQL/Mutations";
+import { NOTIFICATION_ADDED } from '../../GraphQL/Subsriptions'
 import { Row, Col, Dropdown, Menu } from "antd";
 
 import { CLEAR_ALL_NOTIF } from "../../GraphQL/Mutations";
@@ -15,10 +16,14 @@ import { DropIcon } from "../../library/Icon";
 import './notif-style.css'
 
 export default function Notification() {
-  const { notifications, notificationRead, readAllNotificatons } =
-    useContext(AuthContext);
+  const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
 
+  const {data, loading, error} = useSubscription(NOTIFICATION_ADDED)
+  console.log("data", data);
+  console.log("loading", loading);
+  console.log("error", error);
+  
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
       notificationRead(readNotification);
@@ -83,6 +88,7 @@ export default function Notification() {
                 notifications.map((notif, key) => {
                   let type = "";
                   let text = "";
+
                   switch (notif.type) {
                     case "LIKE":
                       type = "liked";
@@ -95,6 +101,11 @@ export default function Notification() {
                     case "COMMENT":
                       type = "commented";
                       text = "comment";
+                      break;
+                    case "REPLY_COMMENT":
+                      type = "reply";
+                      text = "reply";
+                    break;
                     default:
                       break;
                   }
@@ -118,7 +129,7 @@ export default function Notification() {
                           <Col span={22}>
                             <p style={{ marginBottom: 5 }}>
                               {notif.displayName}{" "}
-                              <span>{`${type} your post.`}</span>{" "}
+                              <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
                             </p>
                           </Col>
                           <Col span={2} style={{ color: "#7958f5" }}>

@@ -21,7 +21,7 @@ import RegisterFacebook from './pages/registerFacebook';
 import RegisterGoogle from './pages/GoogleRegs/registerGoogle';
 import LandingPage from './pages/landing-page';
 import Grid from './pages/grid/grid';
-import SinglePost from './pages/detailPost';
+import SinglePost from './pages/detailPost/detailPost';
 import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'

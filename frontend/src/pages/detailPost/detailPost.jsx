@@ -1,20 +1,19 @@
 //GQL
-import moment, { defaultFormatUtc } from "moment";
+import moment from "moment";
 import Geocode from "react-geocode";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { CREATE_COMMENT, DELETE_COMMENT } from "../GraphQL/Mutations";
+import { CREATE_COMMENT } from "../../GraphQL/Mutations";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Meta from "antd/lib/card/Meta";
+import Comments from './comments'
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { get } from "lodash";
 
-import '../components/PostCard/style.css';
+import '../../components/PostCard/style.css';
 
 //antd
 import {
   Skeleton,
   List,
-  Avatar,
   Card,
   Row,
   Col,
@@ -28,26 +27,27 @@ import {
 } from "antd";
 
 //component
-import Pin from "../assets/pin-svg-25px.svg";
-import LikeButton from "../components/Buttons/LikeButton/index";
-import CommentButton from "../components/Buttons/CommentButton/index";
-import RepostButton from "../components/Buttons/RepostButton/index";
+import Pin from "../../assets/pin-svg-25px.svg";
+import LikeButton from "../../components/Buttons/LikeButton/index";
+import CommentButton from "../../components/Buttons/CommentButton/index";
+import RepostButton from "../../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined,  LoadingOutlined, MessageOutlined } from "@ant-design/icons";
 import Photo from "../components/Photo";
 import PostNavBar from "../components/PostNavBar";
 
 // Query
-import { GET_POST } from "../GraphQL/Queries";
-import { PostContext } from "../context/posts";
+import { GET_POST } from "../../GraphQL/Queries";
+import { PostContext } from "../../context/posts";
 
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
-import { AuthContext } from "../context/auth";
+import { AuthContext } from "../../context/auth";
+import { MAP_API_KEY } from "../../util/ConfigMap";
 const  storage = firebase.storage()
 
 //location
-Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
+Geocode.setApiKey(MAP_API_KEY);
 Geocode.setLanguage("id");
 
 function getBase64(file) {
@@ -61,7 +61,7 @@ function getBase64(file) {
 
 export default function SinglePost(props) {
   const _isMounted = useRef(false)
-  const { post, setPost, loading, loadingData, setComment, commentDelete } = useContext(PostContext);
+  const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
@@ -111,18 +111,6 @@ export default function SinglePost(props) {
     }
   }, [id]);
 
-  //reply func
-  const handleReply =item => {
-    setReply({
-      username : item.displayName,
-      id: item.id
-    })
-
-    form.setFieldsValue({
-      comment : `Reply to ${item.displayName}: ` 
-    })
-
-  }
   //input form
 
   useEffect(() => {
@@ -135,7 +123,6 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
-
 
       Geocode.fromLatLng(post.location.lat, post.location.lng).then(
         (response) => {
@@ -184,15 +171,6 @@ export default function SinglePost(props) {
       setComment(commentData)
   },
   });
-
-  const [deleteComment] = useMutation(DELETE_COMMENT, {
-    onError(err) {
-      console.log(err.message);
-    },update(_, { data: { deleteComment: commentData } }){
-
-      commentDelete(commentData)
-  },
-  })
 
   const onFinish = async value => {
     const { comment } = value;
@@ -347,208 +325,7 @@ export default function SinglePost(props) {
 
         </Skeleton>
       </List.Item>
-      {post && post.comments && post.comments.length == 0 ? (null) : (
-        <div>
-          <List
-          itemLayout="vertical"
-          size="large"
-          dataSource={post.comments || []}
-          renderItem={(comment) => (
-            <Card
-              style={{
-                width: "100%",
-                backgroundColor: "#ececec",
-                marginBottom: -20,
-              }}
-              loading={loading}
-            >
-              <Meta
-                avatar={
-                  <div>
-                    {comment.replyList && comment.replyList.length ? <div className="commentContainer"/> : null}
-                    <Avatar
-                    className="photo-comment"
-                      size={50}
-                      style={{
-                        backgroundImage: `url(${comment.displayImage})`,
-                        backgroundColor: comment.colorCode,
-                        backgroundSize: 50,
-                      }}
-                    />
-                  </div>
-                    
-                }
-                title={
-                  <Row>
-                    <Col span={12}>
-                      <p style={{ fontWeight: "bold" }}>{comment.displayName}</p>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Dropdown
-                        overlay={
-                          <Menu>
-                            {comment.owner === user.username ? (
-                              <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: comment.id, room: post.room } })}>Delete Comment</Menu.Item>
-                            ) : null}
-                            <Menu.Item key="3">Report</Menu.Item>
-                            <Menu.Item key="4">Delete</Menu.Item>
-                          </Menu>
-                        }
-                        trigger={["click"]}
-                        placement="bottomRight"
-                      >
-                        <a
-                          className="ant-dropdown-link"
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <EllipsisOutlined />
-                        </a>
-                      </Dropdown>
-                    </Col>
-                  </Row>
-                }
-                description={<div>
-                  <p style={{ color: "black" }}>{comment.text}</p>
-                  {comment.photo ?(
-                    <div style={{width: '80%'}}>
-                    <Image
-                    style={{
-                      height: 220,
-                      borderRadius: 10,
-                      objectFit: "cover",
-                      maxHeight: 300,
-                      objectFit: "cover",
-                    }}
-                    src={comment.photo}
-                  />
-                    </div>
-                    
-                  ) : null}
-                  </div>}
-              />
-              <div
-                style={{
-                  marginTop: 20,
-                  display: "inline-block",
-                  marginBottom: -20,
-                }}
-              >
-                <p>
-                  {moment(comment.createdAt).fromNow()}
-                  
-                  <Button
-                  type="link"
-                  onClick={() => handleReply(comment)}
-                    style={{
-                      fontWeight: "bold",
-                      display: "inline-block",
-                      marginLeft: 10,
-                      color: "black"
-                    }}
-                  >
-                    Reply
-                  </Button>
-                </p>
-              </div>
-            <div>
-            <List
-            className="commentContainerReply"
-          itemLayout="vertical"
-          size="large"
-          dataSource={comment.replyList || []}
-          renderItem={(item, key) => (
-            <Card
-              style={{
-                width: "100%",
-                backgroundColor: "#ececec",
-                marginBottom: -20,
-              }}
-              loading={loading}
-            >
-              <Meta
-                avatar={
-                  <>
-                    {comment && comment.replyList.length !== key + 1 && <div className="commentContainer"/>}
-                    
-                    <Avatar
-                    className="photo-comment"
-                      size={50}
-                      style={{
-                        backgroundColor: item.colorCode,
-                        backgroundImage: `url('${item.displayImage}')`,
-                        backgroundSize: 50,
-                      }}
-                    />
-                  </>
-                }
-                title={
-                  <Row>
-                    <Col span={12}>
-                      <p style={{ fontWeight: "bold" }}>{item.displayName}</p>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Dropdown
-                        overlay={
-                          <Menu>
-                            {item.owner === user.username ? (
-                              <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: item.id, room: post.room } })}>Delete Comment</Menu.Item>
-                            ) : null}
-                            <Menu.Item key="3">Report</Menu.Item>
-                          </Menu>
-                        }
-                        trigger={["click"]}
-                        placement="bottomRight"
-                      >
-                        <a
-                          className="ant-dropdown-link"
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <EllipsisOutlined />
-                        </a>
-                      </Dropdown>
-                    </Col>
-                  </Row>
-                }
-                description={<p style={{ color: "black" }}>{item.text}</p>}
-              />
-              <div
-                style={{
-                  marginTop: 20,
-                  display: "inline-block",
-                  marginBottom: -20,
-                }}
-              >
-                <p>
-                  {moment(item.createdAt).fromNow()}
-                  
-                  <Button
-                  type="link"
-                  onClick={() => handleReply(item)}
-                    style={{
-                      fontWeight: "bold",
-                      display: "inline-block",
-                      marginLeft: 10,
-                      color: "black"
-                    }}
-                  >
-                    Reply
-                  </Button>
-                </p>
-              </div>
-            <div>
-            </div>
-            </Card>
-          )}>
-          </List>
-            </div>
-            </Card>
-          )}>
-          </List>
-          
-        </div>
-        
-        
-      )}
+      {post && post.comments && post.comments.length == 0 ? (null) : <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
       <Form
        form={form}
         style={{ marginTop: 21, paddingBottom: -20 }}

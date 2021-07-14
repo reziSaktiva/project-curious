@@ -1,7 +1,8 @@
 import Geocode from "react-geocode";
+import { MAP_API_KEY } from './ConfigMap'
 
 // Initialize
-Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
+Geocode.setApiKey(MAP_API_KEY);
 Geocode.setLanguage("id");
 
 const getAddress = ({ lat, lng }) => {

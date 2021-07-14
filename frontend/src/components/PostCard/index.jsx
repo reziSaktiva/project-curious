@@ -25,8 +25,9 @@ import {
 import { PostContext } from "../../context/posts";
 
 import "./style.css";
+import { MAP_API_KEY } from "../../util/ConfigMap";
 
-Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
+Geocode.setApiKey(MAP_API_KEY);
 
 Geocode.setLanguage("id");
 

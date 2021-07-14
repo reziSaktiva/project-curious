@@ -73,7 +73,7 @@ module.exports = gql`
         displayImage: String
         colorCode: String
         reply: ReplyData
-        replyList: [Comment]
+        # replyList: [Comment]
     },
     
     input Reply {

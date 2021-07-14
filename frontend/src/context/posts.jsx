@@ -129,57 +129,57 @@ const reducer = (state, action) => {
         room_2: state.room_2.filter((post) => post.id !== idDelete),
       };
     case "SET_COMMENT":
-      const { payload } = action;
-      const hasReply = payload.reply && payload.reply.id;
+      // const { payload } = action;
+      // const hasReply = payload.reply && payload.reply.id;
 
-      if (hasReply) {
-        const match = state.post.comments.findIndex(
-          (itm) => itm.id == payload.reply.id
-        );
+      // if (hasReply) {
+      //   const match = state.post.comments.findIndex(
+      //     (itm) => itm.id == payload.reply.id
+      //   );
 
-        if (!match) {
-          if (state.post.comments.length > 1) {
-            const recursive = (list) => {
-              return list.map((itm) => {
-                if (itm.id === payload.reply.id) {
+      //   if (!match) {
+      //     if (state.post.comments.length > 1) {
+      //       const recursive = (list) => {
+      //         return list.map((itm) => {
+      //           if (itm.id === payload.reply.id) {
   
-                  return { ...itm, replyList: itm.replyList.concat(payload) };
+      //             return { ...itm, replyList: itm.replyList.concat(payload) };
   
-                } else {
-                  if (!itm.replyList) return itm;
+      //           } else {
+      //             if (!itm.replyList) return itm;
   
-                  return recursive(itm.replyList);
-                }
-              });
-            };
+      //             return recursive(itm.replyList);
+      //           }
+      //         });
+      //       };
   
-            const newComments = recursive(state.post.comments);
+      //       const newComments = recursive(state.post.comments);
   
-            return {
-              ...state,
-              post: {
-                ...state.post,
-                comments: newComments,
-                commentsCount: state.post.comments + 1,
-              },
-            };
-          }
+      //       return {
+      //         ...state,
+      //         post: {
+      //           ...state.post,
+      //           comments: newComments,
+      //           commentsCount: state.post.comments + 1,
+      //         },
+      //       };
+      //     }
 
-          if (state.post.comments.length === 1) {
-            const newComments = state.post.comments;
-            newComments[0].replyList = [action.payload];
+      //     if (state.post.comments.length === 1) {
+      //       const newComments = state.post.comments;
+      //       newComments[0].replyList = [action.payload];
 
-            return {
-              ...state,
-              post: {
-                ...state.post,
-                comments: newComments,
-                commentsCount: state.post.comments + 1,
-              },
-            }
-          }
-        }
-      }
+      //       return {
+      //         ...state,
+      //         post: {
+      //           ...state.post,
+      //           comments: newComments,
+      //           commentsCount: state.post.comments + 1,
+      //         },
+      //       }
+      //     }
+      //   }
+      // }
 
       return {
         ...state,
@@ -190,36 +190,15 @@ const reducer = (state, action) => {
         },
       };
     case "DELETE_COMMENT":
-      if (action.payload.reply && action.payload.reply.id) {
-        const find = state.post.comments.findIndex(
-          (itm) => itm.id == action.payload.reply.id
-        );
-
-        if (!find) {
-          const recursive = (list) => {
-            return list.map((itm) => {
-              return { ...itm, replyList: itm.replyList.filter(list => list !== action.payload.id) };
-            });
-          };
-
-          const newComments = recursive(state.post.comments);
-
-          return {
-            ...state,
-            post: {
-              ...state.post,
-              comments: newComments,
-              commentsCount: state.post.comments + 1,
-            },
-          };
-        }
-      }
+      console.log(state.post.comments.filter(
+        (comment) => comment.id !== action.payload.id
+      ));
       return {
         ...state,
         post: {
           ...state.post,
           comments: state.post.comments.filter(
-            (comment) => comment.id !== action.payload
+            (comment) => comment.id !== action.payload.id
           ),
         },
       };
@@ -710,6 +689,8 @@ export const PostProvider = (props) => {
       type: "DELETE_COMMENT",
       payload: data,
     });
+
+    console.log(data);
   };
 
   const setLikedPosts = (posts) => {
