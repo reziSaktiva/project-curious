@@ -8,7 +8,6 @@ Geocode.setLanguage("id");
 const getAddress = ({ lat, lng }) => {
   Geocode.fromLatLng(lat, lng).then(
     (response) => {
-      console.log('address: ', response.results[0])
       const address = response.results[0].address_components[1].short_name;
 
       return address;

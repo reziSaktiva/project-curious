@@ -166,7 +166,6 @@ export function AuthProvider(props) {
 
   useEffect(() => {
     if (token) {
-      // do load data user with token from localstorage
       if (!called) {
         return loadDataUser();
       }
@@ -197,7 +196,7 @@ export function AuthProvider(props) {
       const user = get(data, "getUserData.user", {});
       const notifications = get(data, "getUserData.notifications", []);
       const likes = get(data, "getUserData.liked", []);
-
+      console.log("user", user);
       dispatch({
         type: SET_USER_DATA,
         payload: user,
@@ -249,15 +248,10 @@ export function AuthProvider(props) {
     })
   }
 
-  function login(userData) {
+  function login(token) {
     navigator.geolocation.getCurrentPosition(getGeoLocation, showError);
 
-    localStorage.setItem(LS_TOKEN, userData);
-
-    dispatch({
-      type: SET_USER_DATA,
-      payload: userData,
-    });
+    localStorage.setItem(LS_TOKEN, token);
   }
 
   function loadFacebookData(facebookData) {

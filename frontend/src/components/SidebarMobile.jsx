@@ -64,7 +64,7 @@ export default function SidebarMobile(props) {
   if(props.show) {
     siderClasses = 'sidebarmobilecoy open' 
   }
-  return (
+  return user && (
     <React.Fragment>
       {/* Sidebar */}
       <div className={siderClasses}>

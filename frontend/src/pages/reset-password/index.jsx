@@ -40,7 +40,6 @@ export default function ReserPassword(props) {
 
     auth.sendPasswordResetEmail(email).then(
       (resp) => {
-        console.log("email sent@: ", resp)
         setAlert('success');
         setMessage('Success send link reset passowrd to your email');
       }
@@ -65,8 +64,6 @@ export default function ReserPassword(props) {
     setMessage('');
   };
   
-  console.log('message: ', !!(message && alert));
-  console.log('alert : ', alert)
   return (
     <div>
       <Link to='/' className="header-page">
