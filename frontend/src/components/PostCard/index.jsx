@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image, Card } from "antd";
+import { Row, Col, Menu, Dropdown, Card } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
@@ -26,7 +26,7 @@ import { PostContext } from "../../context/posts";
 
 import "./style.css";
 
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
+Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
 
 Geocode.setLanguage("id");
 
@@ -156,7 +156,7 @@ export default function PostCard({ post, loading, type }) {
                     </div>
                   )}
                 </Col>
-                <Col span={4} style={{ textAlign: "right" }}>
+                <Col span={4}>
                   <Dropdown
                     overlay={
                       <Menu>
@@ -196,7 +196,7 @@ export default function PostCard({ post, loading, type }) {
                       className="ant-dropdown-link"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <DropIcon style={{background: 'red'}} />
+                      <DropIcon />
                     </a>
                   </Dropdown>
                 </Col>

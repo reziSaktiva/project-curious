@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from "react-router-dom";
 import { Slider } from 'antd'
 import {
@@ -23,7 +23,7 @@ import './style.css';
 const libraries = ["places"]
 const mapContainerStyle = {
   width: "100%",
-  height: '75vh'
+  height: '70vh'
 }
 const options = {
   styles: mapStyle,
@@ -31,7 +31,29 @@ const options = {
   zoomControl: true
 }
 
+
+const sliderValidator = () => {
+
+  if ( !localStorage.getItem('rng') ) {
+    return  0
+  }
+    if ( localStorage.getItem('rng') == 1 ) {
+    return  0
+  }
+   if ( localStorage.getItem('rng') == 5 ) {
+      return 33
+  }
+   if ( localStorage.getItem('rng') == 10 ) {
+    return  66
+  }
+  if ( localStorage.getItem('rng') == 15 ) {
+    return 100
+  }
+}
+console.log(sliderValidator());
+
 const MapHeader = props => {
+  
   const { onSetCurrentLoc, onBack } = props;
 
   return (
@@ -51,10 +73,10 @@ const MapHeader = props => {
 }
 
 const Map = () => {
+  
   const currentPosition = localStorage.location && JSON.parse(localStorage.location)
   
   const [position, setPosition] = useState(currentPosition);
-  const range = getRangeSearch();
   const history = useHistory();
   
   // Hooks Map
@@ -66,10 +88,10 @@ const Map = () => {
   const [radius, setRadius] = useState(1000)
 
   const marks = {
-    20: "1km",
-    40: "5km",
-    60: "10km",
-    80: "15km"
+    0: "1km",
+    33: "5km",
+    66: "10km",
+    100: "15km"
   }
 
   const handleBackPage = () => {
@@ -95,12 +117,13 @@ const Map = () => {
     
   const onChangeSlider = (value) => {
     let range = 1000
-
-    if (value <= 60) {
+    if (value == 0) {
+      range = 1000
+    }  if (value == 33) {
       range = 5000
-    } else if (value <= 80) {
+    }  if (value ==66) {
       range = 10000
-    } else if (value <= 100) {
+    }  if (value == 100) {
       range = 15000
     }
 
@@ -137,7 +160,12 @@ const Map = () => {
             }}
           />
         </GoogleMap>
-        <Slider marks={marks} defaultValue={[0, 100]} onChange={onChangeSlider} tooltipVisible={false}/>
+        <Slider
+         style={{margin:"20px 40px 20px 40px"}} 
+         marks={marks} 
+         step={null} 
+         defaultValue={sliderValidator()} 
+         onChange={onChangeSlider} tooltipVisible={false}/>
         <div className="footer-map">
           <Button
             onClick={oSaveRangePosts}

@@ -18,7 +18,7 @@ import register from './pages/register';
 import map from './pages/map/index'
 
 import RegisterFacebook from './pages/registerFacebook';
-import RegisterGoogle from './pages/registerGoogle';
+import RegisterGoogle from './pages/GoogleRegs/registerGoogle';
 import LandingPage from './pages/landing-page';
 import Grid from './pages/grid/grid';
 import SinglePost from './pages/detailPost';

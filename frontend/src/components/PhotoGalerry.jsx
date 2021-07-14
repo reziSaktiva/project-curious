@@ -10,7 +10,7 @@ import { useMutation } from "@apollo/client";
 import { DELETE_POST, MUTE_POST } from "../GraphQL/Mutations";
 import { PostContext } from "../context/posts";
 
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
+Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
 
 Geocode.setLanguage("id");
 

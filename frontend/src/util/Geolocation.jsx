@@ -1,7 +1,7 @@
 import Geocode from "react-geocode";
 
 // Initialize
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
+Geocode.setApiKey("AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA");
 Geocode.setLanguage("id");
 
 const getAddress = ({ lat, lng }) => {
