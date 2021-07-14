@@ -15,33 +15,24 @@
 /* ICON */
 
 .dropIcon {
-    position: relative;
-    background-color: #352A39;
-    border-radius: 3px;
-    font-size: 0;
-    margin-left: 20px;
-    padding: 2px;
-}
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 
-.dropIcon:before {
     position: absolute;
-    left: -8px;
-    top: 0;
-    content: '';
-
-    background-color: #352A39;
-    border-radius: 3px;
-    font-size: 0;
-    padding: 2px;
-}
-
-.dropIcon:after {
-    position: absolute;
-    left: 8px;
-    top: 0;
-    content: '';
-    background-color: #352A39;
-    border-radius: 2px;
-    font-size: 0;    
-    padding: 2px;
-}
+    right: 0px;
+    height: 24px;
+    width: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .dropIcon_dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 100%;
+    background-color: black;
+  }

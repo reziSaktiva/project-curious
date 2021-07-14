@@ -74,7 +74,9 @@ export default function Notification() {
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >
+                <div style={{display: "flex", alignItems: 'center', position: "absolute", right:12}}>
                 <DropIcon />
+                </div>
               </a>
             </Dropdown>
           }

@@ -40,8 +40,8 @@
   background-color: #7f57ff;
 }
 
-.ant-slider-track:focus {
-  background-color: #7f57ff;
+.ant-slider-dot-active {
+  border-color: #7f57ff;
 }
 
 .ant-slider-handle {

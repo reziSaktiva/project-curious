@@ -365,14 +365,26 @@ body {
 }
 
 .notifmobilecoy {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  z-index: 105;
+  height: 100%;
+  width: 100%;
   transform: translateX(-100%);
   transition: transform 0.3s ease-out;
   display: none;
 }
+
 .notifmobilecoy.open {
   transform: translateX(0);
   display: block;
-  
+}
+@media only screen and (min-width: 600px) {
+  .notifmobilecoy.open {
+    transform: translateX(0);
+    display: none;
+  }
 }
 .centeredButton{
   position: absolute;
@@ -549,7 +561,6 @@ border-radius: 10px;
     max-width: 11%;
   }
 }
-
 
 
 @media (min-width: 600px) {

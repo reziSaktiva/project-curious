@@ -8,7 +8,7 @@ import { AuthContext } from '../context/auth';
 export default function NavBar(props) {
   const { notifications } = useContext(AuthContext);
   const { setNav, active } = useContext(PostContext)
-  console.log("nyaa",active);
+
   const handleToggle = e => {
     setNav(e.target.value)
   }

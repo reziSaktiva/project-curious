@@ -59,7 +59,6 @@ const Sidebar = () => {
       }
     );
   }
-  console.log('weww', windowWidth);
   return (
     <React.Fragment>
       {/* Sidebar */}

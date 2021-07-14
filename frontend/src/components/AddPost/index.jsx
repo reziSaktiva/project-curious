@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
 import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Image } from "antd";
 import { DownOutlined } from '@ant-design/icons'
-import { PlusOutlined, PictureOutlined, LoadingOutlined } from '@ant-design/icons';
+import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { get } from 'lodash';
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -122,7 +122,7 @@ export default function ModalPost() {
     );
   }
 
-  const [createPost, {data, loading : loadingCreatePost }] = useMutation(
+  const [createPost, { loading : loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
@@ -280,7 +280,7 @@ export default function ModalPost() {
               <Panel onChange={handleCollapse} header={
                 <div>
                   <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50   }}>
-                    <img src={Pin} style={{ display: 'inline-block', width: 40,  }} />
+                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40,  }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
@@ -292,7 +292,7 @@ export default function ModalPost() {
                 <p onClick={handleRoom}>Nearby</p>
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
-                  <img src={Gorila} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <img src={Gorila} alt='gorila' style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
                   <div style={{ display: 'inline-block' }}>
                     <h4 style={{ fontWeight: "bold" }}>Insvire E-Sport</h4>
                     <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>

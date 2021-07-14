@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image, Card } from "antd";
+import { Row, Col, Menu, Dropdown, Card } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
@@ -157,7 +157,7 @@ export default function PostCard({ post, loading, type }) {
                     </div>
                   )}
                 </Col>
-                <Col span={4} style={{ textAlign: "right" }}>
+                <Col span={4}>
                   <Dropdown
                     overlay={
                       <Menu>
@@ -197,7 +197,7 @@ export default function PostCard({ post, loading, type }) {
                       className="ant-dropdown-link"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <DropIcon style={{background: 'red'}} />
+                      <DropIcon />
                     </a>
                   </Dropdown>
                 </Col>

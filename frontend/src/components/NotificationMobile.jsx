@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
@@ -9,11 +9,14 @@ import {
 } from "../GraphQL/Mutations";
 import { Row, Col, Dropdown, Menu } from "antd";
 
-import { EllipsisOutlined } from "@ant-design/icons";
+import { DropIcon } from "../library/Icon";
 import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
 import NoNotif from "../assets/NoNotif.jpg";
+import { PostContext } from "../context/posts";
 
-export default function NotificationMobile(props) {
+export default function NotificationMobile() {
+
+  const { isNavMobileOpen, setNavMobileOpen } = useContext(PostContext)
   const { notifications, notificationRead, readAllNotificatons } =
     useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
@@ -36,19 +39,25 @@ export default function NotificationMobile(props) {
       alert(clearAllNotif);
     },
   });
-  let notifClasses = 'notifmobilecoy'
   
-  if(props.show) {
-    notifClasses = 'notifmobilecoy open' 
-  }
   return (
-    <div className={notifClasses} style={{ position: "sticky", zIndex: 102, height: '100%' }}>
+    <div className={isNavMobileOpen? "notifmobilecoy open" : "notifmobilecoy"}>
       <div style={{ position: "absolute", left: 0, right: 0, width: "100%" }}>
         <Card
-        
-          title="Notification"
-          extra={
-            <Dropdown
+        >
+          <div style={{ margin: -22, height: '100vh' }}>
+          <div>
+                  <Row>
+          <Col span={6}>
+            <button className="ui inverted basic button" type="text" onClick={() => setNavMobileOpen(false)}>
+              <i className="chevron left icon" style={{ color: 'black' }}></i>
+            </button>
+          </Col>
+          <Col span={12} style={{textAlign: "center", justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
+            <h4>Notification</h4>
+          </Col>
+          <Col span={6} style={{textAlign: "right"}}>
+          <Dropdown
               overlay={
                 <Menu>
                   <Menu.Item key="0" onClick={readNotifications}>
@@ -66,14 +75,12 @@ export default function NotificationMobile(props) {
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >
-                <EllipsisOutlined />
+                <DropIcon />
               </a>
             </Dropdown>
-          }
-          style={{ width: "100%" }}
-          className="testttttt"
-        >
-          <div style={{ margin: -22, height: '100vh' }}>
+          </Col>
+      </Row>
+          </div>
             {(notifications && notifications.length ? (
                 notifications.map((notif, key) => {
                   let type = "";

@@ -24,7 +24,6 @@ import {
   StarOutlined,
   AudioMutedOutlined
 } from "@ant-design/icons";
-import { OmitProps } from "antd/lib/transfer/ListBody";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
