@@ -41,7 +41,7 @@ const RegisterGoogle = (props) => {
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
 
-    const [registerUserGoogle] = useMutation(REGISTER_USER_GOOGLE, {
+    const [registerUserGoogle, { loading }] = useMutation(REGISTER_USER_GOOGLE, {
         update(_, { data: { registerUserWithGoogle } }){
             context.login(registerUserWithGoogle)
             props.history.push('/')

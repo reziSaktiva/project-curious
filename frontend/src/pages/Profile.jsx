@@ -51,8 +51,7 @@ function Profile() {
 
   const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const { user, changeProfilePicture } = useContext(AuthContext);
-  const { posts, setPosts, likedPosts, setLikedPosts } =
-    useContext(PostContext);
+  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
   const [profilePicture, setProfilePicture] = useState(InitialState);
@@ -67,14 +66,14 @@ function Profile() {
 
   //change Photo Profile funtion
 
-  
+
   const handleChange = (value) => {
     const uploadTask = storage
       .ref(`proflePicture/${value.file.originFileObj.name}`)
       .put(value.file.originFileObj);
     uploadTask.on(
       "state_changed",
-      () => {},
+      () => { },
       (error) => {
         console.log(error);
       },
@@ -138,18 +137,27 @@ function Profile() {
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
-        {!getProfilePosts ? (
+        {loading ? (
           <SkeletonLoading />
         ) : (
-          posts.map((post, key) => {
-            return (
-              user && (
-                <div key={`posts${post.id} ${key}`}>
-                  <PostCard post={post} type="nearby" loading={loading} />
-                </div>
-              )
-            );
-          })
+          !posts.length ? (
+            <div className="centeringButton">
+            <img src={Radius} style={{ width: 300}} />
+            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+        </div>
+            ) : (
+            posts.map((post, key) => {
+              return (
+                user && (
+                  <div key={`posts${post.id} ${key}`}>
+                    <PostCard post={post} type="nearby" loading={loading} />
+                  </div>
+                )
+              );
+            })
+          )
         )}
       </TabPane>
       <TabPane tab="Liked" key="2">
@@ -169,10 +177,10 @@ function Profile() {
             })
           ) : (
             <div className="centeringButton">
-                <img src={Radius} style={{ width: 300}} />
-                <h4 style={{textAlign: 'center'}}>Try Upload a Photo when posting</h4>
-                <h4 style={{textAlign: 'center'}}>and make your post more atractive</h4>
-                <h4 style={{textAlign: 'center'}}>and your photo colection will shown up here</h4>
+              <img src={Radius} style={{ width: 300 }} />
+              <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
+              <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
+              <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
             </div>
           )
         )}
@@ -189,7 +197,7 @@ function Profile() {
                     gallery_item_left: idx == 2,
                     gallery__img: idx != 1 || idx != 2,
                   });
-                  return  (
+                  return (
                     <img
                       key={`Media${idx}`}
                       src={photo.media}
@@ -206,11 +214,11 @@ function Profile() {
           ))
         ) : (
           <div className="centeringButton">
-                <img src={Radius} style={{ width: 300}} />
-                <h4 style={{textAlign: 'center'}}>Try Upload a Photo when posting</h4>
-                <h4 style={{textAlign: 'center'}}>and make your post more atractive</h4>
-                <h4 style={{textAlign: 'center'}}>and your photo colection will shown up here</h4>
-            </div>
+            <img src={Radius} style={{ width: 300 }} />
+            <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
+            <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
+            <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
+          </div>
         )}
       </TabPane>
     </Tabs>
@@ -218,9 +226,9 @@ function Profile() {
 
   let repostCount = posts
     ? posts.reduce((accumulator, current) => {
-        return accumulator + current.repostCount;
-      }, 0) : 0;
-      
+      return accumulator + current.repostCount;
+    }, 0) : 0;
+
   return (
     <div>
       <AppBar title="My Profile" />
@@ -252,7 +260,7 @@ function Profile() {
             <ImgCrop rotate>
 
               <Upload onChange={handleChange} showUploadList={false}>
-                <EditOutlined  style={{ color: 'white'}}/>
+                <EditOutlined style={{ color: 'white' }} />
               </Upload>
             </ImgCrop>
           </div>

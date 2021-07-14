@@ -32,8 +32,8 @@ import LikeButton from "../../components/Buttons/LikeButton/index";
 import CommentButton from "../../components/Buttons/CommentButton/index";
 import RepostButton from "../../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined,  LoadingOutlined, MessageOutlined } from "@ant-design/icons";
-import Photo from "../components/Photo";
-import PostNavBar from "../components/PostNavBar";
+import Photo from "../../components/Photo";
+import PostNavBar from "../../components/PostNavBar";
 
 // Query
 import { GET_POST } from "../../GraphQL/Queries";

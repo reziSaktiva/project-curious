@@ -9,7 +9,7 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      let lastIdPosts = action.payload[action.payload.length - 1].id;
+      let lastIdPosts = action.payload.length && action.payload[action.payload.length - 1].id;
 
       return {
         ...state,
@@ -776,12 +776,10 @@ export const PostProvider = (props) => {
   };
 
   const setPosts = (posts) => {
-    if (posts.length > 0) {
       dispatch({
         type: "SET_POSTS",
-        payload: posts,
+        payload: posts.length === 0 ? [] : posts,
       });
-    }
   };
 
   const setNav = (active) => {
