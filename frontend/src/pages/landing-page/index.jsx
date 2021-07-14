@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Col, Row, Button } from 'antd'
 
 import LoginFacebook from '../../components/LoginFacebookButton';
@@ -12,9 +12,6 @@ import './style.css';
 import { AuthContext } from '../../context/auth'
 
 export default function SignIn(props) {
-  const { googleData } = useContext(AuthContext)
-
-  console.log(googleData);
   return (
   <div className="landing-container">
     <div className="left-grid__wrapper">

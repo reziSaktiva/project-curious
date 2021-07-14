@@ -20,10 +20,6 @@ export default function Notification() {
   const { clearNotifications } = useContext(AuthContext);
 
   const {data, loading, error} = useSubscription(NOTIFICATION_ADDED)
-  console.log("data", data);
-  console.log("loading", loading);
-  console.log("error", error);
-  
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
       notificationRead(readNotification);
@@ -43,6 +39,8 @@ export default function Notification() {
     },
   });
 
+  const notificationLength = notifications && notifications.filter(notif => notif.read === false).length
+
   return (
     <div className="notif__fixed">
       <div className="notif__width">
@@ -50,9 +48,9 @@ export default function Notification() {
           title={
         <h3 style={{textAlign: 'center'}}>Notification  {
           notifications.length > 1 && <div className="notifCounter">
-              <p style={{display: 'flex',justifyContent: 'center', marginTop: 2}}>{notifications.length > 99 ?
+              <p style={{display: 'flex',justifyContent: 'center', marginTop: 2}}>{notificationLength > 99 ?
                ('99+') :
-                (notifications.length)}</p>
+                (notificationLength)}</p>
                 </div>}</h3>
           }
           extra={

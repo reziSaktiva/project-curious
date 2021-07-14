@@ -184,9 +184,6 @@ const reducer = (state, action) => {
         },
       };
     case "DELETE_COMMENT":
-      console.log(state.post.comments.filter(
-        (comment) => comment.id !== action.payload.id
-      ));
       return {
         ...state,
         post: {
@@ -679,8 +676,6 @@ export const PostProvider = (props) => {
       type: "DELETE_COMMENT",
       payload: data,
     });
-
-    console.log(data);
   };
 
   const setLikedPosts = (posts) => {

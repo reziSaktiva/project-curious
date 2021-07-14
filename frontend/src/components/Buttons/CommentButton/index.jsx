@@ -5,7 +5,6 @@ import { Button } from 'antd';
 import './style.css';
 
 export default function CommentButton({ commentCount, icon }) {
-  console.log(icon);
     return (
         <div className="ui labeled btn-comment" tabIndex="0">
             <div className="btn-comment__icon">

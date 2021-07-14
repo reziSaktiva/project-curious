@@ -51,7 +51,6 @@ const Register = (props) => {
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
-    console.log(context.facebookData);
 
     const [registerUser, { loading, data }] = useMutation(REGISTER_USER, {
         update(_, { data: { registerUser: userData } }) {
@@ -67,7 +66,6 @@ const Register = (props) => {
     const onFinish = (values) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
         registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || dial[0].dial_code) + phone}` } })
-        console.log('Received values of form: ', values);
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
