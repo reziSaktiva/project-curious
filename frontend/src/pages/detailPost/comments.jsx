@@ -33,7 +33,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
     })
 
     //reply func
-    const handleReply = item => {
+    const handleReply = (item) => {
         setReply({
             username: item.owner,
             id: item.id
@@ -139,7 +139,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
 
                                 <Button
                                     type="link"
-                                    onClick={() => handleReply(comment)}
+                                    onClick={() => handleReply({ displayName: comment.displayName, id: comment.id, username: comment.owner })}
                                     style={{
                                         fontWeight: "bold",
                                         display: "inline-block",
