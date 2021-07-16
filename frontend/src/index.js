@@ -44,7 +44,6 @@ const errorLink = onError(
   ({ graphQLErrors, networkError}) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
-        console.log('error: ',err);
         switch (err.extensions.code) {
           case "UNAUTHENTICATED":
             // error code is set to UNAUTHENTICATED
@@ -79,8 +78,6 @@ const wsLink = new WebSocketLink({
 
 function isSubscription(operation) {
   const definition = getMainDefinition(operation.query);
-  console.log(definition.operation, "operation");
-  console.log(definition.kind, "kind");
   return definition.kind === 'OperationDefinition' 
     && definition.operation === 'subscription'
 }

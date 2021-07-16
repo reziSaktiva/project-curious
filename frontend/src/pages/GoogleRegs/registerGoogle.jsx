@@ -40,15 +40,13 @@ const RegisterGoogle = (props) => {
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
-    console.log(context.googleData);
 
-    const [registerUserGoogle, {loading}] = useMutation(REGISTER_USER_GOOGLE, {
-        update(_, { data: { registerUserWithGoogle: userData } }){
-            context.login(userData)
+    const [registerUserGoogle, { loading }] = useMutation(REGISTER_USER_GOOGLE, {
+        update(_, { data: { registerUserWithGoogle } }){
+            context.login(registerUserWithGoogle)
             props.history.push('/')
         },
         onError(err) {
-            console.log(err.message);
             setErrors(err.message)
         }
     })
@@ -57,7 +55,6 @@ const RegisterGoogle = (props) => {
         const { birthday, gender, phone, phoneCode } = values
         const { email, username, imageUrl, token, id } = context.googleData
         registerUserGoogle({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}`, username, email, imageUrl, token, id } })
-        console.log(context.googleData, values);
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');

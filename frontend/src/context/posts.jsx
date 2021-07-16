@@ -9,7 +9,7 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      let lastIdPosts = action.payload[action.payload.length - 1].id;
+      let lastIdPosts = action.payload.length && action.payload[action.payload.length - 1].id;
 
       return {
         ...state,
@@ -190,9 +190,6 @@ const reducer = (state, action) => {
         },
       };
     case "DELETE_COMMENT":
-      console.log(state.post.comments.filter(
-        (comment) => comment.id !== action.payload.id
-      ));
       return {
         ...state,
         post: {
@@ -689,8 +686,6 @@ export const PostProvider = (props) => {
       type: "DELETE_COMMENT",
       payload: data,
     });
-
-    console.log(data);
   };
 
   const setLikedPosts = (posts) => {
@@ -781,12 +776,10 @@ export const PostProvider = (props) => {
   };
 
   const setPosts = (posts) => {
-    if (posts.length > 0) {
       dispatch({
         type: "SET_POSTS",
-        payload: posts,
+        payload: posts.length === 0 ? [] : posts,
       });
-    }
   };
 
   const setNav = (active) => {

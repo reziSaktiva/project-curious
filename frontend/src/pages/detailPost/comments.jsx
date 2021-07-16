@@ -35,7 +35,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
     })
 
     //reply func
-    const handleReply = item => {
+    const handleReply = (item) => {
         setReply({
             username: item.owner,
             id: item.id
@@ -111,9 +111,14 @@ export default function Comments({ post, loading, user, setReply, form }) {
                                         <Image className="mediaComment" src={comment.photo}/>
                                     </div>}
 
+
                         <div className="descriptionContent">
                             <p> {moment(comment.createdAt).fromNow()}
                                 <Button type="link" className="replyComment__button" onClick={() => handleReply(comment)}>
+
+
+      
+
                                     Reply
                                 </Button>
                             </p>

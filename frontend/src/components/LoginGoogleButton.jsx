@@ -11,7 +11,7 @@ const CHECK_USER_BY_GOOGLE = gql`
   }
 `
 
-export default function LoginGoogleButton({ props }) {
+export default function LoginGoogleButton() {
   let history = useHistory()
   const { loadGoogleData, login } = useContext(AuthContext)
   const [dataGoogle, setGoogleData] = useState({})
@@ -20,12 +20,12 @@ export default function LoginGoogleButton({ props }) {
     update(_, { data: { checkUserWithGoogle } }) {
       if (!checkUserWithGoogle) {
         loadGoogleData(dataGoogle)
-        props.history.push('/register/google')
+        history.push('/register/google')
       } else {
         const { token } = dataGoogle
-        localStorage.setItem("token", token)
+
         login(token)
-        props.history.push('/')
+        history.push('/')
       }
     },
     onError(err) {
@@ -33,7 +33,7 @@ export default function LoginGoogleButton({ props }) {
     }
   })
 
-  const signInWithGoole = async () => {
+  const signInWithGoogle = async () => {
     auth.signInWithPopup(GoogleProvider).then(function (result) {
       let user = result.user;
       let googleData = {
@@ -44,14 +44,12 @@ export default function LoginGoogleButton({ props }) {
         token: user._lat
       }
       setGoogleData(googleData)
-      history.push('/register/google')
-
       check({ variables: { username: user.displayName } })
     })
   }
 
   return (
-    <Button onClick={signInWithGoole} className="landing-big-button" style={{ fontSize: "18px" ,  marginTop: 15, }}>
+    <Button onClick={signInWithGoogle} className="landing-big-button" style={{ fontSize: "18px" ,  marginTop: 15, }}>
       <i className="google icon" />
           Continue with Google
     </Button>
