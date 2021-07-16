@@ -279,8 +279,8 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50   }}>
-                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40,  }} />
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30}}>
+                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20  }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
@@ -452,7 +452,7 @@ export default function ModalPost() {
         )}
         <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
-            <Input.TextArea bordered={false} placeholder="What's your story" />
+            <Input.TextArea bordered={true} style={{width: '100%'}} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
