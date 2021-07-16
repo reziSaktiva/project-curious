@@ -17,6 +17,8 @@ import moment from "moment";
 import { useMutation } from '@apollo/client';
 import { DELETE_COMMENT } from "../../GraphQL/Mutations";
 import { PostContext } from '../../context/posts';
+import Photo from '../../components/Photo';
+import './detail-post-style.css'
 
 export default function Comments({ post, loading, user, setReply, form }) {
     const [ parentComments, setParentComment ] = useState([])
@@ -49,6 +51,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
         setParentComment(parentComments)
     }, [post])
     
+    console.log(post.comments.filter(data => data.reply.id === data.id));
     return (
         <div>
             <List
@@ -56,29 +59,21 @@ export default function Comments({ post, loading, user, setReply, form }) {
                 size="large"
                 dataSource={parentComments || []}
                 renderItem={(comment) => (
-                    <Card
-                        style={{
-                            width: "100%",
-                            backgroundColor: "#ececec",
-                            marginBottom: -20,
-                        }}
-                        loading={loading}
-                    >
+                    <Card className="commentCard" loading={loading}>
                         <Meta
                             avatar={
                                 <div>
-                                    {post.comments.filter(data => data.reply.id === comment.id) && post.comments.filter(data => data.reply.id === comment.id).length && <div className="commentContainer" />}
+                                    {post.comments.filter(data => data.reply.id === comment.id).length != 0 ? <div className="replyComment__stick" />: <div className="replyComment__stick-none" />}
                                     <Avatar
                                         size={50}
                                         style={{
+                                            zIndex:3,
                                             backgroundImage: `url(${comment.displayImage})`,
                                             backgroundColor: comment.colorCode,
                                             backgroundSize: 50,
                                         }}
                                     />
-                                </div>
-
-                            }
+                                </div>}
                             title={
                                 <Row>
                                     <Col span={12}>
@@ -110,142 +105,90 @@ export default function Comments({ post, loading, user, setReply, form }) {
                             }
                             description={<div>
                                 <p style={{ color: "black" }}>{comment.text}</p>
-                                {comment.photo ? (
+                                
+                                {comment.photo &&
                                     <div style={{ width: '80%' }}>
-                                        <Image
-                                            style={{
-                                                height: 220,
-                                                borderRadius: 10,
-                                                objectFit: "cover",
-                                                maxHeight: 300,
-                                                objectFit: "cover",
-                                            }}
-                                            src={comment.photo}
-                                        />
-                                    </div>
+                                        <Image className="mediaComment" src={comment.photo}/>
+                                    </div>}
 
-                                ) : null}
-                            </div>}
-                        />
-                        <div
-                            style={{
-                                marginTop: 20,
-                                display: "inline-block",
-                                marginBottom: -20,
-                            }}
-                        >
-                            <p>
-                                {moment(comment.createdAt).fromNow()}
-
-                                <Button
-                                    type="link"
-                                    onClick={() => handleReply(comment)}
-                                    style={{
-                                        fontWeight: "bold",
-                                        display: "inline-block",
-                                        marginLeft: 10,
-                                        color: "black"
-                                    }}
-                                >
+                        <div className="descriptionContent">
+                            <p> {moment(comment.createdAt).fromNow()}
+                                <Button type="link" className="replyComment__button" onClick={() => handleReply(comment)}>
                                     Reply
                                 </Button>
                             </p>
                         </div>
-                        <div>
-                            <List
-                                className="commentContainerReply"
-                                itemLayout="vertical"
-                                size="large"
-                                dataSource={post.comments.filter(data => data.reply.id === comment.id) || []}
-                                renderItem={(item, key) => (
-                                    <Card
-                                        style={{
-                                            width: "100%",
-                                            backgroundColor: "#ececec",
-                                            marginBottom: -20,
-                                        }}
-                                        loading={loading}
-                                    >
-                                        <Meta
-                                            avatar={
-                                                <>
-                                                    {comment && post.comments.filter(data => data.reply.id === comment.id).length !== key + 1 && <div className="commentContainer" />}
-                                                    <Avatar
-                                                        size={50}
-                                                        style={{
-                                                            backgroundColor: item.colorCode,
-                                                            backgroundImage: `url('${item.displayImage}')`,
-                                                            backgroundSize: 50,
-                                                        }}
-                                                    />
-                                                </>
-                                            }
-                                            title={
-                                                <Row>
-                                                    <Col span={12}>
-                                                        <p style={{ fontWeight: "bold" }}>{item.displayName}</p>
-                                                    </Col>
-                                                    <Col span={12} style={{ textAlign: "right" }}>
-                                                        <Dropdown
-                                                            overlay={
-                                                                <Menu>
-                                                                    {item.owner === user.username ? (
-                                                                        <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: item.id, room: post.room } })}>Delete Comment</Menu.Item>
-                                                                    ) : null}
-                                                                    <Menu.Item key="3">Report</Menu.Item>
-                                                                </Menu>
-                                                            }
-                                                            trigger={["click"]}
-                                                            placement="bottomRight"
-                                                        >
-                                                            <a
-                                                                className="ant-dropdown-link"
-                                                                onClick={(e) => e.preventDefault()}
-                                                            >
-                                                                <EllipsisOutlined />
-                                                            </a>
-                                                        </Dropdown>
-                                                    </Col>
-                                                </Row>
-                                            }
-                                            description={<p style={{ color: "black" }}>{item.text}</p>}
-                                        />
-                                        <div
+                    </div>}/>
+                        
+                <div>
+                    <List
+                        className="commentContainerReply"
+                        itemLayout="vertical"
+                        size="large"
+                        dataSource={post.comments.filter(data => data.reply.id === comment.id) || []}
+                        renderItem={(item, key) => (
+                        <Card className="commentCard" loading={loading}>
+                            <Meta
+                                avatar={
+                                    <>
+                                    {comment && post.comments.filter(data => data.reply.id === comment.id).length !== key + 1 ? <div className="replyComment__stick" />: <div className="replyComment__stick-none" />}
+                                        <Avatar
+                                            size={50}
                                             style={{
-                                                marginTop: 20,
-                                                display: "inline-block",
-                                                marginBottom: -20,
-                                            }}
-                                        >
-                                            <p>
-                                                {moment(item.createdAt).fromNow()}
-
-                                                <Button
-                                                    type="link"
-                                                    onClick={() => handleReply({ displayName: item.displayName, id: comment.id, username: item.owner })}
-                                                    style={{
-                                                        fontWeight: "bold",
-                                                        display: "inline-block",
-                                                        marginLeft: 10,
-                                                        color: "black"
-                                                    }}
-                                                >
-                                                    Reply
-                                                </Button>
-                                            </p>
-                                        </div>
-                                        <div>
-                                        </div>
-                                    </Card>
+                                                zIndex:3,
+                                                backgroundColor: item.colorCode,
+                                                backgroundImage: `url('${item.displayImage}')`,
+                                                backgroundSize: 50,
+                                                }}/>
+                                    </>
+                                }
+                                title={
+                                    <Row>
+                                        <Col span={12}>
+                                            <p style={{ fontWeight: "bold" }}>{item.displayName}</p>
+                                        </Col>
+                                        <Col span={12} style={{ textAlign: "right" }}>
+                                            <Dropdown
+                                                overlay={
+                                                    <Menu>
+                                                        {item.owner === user.username &&
+                                                    <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: item.id, room: post.room } })}>Delete Comment</Menu.Item>}
+                                                    <Menu.Item key="3">Report</Menu.Item>
+                                                    </Menu>}
+                                                trigger={["click"]}
+                                                placement="bottomRight">
+                                                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                                        <EllipsisOutlined />
+                                                    </a>
+                                                        </Dropdown>
+                                        </Col>
+                                    </Row>
+                                            }
+                                description={
+                                    <div>
+                                        <p style={{ color: "black" }}>{item.text}</p>    
+                                            {item.photo &&
+                                                <div style={{ width: '80%' }}>
+                                                    <Image className="mediaComment" src={item.photo} />
+                                    </div>}
+                                    <div className="descriptionContent">
+                                        <p> {moment(item.createdAt).fromNow()}
+                                        <Button
+                                            type="link"
+                                            onClick={() => handleReply({ displayName: item.displayName, id: comment.id, username: item.owner })}
+                                            className="replyComment__button">
+                                        Reply
+                                        </Button>
+                                        </p>
+                                    </div>
+                                </div>}/>
+                        </Card>
                                 )}>
                             </List>
                         </div>
                     </Card>
                 )}>
             </List>
-
         </div>
-
-
     )
 }

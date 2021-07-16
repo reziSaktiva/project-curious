@@ -191,7 +191,7 @@ export default function PostCard({ post, loading, type }) {
                       </Menu>
                     }
                     trigger={["click"]}
-                    placement="bottomRight"
+                    placement="bottomLeft"
                   >
                     <a
                       className="ant-dropdown-link"

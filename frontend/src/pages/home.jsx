@@ -57,7 +57,7 @@ function Home() {
         fetchPolicy: "network-only"
       });
 
-    
+    console.log("range", range);
     useEffect(() => {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
@@ -92,6 +92,7 @@ function Home() {
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
+                {console.log("test di 5km", loadingPosts, user, posts, !_isMounted.current)}
                 {!_isMounted.current && <SkeletonLoading />}
                 {(_isMounted.current && !loading && !posts.length) ? (
                 <div className="centeringButton">
@@ -110,7 +111,7 @@ function Home() {
                             </div>
                         )
                     })}
-            </InfiniteScroll>) : "hai"}
+            </InfiniteScroll>) : null}
         </div>
     );
 }

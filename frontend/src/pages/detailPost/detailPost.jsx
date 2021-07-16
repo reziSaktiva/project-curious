@@ -23,7 +23,6 @@ import {
   Upload,
   Button,
   Form,
-  Image,
 } from "antd";
 
 //component
@@ -32,8 +31,8 @@ import LikeButton from "../../components/Buttons/LikeButton/index";
 import CommentButton from "../../components/Buttons/CommentButton/index";
 import RepostButton from "../../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined,  LoadingOutlined, MessageOutlined } from "@ant-design/icons";
-import Photo from "../components/Photo";
-import PostNavBar from "../components/PostNavBar";
+import Photo from "../../components/Photo";
+import PostNavBar from "../../components/PostNavBar";
 
 // Query
 import { GET_POST } from "../../GraphQL/Queries";
@@ -325,10 +324,12 @@ export default function SinglePost(props) {
 
         </Skeleton>
       </List.Item>
-      {post && post.comments && post.comments.length == 0 ? (null) : <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
+      {post && post.comments && post.comments.length == 0 ? (
+        null) :
+         <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
       <Form
        form={form}
-        style={{ marginTop: 21, paddingBottom: -20 }}
+        style={{ paddingBottom: -20, }}
         name="basic"
       onFinish={onFinish}
       onFinishFailed={onFinish}
@@ -354,59 +355,54 @@ export default function SinglePost(props) {
           </div>
           
           )}
-        
-        <Row>
-          <Col span={2}>
-            <Form.Item name="upload" className="centeringButton" style={{marginTop: -6}} >
-              <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              fileList={fileList}
-              accept="video/*, image/*"
-              onPreview={handlePreview}
-              onChange={handleChange}
-              showUploadList={false}
+        <div
+         className="sticky-input__container" // clas hanya aktif di mobile menggunakan media query
+        >
+              <Form.Item name="upload"  style={{marginLeft:5}}>
+                <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                fileList={fileList}
+                accept="video/*, image/*"
+                onPreview={handlePreview}
+                onChange={handleChange}
+                showUploadList={false}
+                >
+                  <Button
+                    icon={<PlusOutlined style={{ color: "#7f57ff" }} />}
+                  />
+                </Upload>
+              </Form.Item>
+
+              <Form.Item
+                name="comment"
+                rules={[
+                  { required: true, message: "Isi komennya dulu ya broooo!" },
+                ]}
               >
-                <Button
-                  style={{ border: "none" }}
-                  icon={<PlusOutlined style={{ color: "#7f57ff" }} />}
+                <Input
+                name="comment"
+
+                  placeholder="Write your comment..."
+                  style={{ borderRadius: 15, width:'100%', height:30, }}
                 />
-              </Upload>
-            </Form.Item>
-          </Col>
-
-          <Col span={19}>
-            <Form.Item
-              name="comment"
-              rules={[
-                { required: true, message: "Isi komennya dulu ya broooo!" },
-              ]}
-            >
-              <Input
-              name="comment"
-
-                placeholder="Write your comment..."
-                style={{ borderRadius: 15, width:'100%', height:30 }}
-              />
-            </Form.Item>
-          </Col>
-
-          <Col span={3}>
-            <Form.Item className="centeringButton" style={{ marginTop: -6}}>
-              <Button
-                htmlType="submit"
-                style={{
-                  borderRadius: 20,
-                  backgroundColor: "#7f57ff",
-                  display: "inline-block",
-                  color: "white",
-                }}
-              >
-                {loadingCreate ? <LoadingOutlined />: 'Post'}
-                
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
+              </Form.Item>
+              <Form.Item  style={{ marginLeft: 10}}>
+                <Button
+                  htmlType="submit"
+                  style={{
+                    borderRadius: 20,
+                    backgroundColor: "#7f57ff",
+                    display: "inline-block",
+                    color: "white",
+                    
+                  }}
+                >
+                  {loadingCreate ? <LoadingOutlined />: 'Post'}
+                  
+                </Button>
+              </Form.Item>
+        </div>
+        
       </Form>
        </div>
      ) : (

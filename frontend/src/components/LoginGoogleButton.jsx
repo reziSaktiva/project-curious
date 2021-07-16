@@ -23,7 +23,7 @@ export default function LoginGoogleButton({ props }) {
         props.history.push('/register/google')
       } else {
         const { token } = dataGoogle
-        // loginFacebook({ variables: { username, token } })
+        localStorage.setItem("token", token)
         login(token)
         props.history.push('/')
       }
