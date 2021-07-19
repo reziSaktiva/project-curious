@@ -23,7 +23,7 @@ const server = new ApolloServer( {
     resolvers,
     context // Will take request body' and forward it to the context
 } )
-server.applyMiddleware({ app, path:'/', cors: false })
+server.applyMiddleware({ app, path:'/', cors: true })
 
 const httpServer = http.createServer(app)
 
