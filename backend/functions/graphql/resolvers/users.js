@@ -186,7 +186,8 @@ module.exports = {
                         timeout: 1000 // milliseconds
                     }, axios)
                     .then(r => {
-                        const { address_components } = r.data.results[0];
+                        console.log('r.data.results[0]: ', r.data.results)
+                        const { address_components, place_id } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
@@ -196,6 +197,28 @@ module.exports = {
 
                             geoResult[point] = long_name;
                         });
+
+                        googleMapsClient.placeDetails({ params: { place_id, key: 'AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA' } }, axios)
+                            .then(resp => {
+                                console.log('resp: ', resp)
+                                const { result: locs } = resp.json
+                                const { photos = [] } = locs;
+
+                                if (photos[0]) {
+                                    googleMapsClient.placesPhoto({
+                                        photoreference: photos[0].photo_reference,
+                                        maxwidth: 200
+                                    }, axios)
+                                    .then((photo) => {
+                                        console.log("Photo:", photo); // this returns a massive chunk of data which I think contains the actual image object also
+                                        geoResult.photoLocation = photo.url; // this doesn't work
+                                    })
+                                    .catch((err)=>{
+                                        console.log("Error Getting Photo!", err);
+                                        geoResult.photoLocation = ''
+                                    })
+                                }
+                            });
 
                         return { ...geoResult, location: { lat, lng } };
                     })
