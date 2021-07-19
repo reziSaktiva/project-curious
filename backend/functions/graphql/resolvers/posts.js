@@ -392,45 +392,6 @@ module.exports = {
           })
       })
     },
-    async textSearch(_, { search, perPage = 5, page, range = 40, location }, context) {
-      const { lat, lng } = location;
-      const index = client.initIndex('search_posts');
-
-      const defaultPayload = {
-        "attributesToRetrieve": "*",
-        "attributesToSnippet": "*:20",
-        "snippetEllipsisText": "…",
-        "responseFields": "*",
-        "getRankingInfo": true,
-        "analytics": false,
-        "enableABTest": false,
-        "explain": "*",
-        "facets": ["*"],
-        "customRanking": ['desc(likeCount)', 'desc(commentCount)', "words"] // ranking based on likeCount and commentCount
-      };
-      const geoLocPayload = {
-        "aroundLatLng": `${lat}, ${lng}`,
-        "aroundRadius": range * 1000,
-      };
-
-      const pagination = {
-        "hitsPerPage": perPage || 10,
-        "page": page || 0,
-      }
-
-      return new Promise((resolve, reject) => {
-        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
-          .then(res => {
-            const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
-            
-            // return following structure data algolia
-            resolve({ hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
-          }).catch(err => {
-            reject(err)
-            console.error(err)
-          });
-      });
-    },
     async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
       

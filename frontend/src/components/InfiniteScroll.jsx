@@ -10,7 +10,7 @@ import SkeletonLoading from './SkeletonLoading'
 import { LoadingOutlined } from '@ant-design/icons';
 
 function ScrollInfinite(props) {
-    const { isLoading } = props;
+    const { isLoading, isLoadingNextPost = false } = props;
     const { posts, morePosts, lastIdPosts, isMorePost } = useContext(PostContext)
     const { location } = getSession()
 
