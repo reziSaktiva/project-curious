@@ -233,6 +233,11 @@ const reducer = (state, action) => {
           return post;
         }),
       };
+      case "SET_MODAL":
+        return {
+          ...state,
+          isModalActive: action.payload
+        }
     case "LIKE_MUTED":
       return {
         ...state,
@@ -592,6 +597,7 @@ export const PostContext = createContext({
   repost: false,
   active: "latest",
   isNavMobileOpen: false,
+  setModal: () => {},
   setNavMobileOpen: () => {},
   setRoom: () => {},
   setLikedPosts: () => {},
@@ -617,6 +623,7 @@ const initialState = {
   room_2: [],
   active: "latest",
   isNavMobileOpen: false,
+  isModalActive: false,
   likedPosts: [],
   post: null,
   mutedPost: [],
@@ -627,11 +634,13 @@ const initialState = {
   subscribePosts: [],
 };
 
+
 export const PostProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const {
     isNavMobileOpen,
+    isModalActive,
     posts,
     active,
     post,
@@ -687,6 +696,8 @@ export const PostProvider = (props) => {
       payload: data,
     });
   };
+
+
 
   const setLikedPosts = (posts) => {
     if (posts.length > 0) {
@@ -786,6 +797,13 @@ export const PostProvider = (props) => {
     dispatch({
       type: "SET_NAV",
       payload: active
+    })
+  }
+  const setModal = (isModalActive) => {
+    console.log("isModalActive", isModalActive);
+    dispatch({
+      type: "SET_MODAL",
+      payload: isModalActive
     })
   }
   const setNavMobileOpen = (isNavMobileOpen) => {
@@ -907,6 +925,8 @@ export const PostProvider = (props) => {
         room_2,
         active,
         isNavMobileOpen,
+        isModalActive,
+        setModal,
         setPosts,
         setNav,
         setPost,

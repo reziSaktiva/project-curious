@@ -26,6 +26,7 @@ import { PostContext } from "../../context/posts";
 
 import "./style.css";
 import { MAP_API_KEY } from "../../util/ConfigMap";
+import Modal from "../Modal";
 
 Geocode.setApiKey(MAP_API_KEY);
 
@@ -38,6 +39,7 @@ export default function PostCard({ post, loading, type }) {
 
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
+  const { setModal, isModalActive } = useContext(PostContext);
 
   const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
@@ -132,6 +134,7 @@ export default function PostCard({ post, loading, type }) {
           ]
         }
       >
+        
         <List.Item.Meta
           title={
             <div>
@@ -181,11 +184,11 @@ export default function PostCard({ post, loading, type }) {
                         {userName === post.owner ? (
                           <Menu.Item
                             key="4"
-                            onClick={() =>
-                              deletePost({ variables: { id: post.id, room: post.room } })
-                            }
-                          >
-                            Delete Post
+                            onClick={() => {
+                              console.log("event from post card")
+                              setModal(true)
+                            }}>
+                            <span>Delete Post</span>
                           </Menu.Item>
                         ) : null}
                       </Menu>
@@ -198,7 +201,9 @@ export default function PostCard({ post, loading, type }) {
                       onClick={(e) => e.preventDefault()}
                     >
                       <DropIcon />
+                      
                     </a>
+                    
                   </Dropdown>
                 </Col>
               </Row>
@@ -243,11 +248,15 @@ export default function PostCard({ post, loading, type }) {
             </span>
             {repost.media && <Photo photo={repost.media} />}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
+            
           </Card>
         )}
+        
         <p style={{ marginTop: -9 }}>{post.text}</p>
+           
         <Photo photo={post.media} />
-
+        <Modal title="Delete Post" handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
+             
       </List.Item>
     </List>
   );
