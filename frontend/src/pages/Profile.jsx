@@ -16,6 +16,7 @@ import ImgCrop from "antd-img-crop";
 //assets
 import Pin from "../assets/pin-svg-25px.svg";
 import IconCrash from "../assets/ic-crash.png";
+import Radius from '../assets/radius.png'
 
 //location
 import Geocode from "react-geocode";
@@ -31,6 +32,7 @@ import AppBar from "../components/AppBar";
 import firebase from "firebase/app";
 import "firebase/storage";
 import { PostContext } from "../context/posts";
+import SkeletonLoading from "../components/SkeletonLoading";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -42,13 +44,14 @@ function Profile() {
   const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
     fetchPolicy: "network-only",
   });
+
   const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS, {
     fetchPolicy: "network-only",
   });
+
   const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const { user, changeProfilePicture } = useContext(AuthContext);
-  const { posts, setPosts, likedPosts, setLikedPosts } =
-    useContext(PostContext);
+  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
   const [profilePicture, setProfilePicture] = useState(InitialState);
@@ -63,13 +66,14 @@ function Profile() {
 
   //change Photo Profile funtion
 
+
   const handleChange = (value) => {
     const uploadTask = storage
       .ref(`proflePicture/${value.file.originFileObj.name}`)
       .put(value.file.originFileObj);
     uploadTask.on(
       "state_changed",
-      () => {},
+      () => { },
       (error) => {
         console.log(error);
       },
@@ -88,7 +92,6 @@ function Profile() {
 
   useEffect(() => {
     if (isFinishUpload) {
-      console.log("dor");
       changePPuser({ variables: { url } });
     }
   }, [url, isFinishUpload]);
@@ -134,40 +137,57 @@ function Profile() {
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
-        {!getProfilePosts ? (
-          <p>loading...</p>
+        {loading ? (
+          <SkeletonLoading />
         ) : (
-          posts.map((post, key) => {
-            return (
-              user && (
-                <div key={`posts${post.id} ${key}`}>
-                  <PostCard post={post} loading={loading} />
-                </div>
-              )
-            );
-          })
+          !posts.length ? (
+            <div className="centeringButton">
+            <img src={Radius} style={{ width: 300}} />
+            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+        </div>
+            ) : (
+            posts.map((post, key) => {
+              return (
+                user && (
+                  <div key={`posts${post.id} ${key}`}>
+                    <PostCard post={post} type="nearby" loading={loading} />
+                  </div>
+                )
+              );
+            })
+          )
         )}
       </TabPane>
       <TabPane tab="Liked" key="2">
         {!getProfileLikedPost ? (
-          <p>loading</p>
+          <SkeletonLoading />
         ) : (
-          likedPosts.map((post, key) => {
-            return (
-              post &&
-              user && (
-                <div key={`posts${post.id} ${key}`}>
-                  <PostCard post={post} loading={loading} />
-                </div>
-              )
-            );
-          })
+          getProfileLikedPost.getProfileLikedPost.length ? (
+            likedPosts.map((post, key) => {
+              return (
+                post &&
+                user && (
+                  <div key={`posts${post.id} ${key}`}>
+                    <PostCard post={post} type='liked_posts' loading={loading} />
+                  </div>
+                )
+              );
+            })
+          ) : (
+            <div className="centeringButton">
+              <img src={Radius} style={{ width: 300 }} />
+              <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
+              <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
+              <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
+            </div>
+          )
         )}
       </TabPane>
 
       <TabPane tab="Media" key="3">
-    
-        {gallery.length &&
+        {gallery.length ? (
           gallery.map((media) => (
             <div className="gallery">
               {media.length &&
@@ -188,22 +208,34 @@ function Profile() {
                       className={imgClass}
                       alt="Image 1"
                     />
-                  );
+                  )
                 })}
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="centeringButton">
+            <img src={Radius} style={{ width: 300 }} />
+            <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
+            <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
+            <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
+          </div>
+        )}
       </TabPane>
     </Tabs>
   );
 
+  let repostCount = posts
+    ? posts.reduce((accumulator, current) => {
+      return accumulator + current.repostCount;
+    }, 0) : 0;
+
   return (
     <div>
       <AppBar title="My Profile" />
-
       <div
-        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10 }}
+        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10, backgroundColor: 'white' }}
       >
-        <div style={{ position: "relative", textAlign: "center", width: 80 }}>
+        <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
           <img
             src={user.profilePicture}
             style={{
@@ -226,8 +258,9 @@ function Profile() {
             }}
           >
             <ImgCrop rotate>
+
               <Upload onChange={handleChange} showUploadList={false}>
-                <EditOutlined />
+                <EditOutlined style={{ color: 'white' }} />
               </Upload>
             </ImgCrop>
           </div>
@@ -258,7 +291,7 @@ function Profile() {
             <p>Post</p>
           </Col>
           <Col span={8}>
-            <h5>12</h5>
+            <h5>{repostCount}</h5>
             <p>Repost</p>
           </Col>
           <Col span={8}>
@@ -282,7 +315,10 @@ function Profile() {
         }}
       >
         <div className="ui action input" style={{ height: 25 }}>
-          <input type="text" value={`http://localhost:3000/profile/${user.id}`} />
+          <input
+            type="text"
+            value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
+          />
           <button
             className="ui teal right icon button"
             style={{ backgroundColor: "#7F57FF", fontSize: 10 }}

@@ -8,8 +8,9 @@ module.exports = gql`
         media: [String]
         createdAt: String!
         location: LatLong
-        likeCount: Int!
-        commentCount: Int!
+        likeCount: Int
+        commentCount: Int
+        repostCount: Int
         comments: [Comment]
         likes: [Like]
         muted: [Mute]
@@ -26,6 +27,10 @@ module.exports = gql`
         hitsPerPage: Int
         processingTimeMS: Float
     }
+    # type Repost {
+    #     repost: String
+    #     room: String
+    # }
     type Repost {
         id: ID
         owner: String
@@ -67,16 +72,16 @@ module.exports = gql`
         displayName: String
         displayImage: String
         colorCode: String
-        replay: ReplayData
-        replayList: [Comment]!
+        reply: ReplyData
+        # replyList: [Comment]
     },
     
-    input Replay {
+    input Reply {
         username: String
         id: ID
     },
     
-    type ReplayData {
+    type ReplyData {
         username: String
         id: ID
     },
@@ -90,6 +95,7 @@ module.exports = gql`
         isLike: Boolean
     },
     type Notification {
+        owner: String
         recipient: String!
         sender: String!
         read: Boolean!
@@ -127,6 +133,9 @@ module.exports = gql`
         createdAt: String!
         postId: ID!
         isSubscribe: Boolean
+    }
+    type Subscription {
+        notificationAdded: Notification
     }
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!
@@ -174,25 +183,30 @@ module.exports = gql`
         lat: Float
         lng: Float
     }
+    input Data {
+        repost: String
+        room: String
+    }
     type Mutation {
         # users mutation
         registerUser(registerInput: RegisterInput): String!
         login(username: String!, password: String!): String!
-        loginWithFacebook(username: String!, token: String!): User!
-        registerUserWithFacebook(facebookData: FacebookData): User!
-        registerUserWithGoogle(googleData: GoogleData): User!
+        loginWithFacebook(username: String!, token: String!): String!
+        registerUserWithFacebook(facebookData: FacebookData): String!
+        registerUserWithGoogle(googleData: GoogleData): String!
         checkUserWithFacebook(username: String!): Boolean!
         checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
         readAllNotification: [Notification]
-        changePPUser( url : String! ): String!
+        changePPUser( url: String! ): String!
         clearAllNotif: String!
+        deleteAccount( id: ID! ): String!
 
         # posts mutation
         nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
-        createPost(text:String, media: [String] location: Location!, repost: String, room: String): Post!
+        createPost(text:String, media: [String] location: Location! repost: Data room: String): Post!
         subscribePost( postId: ID! room: String ): Subscribe!
         mutePost ( postId: ID! room: String ): Mute!
         deletePost( id: ID! room: String ): String!
@@ -200,7 +214,7 @@ module.exports = gql`
         textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
 
         # comments mutation
-        createComment( id:ID!, text: String!, replay: Replay, photo: String ): Comment!
-        deleteComment( postId: ID!, commentId: ID! ): String!
+        createComment( id:ID!, text: String!, reply: Reply, photo: String, room: String ): Comment!
+        deleteComment( postId: ID!, commentId: ID!, room: String ): Comment!
     }
 `

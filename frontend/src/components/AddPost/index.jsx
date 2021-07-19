@@ -1,7 +1,7 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Image } from "antd";
 import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -23,7 +23,8 @@ import Gorila from "../../assets/gorila.jpg";
 import Bmw from "../../assets/bmw.jpg";
 
 // Query
-import { CREATE_POST, GET_POST } from '../../GraphQL/Queries';
+import { GET_POST } from '../../GraphQL/Queries';
+import { CREATE_POST } from '../../GraphQL/Mutations'
 
 // Init Firebase
 import firebase from 'firebase/app'
@@ -66,6 +67,7 @@ export default function ModalPost() {
   // Local State
   const [state, setState] = useState(InitialState);
   const [address, setAddress] = useState("");
+  const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
   const { room, setRoom } = useContext(AuthContext)
   const [open, setOpen] = useState([])
@@ -79,7 +81,7 @@ export default function ModalPost() {
     }
   }
   const handleRoom = (e) => {
-    setRoom(e.target.value)
+    setRoom('Nearby')
     setOpen([])
 
   }
@@ -100,12 +102,27 @@ export default function ModalPost() {
       }
     );
   }
+  
+
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
 
-  const [createPost] = useMutation(
+
+  if (getPost.location) {
+    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
+      (response) => {
+        const address = response.results[0].address_components[1].short_name;
+        setAddressRepost(address);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  const [createPost, { loading : loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
@@ -142,7 +159,7 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (repost) {
-      getRepost({ variables: { id: repost } });
+      getRepost({ variables: { id: repost.repost } });
     }
   }, [repost]);
 
@@ -156,7 +173,8 @@ export default function ModalPost() {
           lat,
           lng
         },
-        repost: repost || '',
+        repost: repost.repost || '',
+        roomRepost: repost.room || '',
         room
       };
       
@@ -200,8 +218,16 @@ export default function ModalPost() {
       ...state,
       fileList: newFiles
     });
-  }
 
+    
+  }
+  const handleRemove = file => {
+    const newFile = fileList.filter(item => item !== file);
+    setState({
+      ...state,
+      fileList: newFile
+    })
+  }
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
 
@@ -240,6 +266,7 @@ export default function ModalPost() {
 
     return;
   };
+
   
   return (
     <div>
@@ -252,8 +279,8 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 50, top: -15 }}>
-                    <img src={Pin} style={{ display: 'inline-block', width: 40, marginBottom: "auto", }} />
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30}}>
+                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20  }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
@@ -262,9 +289,10 @@ export default function ModalPost() {
                   <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
                 </div>
               } key="1" showArrow={false}>
+                <p onClick={handleRoom}>Nearby</p>
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
-                  <img src={Gorila} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <img src={Gorila} alt='gorila' style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
                   <div style={{ display: 'inline-block' }}>
                     <h4 style={{ fontWeight: "bold" }}>Insvire E-Sport</h4>
                     <p style={{ fontSize: 12, marginTop: -15 }}>bermain dan besenang senang adalah jalan ninja kami</p>
@@ -305,21 +333,131 @@ export default function ModalPost() {
                 <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
                   <div style={{ display: 'flex' }}>
                     <p className="ic-location-small" style={{ margin: 0 }} />
-                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>Jakarta, Indonesia</div>
+                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{addressRepost}</div>
                   </div>
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
+                  
+                  {getPost.media ? (
+          getPost.media.length == 1 ? (
+            <Image
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                objectFit: "cover",
+                maxHeight: 300,
+              }}
+              src={getPost.media}
+            />
+          ) : null
+        ) : null}
+
+        {getPost.media ? (
+          getPost.media.length == 2 ? (
+            <table className="row-card-2">
+              <tbody>
+                <tr>
+                  <Image.PreviewGroup>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={getPost.media[0]}
+                      />
+                    </td>
+                    <td>
+                      <Image
+                        style={{ borderRadius: "0px 10px 10px 0px" }}
+                        src={getPost.media[1]}
+                      />
+                    </td>
+                  </Image.PreviewGroup>
+                </tr>
+              </tbody>
+            </table>
+          ) : null
+        ) : null}
+
+        {getPost.media ? (
+          getPost.media.length >= 3 ? (
+            <table className="photo-grid-3">
+              <Image.PreviewGroup>
+                <tbody>
+                  <tr style={{ margin: 0, padding: 0 }}>
+                    <td
+                      rowspan="2"
+                      style={{ width: "50%", verticalAlign: "top" }}
+                    >
+                      <Image
+                        className="pict1-3"
+                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        src={getPost.media[0]}
+                      />
+                    </td>
+                    <td style={{ width: "50%" }}>
+                      <Image
+                        className="pict2-3"
+                        style={{ borderRadius: "0px 10px 0px 0px" }}
+                        src={getPost.media[1]}
+                      />
+                      <div
+                        className="text-container"
+                        style={{ marginTop: "-6px" }}
+                      >
+                        <Image
+                          className="pict3-3"
+                          style={
+                            getPost.media.length > 3
+                              ? {
+                                  borderRadius: "0px 0px 10px 0px",
+                                  filter: "blur(2px)",
+                                }
+                              : { borderRadius: "0px 0px 10px 0px" }
+                          }
+                          src={getPost.media[2]}
+                        />
+                        <div className="text-center">
+                          {getPost.media.length > 3
+                            ? "+" + (getPost.media.length - 3)
+                            : null}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {getPost.media.length > 3 ? (
+                    <div>
+                      <Image
+                        className="pict3-3"
+                        style={{ display: "none" }}
+                        src={getPost.media[3]}
+                      />
+                      {getPost.media.length > 4 ? (
+                        <Image
+                          className="pict3-3"
+                          style={{ display: "none" }}
+                          src={getPost.media[4]}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null}
+                </tbody>
+              </Image.PreviewGroup>
+            </table>
+          ) : null
+        ) : null}
+
+                  
                 </Card>
               )}
           </>
         )}
         <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
-            <Input.TextArea bordered={false} placeholder="What's your story" />
+            <Input.TextArea bordered={true} style={{width: '100%'}} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
+                onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
@@ -331,6 +469,7 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
+          
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
@@ -343,14 +482,16 @@ export default function ModalPost() {
                 <Upload
                   accept="video/*, image/*"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  fileList={fileList}
                   showUploadList={null}
                   onChange={handleChange}
+                  onRemove={handleRemove}
                 >
                   <PictureOutlined />
                 </Upload>
               </Form.Item>
             </Col>
-            <Button htmlType="submit" key="submit" type="primary"
+            <Button htmlType="submit" key="submit" type="primary" loading={loadingCreatePost}
               style={{ backgroundColor: '#7958f5', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
               Post
             </Button>

@@ -1,10 +1,10 @@
-const { UserInputError } = require('apollo-server-express');
+const { UserInputError, withFilter } = require('apollo-server-express');
 const { Client } = require("@googlemaps/google-maps-services-js");
 const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { db } = require('../../utility/admin')
+const { db, auth, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
 const firebase = require('firebase')
 const config = require('../../utility/config')
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -14,6 +14,14 @@ const { validateRegisterInput, validateLoginInput } = require('../../utility/val
 firebase.initializeApp(config)
 
 module.exports = {
+    Subscription: {
+        notificationAdded: {
+            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), async (payload, _variables, context) => {
+                const { username } = await fbAuthContext(context)
+                return payload.notificationAdded.owner === username
+            })
+        }
+    },
     Query: {
         async getUserData(_, args, context) {
             const { username } = await fbAuthContext(context)
@@ -82,7 +90,7 @@ module.exports = {
                     let repost = {}
 
                     if (repostId) {
-                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
                         repost = repostData.data() || {}
                     }
 
@@ -124,7 +132,7 @@ module.exports = {
                     let repost = {}
 
                     if (repostId) {
-                        const repostData = await db.doc(`/posts/${repostId}`).get()
+                        const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
                         repost = repostData.data() || {}
                     }
 
@@ -150,22 +158,22 @@ module.exports = {
                     return values.filter(item => item && item)
                 })
 
-                return Promise.all(result).then(values => {
-                    return values.filter(item => item && item)
-                })
+                // return Promise.all(result).then(values => {
+                //     return values.filter(item => item && item)
+                // })
             }
             catch (err) {
                 throw new Error(err)
             }
         },
-        async getVisited (_, args, ctx) {
+        async getVisited(_, args, ctx) {
             const googleMapsClient = new Client({ axiosInstance: axios })
             const { username } = await fbAuthContext(ctx);
 
             const userVisit = await db.collection(`/users/${username}/visited`).get();
             const visited = (await userVisit).docs.map(doc => doc.data());
-            
-            const promises = visited.map(async ({ lat, lng}) => {
+
+            const promises = visited.map(async ({ lat, lng }) => {
                 const request = await googleMapsClient
                     .reverseGeocode({
                         params: {
@@ -173,7 +181,7 @@ module.exports = {
                             language: 'en',
                             result_type: 'street_address|administrative_area_level_4',
                             location_type: 'APPROXIMATE',
-                            key: 'AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k'
+                            key: 'AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA'
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
@@ -189,13 +197,13 @@ module.exports = {
                             geoResult[point] = long_name;
                         });
 
-                        return {...geoResult, location: { lat, lng }};
+                        return { ...geoResult, location: { lat, lng } };
                     })
                     .catch(e => {
                         console.log(e);
                         return e
                     });
-                
+
                 return request;
             });
 
@@ -214,34 +222,277 @@ module.exports = {
         }
     },
     Mutation: {
+        async deleteAccount(_, { id }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                if (!username) {
+                    throw new UserInputError("UnAuthorization")
+                } else {
+                    const getNotification = await db.collection(`/users/${username}/notifications`).get()
+                    const notification = getNotification.docs.map(doc => doc.data())
+
+                    notification.map(doc => {
+                        if (doc) {
+                            db.doc(`/users/${username}/notifications/${doc.id}`).delete()
+                        }
+                    })
+
+                    const getLiked = await db.collection(`/users/${username}/liked`).get()
+                    const liked = getLiked.docs.map(doc => doc.data())
+
+                    liked.map(doc => {
+                        if (doc) {
+                            db.doc(`/users/${username}/liked/${doc.id}`).delete()
+                        }
+                    })
+
+                    const getMuted = await db.collection(`/users/${username}/muted`).get()
+                    const muted = getMuted.docs.map(doc => doc.data())
+
+                    muted.map(doc => {
+                        if (doc) {
+                            db.doc(`/users/${username}/muted/${doc.id}`).delete()
+                        }
+                    })
+
+                    const getVisited = await db.collection(`/users/${username}/visited`).get()
+                    const visited = getVisited.docs.map(doc => doc)
+
+                    visited.map(doc => {
+                        if (doc) {
+                            db.doc(`/users/${username}/visited/${doc.id}`).delete()
+                        }
+                    })
+
+                    const getAllPosts = await db.collection(`/posts`).get()
+                    const allPosts = getAllPosts.docs.map(doc => doc.data())
+
+                    allPosts.map(async doc => {
+                        if (doc) {
+                            const id = doc.id
+
+                            const getComments = await db.collection(`/posts/${doc.id}/comments`).where('owner', '==', username).get()
+                            const comments = getComments.docs.map(doc => doc.data())
+
+                            comments.map(doc => {
+                                if (doc) {
+                                    db.doc(`/posts/${id}/comments/${doc.id}`).delete()
+                                }
+                            })
+
+                            const getLikes = await db.collection(`/posts/${doc.id}/likes`).where('owner', '==', username).get()
+                            const likes = getLikes.docs.map(doc => doc.data())
+
+                            likes.map(doc => {
+                                if (doc) {
+                                    db.doc(`/posts/${id}/likes/${doc.id}`).delete()
+                                }
+                            })
+
+                            const getRandomizedData = await db.collection(`/posts/${doc.id}/randomizedData`).where('owner', '==', username).get()
+                            const randomizedData = getRandomizedData.docs.map(doc => doc.data())
+
+                            randomizedData.map(doc => {
+                                if (doc) {
+                                    db.doc(`/posts/${id}/randomizedData/${doc.id}`).delete()
+                                }
+                            })
+
+                            const getSubscribes = await db.collection(`/posts/${doc.id}/subscribes`).where('owner', '==', username).get()
+                            const subscribes = getSubscribes.docs.map(doc => doc.data())
+
+                            subscribes.map(doc => {
+                                if (doc) {
+                                    db.doc(`/posts/${id}/subscribes/${doc.id}`).delete()
+                                }
+                            })
+                        }
+                    })
+
+                    const getUserPosts = await db.collection(`/posts`).where('owner', '==', username).get()
+                    const allUserPosts = getUserPosts.docs.map(doc => doc.data())
+
+                    allUserPosts.map(async doc => {
+                        const id = doc.id
+
+                        const getComments = await db.collection(`/posts/${id}/comments`).get()
+                        const comments = getComments.docs.map(doc => doc.data())
+
+                        comments.map(doc => {
+                            if (doc) {
+                                db.doc(`/posts/${id}/comments/${doc.id}`).delete()
+                            }
+                        })
+
+                        const getLikes = await db.collection(`/posts/${id}/likes`).get()
+                        const likes = getLikes.docs.map(doc => doc.data())
+
+                        likes.map(doc => {
+                            if (doc) {
+                                db.doc(`/posts/${id}/likes/${doc.id}`).delete()
+                            }
+                        })
+
+                        const getRandomizedData = await db.collection(`/posts/${id}/randomizedData`).get()
+                        const randomizedData = getRandomizedData.docs.map(doc => doc.data())
+
+                        randomizedData.map(doc => {
+                            if (doc) {
+                                db.doc(`/posts/${id}/randomizedData/${doc.id}`).delete()
+                            }
+                        })
+
+                        const getSubscribes = await db.collection(`/posts/${id}/subscribes`).get()
+                        const subscribes = getSubscribes.docs.map(doc => doc.data())
+
+                        subscribes.map(doc => {
+                            if (doc) {
+                                db.doc(`/posts/${id}/subscribes/${doc.id}`).delete()
+                            }
+                        })
+
+                        db.doc(`/posts/${id}`).delete()
+                    })
+
+                    const getAllRoomPosts = await db.collection(`room`).get()
+
+                    getAllRoomPosts.docs.map(async doc => {
+                        const getPostRoom = await db.collection(`/room/${doc.id}/posts`).get()
+                        const postRoom = getPostRoom.docs.map(doc => doc.data())
+
+                        postRoom.map(async doc => {
+                            if (doc) {
+                                const id = doc.id
+                                const room = doc.room
+
+                                const getComments = await db.collection(`/room/${room}/posts/${id}/comments`).where('owner', '==', username).get()
+                                const comments = getComments.docs.map(doc => doc.data())
+
+                                comments.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/comments/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getLikes = await db.collection(`/room/${room}/posts/${id}/likes`).where('owner', '==', username).get()
+                                const likes = getLikes.docs.map(doc => doc.data())
+
+                                likes.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/likes/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getRandomizedData = await db.collection(`/room/${room}/posts/${id}/randomizedData`).where('owner', '==', username).get()
+                                const randomizedData = getRandomizedData.docs.map(doc => doc.data())
+
+                                randomizedData.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/randomizedData/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getSubscribes = await db.collection(`/room/${room}/posts/${id}/subscribes`).where('owner', '==', username).get()
+                                const subscribes = getSubscribes.docs.map(doc => doc.data())
+
+                                subscribes.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/subscribes/${doc.id}`).delete()
+                                    }
+                                })
+                            }
+                        })
+
+                        const getUserPostRoom = await db.collection(`/room/${doc.id}/posts`).get()
+                        const userPostRoom = getUserPostRoom.docs.map(doc => doc.data())
+
+                        userPostRoom.map(async doc => {
+                            if (doc) {
+                                const id = doc.id
+                                const room = doc.room
+
+                                const getComments = await db.collection(`/room/${room}/posts/${id}/comments`).get()
+                                const comments = getComments.docs.map(doc => doc.data())
+
+                                comments.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/comments/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getLikes = await db.collection(`/room/${room}/posts/${id}/likes`).get()
+                                const likes = getLikes.docs.map(doc => doc.data())
+
+                                likes.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/likes/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getRandomizedData = await db.collection(`/room/${room}/posts/${id}/randomizedData`).get()
+                                const randomizedData = getRandomizedData.docs.map(doc => doc.data())
+
+                                randomizedData.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/randomizedData/${doc.id}`).delete()
+                                    }
+                                })
+
+                                const getSubscribes = await db.collection(`/room/${room}/posts/${id}/subscribes`).get()
+                                const subscribes = getSubscribes.docs.map(doc => doc.data())
+
+                                subscribes.map(doc => {
+                                    if (doc) {
+                                        db.doc(`/room/${room}/posts/${id}/subscribes/${doc.id}`).delete()
+                                    }
+                                })
+
+                                db.doc(`/room/${room}/posts/${id}`).delete()
+                            }
+                        })
+                    })
+
+                    auth.deleteUser(id).then(() => {
+                        console.log("success");
+                        db.doc(`/users/${username}`).delete()
+                    })
+                }
+
+                return 'account deleted'
+
+            } catch (err) {
+                console.log(err);
+            }
+        },
         async clearAllNotif(_, args, context) {
             const { username } = await fbAuthContext(context)
-      
+
             if (!username) {
-              throw new UserInputError("UnAuthorization")
+                throw new UserInputError("UnAuthorization")
             } else {
-              const getNotification = await db.collection(`/users/${username}/notifications`).get()
-              const notification = getNotification.docs.map(doc => doc.data())
-      
-              try {
-                notification.map(doc => {
-                  db.doc(`/users/${username}/notifications/${doc.id}`).delete()
-                })
-                
-                return 'Notification Clear'
-              }
-              catch (err) {
-                console.log(err);
-                throw new Error(err);
-              }
+                const getNotification = await db.collection(`/users/${username}/notifications`).get()
+                const notification = getNotification.docs.map(doc => doc.data())
+
+                try {
+                    notification.map(doc => {
+                        db.doc(`/users/${username}/notifications/${doc.id}`).delete()
+                    })
+
+                    return 'Notification Clear'
+                }
+                catch (err) {
+                    console.log(err);
+                    throw new Error(err);
+                }
             }
-          },
+        },
         async readAllNotification(_, args, context) {
             const { username } = await fbAuthContext(context)
 
-            try{
+            try {
                 const batch = db.batch()
-                
+
                 if (!username) {
                     throw UserInputError("unauthorization")
                 } else {
@@ -254,9 +505,9 @@ module.exports = {
                     })
 
                     return batch.commit()
-                            .then(() => notifications)
+                        .then(() => notifications)
                 }
-            } 
+            }
             catch (err) {
                 throw new Error(err)
             }
@@ -425,10 +676,7 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).set(newUser)
 
-                return {
-                    ...newUser,
-                    token
-                }
+                return token
             }
             catch (err) {
                 console.log(err);
@@ -451,10 +699,7 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).set(newUser)
 
-                return {
-                    ...newUser,
-                    token
-                }
+                return token
             }
             catch (err) {
                 console.log(err);
@@ -533,15 +778,15 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async changePPUser(_, {url}, context) {
+        async changePPUser(_, { url }, context) {
             const { username } = await fbAuthContext(context)
             console.log(url);
 
             try {
                 await db.doc(`users/${username}`).get()
-                .then(doc => {
-                    doc.ref.update({profilePicture: url})
-                }) 
+                    .then(doc => {
+                        doc.ref.update({ profilePicture: url })
+                    })
 
                 return "beres"
             } catch (error) {

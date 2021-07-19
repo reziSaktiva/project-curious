@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { List } from "antd";
-import { Row, Col, Menu, Dropdown, Image, Card } from "antd";
+import { Row, Col, Menu, Dropdown, Card } from "antd";
 import moment from "moment";
 import Geocode from "react-geocode";
 import { Link } from "react-router-dom";
@@ -11,8 +11,11 @@ import Pin from "../../assets/pin-svg-25px.svg";
 import LikeButton from "../Buttons/LikeButton/index";
 import CommentButton from "../Buttons/CommentButton/index";
 import RepostButton from "../Buttons/RepostButton/index";
+import Photo from '../Photo'
 
-import { EllipsisOutlined } from "@ant-design/icons";
+import { DropIcon } from "../../library/Icon";
+import { MessageOutlined, RetweetOutlined } from '@ant-design/icons';
+
 import { useMutation } from "@apollo/client";
 import {
   DELETE_POST,
@@ -22,12 +25,13 @@ import {
 import { PostContext } from "../../context/posts";
 
 import "./style.css";
+import { MAP_API_KEY } from "../../util/ConfigMap";
 
-Geocode.setApiKey("AIzaSyBM6YuNkF6yev9s3XpkG4846oFRlvf2O1k");
+Geocode.setApiKey(MAP_API_KEY);
 
 Geocode.setLanguage("id");
 
-export default function PostCard({ post, loading }) {
+export default function PostCard({ post, loading, type }) {
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
@@ -50,7 +54,7 @@ export default function PostCard({ post, loading }) {
 
   const [subscribePost] = useMutation(SUBSCRIBE_POST, {
     update(_, { data: { subscribePost } }) {
-      postContext.subscribePost(subscribePost);
+      postContext.subscribePost(subscribePost, post);
     },
   });
   const userName = user && user.username;
@@ -58,10 +62,9 @@ export default function PostCard({ post, loading }) {
   const isRepost = get(repost, "id") || "";
 
   const { muted, subscribe } = post;
-  const isMuted =
-    user && muted && muted.find((mute) => mute.owner === user.username);
-  const isSubscribe =
-    user && subscribe && subscribe.find((sub) => sub.owner === user.username);
+  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
+
+  const isSubscribe = user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   useEffect(() => {
     if (post.location) {
@@ -92,8 +95,14 @@ export default function PostCard({ post, loading }) {
     }
   }, [post, isRepost]);
 
+
   return (
-    <List itemLayout="vertical" size="large">
+    <List itemLayout="vertical" size="large" style={{
+      background: 'white',
+      marginBottom: '16px',
+
+      borderRadius: 5
+      }}>
       <List.Item
         key={post.id}
         className="list-actions"
@@ -107,17 +116,16 @@ export default function PostCard({ post, loading }) {
                     likes={post.likes}
                     id={post.id}
                     room={post.room}
+                    type={type}
                   />
                 </div>
                 <div className="action-post__item">
-                  <Link to={`/post/${post.id}`}>
-
-                  <CommentButton commentCount={post.commentCount} />
-
+                  <Link to={`/${post.room ? post.room : "post"}/${post.id}`}>
+                  <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
                   </Link>
                 </div>
                 <div className="action-post__item">
-                  <RepostButton idPost={post.id} />
+                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} icon={<RetweetOutlined />} />
                 </div>
               </div>
             </>,
@@ -128,7 +136,7 @@ export default function PostCard({ post, loading }) {
           title={
             <div>
               <Row>
-                <Col span={12}>
+                <Col span={20}>
                   <Link to={`/${post.room ? post.room : "post"}/${post.id}`} style={{ fontSize: 15 }}>
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
@@ -149,7 +157,7 @@ export default function PostCard({ post, loading }) {
                     </div>
                   )}
                 </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
+                <Col span={4}>
                   <Dropdown
                     overlay={
                       <Menu>
@@ -164,7 +172,7 @@ export default function PostCard({ post, loading }) {
                         {!post.room && (<Menu.Item
                           key="1"
                           onClick={() =>
-                            mutePost({ variables: { id: post.id, room: post.room} })
+                            mutePost({ variables: { postId: post.id, room: post.room} })
                           }
                         >
                           {isMuted ? "Unmute" : "Mute"}
@@ -183,13 +191,13 @@ export default function PostCard({ post, loading }) {
                       </Menu>
                     }
                     trigger={["click"]}
-                    placement="bottomRight"
+                    placement="bottomLeft"
                   >
                     <a
                       className="ant-dropdown-link"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <EllipsisOutlined />
+                      <DropIcon />
                     </a>
                   </Dropdown>
                 </Col>
@@ -231,180 +239,15 @@ export default function PostCard({ post, loading }) {
               </div>
             )}
             <span style={{ fontSize: 12 }}>
-              {moment(repost.createdAt).fromNow()}
+              {<div style={{marginBottom: 16}}>{moment(repost.createdAt).fromNow()}</div>}
             </span>
-            {repost.media ? (
-              repost.media.length == 1 ? (
-                <Image
-                  style={{
-                    width: "100%",
-                    borderRadius: 10,
-                    objectFit: "cover",
-                    maxHeight: 300,
-                    objectFit: "cover",
-                  }}
-                  src={repost.media}
-                />
-              ) : null
-            ) : null}
+            {repost.media && <Photo photo={repost.media} />}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
           </Card>
         )}
         <p style={{ marginTop: -9 }}>{post.text}</p>
-        {post.media ? (
-          post.media.length == 1 ? (
-            <Image
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
-              src={post.media}
-            />
-          ) : null
-        ) : null}
+        <Photo photo={post.media} />
 
-        {post.media ? (
-          post.media.length == 2 ? (
-            <table className="row-card-2">
-              <tbody>
-                <tr>
-                  <Image.PreviewGroup>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td>
-                      <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
-                        src={post.media[1]}
-                      />
-                    </td>
-                  </Image.PreviewGroup>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
-
-        {post.media ? (
-          post.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <Image.PreviewGroup>
-                <tbody>
-                  <tr style={{ margin: 0, padding: 0 }}>
-                    <td
-                      rowspan="2"
-                      style={{ width: "50%", verticalAlign: "top" }}
-                    >
-                      <Image
-                        className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={post.media[0]}
-                      />
-                    </td>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
-                        src={post.media[1]}
-                      />
-                      <div
-                        className="text-container"
-                        style={{ marginTop: "-6px" }}
-                      >
-                        <Image
-                          className="pict3-3"
-                          style={
-                            post.media.length > 3
-                              ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
-                              : { borderRadius: "0px 0px 10px 0px" }
-                          }
-                          src={post.media[2]}
-                        />
-                        <div className="text-center">
-                          {post.media.length > 3
-                            ? "+" + (post.media.length - 3)
-                            : null}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {post.media.length > 3 ? (
-                    <div>
-                      <Image
-                        className="pict3-3"
-                        style={{ display: "none" }}
-                        src={post.media[3]}
-                      />
-                      {post.media.length > 4 ? (
-                        <Image
-                          className="pict3-3"
-                          style={{ display: "none" }}
-                          src={post.media[4]}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null}
-                </tbody>
-              </Image.PreviewGroup>
-            </table>
-          ) : null
-        ) : null}
-
-        {post.media ? (
-          post.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <tbody>
-                <tr>
-                  <td rowSpan="2" style={{ width: "50%" }}>
-                    <img
-                      className="pict1-3"
-                      src={post.media[0]}
-                      style={{ borderRadius: "10px 0px 0px 10px" }}
-                    />
-                  </td>
-                  <td style={{ width: "50%" }}>
-                    <img
-                      className="pict2-3"
-                      src={post.media[1]}
-                      style={{ borderRadius: "0px 10px 0px 0px" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ width: "50%" }}>
-                    <div className="text-container">
-                      <img
-                        className="pict3-3"
-                        src={post.media[2]}
-                        style={
-                          post.media.length > 3
-                            ? {
-                                borderRadius: "0px 0px 10px 0px",
-                                filter: "blur(2px)",
-                              }
-                            : { borderRadius: "0px 0px 10px 0px" }
-                        }
-                      />
-                      <div className="text-center">
-                        {post.media.length > 3
-                          ? "+" + (post.media.length - 3)
-                          : null}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
       </List.Item>
     </List>
   );

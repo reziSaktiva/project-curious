@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, from} from '@apollo/client';
-import { setContext } from 'apollo-link-context'
-import { concat } from 'apollo-link'
+import { ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat, split} from '@apollo/client/core';
 import { onError } from 'apollo-link-error';
 import { isMobile } from "react-device-detect";
+
+import { WebSocketLink } from '@apollo/client/link/ws'
+import { getMainDefinition } from '@apollo/client/utilities'
 
 import { destorySession } from './util/Session';
 
@@ -14,15 +16,34 @@ import './index.css'
 // Importing components
 import App from './App'
 
-const link = from([
-  new HttpLink({uri: 'http://localhost:5000/curious-dev-d071c/us-central1/graphql'})
+// const link = from([
+//   new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
+// ])
+const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
+const wsUrl = 'ws://localhost:5000/graphql';
+
+const httpLink = ApolloLink.from([
+  new ApolloLink((operation, forward) => {
+    const token = localStorage.token
+    if(token) {
+      operation.setContext({
+        headers: {
+          "Authorization" : `Bearer ${token}`
+        }
+      })
+    }
+    return forward(operation)
+  }),
+  new HttpLink({uri: httpUrl})
+   //new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
 ])
 
+
+
 const errorLink = onError(
-  ({ graphQLErrors, networkError, operation, forward }) => {
+  ({ graphQLErrors, networkError}) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
-        console.log('error: ',err);
         switch (err.extensions.code) {
           case "UNAUTHENTICATED":
             // error code is set to UNAUTHENTICATED
@@ -45,19 +66,26 @@ const errorLink = onError(
   }
 );
 
-const authLink = setContext(() => {
-  const token = localStorage.token
-
-  return {
-    headers: {
-      Authorization : token ? `Bearer ${token}` : ''
-    }
+const wsLink = new WebSocketLink({
+  uri: wsUrl,
+  options: {
+    connectionParams: () => ({
+      accessToken: localStorage.token
+    }),
+    reconnect: true
   }
 })
 
+function isSubscription(operation) {
+  const definition = getMainDefinition(operation.query);
+  return definition.kind === 'OperationDefinition' 
+    && definition.operation === 'subscription'
+}
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: concat(errorLink, concat(authLink, link))
+  link: concat(errorLink, split(isSubscription, wsLink, httpLink,)),
+  defaultOptions: {query: {fetchPolicy: 'no-cache'}}
 });
 
 window.isMobile = isMobile;

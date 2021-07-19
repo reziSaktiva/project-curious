@@ -1,49 +1,73 @@
-import { Button, Radio, Tabs } from 'antd';
-import React, { useContext, useState } from 'react'
-import { useHistory, Link } from 'react-router-dom'
-
-import { StickyContainer, Sticky } from 'react-sticky';
-// Semantic
-import { Menu } from 'semantic-ui-react'
-
+import React, { useContext } from 'react'
+import { BellOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom'
 import '../App.css'
+import { PostContext } from '../context/posts';
+import { AuthContext } from '../context/auth';
 
+export default function NavBar(props) {
+  const { notifications } = useContext(AuthContext);
+  const { setNav, active } = useContext(PostContext)
 
-export default function Login() {
-  const history = useHistory();
-  const parentTab = history.location.pathname == '/populer' ? 'populer' : 'latest'
-  const [nav, setNav] = useState({ value2: '/' })
-
-  const onChange2 = e => {
-    setNav({
-      value2: e.target.value,
-    });
-  };
-
-  const { value2 } = nav;
+  const handleToggle = e => {
+    setNav(e.target.value)
+  }
 
   return (
-    <StickyContainer style={{ position: "center" }}>
-      <Menu pointing secondary size='massive'>
-        <div className="centeredButton">
-          
-          <Radio.Group
-            value={value2}
-            optionType="button"
-            buttonStyle="solid"
-            defaultValue="/"
-            >
-              <Radio.Button  value="/">
-                <Link to='/' style={{color: 'white'}}>Latest</Link>
-                </Radio.Button>
-              <Radio.Button value="/popular">
-                <Link to='/popular' style={{color: '#7958f5'}}>Popular</Link>
-              </Radio.Button>
+    <header className="toolbar">
+      <div className="toolbar__nav">
+      
+      <nav >
+        <div style={{
+          display: 'flex',
+          width: '100vw',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+          <button className="toggle-button" onClick={props.toggleOpen}>
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
+        </button>
+          </div>
+          <div>
+            <div className="radio-center">
+              <Link to='/'>
+              <button className={ active == 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
+                onClick={handleToggle}
+               value="latest">Latest</button>
+              </Link>
+              <Link to='/popular'>
+              <button className={ active == 'popular' ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
+                onClick={handleToggle}
+               value="popular">Popular</button>
+              </Link>
+            </div>
             
-          </Radio.Group>
+          </div>
+          <div className='notif'>
+            <div className="toggle-button">
+            <BellOutlined style={{
+              marginLeft: -10,
+              fontSize: "25px",
+              color: "black",
+              strokeWidth: "30",
+              }} onClick={props.toggleOpenNotif} />
+              {
+          notifications.length > 1 && <div className="notifCounter__mobile">
+            <p style={{fontSize:10,display: 'flex', justifyContent: 'center'}}> {notifications.length > 99 ?
+               ('99+') :
+                (notifications.length)}</p>
+              
+                </div>}
+              
+            </div>
           
+          </div>
         </div>
-      </Menu>
-    </StickyContainer>
-  )
+      </nav>
+      <div className="toolbar__nav2" />
+      </div>
+    </header>
+   )
 }

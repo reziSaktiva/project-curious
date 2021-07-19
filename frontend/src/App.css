@@ -1,17 +1,42 @@
+:root {
+  --primary-color: #7958f5;
+}
+@font-face {
+  font-family: SF Pro Display;
+  src: url('./assets/FontsFree-Net-SFProDisplay-Regular.ttf');
+}
+
+body {
+  background: #FAFAFA !important;
+  font-family: SF Pro Display;
+
+}
+#root {
+  background: #FAFAFA;
+  height: auto;
+}
+/* LANDING */
+.landing-big-button {
+  width: 100%;
+  height: 45px;
+  border-radius: 8px;
+  border: 1px solid #352A39;
+}
 /* assetes */
 .centeringButton {
     margin: 0;
     position: absolute;
     left: 50%;
-    -ms-transform: translate(-50%, 0);
-    transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 20%);
+    transform: translate(-50%, 20%);
 }
+
 
 .centeringImage {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 40%;
+  width: 77%;
 }
 
 .landingimage {
@@ -112,13 +137,7 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
-.container-landing{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-}
+
 
 .curiouslanding {
   background-image: url('./assets/curiouslanding.png');
@@ -132,12 +151,6 @@
   -ms-transform: translate(-50%, -50%);
 }
 
-.landingPage-input {
-  text-align: center;
-  padding-top: 30%;
-  margin: auto;
-  width: 50%;
-}
 
 /* LOGO */
 .curious {
@@ -215,6 +228,14 @@
 }
 
 /* SIDE BAR */
+.ant-menu-sub.ant-menu-inline {
+  background-color:#FAFAFA;
+}
+.ant-menu-item:hover a {
+  color: #7f57ff;
+} 
+
+
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected, .ant-menu-item-selected a, .ant-menu-item-selected a:hover {
   background-color:#7f57ff;
   color: white;
@@ -229,8 +250,8 @@
   color: white;
 }
 
-.ant-menu-item:hover a{
-  color: #7f57ff;
+.ant-menu-item.ant-menu-item-active.ant-menu-item-selected:hover a{
+  color: white;
 }
 
 .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
@@ -245,6 +266,126 @@
 }
 
 /* NAV BAR */
+.radio-center {
+  margin-top: 6px;
+  border-radius: 8px;
+}
+.toogle-latest {
+  width: 72px;
+  height: 28px;
+  border-radius: 8px 0px 0px 8px;
+  border: 1px solid var(--primary-color);
+
+  background: white;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.toogle-popular {
+  width: 72px;
+  height: 28px;
+  border-radius: 0px 8px 8px 0px;
+  border: 1px solid var(--primary-color);
+
+  background: white;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.toggle-active__navbar {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+
+.toolbar {
+  width: 100%;
+  height: 45px;
+}
+
+.toolbar__nav {
+  position: fixed;
+  width: 600px;
+  height: 45px;
+  z-index: 105;
+  background-color: #FAFAFA;
+}
+.toolbar__nav2 {
+  width: 600px;
+  margin-top: 6px;
+  border-top: 1px solid #cecece;
+  z-index: 106;
+}
+.toolbar__button {
+  position: fixed;
+  margin: auto;
+  width: 50%;
+
+}
+.toggle-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 30px;
+  height: 24px;
+  width: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+  -ms-transform: translate(-50%, 30%);
+  transform: translate(-50%, 30%);
+}
+
+.hamburger-line {
+  width: 25px;
+  height: 2px;
+  background-color: black;
+}
+.sidebarmobilecoy {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  height: 100%;
+  box-shadow: 1px, 0px, 7px rgba(0,0,0, 5px);
+  width: 70%;
+  max-width: 200;
+  background-color: white;
+  z-index: 300;
+  border-right: 1px #cccccc solid;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-out;
+  
+}
+.sidebarmobilecoy.open {
+  transform: translateX(0);
+}
+
+.notifmobilecoy {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  z-index: 105;
+  height: 100%;
+  width: 100%;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-out;
+  display: none;
+}
+
+.notifmobilecoy.open {
+  transform: translateX(0);
+  display: block;
+}
+@media only screen and (min-width: 600px) {
+  .notifmobilecoy.open {
+    transform: translateX(0);
+    display: none;
+  }
+}
 .centeredButton{
   position: absolute;
   top: auto;
@@ -252,27 +393,12 @@
   -ms-transform: translate(-50%, 30%);
 transform: translate(-50%, 30%);
 }
-.ant-radio-button-wrapper{
-  color: #7f57ff;
-  border: 1px solid #7f57ff;
-}
-.ant-radio-button-wrapper:hover {
-  color: #7f57ff;
-}
-.ant-radio-button-wrapper-checked:hover {
-  color: #7f57ff;
-}
-.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
-  background: #7f57ff;
-}
-.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover{
-  background: #7f57ff;
-}
 
 /* POST CARD */
 .ant-list-vertical .ant-list-item-meta-title{
   margin-bottom: 0;
 }
+
 /* POST CARD IMAGE LAYOUT */
 
 .row-card-2 {
@@ -387,27 +513,62 @@ transform: translate(-50%, 30%);
   margin-right: -25px;
   margin-left: -25px;
 }
-.commentContainer {
-  z-index: 1;
-  margin-top: 50px;
-  height: 65px;
-  position: absolute;
-  margin-left: 23px;
-  border-left: thick solid #3333;
-}
-/* NOTIFICATION */
 
-.notifContainer :hover {
-  background-color: #7958f5;
-  color: white;
-  padding: 2px;
+
+.ant-list-item-action li {
+  width: 100%;
 }
-.notifContainer {
-  padding: 4px;
+
+/* REGISTER */
+.ant-input-group-addon {
+  width: 60px;
+height: 40px;
+background: #FAFAFA;
+border: 0.5px solid #E6E6E6;
+box-sizing: border-box;
+border-radius: 10px;
 }
-@media only screen and (max-width: 1200px) {
+.ant-picker {
+  background-color: #FAFAFF;
+  width: 343px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+@media only screen and (max-width: 990px) {
+  .ant-col-md-3 {
+    max-width: 11%;
+  }
+  .landing-big-button > span{
+    font-size: 14px;
+  }
+}
+
+
+@media only screen and (max-width: 760px) {
   .ui.container {
     margin-left: 0px !important;
     margin-right: 0px !important;
   }
+  .ant-col-md-3 {
+    max-width: 11%;
+  }
+}
+
+
+@media (min-width: 600px) {
+  .toggle-button {
+    display: none;
+  }
+  .toolbar__nav2 {
+    margin-top: 45px;
+  }
+  
+  .radio-center {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translate(-50%, 20%);
+    transform: translate(-50%, 20%);
+}
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Button } from 'antd'
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { AuthContext } from '../context/auth'
 import { GoogleProvider, auth } from '../util/Firebase'
 import { gql, useMutation } from '@apollo/client'
@@ -11,7 +11,8 @@ const CHECK_USER_BY_GOOGLE = gql`
   }
 `
 
-export default function LoginGoogleButton({ props }) {
+export default function LoginGoogleButton() {
+  let history = useHistory()
   const { loadGoogleData, login } = useContext(AuthContext)
   const [dataGoogle, setGoogleData] = useState({})
 
@@ -19,12 +20,12 @@ export default function LoginGoogleButton({ props }) {
     update(_, { data: { checkUserWithGoogle } }) {
       if (!checkUserWithGoogle) {
         loadGoogleData(dataGoogle)
-        props.history.push('/register/google')
+        history.push('/register/google')
       } else {
         const { token } = dataGoogle
-        // loginFacebook({ variables: { username, token } })
+
         login(token)
-        props.history.push('/')
+        history.push('/')
       }
     },
     onError(err) {
@@ -32,10 +33,8 @@ export default function LoginGoogleButton({ props }) {
     }
   })
 
-  const signInWithGoole = async () => {
+  const signInWithGoogle = async () => {
     auth.signInWithPopup(GoogleProvider).then(function (result) {
-      console.log("result", result);
-      console.log("result", result.user._lat, typeof(result.user._lat));
       let user = result.user;
       let googleData = {
         username: user.displayName,
@@ -45,13 +44,12 @@ export default function LoginGoogleButton({ props }) {
         token: user._lat
       }
       setGoogleData(googleData)
-
       check({ variables: { username: user.displayName } })
     })
   }
 
   return (
-    <Button onClick={signInWithGoole} className="ui black basic button" style={{ width: "100%", fontSize: "18px" , height: 45, marginTop: 15, borderRadius: 5 }}>
+    <Button onClick={signInWithGoogle} className="landing-big-button" style={{ fontSize: "18px" ,  marginTop: 15, }}>
       <i className="google icon" />
           Continue with Google
     </Button>

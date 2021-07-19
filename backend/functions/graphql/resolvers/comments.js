@@ -1,4 +1,4 @@
-const { db } = require('../../utility/admin')
+const { db, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
 const { UserInputError } = require('apollo-server-express');
 
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -6,14 +6,13 @@ const randomGenerator = require('../../utility/randomGenerator')
 
 module.exports = {
     Mutation: {
-        async createComment(_, { id, text, replay, photo }, context) {
-            console.log("photo", photo);
+        async createComment(_, { id, text, reply, photo, room }, context) {
             const { username } = await fbAuthContext(context)
-            const { name, displayImage, colorCode } = await randomGenerator(username, id)
+            const { name, displayImage, colorCode } = await randomGenerator(username, id, room)
 
-            const postDocument = db.doc(`/posts/${id}`)
-            const commentCollection = db.collection(`/posts/${id}/comments`)
-            const subscribeCollection = db.collection(`/posts/${id}/subscribes`)
+            const postDocument = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`)
+            const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
+            const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`)
 
             if (text.trim() === '') {
                 throw new UserInputError('kamu tidak bisa membuat comment tanpa text', { error: { text: 'kamu tidak bisa membuat comment tanpa text' } })
@@ -23,9 +22,9 @@ module.exports = {
                     owner: username,
                     createdAt: new Date().toISOString(),
                     text,
-                    replay,
+                    reply,
                     photo
-                    
+
                 }
 
                 let postOwner;
@@ -49,8 +48,59 @@ module.exports = {
 
                         doc.update({ id: doc.id, displayName: name, displayImage: displayImage, colorCode })
 
+                        if (newComment.reply.username && newComment.reply.id && newComment.reply.username !== username) {
+                            const notifReply = {
+                                owner: newComment.reply.username,
+                                recipient: newComment.reply.username,
+                                sender: username,
+                                read: false,
+                                postId: id,
+                                type: 'REPLY_COMMENT',
+                                createdAt: new Date().toISOString(),
+                                displayName: name,
+                                displayImage,
+                                colorCode
+                            }
+                            return db.collection(`/users/${newComment.reply.username}/notifications`).add(notifReply)
+                                .then(data => {
+                                    data.update({ id: data.id })
+                                    pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notifReply, id: data.id } })
+
+                                    return subscribeCollection.get()
+                                        .then(data => {
+                                            if (!data.empty) {
+                                                return data.docs.forEach(doc => {
+                                                    if (doc.data().owner !== username) {
+                                                        // FIX ME
+                                                        const notifSubscribe = {
+                                                            owner: doc.data().owner,
+                                                            recipient: postOwner,
+                                                            sender: username,
+                                                            read: false,
+                                                            postId: id,
+                                                            type: 'COMMENT',
+                                                            createdAt: new Date().toISOString(),
+                                                            displayName: name,
+                                                            displayImage,
+                                                            colorCode
+                                                        }
+                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add(notifSubscribe)
+                                                            .then(data => {
+                                                                data.update({ id: data.id })
+                                                                pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notifSubscribe, id: data.id } })
+                                                            })
+                                                    }
+                                                })
+                                            }
+                                        })
+                                })
+
+                        }
+
                         if (postOwner !== username) {
-                            return db.collection(`/users/${postOwner}/notifications`).add({
+                            // FIX ME (done)
+                            const notifData = {
+                                owner: postOwner,
                                 recipient: postOwner,
                                 sender: username,
                                 read: false,
@@ -60,29 +110,34 @@ module.exports = {
                                 displayName: name,
                                 displayImage,
                                 colorCode
-                            })
+                            }
+                            return db.collection(`/users/${postOwner}/notifications`).add(notifData)
                                 .then(data => {
                                     data.update({ id: data.id })
+                                    pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notifData, id: data.id } })
 
                                     return subscribeCollection.get()
                                         .then(data => {
                                             if (!data.empty) {
                                                 return data.docs.forEach(doc => {
                                                     if (doc.data().owner !== username) {
-                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add({
+                                                        // FIX ME
+                                                        const notifSubscribe = {
+                                                            owner: doc.data().owner,
                                                             recipient: postOwner,
                                                             sender: username,
                                                             read: false,
                                                             postId: id,
                                                             type: 'COMMENT',
                                                             createdAt: new Date().toISOString(),
-                                                            owner: doc.data().owner,
                                                             displayName: name,
                                                             displayImage,
                                                             colorCode
-                                                        })
+                                                        }
+                                                        return db.collection(`/users/${doc.data().owner}/notifications`).add(notifSubscribe)
                                                             .then(data => {
                                                                 data.update({ id: data.id })
+                                                                pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notifSubscribe, id: data.id } })
                                                             })
                                                     }
                                                 })
@@ -98,83 +153,124 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async deleteComment(_, { postId, commentId }, context) {
+        async deleteComment(_, { postId, commentId, room }, context) {
             const { username } = await fbAuthContext(context)
-            const postDocument = db.doc(`/posts/${postId}`)
-
-            const commentCollection = db.collection("posts").doc(postId).collection('comments').doc(commentId)
-            const subscribeCollection = db.collection(`/posts/${postId
-            }/subscribes`)
-
+            const getCommentDoc = await db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId).get()
+            const commentDoc = db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId)
+            const subscribeCollection = await db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`).get()
 
             try {
-                let postOwner;
-
-                await postDocument.get()
-                    .then(doc => {
-                        if (!doc.exists) {
-                            throw new UserInputError("postingan tidak di temukan/sudah di hapus")
-                        } else {
-                            postOwner = doc.data().owner;
-
-                            return commentCollection.get()
-                                .then(doc => {
-                                    if (!doc.exists) {
-                                        throw new UserInputError('Comment tidak tersedia')
-                                    } else {
-                                        if (username !== doc.data().owner) {
-                                            throw new UserInputError('Anda tidak boleh menghapus comment ini')
-                                        } else {
-                                            return postDocument.get()
-                                        }
-                                    }
-                                })
-                                .then(doc => {
-                                    return doc.ref.update({ commentCount: doc.data().commentCount - 1 })
-                                })
-                                .then(() => {
-                                    commentCollection.delete()
-
-                                    return subscribeCollection.get()
-                                        .then(data => {
-                                            if (!data.empty) {
-                                                return data.docs.forEach(doc => {
-                                                    return db.collection(`/users/${doc.data().owner}/notifications`)
-                                                        .where('postId', "==", postId)
-                                                        .where('owner', '==', doc.data().owner)
-                                                        .get()
-                                                        .then(data => {
-                                                            return data.docs.forEach(doc => {
-                                                                db.doc(`/users/${doc.data().owner}/notifications/${doc.data().id}`).delete()
-
-                                                                if (postOwner !== username) {
-                                                                    return db.collection(`/users/${postOwner}/notifications`)
-                                                                        .where('type', '==', "COMMENT")
-                                                                        .where('sender', '==', username).get()
-                                                                        .then(data => {
-                                                                            db.doc(`/users/${postOwner}/notifications/${data.docs[0].id}`).delete()
-                                                                        })
-                                                                }
-
-                                                            })
-                                                        })
-                                                })
-                                            } else {
-                                                if (postOwner !== username) {
-                                                    return db.collection(`/users/${postOwner}/notifications`)
-                                                        .where('type', '==', "COMMENT")
-                                                        .where('sender', '==', username).get()
-                                                        .then(data => {
-                                                            db.doc(`/users/${postOwner}/notifications/${data.docs[0].id}`).delete()
-                                                        })
-                                                }
-                                            }
-                                        })
-                                })
+                if (!getCommentDoc.exists) {
+                    throw new UserInputError("Comment tidak di temukan/sudah di hapus")
+                } else {
+                    if (!getCommentDoc.data().reply.id) {
+                        const getCommentChild = await db.collection(`${room ? `/room/${room}/posts/` : `/posts/`}${postId}/comments`).where('reply.id', '==', getCommentDoc.data().id).get()
+                        if (!getCommentChild.empty) {
+                            const commentChilds = getCommentChild.docs.map(doc => doc.data())
+                            commentChilds.forEach(doc => {
+                                db.doc(`${room ? `/room/${room}/posts/` : `/posts/`}${postId}/comments/${doc.id}`).delete()
+                            })
                         }
-                    })
+                    }
 
-                return 'Comment sudah di hapus'
+                    commentDoc.delete()
+
+                    if (!subscribeCollection.empty) {
+                        subscribeCollection.docs.forEach(doc => {
+                            return db.collection(`/users/${doc.data().owner}/notifications`)
+                                .where('postId', "==", postId)
+                                .where('owner', '==', doc.data().owner)
+                                .get()
+                                .then(data => {
+                                    return data.docs.forEach(doc => {
+                                        db.doc(`/users/${doc.data().owner}/notifications/${doc.data().id}`).delete()
+
+                                        if (postOwner !== username) {
+                                            return db.collection(`/users/${postOwner}/notifications`)
+                                                .where('type', '==', "COMMENT")
+                                                .where('sender', '==', username).get()
+                                                .then(data => {
+                                                    db.doc(`/users/${postOwner}/notifications/${data.docs[0].id}`).delete()
+                                                })
+                                        }
+
+                                    })
+                                })
+                        })
+                    }
+
+                }
+
+                return getCommentDoc.data()
+                // let postOwner;
+                // let comment;
+
+                // await postDocument.get()
+                //     .then(doc => {
+                //         if (!doc.exists) {
+                //             throw new UserInputError("postingan tidak di temukan/sudah di hapus")
+                //         } else {
+                //             postOwner = doc.data().owner;
+
+                //             return commentCollection.get()
+                //                 .then(doc => {
+                //                     if (!doc.exists) {
+                //                         throw new UserInputError('Comment tidak tersedia')
+                //                     } else {
+                //                         comment = doc.data()
+                //                         if (username !== doc.data().owner) {
+                //                             throw new UserInputError('Anda tidak boleh menghapus comment ini')
+                //                         } else {
+                //                             return postDocument.get()
+                //                         }
+                //                     }
+                //                 })
+                //                 .then(doc => {
+                //                     return doc.ref.update({ commentCount: doc.data().commentCount - 1 })
+                //                 })
+                //                 .then(() => {
+                //                     commentCollection.delete()
+
+                //                     return subscribeCollection.get()
+                //                         .then(data => {
+                //                             if (!data.empty) {
+                //                                 return data.docs.forEach(doc => {
+                //                                     return db.collection(`/users/${doc.data().owner}/notifications`)
+                //                                         .where('postId', "==", postId)
+                //                                         .where('owner', '==', doc.data().owner)
+                //                                         .get()
+                //                                         .then(data => {
+                //                                             return data.docs.forEach(doc => {
+                //                                                 db.doc(`/users/${doc.data().owner}/notifications/${doc.data().id}`).delete()
+
+                //                                                 if (postOwner !== username) {
+                //                                                     return db.collection(`/users/${postOwner}/notifications`)
+                //                                                         .where('type', '==', "COMMENT")
+                //                                                         .where('sender', '==', username).get()
+                //                                                         .then(data => {
+                //                                                             db.doc(`/users/${postOwner}/notifications/${data.docs[0].id}`).delete()
+                //                                                         })
+                //                                                 }
+
+                //                                             })
+                //                                         })
+                //                                 })
+                //                             } else {
+                //                                 if (postOwner !== username) {
+                //                                     return db.collection(`/users/${postOwner}/notifications`)
+                //                                         .where('type', '==', "COMMENT")
+                //                                         .where('sender', '==', username).get()
+                //                                         .then(data => {
+                //                                             db.doc(`/users/${postOwner}/notifications/${data.docs[0].id}`).delete()
+                //                                         })
+                //                                 }
+                //                             }
+                //                         })
+                //                 })
+                //         }
+                //     })
+
+                // return comment
             }
             catch (err) {
                 console.log(err);

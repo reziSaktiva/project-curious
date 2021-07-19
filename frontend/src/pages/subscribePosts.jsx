@@ -9,8 +9,18 @@ import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import SkeletonLoading from '../components/SkeletonLoading'
 import Radius from '../assets/Radius.jpg'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 function SubscribePosts() {
+
+    const path = useHistory().location.pathname
+
+    const { setPathname } = useContext(AuthContext)
+  
+      useEffect(() => {
+          setPathname(path)
+      }, [])
+
     const { data } = useQuery(GET_SUBSCRIBED_POSTS, {
         fetchPolicy: "network-only"
       });
@@ -40,7 +50,7 @@ function SubscribePosts() {
         <div>
             <NavBar />
             {user ? (<div>
-                {!subscribePosts || subscribePosts.length ? (
+                {!subscribePosts || !subscribePosts.length ? (
                 <div className="centeringButton">
                 <img src={Radius} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>Subcribe to a Post that goes fire</h4>
@@ -48,10 +58,9 @@ function SubscribePosts() {
                 <h4 style={{textAlign: 'center'}}>and never miss what's happening</h4>
             </div>
                 )
-                    : subscribePosts.map((post, key) => post === null ? (<SkeletonLoading />) : (
-                        <div key={`posts${post.id} ${key}`}>
-                            {console.log("true")}
-                        <PostCard post={post} loading={loading} />
+                    : subscribePosts.map((post, key) => (
+                        <div key={`posts subscribe ${key}`} style={key == 0 ? { marginTop: 40 }: { marginTop: 0 }}>
+                        <PostCard post={post} type="subscribe_posts" loading={loading} />
                     </div>
                 ))}
             </div>) : <SkeletonLoading />}

@@ -83,7 +83,6 @@ const RegisterFacebook = (props) => {
         const { birthday, gender, phone, phoneCode } = values
         const { email, username, imageUrl, token, id } = context.facebookData
         registerUserFacebook({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}`, username, email, imageUrl, token, id } })
-        console.log(context.facebookData, values);
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');

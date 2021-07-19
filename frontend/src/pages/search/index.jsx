@@ -10,11 +10,14 @@ import { SEARCH_POSTS } from '../../GraphQL/Mutations';
 import { getSession } from '../../util/Session';
 
 import './style.css';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../../context/auth';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const Search = () => {
   const [getSearch, { data, loading }] =useMutation(SEARCH_POSTS);
+  const history = useHistory().location.pathname
   const hits = get(data, 'textSearch.hits') || [];
-  console.log('hits: ', hits)
 
   const searchPosts = debounce(
     ({ target: { value }}) => {
@@ -34,7 +37,13 @@ const Search = () => {
   }, 500)
 
   const doSearchData = hits.length && !loading;
-  
+
+  const { setPathname } = useContext(AuthContext)
+
+  useEffect(() => {
+      setPathname(history)
+  }, [])
+
   return (
     <>
     <AppBar title="Seach" />

@@ -13,21 +13,19 @@ const AppBar = props => {
     <div className="app-bar">
       <Row>
           <Col span={6}>
-            <button class="ui inverted basic button" type="text" onClick={() => history.goBack()}>
-              <i class="chevron left icon" style={{ color: 'black' }}></i>
+            <button className="ui inverted basic button" type="text" onClick={() => history.goBack()}>
+              <i className="chevron left icon" style={{ color: 'black' }}></i>
             </button>
           </Col>
           <Col span={12} style={{textAlign: "center", justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
             <h4>{title}</h4>
           </Col>
           <Col span={6} style={{textAlign: "right"}}>
-            <button class="ui inverted basic button" type="text">
-              <i class="ellipsis horizontal icon" style={{ color: 'black' }}></i>
-            </button>
+            
           </Col>
       </Row>
       <div style={{width: "100%"}}>
-        <div class="ui divider"/>
+        <div className="ui divider"/>
       </div>
     </div>
   )

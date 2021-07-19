@@ -11,9 +11,12 @@ import {
 } from 'antd';
 import { useMutation } from '@apollo/client'
 import { REGISTER_USER } from '../GraphQL/Mutations'
-
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/auth'
 
+import { LoadingOutlined } from "@ant-design/icons";
+
+import {dial} from './Countries'
 
 const { Option } = Select;
 const gender = [
@@ -48,7 +51,6 @@ const Register = (props) => {
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
-    console.log(context.facebookData);
 
     const [registerUser, { loading, data }] = useMutation(REGISTER_USER, {
         update(_, { data: { registerUser: userData } }) {
@@ -63,46 +65,50 @@ const Register = (props) => {
 
     const onFinish = (values) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
-
-        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}` } })
-        console.log('Received values of form: ', values);
+        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || dial[0].dial_code) + phone}` } })
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
     };
 
-    console.log(loading, data);
+   const dialData = dial.map(item => {
+    return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
+   })
     const phoneCode = (
         <Form.Item name="phoneCode" noStyle>
             <Select
+
+                defaultValue={dial[0].dial_code}
+
                 style={{
                     width: 70,
                 }}
             >
-                <Option value="+62">+62</Option>
-                <Option value="+87">+87</Option>
+               {dialData}
             </Select>
         </Form.Item>
     );
 
     return (
-        <div>
-            <div>
+        <div >
+            <div >
+                <Link to ='/'>
                 <div className="centeringImage">
                 <div className="curious centeringImage" style={{ marginTop: 50, }} />
                 </div>
+                </Link>
+                
                 <div>
 
                 </div>
-                <div class="ui card container centeringImage" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
-                    <div class="content">
+                <div className="landing-card">
+                    <div className="content">
                         <Form
                             form={form}
                             name="register"
                             onFinish={onFinish}
                             initialValues={{
-                                residence: ['zhejiang', 'hangzhou', 'xihu'],
-                                prefix: '86',
+                                prefix: '+62'
                             }}
                             scrollToFirstError
                         >
@@ -120,10 +126,9 @@ const Register = (props) => {
                                 ]}
                             >
 
-                                <Input placeholder="Email adress" />
+                                <Input placeholder="Email adress" style={{width:"100%"}} />
                             </Form.Item>
                             <Form.Item
-
                                 name="phone"
                                 rules={[
                                     {
@@ -137,9 +142,7 @@ const Register = (props) => {
                                 <Input
                                     addonBefore={phoneCode}
                                     placeholder="Phone number"
-                                    style={{
-                                        width: '100%',
-                                    }}
+                                    style={{width: "100%"}}
                                 />
                             </Form.Item>
                             <Form.Item
@@ -153,7 +156,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Input placeholder="Username" />
+                                <Input placeholder="Username"  style={{width:"100%"}}/>
                             </Form.Item>
                             <Form.Item
                                 name="password"
@@ -165,7 +168,7 @@ const Register = (props) => {
                                 ]}
                                 hasFeedback
                             >
-                                <Input.Password placeholder="Password" />
+                                <Input.Password style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: "100%"}} placeholder="Password" />
                             </Form.Item>
                             <Form.Item
                                 name="birthday"
@@ -176,7 +179,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <DatePicker placeholder="birthday" style={{ width: 359 }} />
+                                <DatePicker placeholder="birthday" style={{width:"100%"}}  />
                             </Form.Item>
 
                             <Form.Item
@@ -189,7 +192,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Cascader options={gender} />
+                                <Cascader style={{backgroundColor: '#FAFAFF', width: "100%"}} options={gender} />
                             </Form.Item>
                             <Form.Item
                                 name="agreement"
@@ -203,14 +206,15 @@ const Register = (props) => {
                                 {...tailFormItemLayout}
                                 style={{ marginRight: 160 }}
                             >
-                                <Checkbox >
+                                <Checkbox  style={{width: 200}}>
                                     I have read the agreement
-                </Checkbox>
+                                </Checkbox>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" className='centeringButton' style={{ marginTop: 10, backgroundColor: '#7f57ff' }}>
-                                    Register
-                                </Button>
+                            <button className="ui facebook button body-page__btn-send" type="submit" 
+                                style={{ fontSize: '18px',padding: 0 }}>
+                                    {loading ? (<LoadingOutlined />): ("Register")} 
+                                </button>
                                 <p style={{ fontSize: 12, textAlign: 'center', marginTop: 60 }}>By signing up, you agree to our <span style={{ fontWeight: 'bold' }}>Terms & Privacy Policy</span></p>
                             </Form.Item>
                             {Object.keys(errors).length > 0 && (

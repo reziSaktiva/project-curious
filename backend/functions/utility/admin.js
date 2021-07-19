@@ -2,6 +2,12 @@ const admin = require('firebase-admin')
 admin.initializeApp();
 
 const db = admin.firestore()
+const auth = admin.auth()
 db.settings({ ignoreUndefinedProperties: true })
 
-module.exports = { db, admin }
+const { PubSub, withFilter } = require('graphql-subscriptions')
+const pubSub = new PubSub;
+
+const NOTIFICATION_ADDED = "NOTIFICATION_ADDED"
+
+module.exports = { db, admin, auth, NOTIFICATION_ADDED, pubSub, withFilter }

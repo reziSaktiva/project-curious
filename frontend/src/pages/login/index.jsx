@@ -10,14 +10,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 import '../reset-password/style.css';
 
-const layout = {
-  labelCol: {
-      span: 8,
-  },
-  wrapperCol: {
-      span: 16,
-  },
-};
+
 
 const Login = (props) => {
   const context = useContext(AuthContext)
@@ -49,11 +42,10 @@ const Login = (props) => {
       <Link to='/' className="header-page">
         <div className="curious"/>
       </Link>
-      <div className="body-page ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+      <div className="landing-card">
         <div className="body-page__wrapper content">
           <h1>Sign in</h1>
           <Form
-            {...layout}
             name="basic"
             initialValues={{
                 remember: true,
@@ -70,7 +62,9 @@ const Login = (props) => {
               ]}
               className="body-page__textfield"
             >
-              <Input placeholder="Email / Username" />
+              <Input 
+               style={{width:"100%"}}
+             placeholder="Email / Username" />
             </Form.Item>
 
             <Form.Item
@@ -83,12 +77,14 @@ const Login = (props) => {
               ]}
               className="body-page__textfield"
             >
-              <Input.Password placeholder="Password" />
+              <Input.Password 
+            style={{backgroundColor: '#FAFAFF', borderRadius: 10, paddingTop: 0, paddingBottom: 0, width: "100%"}}
+             placeholder="Password" />
             </Form.Item>
 
             <Form.Item>
-              <button className="ui facebook button body-page__btn-send" type="submit" 
-              style={{ fontSize: '18px',padding: 0 }}>
+              <button className="ui  facebook button body-page__btn-send" type="submit" 
+              style={{ fontSize: '18px',padding: 0, width:"100%" }}>
                 {loading ? (<LoadingOutlined />): ("Sign in")} 
               </button>
             </Form.Item>
