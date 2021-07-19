@@ -19,6 +19,7 @@ import SidebarMobile from '../components/SidebarMobile'
 import BackDrop from '../components/BackDrop'
 import NotificationMobile from '../components/NotificationMobile'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import Modal from '../components/Modal'
 
 
 function Home() {
@@ -89,6 +90,7 @@ function Home() {
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
             <NotificationMobile />
             <SidebarMobile show={burger.toggle} />
+            
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
