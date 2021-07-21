@@ -36,10 +36,10 @@ export default function PostCard({ post, loading, type }) {
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
+  const [deleteModal, setDeleteModal] = useState(false)
 
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
-  const { setModal, isModalActive } = useContext(PostContext);
 
   const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
@@ -186,7 +186,7 @@ export default function PostCard({ post, loading, type }) {
                             key="4"
                             onClick={() => {
                               console.log("event from post card")
-                              setModal(true)
+                              setDeleteModal(true)
                             }}>
                             <span>Delete Post</span>
                           </Menu.Item>
@@ -255,7 +255,7 @@ export default function PostCard({ post, loading, type }) {
         <p style={{ marginTop: -9 }}>{post.text}</p>
            
         <Photo photo={post.media} />
-        <Modal title="Delete Post" handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
+        <Modal title="Delete Post" deleteModal={deleteModal} setDeleteModal={setDeleteModal} handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
              
       </List.Item>
     </List>
