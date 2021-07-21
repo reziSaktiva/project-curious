@@ -149,7 +149,6 @@ module.exports = gql`
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
-        textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
         setRulesSearchAlgolia(index: String!, rank: [String]!): String
     },
     input RegisterInput {
@@ -212,6 +211,7 @@ module.exports = gql`
         mutePost ( postId: ID! room: String ): Mute!
         deletePost( id: ID! room: String ): String!
         likePost(id: ID! room:String ): Like
+        textSearch(search: String, perPage: Int, page: Int, range: Float, location: Location ): Search!
 
         # comments mutation
         createComment( id:ID!, text: String!, reply: Reply, photo: String, room: String ): Comment!
