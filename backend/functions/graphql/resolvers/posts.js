@@ -892,7 +892,7 @@ module.exports = {
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
-            if (doc.data().repost.repost) {
+            if ( doc.data().repost && doc.data().repost.repost) {
               const { repost } = doc.data()
               db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
                 .then(doc => doc.ref.update({repostCount: doc.data().repostCount - 1}))
