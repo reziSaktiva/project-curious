@@ -2,14 +2,11 @@ import React, { useContext } from 'react'
 import { PostContext } from '../../context/posts'
 import './style.css'
 
-export default function Modal({title, handleYes}) {
-    const { setModal, isModalActive } = useContext(PostContext)
-
-    const handleClose = () => setModal(false)
-    const handleOpen = () => setModal(true)
+export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
+    const handleClose = () => setDeleteModal(false)
 
     let classes = "modal-bg"
-        if(isModalActive) {
+        if(deleteModal) {
             classes = "modal-bg bg-active"
         }
         

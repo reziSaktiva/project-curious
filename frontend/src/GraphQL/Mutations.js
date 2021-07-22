@@ -227,3 +227,56 @@ export const REGISTER_USER = gql`
     )
   }
 `;
+
+export const SEARCH_POSTS = gql`
+  mutation Search($search: String, $perPage: Int, $page: Int, $range: Float, $location: Location) {
+    textSearch(search: $search, perPage: $perPage, page: $page, range: $range, location: $location){
+      hits {
+        id
+        createdAt
+        owner
+        commentCount
+        likeCount
+        text
+        location {
+          lat
+          lng
+        }
+        likes {
+          id
+          owner
+          createdAt
+          colorCode
+          displayName
+          displayImage
+        }
+        comments {
+          id
+          createdAt
+          owner
+          text
+          displayName
+          photoProfile
+          colorCode
+        }
+        repost {
+            id
+            owner
+            text
+            media
+            createdAt
+            location {
+              lat
+              lng
+            }
+        }
+        hastags
+      }
+      page
+      nbHits
+      nbPages
+      hitsPerPage
+      processingTimeMS
+    }
+  }
+`

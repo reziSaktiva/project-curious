@@ -345,8 +345,8 @@ module.exports = {
       if (!index) {
         throw new UserInputError('index search is required, check index name on algolia dashboard')
       }
-
-      if (!rang || rank.length) {
+      
+      if (!rank || !rank.length) {
         throw new UserInputError('rank is Required')
       }
 
@@ -361,45 +361,6 @@ module.exports = {
             reject("Failed set rules")
           })
       })
-    },
-    async textSearch(_, { search, perPage = 5, page, range = 40, location }, context) {
-      const { lat, lng } = location;
-      const index = client.initIndex('search_posts');
-
-      const defaultPayload = {
-        "attributesToRetrieve": "*",
-        "attributesToSnippet": "*:20",
-        "snippetEllipsisText": "…",
-        "responseFields": "*",
-        "getRankingInfo": true,
-        "analytics": false,
-        "enableABTest": false,
-        "explain": "*",
-        "facets": ["*"],
-        "customRanking": ['desc(likeCount)', 'desc(commentCount)', "words"] // ranking based on likeCount and commentCount
-      };
-      const geoLocPayload = {
-        "aroundLatLng": `${lat}, ${lng}`,
-        "aroundRadius": range * 1000,
-      };
-
-      const pagination = {
-        "hitsPerPage": perPage || 10,
-        "page": page || 0,
-      }
-
-      return new Promise((resolve, reject) => {
-        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination })
-          .then(res => {
-            const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
-
-            // return following structure data algolia
-            resolve({ hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
-          }).catch(err => {
-            reject(err)
-            console.error(err)
-          });
-      });
     },
     async getPost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context)
@@ -892,7 +853,7 @@ module.exports = {
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
-            if (doc.data().repost.repost) {
+            if ( doc.data().repost && doc.data().repost.repost) {
               const { repost } = doc.data()
               db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
                 .then(doc => doc.ref.update({repostCount: doc.data().repostCount - 1}))
@@ -1294,6 +1255,61 @@ module.exports = {
         console.log(err);
         throw new Error(err);
       }
+    },
+    async textSearch(_, { search, perPage = 5, page, range = 40, location }, context) {
+      const { lat, lng } = location;
+      const index = client.initIndex('search_posts');
+
+      const defaultPayload = {
+        "attributesToRetrieve": "*",
+        "attributesToSnippet": "*:20",
+        "snippetEllipsisText": "…",
+        "responseFields": "*",
+        "getRankingInfo": true,
+        "analytics": false,
+        "enableABTest": false,
+        "explain": "*",
+        "facets": ["*"]
+      };
+      const geoLocPayload = {
+        "aroundLatLng": `${lat}, ${lng}`,
+        "aroundRadius": range * 1000,
+      };
+
+      const pagination = {
+        "hitsPerPage": perPage || 10,
+        "page": page || 0,
+      }
+
+      return new Promise((resolve, reject) => {
+        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
+          .then(res => {
+            const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
+            
+            const newHits = []
+            if (hits.length) {
+              hits.forEach(async data => {
+                // Likes
+                const likes = async () => {
+  
+                  const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+                  const likes = likesData.docs.map(doc => doc.data())
+  
+                  return likes;
+                };
+  
+                newHits.push({ ...data, likes: likes() })
+              })
+            }
+
+            console.log(newHits)
+            // return following structure data algolia
+            resolve({ hits: newHits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
+          }).catch(err => {
+            reject(err)
+            console.error(err)
+          });
+      });
     },
   },
 };
