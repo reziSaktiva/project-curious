@@ -5,7 +5,6 @@ import {
     Cascader,
     Select,
     Checkbox,
-    Button,
     DatePicker,
     Alert
 } from 'antd';
@@ -78,7 +77,7 @@ const Register = (props) => {
         <Form.Item name="phoneCode" noStyle>
             <Select
 
-                defaultValue={dial[0].dial_code}
+                defaultValue='+62'
 
                 style={{
                     width: 70,

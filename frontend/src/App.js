@@ -25,7 +25,7 @@ import SinglePost from './pages/detailPost/detailPost';
 import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
-import Profile from './pages/Profile'
+import Profile from './pages/Profile/Profile'
 import Visited from './pages/visited/index'
 import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
@@ -35,6 +35,7 @@ import Chat from './components/chat';
 import settings from './pages/Settings';
 
 import Search from './pages/search/index';
+import EditProfile from './pages/Profile/editProfile';
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
             <UserRoute exact path="/BMW Club Bandung" component={Room} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
+            <UserRoute exact path="/editProfile" component={EditProfile} />
             <UserRoute exact path="/profile/user/:id" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />

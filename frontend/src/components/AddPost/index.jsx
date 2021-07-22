@@ -69,8 +69,12 @@ export default function ModalPost() {
   const [address, setAddress] = useState("");
   const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
-  const { room, setRoom } = useContext(AuthContext)
+  const [ room, setRoom ] = useState("Nearby")
   const [open, setOpen] = useState([])
+
+  const handleCloseAddPost = () => {
+    toggleOpenNewPost(false)
+  }
 
   //changeroom func
   const handleCollapse = () => {
@@ -81,7 +85,7 @@ export default function ModalPost() {
     }
   }
   const handleRoom = (e) => {
-    setRoom('Nearby')
+    setRoom(e.target.value)
     setOpen([])
 
   }
@@ -279,17 +283,21 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
+                  
                   <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30}}>
                     <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20  }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
-                    <Link to='/maps'><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
+                    <Link to='/maps' onClick={handleCloseAddPost}><p style={{ fontSize: 12, marginTop: -10 }}>{address}</p></Link>
                   </div>
                   <DownOutlined style={{ float: 'right', width: 46, marginTop: 15 }} />
                 </div>
               } key="1" showArrow={false}>
-                <p onClick={handleRoom}>Nearby</p>
+                {room !== "Nearby" && (
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>Nearby</Radio.Button>
+                ) }
+                
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
                   <img src={Gorila} alt='gorila' style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
