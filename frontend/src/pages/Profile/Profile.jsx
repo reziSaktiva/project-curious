@@ -3,20 +3,20 @@ import React, { useContext, useEffect, useState } from "react";
 import cn from "classnames";
 import { useMutation, useQuery } from "@apollo/client";
 import { chunk } from "lodash";
-import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../GraphQL/Queries";
-import { CHANGE_PP } from "../GraphQL/Mutations";
-import { AuthContext } from "../context/auth";
+import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
+import { CHANGE_PP } from "../../GraphQL/Mutations";
+import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
-import "../App.css";
+import "./style.css";
 import { Col, Row, Tabs, Upload } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import ImgCrop from "antd-img-crop";
 
 //assets
-import Pin from "../assets/pin-svg-25px.svg";
-import IconCrash from "../assets/ic-crash.png";
-import Radius from '../assets/radius.png'
+import Pin from "../../assets/pin-svg-25px.svg";
+import IconCrash from "../../assets/ic-crash.png";
+import Radius from '../../assets/radius.png'
 
 //location
 import Geocode from "react-geocode";
@@ -25,14 +25,14 @@ import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from "react-router-dom";
 
 // Components
-import PostCard from "../components/PostCard/index";
-import AppBar from "../components/AppBar";
+import PostCard from "../../components/PostCard/index";
+import AppBar from "../../components/AppBar";
 
 // Init Firebase
 import firebase from "firebase/app";
 import "firebase/storage";
-import { PostContext } from "../context/posts";
-import SkeletonLoading from "../components/SkeletonLoading";
+import { PostContext } from "../../context/posts";
+import SkeletonLoading from "../../components/SkeletonLoading";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -67,28 +67,28 @@ function Profile() {
   //change Photo Profile funtion
 
 
-  const handleChange = (value) => {
-    const uploadTask = storage
-      .ref(`proflePicture/${value.file.originFileObj.name}`)
-      .put(value.file.originFileObj);
-    uploadTask.on(
-      "state_changed",
-      () => { },
-      (error) => {
-        console.log(error);
-      },
-      async () => {
-        storage
-          .ref("proflePicture")
-          .child(value.file.originFileObj.name)
-          .getDownloadURL()
-          .then((url) => {
-            setProfilePicture({ url, isFinishUpload: true });
-            changeProfilePicture(url);
-          });
-      }
-    );
-  };
+  // const handleChange = (value) => {
+  //   const uploadTask = storage
+  //     .ref(`proflePicture/${value.file.originFileObj.name}`)
+  //     .put(value.file.originFileObj);
+  //   uploadTask.on(
+  //     "state_changed",
+  //     () => { },
+  //     (error) => {
+  //       console.log(error);
+  //     },
+  //     async () => {
+  //       storage
+  //         .ref("proflePicture")
+  //         .child(value.file.originFileObj.name)
+  //         .getDownloadURL()
+  //         .then((url) => {
+  //           setProfilePicture({ url, isFinishUpload: true });
+  //           changeProfilePicture(url);
+  //         });
+  //     }
+  //   );
+  // };
 
   useEffect(() => {
     if (isFinishUpload) {
@@ -257,13 +257,29 @@ function Profile() {
               right: 0,
             }}
           >
+              <Link to="/editProfile" showUploadList={false}>
+                <EditOutlined style={{ color: 'white' }} />
+              </Link>
+          </div>
+          {/* <div
+            style={{
+              backgroundColor: "#7f57ff",
+              color: "white",
+              borderRadius: "50%",
+              width: 21,
+              height: 21,
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+            }}
+          >
             <ImgCrop rotate>
 
               <Upload onChange={handleChange} showUploadList={false}>
                 <EditOutlined style={{ color: 'white' }} />
               </Upload>
             </ImgCrop>
-          </div>
+          </div> */}
         </div>
       </div>
 
