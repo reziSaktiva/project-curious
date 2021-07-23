@@ -11,6 +11,7 @@ import Modal from '../components/Modal';
 import { PostContext } from '../context/posts';
 
 export default function Settings() {
+  const [deleteModal, setDeleteModal] = useState(false)
   const { setModal } = useContext(PostContext);
   const history = useHistory()
   const path = useHistory().location.pathname
@@ -41,7 +42,8 @@ export default function Settings() {
 
   const handleLogout = () => {
     localStorage.clear()
-    history.push('/')
+    history.go('/')
+    
   }
   return (
     <div>
@@ -84,7 +86,7 @@ export default function Settings() {
           </List.Item>
         </Link>
         {/* <a href="/" onClick={handleLogout}> */}
-          <List.Item onClick={() => setModal(true)} key='3'>
+          <List.Item onClick={() => setDeleteModal(true)} key='3'>
             <List.Item.Meta
               title="Logout"
             />
@@ -100,7 +102,7 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <Modal title="log out" />
+        <Modal title="logout" handleYes={handleLogout} deleteModal={deleteModal} setDeleteModal={setDeleteModal}/>
       </List>
     </div>
   )

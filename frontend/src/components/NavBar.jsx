@@ -11,7 +11,7 @@ export default function NavBar(props) {
   const handleToggle = e => {
     setNav(e.target.value)
   }
-
+  const notificationLength = notifications && notifications.filter(notif => notif.read === false).length
   return (
     <header className="toolbar">
       <div className="toolbar__nav">
@@ -56,7 +56,7 @@ export default function NavBar(props) {
           notifications.length > 1 && <div className="notifCounter__mobile">
             <p style={{fontSize:10,display: 'flex', justifyContent: 'center'}}> {notifications.length > 99 ?
                ('99+') :
-                (notifications.length)}</p>
+                (notificationLength)}</p>
               
                 </div>}
               
