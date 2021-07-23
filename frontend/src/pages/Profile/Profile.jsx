@@ -285,7 +285,7 @@ function Profile() {
 
       <h4 style={{ textAlign: "center" }}>{user.username}</h4>
       <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
-        <Link to="/">
+        <Link to="/maps">
           <img src={Pin} style={{ width: 20, marginTop: -5 }} />
           <span style={{ fontSize: 12 }}>{address}</span>
         </Link>
