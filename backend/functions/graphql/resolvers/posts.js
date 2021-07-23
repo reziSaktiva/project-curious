@@ -69,7 +69,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 1)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {

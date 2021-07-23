@@ -12,7 +12,6 @@ export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
         
     return (
         <>
-        {/* <span onClick={handleOpen} className="modal-btn">{title}</span> */}
 
         <div className={classes}>
             <div className="modal">
