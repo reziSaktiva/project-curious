@@ -23,7 +23,8 @@ import {
   NOTIFICATION_READ,
   NOTIFICATIONS_READ,
   SET_PROFILE_PICTURE,
-  SET_ROOM
+  SET_ROOM,
+  NOTIFICATION_ADDED
 } from "./constant";
 
 const initialState = {
@@ -103,6 +104,11 @@ function authReducer(state, action) {
         ...state,
         user: null,
       };
+    case NOTIFICATION_ADDED:
+      return {
+        ...state,
+        notifications: [action.payload, ...state.notifications]
+      }
     case NOTIFICATIONS_READ:
       return {
         ...state,
@@ -196,7 +202,7 @@ export function AuthProvider(props) {
       const user = get(data, "getUserData.user", {});
       const notifications = get(data, "getUserData.notifications", []);
       const likes = get(data, "getUserData.liked", []);
-      console.log("user", user);
+      
       dispatch({
         type: SET_USER_DATA,
         payload: user,
@@ -282,6 +288,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function notificationAdded(notification) {
+    dispatch({
+      type: NOTIFICATION_ADDED,
+      payload: notification
+    })
+  }
+
   function logout() {
     dispatch({ type: LOGOUT });
   }
@@ -303,6 +316,7 @@ export function AuthProvider(props) {
       room,
       pathname,
       setRoom,
+      notificationAdded,
       setPathname,
       clearNotifications,
       changeProfilePicture,

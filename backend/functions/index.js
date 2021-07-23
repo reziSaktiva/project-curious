@@ -5,7 +5,7 @@ const { ApolloServer } = require('apollo-server-express');
 
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers/index')
-
+const PORT = 5000
 // Global Config
 require('dotenv').config()
 
@@ -28,6 +28,6 @@ server.applyMiddleware({ app, path:'/', cors: true })
 const httpServer = http.createServer(app)
 
 server.installSubscriptionHandlers(httpServer)
-httpServer.listen(5000, console.log(`Server start on port 5000`))
+httpServer.listen(PORT, console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`))
 
 exports.graphql = functions.https.onRequest(app)

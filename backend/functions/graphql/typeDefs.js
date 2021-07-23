@@ -135,7 +135,7 @@ module.exports = gql`
         isSubscribe: Boolean
     }
     type Subscription {
-        notificationAdded: Notification
+        notificationAdded(username: String): Notification
     }
     type Query {
         getPosts(lat: Float, lng: Float, range: Float): [Post]!

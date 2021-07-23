@@ -39,7 +39,6 @@ const Search = () => {
   const doSearchData = hits.length && !loading;
 
   const { setPathname } = useContext(AuthContext)
-
   useEffect(() => {
       setPathname(history)
   }, [])

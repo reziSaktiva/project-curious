@@ -16,10 +16,27 @@ firebase.initializeApp(config)
 module.exports = {
     Subscription: {
         notificationAdded: {
-            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), async (payload, _variables, context) => {
-                const { username } = await fbAuthContext(context)
-                return payload.notificationAdded.owner === username
+            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
+                console.log(variables);
+                return payload.notificationAdded.owner === variables.username
             })
+            // subscribe : (_, __, context) => {
+            //     return pubSub.asyncIterator(NOTIFICATION_ADDED)
+            // }
+            // subscribe: async (_, __, context) => {
+            //     const { username } = await fbAuthContext(context)
+            //     console.log(username);
+            //     try {
+            //         const data = await withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, _variables) => {
+            //             return payload.notificationAdded.owner === username
+            //         })
+            //         console.log(data());
+            //         return data()
+            //     }
+            //     catch (err) {
+            //         console.log(err);
+            //     }
+            // }
         }
     },
     Query: {

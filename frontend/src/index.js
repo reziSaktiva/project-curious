@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat, split} from '@apollo/client/core';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat, split } from '@apollo/client/core';
 import { onError } from 'apollo-link-error';
 import { isMobile } from "react-device-detect";
 
@@ -25,23 +25,23 @@ const wsUrl = 'ws://localhost:5000/graphql';
 const httpLink = ApolloLink.from([
   new ApolloLink((operation, forward) => {
     const token = localStorage.token
-    if(token) {
+    if (token) {
       operation.setContext({
         headers: {
-          "Authorization" : `Bearer ${token}`
+          "Authorization": `Bearer ${token}`
         }
       })
     }
     return forward(operation)
   }),
-  new HttpLink({uri: httpUrl})
-   //new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
+  new HttpLink({ uri: httpUrl })
+  //new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
 ])
 
 
 
 const errorLink = onError(
-  ({ graphQLErrors, networkError}) => {
+  ({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       for (let err of graphQLErrors) {
         switch (err.extensions.code) {
@@ -49,7 +49,7 @@ const errorLink = onError(
             // error code is set to UNAUTHENTICATED
             if (err.message.includes('Firebase ID token has expired')) {
               destorySession();
-              
+
               window.location.href = '/';
             }
           default:
@@ -72,20 +72,21 @@ const wsLink = new WebSocketLink({
     connectionParams: () => ({
       accessToken: localStorage.token
     }),
-    reconnect: true
+    reconnect: true,
+    lazy: true
   }
 })
 
 function isSubscription(operation) {
   const definition = getMainDefinition(operation.query);
-  return definition.kind === 'OperationDefinition' 
+  return definition.kind === 'OperationDefinition'
     && definition.operation === 'subscription'
 }
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(errorLink, split(isSubscription, wsLink, httpLink,)),
-  defaultOptions: {query: {fetchPolicy: 'no-cache'}}
+  defaultOptions: { query: { fetchPolicy: 'no-cache' } }
 });
 
 window.isMobile = isMobile;

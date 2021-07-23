@@ -800,7 +800,6 @@ export const PostProvider = (props) => {
     })
   }
   const setModal = (isModalActive) => {
-    console.log("isModalActive", isModalActive);
     dispatch({
       type: "SET_MODAL",
       payload: isModalActive

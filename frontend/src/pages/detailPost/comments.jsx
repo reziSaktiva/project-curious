@@ -51,7 +51,6 @@ export default function Comments({ post, loading, user, setReply, form }) {
         setParentComment(parentComments)
     }, [post])
     
-    console.log(post.comments.filter(data => data.reply.id === data.id));
     return (
         <div>
             <List
