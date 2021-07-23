@@ -16,7 +16,7 @@ export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
 
         <div className={classes}>
             <div className="modal">
-                <h2>Are You Sure want to delete this post?</h2>
+                <p>Are You Sure want to {title}?</p>
                 <div className="btn-container">
                     <button
                      className="modal-btn__footer"

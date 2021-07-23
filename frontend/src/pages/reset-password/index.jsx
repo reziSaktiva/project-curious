@@ -69,17 +69,17 @@ export default function ReserPassword(props) {
       <Link to='/' className="header-page">
         <div className="curious"/>
       </Link>
-      <div className="body-page ui card container">
+      <div className="landing-card">
         <div className="body-page__wrapper content">
           <h1>Reset Password</h1>
           <Form
-            {...layout}
             name="basic"
             initialValues={{
                 remember: true,
             }}
             onFinish={onFinish}>
               <Form.Item
+              style={{width:"100%"}}
                 name="email"
                 className="body-page__textfield"
                 rules={[
@@ -89,14 +89,16 @@ export default function ReserPassword(props) {
                   },
                 ]}
               >
-                <Input placeholder="Email / Username" />
+                <Input style={{width:"100%", }}   placeholder="Email / Username" />
               </Form.Item>
 
-              <Form.Item>
-                <button className="ui facebook button body-page__btn-send" type="submit" >
-                    Send Verification Email
-                </button>
-              </Form.Item>
+
+              <Form.Item style={{width:'100%', maxWidth: 450}}>
+              <button className="ui  facebook button body-page__btn-send" type="submit" 
+              style={{ fontSize: '14px',padding: 0, width:"100%",  }}>
+                Send Verification Email
+              </button>
+            </Form.Item>
             </Form>
         </div>
       </div>

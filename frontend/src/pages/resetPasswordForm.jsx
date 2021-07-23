@@ -41,9 +41,9 @@ export default function ReserPasswordForm(props) {
     return (
         <div>
             <Link to='/'>
-            <div className="curious" style={{ marginLeft: 710, marginTop: 100 }} />
+            <div className="curious" />
             </Link>
-            <div className="ui card container" style={{ width: 447, marginTop: 30, paddingTop: 30, padding: 30 }}>
+            <div className="ui card container" >
                 <div className="content">
                     <h1>We Got Your Back!</h1>
                     <h3>Just type your new Password here!</h3>
@@ -63,9 +63,9 @@ export default function ReserPasswordForm(props) {
                                     message: 'Please input your password!',
                                 },
                             ]}
-                            style={{ width: 539 }}
+                            
                         >
-                            <Input.Password placeholder="Password" />
+                            <Input.Password style={{ width: '100%' }} placeholder="Password" />
                         </Form.Item>
 
                         <Form.Item>

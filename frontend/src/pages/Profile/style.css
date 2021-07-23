@@ -1,0 +1,41 @@
+.edit-profile__container {
+    background-color: white;
+    height: 100vh;
+    width: 100%;
+    max-width: 600px;
+    margin-top: -14px;
+    padding: 16px;
+
+    display: flex;
+    justify-content: center;
+}
+.form__container {
+    width: 100%;
+    max-width: 342px;
+    margin: 0 auto 0 auto;
+}
+.profile-picture {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 80px;
+    height: 80px;
+}
+.PP__grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    margin-bottom: 32px;
+    
+}
+.right-content {
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+    
+    font-weight: 700;
+}
+.text-color {
+    color: var(--primary-color);
+}
+.edit-profile__textfield {
+    margin-bottom: 16px;
+}

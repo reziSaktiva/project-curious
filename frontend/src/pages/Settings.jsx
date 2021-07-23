@@ -7,9 +7,12 @@ import { useMutation } from '@apollo/client';
 import { DELETE_ACCOUNT } from '../GraphQL/Mutations';
 import { AuthContext } from '../context/auth'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import Modal from '../components/Modal';
+import { PostContext } from '../context/posts';
 
 export default function Settings() {
-
+  const { setModal } = useContext(PostContext);
+  const history = useHistory()
   const path = useHistory().location.pathname
 
   const { setPathname } = useContext(AuthContext)
@@ -35,8 +38,10 @@ export default function Settings() {
     }
   }
 
+
   const handleLogout = () => {
     localStorage.clear()
+    history.push('/')
   }
   return (
     <div>
@@ -78,14 +83,15 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <a href="/" onClick={handleLogout}>
-          <List.Item key='3'>
+        {/* <a href="/" onClick={handleLogout}> */}
+          <List.Item onClick={() => setModal(true)} key='3'>
             <List.Item.Meta
               title="Logout"
             />
+            
             <div><RightOutlined /></div>
           </List.Item>
-        </a>
+        {/* </a> */}
         <Link onClick={handleDeleteAccount}>
           <List.Item key='3'>
             <List.Item.Meta
@@ -94,6 +100,7 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
+        <Modal title="log out" />
       </List>
     </div>
   )

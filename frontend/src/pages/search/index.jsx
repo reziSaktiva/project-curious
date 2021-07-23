@@ -42,20 +42,22 @@ const Search = () => {
   useEffect(() => {
       setPathname(history)
   }, [])
-
+console.log(hits);
   return (
     <>
     <AppBar title="Seach" />
+    
     <div className="search_page">
+    <Input placeholder="seach something.." className="test" onPressEnter={searchPosts} prefix={<SearchOutlined />} style={{marginBottom: 10}} />
       {doSearchData ? (
         <>{hits.map((post, key) => (
           <div key={`posts${post.id} ${key}`}>
-            {/* <PostCard post={post} loading={loading} /> */}
+            <PostCard post={post} loading={loading} />
           </div>
         ))}</>
       ) : (
         <>
-          <Input placeholder="default size" onChange={searchPosts} prefix={<SearchOutlined />} />
+          
             <div className="explore-place">
               <span className="title">Explore Place</span>
               <div className="explore-place__btn-more">More</div>

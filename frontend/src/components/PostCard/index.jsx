@@ -184,6 +184,8 @@ export default function PostCard({ post, loading, type }) {
                         {userName === post.owner ? (
                           <Menu.Item
                             key="4"
+                            // onClick={() => setModal(true)}>
+
                             onClick={() => {
                               console.log("event from post card")
                               setDeleteModal(true)
@@ -255,7 +257,7 @@ export default function PostCard({ post, loading, type }) {
         <p style={{ marginTop: -9 }}>{post.text}</p>
            
         <Photo photo={post.media} />
-        <Modal title="Delete Post" deleteModal={deleteModal} setDeleteModal={setDeleteModal} handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
+        <Modal title="delete this post" deleteModal={deleteModal} setDeleteModal={setDeleteModal} handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
              
       </List.Item>
     </List>
