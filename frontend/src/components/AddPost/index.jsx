@@ -179,7 +179,7 @@ export default function ModalPost() {
         },
         repost: repost.repost || '',
         roomRepost: repost.room || '',
-        room
+        room: room === "Nearby" ? null : room
       };
       
       createPost({ variables });
