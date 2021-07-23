@@ -3,7 +3,10 @@
   margin-top: 10px;
   margin-right: 10px;
 }
-
+.test > .ant-input {
+  background-color: white;
+  height: 30px;
+}
 .search_page .ant-input-affix-wrapper {
   border-radius: 5px;
   height: 40px;
