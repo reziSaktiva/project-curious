@@ -17,10 +17,15 @@ import './notif-style.css'
 
 export default function Notification() {
   const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
-  const { clearNotifications } = useContext(AuthContext);
+  const { clearNotifications, user } = useContext(AuthContext);
 
-  const {data, loading, error} = useSubscription(NOTIFICATION_ADDED)
-  console.log(data, "notification")
+  useSubscription(NOTIFICATION_ADDED, {
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      notificationAdded(subscriptionData.data.notificationAdded);
+    },
+    variables: { username: user.username }
+  })
+
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
       notificationRead(readNotification);
@@ -47,12 +52,12 @@ export default function Notification() {
       <div className="notif__width">
         <Card
           title={
-        <h3 style={{textAlign: 'center'}}>Notification  {
-          notifications.length > 1 && <div className="notifCounter">
-              <p style={{display: 'flex',justifyContent: 'center', marginTop: 2}}>{notificationLength > 99 ?
-               ('99+') :
-                (notificationLength)}</p>
-                </div>}</h3>
+            <h3 style={{ textAlign: 'center' }}>Notification  {
+              notifications.length > 1 && <div className="notifCounter">
+                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>{notificationLength > 99 ?
+                  ('99+') :
+                  (notificationLength)}</p>
+              </div>}</h3>
           }
           extra={
             <Dropdown
@@ -73,8 +78,8 @@ export default function Notification() {
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >
-                <div style={{display: "flex", alignItems: 'center', position: "absolute", right:12}}>
-                <DropIcon />
+                <div style={{ display: "flex", alignItems: 'center', position: "absolute", right: 12 }}>
+                  <DropIcon />
                 </div>
               </a>
             </Dropdown>
@@ -82,66 +87,66 @@ export default function Notification() {
           style={{ width: "100%" }}
           className="testttttt"
         >
-          <div style={{ margin: -22, overflowY: "auto", overflowX :'hidden', height: 342 }}>
+          <div style={{ margin: -22, overflowY: "auto", overflowX: 'hidden', height: 342 }}>
             {(notifications && notifications.length ? (
-                notifications.map((notif, key) => {
-                  let type = "";
-                  let text = "";
+              notifications.map((notif, key) => {
+                let type = "";
+                let text = "";
 
-                  switch (notif.type) {
-                    case "LIKE":
-                      type = "liked";
-                      text = "iike";
-                      break;
-                    case "REPOST":
-                      type = "repost";
-                      text = "repost";
-                      break;
-                    case "COMMENT":
-                      type = "commented";
-                      text = "comment";
-                      break;
-                    case "REPLY_COMMENT":
-                      type = "reply";
-                      text = "reply";
+                switch (notif.type) {
+                  case "LIKE":
+                    type = "liked";
+                    text = "iike";
                     break;
-                    default:
-                      break;
-                  }
+                  case "REPOST":
+                    type = "repost";
+                    text = "repost";
+                    break;
+                  case "COMMENT":
+                    type = "commented";
+                    text = "comment";
+                    break;
+                  case "REPLY_COMMENT":
+                    type = "reply";
+                    text = "reply";
+                    break;
+                  default:
+                    break;
+                }
 
-                  return (
-                    <Link
-                      to={`/post/${notif.postId}`}
-                      onClick={() =>
-                        readNotification({ variables: { id: notif.id } })
-                      }
-                      name={notif.id}
-                      key={`notif${key}`}
-                      style={
-                        notif.read
-                          ? { fontSize: 13, color: "black" }
-                          : { fontSize: 13, fontWeight: "bold", color: "black" }
-                      }
-                    >
-                      <div className="notifContainer">
-                        <Row style={{paddingLeft: 5, paddingRight: 5}}>
-                          <Col span={22}>
-                            <p style={{ marginBottom: 5 }}>
-                              {notif.displayName}{" "}
-                              <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
-                            </p>
-                          </Col>
-                          <Col span={2} style={{ color: "#7958f5" }}>
-                            {!notif.read && <p style={{textAlign: 'right'}}>&#8226;</p>}
-                          </Col>
-                        </Row>
-                      </div>
-                    </Link>
-                  );
-                })
-              ) : (
-                <div className="noNotif"/>
-              )
+                return (
+                  <Link
+                    to={`/post/${notif.postId}`}
+                    onClick={() =>
+                      readNotification({ variables: { id: notif.id } })
+                    }
+                    name={notif.id}
+                    key={`notif${key}`}
+                    style={
+                      notif.read
+                        ? { fontSize: 13, color: "black" }
+                        : { fontSize: 13, fontWeight: "bold", color: "black" }
+                    }
+                  >
+                    <div className="notifContainer">
+                      <Row style={{ paddingLeft: 5, paddingRight: 5 }}>
+                        <Col span={22}>
+                          <p style={{ marginBottom: 5 }}>
+                            {notif.displayName}{" "}
+                            <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
+                          </p>
+                        </Col>
+                        <Col span={2} style={{ color: "#7958f5" }}>
+                          {!notif.read && <p style={{ textAlign: 'right' }}>&#8226;</p>}
+                        </Col>
+                      </Row>
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="noNotif" />
+            )
             )
             }
           </div>

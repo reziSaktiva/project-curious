@@ -5,7 +5,7 @@
     "serve": "firebase emulators:start",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy functions",
+    "deploy": "firebase deploy",
     "logs": "firebase functions:log"
   },
   "engines": {
