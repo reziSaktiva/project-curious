@@ -21,6 +21,7 @@ export default function Notification() {
 
   useSubscription(NOTIFICATION_ADDED, {
     onSubscriptionData: ({ client, subscriptionData }) => {
+      console.log(subscriptionData.data.notificationAdded);
       notificationAdded(subscriptionData.data.notificationAdded);
     },
     variables: { username: user.username }
@@ -41,7 +42,6 @@ export default function Notification() {
   const [clearNotif] = useMutation(CLEAR_ALL_NOTIF, {
     update(_, { data: { clearAllNotif } }) {
       clearNotifications();
-      alert(clearAllNotif);
     },
   });
 

@@ -12,16 +12,10 @@ import { PostContext } from '../context/posts';
 
 export default function Settings() {
   const [deleteModal, setDeleteModal] = useState(false)
-  const { setModal } = useContext(PostContext);
+  const [ModalSource, setModalSource] = useState("")
   const history = useHistory()
   const path = useHistory().location.pathname
-
   const { setPathname } = useContext(AuthContext)
-
-    useEffect(() => {
-        setPathname(path)
-    }, [])
-
   const { user } = useContext(AuthContext)
   const [deleteAccount] = useMutation(DELETE_ACCOUNT ,{
     update(){
@@ -32,7 +26,23 @@ export default function Settings() {
       console.log(err);
     }
   })
+  useEffect(() => {
+    setPathname(path)
+}, [])
 
+  const handleClickLogout = () => {
+    setModalSource(true)
+    setDeleteModal(true)
+    console.log(ModalSource)
+    
+  }
+  const handleClickDeleteAccount = () => {
+    setModalSource(false)
+    setDeleteModal(true)
+    console.log(ModalSource)
+    
+  }
+  
   const handleDeleteAccount = () => {
     if(user){
       deleteAccount({ variables: { id: user.id } })
@@ -77,32 +87,31 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <Link to="/">
-          <List.Item key='3'>
+
+          <List.Item onClick={handleClickLogout} key='4'>
             <List.Item.Meta
               title="Privacy Policy"
             />
             <div><RightOutlined /></div>
           </List.Item>
-        </Link>
-        {/* <a href="/" onClick={handleLogout}> */}
-          <List.Item onClick={() => setDeleteModal(true)} key='3'>
+
+          <List.Item onClick={handleClickLogout} key='5'>
             <List.Item.Meta
               title="Logout"
             />
             
             <div><RightOutlined /></div>
           </List.Item>
-        {/* </a> */}
-        <Link onClick={handleDeleteAccount}>
-          <List.Item key='3'>
+
+        <Link onClick={handleClickDeleteAccount}>
+          <List.Item key='6'>
             <List.Item.Meta
               title="Delete Account"
             />
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <Modal title="logout" handleYes={handleLogout} deleteModal={deleteModal} setDeleteModal={setDeleteModal}/>
+        <Modal title={ModalSource? "logout": "delete this account"} handleYes={ModalSource? handleLogout : handleDeleteAccount} deleteModal={deleteModal} setDeleteModal={setDeleteModal}/>
       </List>
     </div>
   )

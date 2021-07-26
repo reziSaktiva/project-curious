@@ -43,7 +43,6 @@ export default function PostCard({ post, loading, type }) {
 
   const [deletePost] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
-      alert(deletePost);
       postContext.deletePost(post.id, post.room);
     },
   });
@@ -184,12 +183,7 @@ export default function PostCard({ post, loading, type }) {
                         {userName === post.owner ? (
                           <Menu.Item
                             key="4"
-                            // onClick={() => setModal(true)}>
-
-                            onClick={() => {
-                              console.log("event from post card")
-                              setDeleteModal(true)
-                            }}>
+                            onClick={() => setDeleteModal(true)}>
                             <span>Delete Post</span>
                           </Menu.Item>
                         ) : null}

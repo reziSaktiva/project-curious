@@ -15,7 +15,7 @@ export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
 
         <div className={classes}>
             <div className="modal">
-                <p>Are You Sure want to {title}?</p>
+                <p>Are you sure want to {title}?</p>
                 <div className="btn-container">
                     <button
                      className="modal-btn__footer"

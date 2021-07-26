@@ -36,6 +36,7 @@ import settings from './pages/Settings';
 
 import Search from './pages/search/index';
 import EditProfile from './pages/Profile/editProfile';
+import SkeletonProfile from './pages/Profile/SkeletonProfile';
 
 
 function App() {

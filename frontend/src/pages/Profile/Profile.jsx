@@ -33,6 +33,7 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import { PostContext } from "../../context/posts";
 import SkeletonLoading from "../../components/SkeletonLoading";
+import SkeletonProfile from "./SkeletonProfile";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -229,11 +230,11 @@ function Profile() {
       return accumulator + current.repostCount;
     }, 0) : 0;
 
-  return (
+  return loading? <div><AppBar title="My Profile" /><SkeletonProfile /></div> : (
     <div>
       <AppBar title="My Profile" />
       <div
-        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10, backgroundColor: 'white' }}
+        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10,  }}
       >
         <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
           <img

@@ -39,3 +39,18 @@
 .edit-profile__textfield {
     margin-bottom: 16px;
 }
+.profile__skeleton {
+    display: flex;
+    align-items: center;
+    flex-direction: column;  
+}
+.grid__skeleton {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 300px;
+    justify-content: center;
+}
+.centering-skeleton {
+    display: flex;
+    justify-content: center;
+}

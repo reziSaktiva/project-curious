@@ -36,7 +36,6 @@ export default function NotificationMobile() {
   const [clearNotif] = useMutation(CLEAR_ALL_NOTIF, {
     update(_, { data: { clearAllNotif } }) {
       clearNotifications();
-      alert(clearAllNotif);
     },
   });
   

@@ -92,10 +92,7 @@ export default function SidebarMobile(props) {
             title={
               <Link to="/maps" style={{marginLeft: 4,}}>
                 {" "}
-                {windowWidth > 993 ? (
                   <img src={Pin} style={{ width: 20, marginTop: -5 }} />
-                ) : null}
-                
                 {address}
               </Link>
             }

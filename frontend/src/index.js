@@ -16,10 +16,10 @@ import './index.css'
 // Importing components
 import App from './App'
 
-// const link = from([
-//   new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
-// ])
-const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
+const link = from([
+  new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
+])
+// const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
 const wsUrl = 'ws://localhost:5000/graphql';
 
 const httpLink = ApolloLink.from([
@@ -34,7 +34,7 @@ const httpLink = ApolloLink.from([
     }
     return forward(operation)
   }),
-  new HttpLink({ uri: httpUrl })
+  new HttpLink({ uri: link })
   //new HttpLink({uri: process.env.REACT_APP_GRAPHQL_ENDPOINT})
 ])
 
