@@ -61,7 +61,8 @@ module.exports = {
                                 createdAt: doc.data().createdAt,
                                 gender: doc.data().gender,
                                 birthday: doc.data().birthday,
-                                profilePicture: doc.data().profilePicture
+                                profilePicture: doc.data().profilePicture,
+                                newUsername: doc.data().newUsername
                             }
 
                             return db.collection(`/users/${username}/liked`).get()
@@ -795,17 +796,31 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async changePPUser(_, { url }, context) {
-            const { username } = await fbAuthContext(context)
-            console.log(url);
+        async changeProfileUser(_, { profile }, context) {
+            const { url, phoneNumber, gender, birthday, newUsername } = profile
+            const { username: oldName } = await fbAuthContext(context)
 
+            const userData = await (await db.doc(`users/${oldName}`).get()).data()
             try {
-                await db.doc(`users/${username}`).get()
+                await db.doc(`users/${oldName}`).get()
                     .then(doc => {
-                        doc.ref.update({ profilePicture: url })
-                    })
+                        const newUserData = newUsername ? {
+                            profilePicture: url ? url : userData.profilePicture,
+                            mobileNumber: phoneNumber ? phoneNumber : userData.mobileNumber,
+                            gender: gender ? gender : userData.gender,
+                            birthday: birthday ? birthday : userData.birthday,
+                            newUsername
+                        } : {
+                            profilePicture: url ? url : userData.profilePicture,
+                            mobileNumber: phoneNumber ? phoneNumber : userData.mobileNumber,
+                            gender: gender ? gender : userData.gender,
+                            birthday: birthday ? birthday : userData.birthday
+                        }
 
-                return "beres"
+                        doc.ref.update(newUserData)
+                    })
+                    
+                return await (await db.doc(`users/${oldName}`).get()).data()
             } catch (error) {
                 console.log(error);
             }
