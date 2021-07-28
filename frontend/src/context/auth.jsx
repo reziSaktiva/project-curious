@@ -247,11 +247,12 @@ export function AuthProvider(props) {
     })
   }
 
-  function changeProfilePicture(url) {
-    dispatch({
-      type: SET_PROFILE_PICTURE,
-      payload: url
-    })
+  function changeProfile(data) {
+    // dispatch({
+    //   type: SET_PROFILE_PICTURE,
+    //   payload: url
+    // })
+    console.log(data);
   }
 
   function login(token) {
@@ -319,7 +320,7 @@ export function AuthProvider(props) {
       notificationAdded,
       setPathname,
       clearNotifications,
-      changeProfilePicture,
+      changeProfile,
       notificationRead,
       readAllNotificatons,
       login,

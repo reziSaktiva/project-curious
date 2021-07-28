@@ -4,7 +4,7 @@ import cn from "classnames";
 import { useMutation, useQuery } from "@apollo/client";
 import { chunk } from "lodash";
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
-import { CHANGE_PP } from "../../GraphQL/Mutations";
+// import { CHANGE_PP } from "../../GraphQL/Mutations";
 import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
 import "./style.css";
@@ -49,7 +49,7 @@ function Profile() {
     fetchPolicy: "network-only",
   });
 
-  const [changePPuser, { data }] = useMutation(CHANGE_PP);
+  // const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const { user, changeProfilePicture } = useContext(AuthContext);
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
@@ -90,11 +90,11 @@ function Profile() {
   //   );
   // };
 
-  useEffect(() => {
-    if (isFinishUpload) {
-      changePPuser({ variables: { url } });
-    }
-  }, [url, isFinishUpload]);
+  // useEffect(() => {
+  //   if (isFinishUpload) {
+  //     changePPuser({ variables: { url } });
+  //   }
+  // }, [url, isFinishUpload]);
 
   //set location
   const loc = localStorage.location;
