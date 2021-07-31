@@ -91,9 +91,25 @@ export const DELETE_POST = gql`
   }
 `
 
-export const CHANGE_PP = gql`
-  mutation changePPUser($url: String!) {
-    changePPUser(url: $url)
+export const CHANGE_PROFILE = gql`
+  mutation changeProfileUser($url: String $phoneNumber: String $gender: String $birthday: String $newUsername: String ) {
+    changeProfileUser(profile: {
+      url :$url
+      phoneNumber: $phoneNumber
+      gender: $gender
+      birthday: $birthday
+      newUsername: $newUsername
+    }){
+        id
+        username
+        email
+        mobileNumber
+        gender
+        birthday
+        createdAt
+        profilePicture
+        newUsername
+      }
   }
 `
 

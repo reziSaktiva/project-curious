@@ -60,6 +60,7 @@ module.exports = gql`
         birthday: String!
         createdAt: String!
         profilePicture: String!
+        newUsername: String
         token: String
     },
     type Comment {
@@ -187,6 +188,13 @@ module.exports = gql`
         repost: String
         room: String
     }
+    input Profile {
+        newUsername: String
+        url: String
+        phoneNumber: String
+        gender: String
+        birthday: String
+    }
     type Mutation {
         # users mutation
         registerUser(registerInput: RegisterInput): String!
@@ -198,7 +206,7 @@ module.exports = gql`
         checkUserWithGoogle(username: String!): Boolean!
         readNotification( id: ID! ): Notification!
         readAllNotification: [Notification]
-        changePPUser( url: String! ): String!
+        changeProfileUser( profile: Profile ): User!
         clearAllNotif: String!
         deleteAccount( id: ID! ): String!
 
