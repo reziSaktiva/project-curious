@@ -4,6 +4,7 @@
   grid-template-rows: repeat(3, 180px);
   grid-gap: 10px;
   justify-content: center;
+  margin-bottom: 10px;
 }
 .gallery-location__img {
   border-radius: 20px;

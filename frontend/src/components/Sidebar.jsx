@@ -96,10 +96,12 @@ const Sidebar = () => {
               <Link to="/maps">
                 {" "}
                 {windowWidth > 993 ? (
-                  <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                  <div>
+                    <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+                    <p>{address}</p>
+                  </div>
                 ) : null}
                 
-                {address}
               </Link>
             }
           />

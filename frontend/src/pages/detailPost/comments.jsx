@@ -17,7 +17,6 @@ import moment from "moment";
 import { useMutation } from '@apollo/client';
 import { DELETE_COMMENT } from "../../GraphQL/Mutations";
 import { PostContext } from '../../context/posts';
-import Photo from '../../components/Photo';
 import './detail-post-style.css'
 
 export default function Comments({ post, loading, user, setReply, form }) {
