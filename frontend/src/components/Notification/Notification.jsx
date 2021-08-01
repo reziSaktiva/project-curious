@@ -84,7 +84,6 @@ export default function Notification() {
               </a>
             </Dropdown>
           }
-          style={{ width: "100%" }}
           className="testttttt"
         >
           <div style={{ margin: -22, overflowY: "auto", overflowX: 'hidden', height: 342 }}>

@@ -98,7 +98,7 @@ const Sidebar = () => {
                 {windowWidth > 993 ? (
                   <div>
                     <img src={Pin} style={{ width: 20, marginTop: -5 }} />
-                    <p>{address}</p>
+                    {address}
                   </div>
                 ) : null}
                 

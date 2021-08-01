@@ -52,14 +52,20 @@
     .notifContainer {
       padding: 4px;
     }
-
+.testttttt {
+  width: 100%;
+}
 @media only screen and (max-width: 1024px) {
-    .notif__width {
-        width: 315px;
-      }
+  .testttttt {
+    width: 75%;
+  }
+  .testttttt > .ant-card-head {
+    margin-left: -50px;
+  }
+  
 }
 @media only screen and (max-width: 768px) {
     .notif__width {
-        width: 220px;
+        width: 75%;
       }
 }

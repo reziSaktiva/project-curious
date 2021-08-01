@@ -1,22 +1,21 @@
 // Modules
 import React, { useContext, useEffect, useState } from "react";
 import cn from "classnames";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { chunk } from "lodash";
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
 // import { CHANGE_PP } from "../../GraphQL/Mutations";
 import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
 import "./style.css";
-import { Col, Row, Tabs, Upload } from "antd";
+import { Col, Row, Tabs,  } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
-import ImgCrop from "antd-img-crop";
 
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
 import IconCrash from "../../assets/ic-crash.png";
-import Radius from '../../assets/radius.png'
+import Radius from '../../assets/no_post.png'
 
 //location
 import Geocode from "react-geocode";
@@ -142,12 +141,12 @@ function Profile() {
           <SkeletonLoading />
         ) : (
           !posts.length ? (
-            <div className="centeringButton">
-            <img src={Radius} style={{ width: 300}} />
-            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
-            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
-            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
-        </div>
+            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
+                <img src={Radius} style={{ width: 300}} />
+                <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+                <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+                <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+            </div>
             ) : (
             posts.map((post, key) => {
               return (
