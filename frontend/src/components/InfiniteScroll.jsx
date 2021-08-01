@@ -35,7 +35,7 @@ function ScrollInfinite(props) {
                 next={loadMore}
                 hasMore={isMorePost && posts.length}
                 loader={(loading || isLoading) ? loading ?
-                     <SkeletonLoading />
+                    <Skeleton avatar active paragraph={{rows: 2}} />
                        : (
                     isLoading && <div className="centeringButton" ><LoadingOutlined /></div>): <Skeleton avatar active paragraph={{rows: 2}} />}
                 scrollableTarget="scrollableDiv"

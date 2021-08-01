@@ -3,12 +3,19 @@ import React from 'react'
 import {Image } from "antd";
 
 export default function Photo({photo}) {
+
     return (
         <div style={{
           width: "100%",
         }}>
             {photo ? (
           photo.length == 1 ? (
+            <div>
+              {photo[0].split(".")[5].split("?")[0] === "mp4" ? (
+                <video width={"100%"} height={400} controls>
+              <source src={photo} />
+            </video>
+              ) : (
             <Image width={"100%"}
               style={{
                 width: "100%",
@@ -18,9 +25,10 @@ export default function Photo({photo}) {
               }}
               src={photo}
             />
-            // <video width={"100%"} height={400} controls>
-            //   <source src={photo} />
-            // </video>
+              )}
+            </div>
+            
+            
           ) : null
         ) : null}
 

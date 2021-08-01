@@ -19,7 +19,9 @@ import App from './App'
 // const link = from([
 //   new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
 // ])
- const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
+//  const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
+ const httpUrl = 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql';
+ 
 const wsUrl = 'ws://localhost:5000/graphql';
 
 const httpLink = ApolloLink.from([
