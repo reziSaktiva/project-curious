@@ -16,7 +16,7 @@ firebase.initializeApp(config)
 module.exports = {
     Subscription: {
         notificationAdded: {
-            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
+            subscribe: withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
                 console.log(variables);
                 return payload.notificationAdded.owner === variables.username
             })
@@ -560,42 +560,48 @@ module.exports = {
             const { valid, errors } = validateLoginInput(username, password)
             if (!valid) throw new UserInputError("Errors", { errors })
 
-            let userList = db
+            const findUserWithEmail = await db
                 .collection(`users`)
                 .where('email', '==', username)
-                .limit(1)
+                .limit(1).get()
 
-            let nama;
+            const findUserWithUsername = await db
+                .collection(`users`)
+                .where('username', '==', username)
+                .limit(1).get()
+
+            const findUserWithNewusername = await db
+                .collection(`users`)
+                .where('newUsername', '==', username)
+                .limit(1).get()
+
+            let data;
 
             try {
-                let list;
-                await db.doc(`/users/${username}`).get()
-                    .then(doc => {
-                        if (!doc.exists) {
-                            return userList.get()
-                                .then(data => {
-                                    data.forEach(doc => {
-                                        return nama = doc.data().username
-                                    })
-                                    return db.doc(`/users/${nama}`).get()
-                                        .then(doc => {
-                                            if (!doc.exists) {
-                                                throw new UserInputError('username/email tidak ditemukan', {
-                                                    errors: { username: "username/email tidak ditemukan" }
-                                                })
-                                            } else {
-                                                list = doc.data()
-                                            }
+                if (!findUserWithEmail.empty) {
 
-                                        })
-                                })
+                    data = findUserWithEmail.docs[0].data()
 
-                        } else {
-                            list = doc.data()
-                        }
+                } else if (!findUserWithUsername.empty) {
+
+                    if (findUserWithUsername.docs[0].data().newUsername) {
+                        throw new UserInputError('username/email tidak ditemukan', {
+                            errors: { username: "username/email tidak ditemukan" }
+                        })
+                    } else {
+                        data = findUserWithUsername.docs[0].data()
+                    }
+
+                } else if (!findUserWithNewusername.empty) {
+                    data = findUserWithNewusername.docs[0].data()
+
+                }  else {
+                    throw new UserInputError('username/email tidak ditemukan', {
+                        errors: { username: "username/email tidak ditemukan" }
                     })
+                }
 
-                const { email } = list
+                const { email } = data
 
                 const token = await firebase.auth().signInWithEmailAndPassword(email, password)
                     .then(data => data.user.getIdToken())
@@ -819,7 +825,7 @@ module.exports = {
 
                         doc.ref.update(newUserData)
                     })
-                    
+
                 return await (await db.doc(`users/${oldName}`).get()).data()
             } catch (error) {
                 console.log(error);

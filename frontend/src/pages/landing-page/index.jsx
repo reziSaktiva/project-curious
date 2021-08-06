@@ -9,8 +9,6 @@ import BGLanding from '../../assets/bg-landing.png';
 
 import './style.css';
 
-import { AuthContext } from '../../context/auth'
-
 export default function SignIn(props) {
   return (
   <div className="landing-container">
