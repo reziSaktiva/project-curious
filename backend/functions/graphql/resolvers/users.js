@@ -40,6 +40,20 @@ module.exports = {
         }
     },
     Query: {
+        async explorPlace(_, args, context) {
+            const time = new Date();
+            time.setDate(time.getDate() - 7);
+            const oneWeekAgo = new Date(time).toISOString()
+
+            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '<=', oneWeekAgo).get()
+            try {
+                return getPosts.docs.map(doc => doc.data().location)
+            }
+            catch (err) {
+                console.log(err);
+                throw new Error(err)
+            }
+        },
         async getUserData(_, args, context) {
             const { username } = await fbAuthContext(context)
 
@@ -595,7 +609,7 @@ module.exports = {
                 } else if (!findUserWithNewusername.empty) {
                     data = findUserWithNewusername.docs[0].data()
 
-                }  else {
+                } else {
                     throw new UserInputError('username/email tidak ditemukan', {
                         errors: { username: "username/email tidak ditemukan" }
                     })

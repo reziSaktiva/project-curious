@@ -151,6 +151,7 @@ module.exports = gql`
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
         setRulesSearchAlgolia(index: String!, rank: [String]!): String
+        explorPlace: [LatLong]
     },
     input RegisterInput {
         email: String!

@@ -19,10 +19,10 @@ import App from './App'
 // const link = from([
 //   new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
 // ])
- const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
-//  const httpUrl = 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql';
+//  const httpUrl = 'http://localhost:5000/insvire-curious-app/us-central1/graphql';
+ const httpUrl = 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql';
  
-const wsUrl = 'ws://localhost:5000/graphql';
+// const wsUrl = 'ws://localhost:5000/graphql';
 
 const httpLink = ApolloLink.from([
   new ApolloLink((operation, forward) => {
@@ -68,26 +68,26 @@ const errorLink = onError(
   }
 );
 
-const wsLink = new WebSocketLink({
-  uri: wsUrl,
-  options: {
-    connectionParams: () => ({
-      accessToken: localStorage.token
-    }),
-    reconnect: true,
-    lazy: true
-  }
-})
+// const wsLink = new WebSocketLink({
+//   uri: wsUrl,
+//   options: {
+//     connectionParams: () => ({
+//       accessToken: localStorage.token
+//     }),
+//     reconnect: true,
+//     lazy: true
+//   }
+// })
 
-function isSubscription(operation) {
-  const definition = getMainDefinition(operation.query);
-  return definition.kind === 'OperationDefinition'
-    && definition.operation === 'subscription'
-}
+// function isSubscription(operation) {
+//   const definition = getMainDefinition(operation.query);
+//   return definition.kind === 'OperationDefinition'
+//     && definition.operation === 'subscription'
+// }
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: concat(errorLink, split(isSubscription, wsLink, httpLink,)),
+  link: concat(errorLink, httpLink),
   defaultOptions: { query: { fetchPolicy: 'no-cache' } }
 });
 
