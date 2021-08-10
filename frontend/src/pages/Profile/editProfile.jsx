@@ -111,7 +111,7 @@ export default function EditProfile() {
               className="edit-profile__textfield"
             >
               <Input
-                placeholder="Username" defaultValue={user.username} />
+                placeholder="Username" defaultValue={user.newUsername ? user.newUsername : user.username } />
             </Form.Item>
 
             <Form.Item name="gender"

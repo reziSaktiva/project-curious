@@ -26,7 +26,7 @@ export default function Visited() {
   const { data, loading } = useQuery(GET_VISITED);
   const visited = data?.getVisited || [];
 
-  const path = useHistory().location.pathname
+  const path = history.location.pathname
 
   const { setPathname } = useContext(AuthContext)
 
