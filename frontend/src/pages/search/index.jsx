@@ -12,14 +12,14 @@ import { getSession } from '../../util/Session';
 import ExplorePlace from './explorePlace';
 
 import './style.css';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import NotFound from './NotFound';
 
 const Search = () => {
   const [searched, setSearched] = useState(false);
-
+  const [backtoDefault, setbacktoDefault] = useState(false)
   const [getSearch, { data, loading }] =useMutation(SEARCH_POSTS);
   const history = useHistory().location.pathname
   let hits = get(data, 'textSearch.hits') || undefined;
@@ -27,6 +27,11 @@ const Search = () => {
   const searchPosts = debounce(
     (value) => {
       setSearched(true)
+      if(value == "") {
+        setbacktoDefault(true)
+      return
+      }
+      else setbacktoDefault(false)
       const { location } = getSession();
       const { lat, lng } = JSON.parse(location);
       const payload = {
@@ -42,16 +47,8 @@ const Search = () => {
       getSearch({ variables: payload })
   }, 500)
 
-  // useEffect(() => {
-  //   if ( data == undefined) setnotFound(false);
-  // }, [])
-  
-
   const { setPathname } = useContext(AuthContext)
 
-  // useEffect(() => {
-
-  // }, [hits])
   return (
     <>
     <AppBar title="Seach" />
@@ -66,8 +63,7 @@ const Search = () => {
       loading={loading}
     />
     {loading && <SkeletonLoading />}
-      {console.log("hits", hits)}
-      {hits ? (
+      {hits && !backtoDefault ? (
         searched && hits.length == 0 ? <NotFound /> : 
                 <>
                 {hits.map((post, key) => (
