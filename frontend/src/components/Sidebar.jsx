@@ -16,14 +16,13 @@ import Pin from "../assets/pin-svg-25px.svg";
 //antd
 import { Layout, Menu, List } from "antd";
 import {
-  UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
   SettingOutlined,
-  SearchOutlined,
   StarOutlined,
   AudioMutedOutlined
 } from "@ant-design/icons";
+import { MuteIcon, NearbyIcon, RoomIcon, SearchIcon, SettingIcon, SubIcon, VisitIcon } from "../library/Icon";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
@@ -114,16 +113,17 @@ const Sidebar = () => {
             inlineCollapsed="false"
           >
             <Menu.Divider />
-            <Menu.Item key="/" icon={<UserOutlined />}>
+            <Menu.Item key="/" icon={<div className="sidebar-nearby" style={{display: 'inline',  position:'relative', top:5}}><NearbyIcon /></div>}>
               <Link to="/">Nearby</Link>
             </Menu.Item>
-            <Menu.Item key="/search" icon={<SearchOutlined />}>
+            <Menu.Item key="/search" icon={<div className="sidebar-search" style={{display: 'inline',  position:'relative', top:3}}><SearchIcon /></div>}>
               <Link to="/search">Search</Link>
             </Menu.Item>
 
             <SubMenu
+              expandIcon=" "
               key="Room"
-              icon={<LaptopOutlined />}
+              icon={<div className="sidebar-room" style={{display: 'inline',  position:'relative', top:8, marginRight: 9}}><RoomIcon /></div>}
               title="Available Room"
             >
               <Menu.Item key="/Insvire E-Sport" className="sidebar-sub">
@@ -133,17 +133,17 @@ const Sidebar = () => {
                 <Link to="/BMW Club Bandung">BMW Club Bandung</Link>
                 </Menu.Item>
             </SubMenu>
-            <Menu.Item key="/visited" icon={<StarOutlined />}>
+            <Menu.Item key="/visited" icon={<div className="sidebar-visit" style={{display: 'inline'}}><VisitIcon /></div>}>
               <Link to="/visited">Visited Places</Link>
             </Menu.Item>
-            <Menu.Item key="/subscribePosts" icon={<NotificationOutlined />}>
+            <Menu.Item key="/subscribePosts" icon={<div style={{display: 'inline', position:'relative', top:5}}><SubIcon /></div>}>
               <Link to="/subscribePosts">Subscribed Posts</Link>
             </Menu.Item>
-            <Menu.Item key="/MutedPost" icon={<AudioMutedOutlined />}>
+            <Menu.Item key="/MutedPost" icon={<div className="sidebar-mute" style={{display: 'inline',  position:'relative', top:5}}><MuteIcon /></div>}>
               <Link to="/MutedPost" >Muted Posts</Link>
             </Menu.Item>
 
-            <Menu.Item key="/settings" icon={<SettingOutlined />}>
+            <Menu.Item key="/settings" icon={<div className="sidebar-mute" style={{display: 'inline',  position:'relative', top:5}}><SettingIcon /></div>}>
               <Link to="/settings">Settings</Link>
             </Menu.Item>
           </Menu>

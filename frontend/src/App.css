@@ -130,7 +130,7 @@ body {
 /* LANDING */
 
 .landingimage {
-  background-image: url('./assets/Isometric\ Location\ Radius.V-4.png');
+  background-image: url('./assets/Isometric_Location.png');
   height: 100vh;
   width: 100%;
   background-position: center;
@@ -239,9 +239,31 @@ body {
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected, .ant-menu-item-selected a, .ant-menu-item-selected a:hover {
   background-color:#7f57ff;
   color: white;
-
 }
 
+.ant-menu-submenu.ant-menu-submenu-inline.ant-menu-submenu > div > div > svg {
+  transform: rotate(0deg);
+  transition: transform 600ms;
+}
+.ant-menu-submenu.ant-menu-submenu-inline.ant-menu-submenu-open > div > div > svg {
+  transform: rotate(-180deg);
+}
+.ant-menu-item.ant-menu-item-selected svg path,
+.ant-menu-item.ant-menu-item-selected svg circle,
+.ant-menu-item.ant-menu-item-selected svg ellipse  {
+  stroke: white;
+}
+.ant-menu-item.ant-menu-item-selected >.sidebar-search.ant-menu-item-icon svg path {
+  fill: white;
+}
+.ant-menu-item.ant-menu-item-selected >.sidebar-nearby.ant-menu-item-icon svg path {
+  fill: white;
+  stroke: white;
+}
+.ant-menu-item.ant-menu-item-selected >.sidebar-visit.ant-menu-item-icon svg path {
+  fill: white;
+  stroke: none;
+}
 
 .ant-menu-item:hover, .ant-menu-item-active:hover, .ant-menu-submenu-title:hover{
   color: #7f57ff;
@@ -393,6 +415,27 @@ body {
   left: 50%;
   -ms-transform: translate(-50%, 30%);
 transform: translate(-50%, 30%);
+}
+.x_button {
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.media__container {
+  width: "100%";
+  border-radius: 10;
+  object-fit: "cover";
+  max-height: 300;
+  
+}
+.hover_media:hover {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  
+  z-index: 200;
+  filter: drop-shadow(2px);
 }
 
 /* POST CARD */

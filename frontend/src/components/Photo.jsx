@@ -1,34 +1,30 @@
-import React from 'react'
-
+import React, { useContext, useState } from 'react'
 import {Image } from "antd";
+import { AuthContext } from '../context/auth';
+
 
 export default function Photo({photo}) {
-
+const {loginLoader, setLoginLoader} = useContext(AuthContext)
     return (
-        <div style={{
-          width: "100%",
-        }}>
+        <div style={{width: "100%"}}>
             {photo ? (
           photo.length == 1 ? (
             <div>
               {photo[0].split(".")[5].split("?")[0] === "mp4" ? (
-                <video width={"100%"} height={400} controls>
+                <video className="hover_media" controls style={{objectFit: 'cover', borderRadius: 10, maxHeight: 300}} width={"100%"}>
               <source src={photo} />
             </video>
               ) : (
-            <Image width={"100%"}
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
+            <Image
+            onClick={() => setLoginLoader(true)}
+            style={{borderRadius: 10, maxHeight: 300}}
+             width={"100%"}
+                className="media__container"
               src={photo}
             />
               )}
             </div>
-            
-            
+
           ) : null
         ) : null}
 
@@ -46,7 +42,7 @@ export default function Photo({photo}) {
                     </td>
                     <td>
                       <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
+                        style={{ borderRadius: "0px 10px 10px 0px", minWidth: 300 }}
                         src={photo[1]}
                       />
                     </td>

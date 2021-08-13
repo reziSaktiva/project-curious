@@ -14,7 +14,7 @@ import RepostButton from "../Buttons/RepostButton/index";
 import Photo from '../Photo'
 
 import { DropIcon } from "../../library/Icon";
-import { MessageOutlined, RetweetOutlined } from '@ant-design/icons';
+import { MessageOutlined, RetweetOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { useMutation } from "@apollo/client";
 import {
@@ -27,26 +27,29 @@ import { PostContext } from "../../context/posts";
 import "./style.css";
 import { MAP_API_KEY } from "../../util/ConfigMap";
 import Modal from "../Modal";
+import BackDrop from "../BackDrop";
+import ImgPreview from "../ImgPreview";
 
 Geocode.setApiKey(MAP_API_KEY);
 
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading, type }) {
+  const [media] = useState(post.media)
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
   const [deleteModal, setDeleteModal] = useState(false)
-
+  const {loginLoader} = useContext(AuthContext)
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
 
-  const [deletePost] = useMutation(DELETE_POST, {
-    update(_, { data: { deletePost } }) {
+  const [deletePost, {loading: deletePostLoading}] = useMutation(DELETE_POST, {
+    update(_, { data: { deletePost} }) {
+      
       postContext.deletePost(post.id, post.room);
     },
   });
-
   const [mutePost] = useMutation(MUTE_POST, {
     update(_, { data: { mutePost } }) {
       postContext.mutePost(mutePost, post.room);
@@ -101,7 +104,6 @@ export default function PostCard({ post, loading, type }) {
     <List itemLayout="vertical" size="large" style={{
       background: 'white',
       marginBottom: '16px',
-
       borderRadius: 5
       }}>
       <List.Item
@@ -249,10 +251,19 @@ export default function PostCard({ post, loading, type }) {
         )}
         
         <p style={{ marginTop: -9 }}>{post.text}</p>
-           
-        <Photo photo={post.media} />
-        <Modal title="delete this post" deleteModal={deleteModal} setDeleteModal={setDeleteModal} handleYes={() => deletePost({ variables: { id: post.id, room: post.room } })}/>
-             
+        {/* {
+          loginLoader && <ImgPreview photo={media} />
+        } */}
+        {deletePostLoading && <BackDrop ><LoadingOutlined style={{fontSize: 50}} /></BackDrop> }   
+        <Photo photo={media} />
+        <Modal title="delete this post"
+         deleteModal={deleteModal}
+          setDeleteModal={setDeleteModal}
+          handleYes={() => {
+          deletePost({ variables: { id: post.id, room: post.room }})
+          setDeleteModal(false)
+          }}/>
+        
       </List.Item>
     </List>
   );

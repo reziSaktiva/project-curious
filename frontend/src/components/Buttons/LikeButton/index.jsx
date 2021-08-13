@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { HeartOutlined } from "@ant-design/icons";
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { Button } from "antd";
 import { useMutation } from "@apollo/client";
 import { LIKE_POST } from "../../../GraphQL/Mutations";
@@ -7,7 +7,6 @@ import { PostContext } from "../../../context/posts";
 import { AuthContext } from "../../../context/auth";
 
 import './style.css';
-
 export default function LikeButton({ likeCount, id, likes, room, type }) {
   const { like } = useContext(PostContext);
   const { user } = useContext(AuthContext);
@@ -32,7 +31,7 @@ export default function LikeButton({ likeCount, id, likes, room, type }) {
           icon={
             // <HeartOutlined />
             user && likes.find((like) => like.owner === user.username) ? (
-              <HeartOutlined style={{ color: "red" }} />
+              <HeartFilled style={{ color: "#FF0073" }} />
             ) : (
               <HeartOutlined />
             )

@@ -66,6 +66,8 @@ export default function ModalPost() {
 
   // Local State
   const [state, setState] = useState(InitialState);
+  const [noVideoFilter, setnoVideoFilter] = useState(false)
+  const [limiter, setlimiter] = useState(false)
   const [address, setAddress] = useState("");
   const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
@@ -222,9 +224,15 @@ export default function ModalPost() {
       ...state,
       fileList: newFiles
     });
+    let limit = fileList.map( file => file.type.split("/")[0])
+    console.log(FileList);
+    if(limit[0] === "image") setnoVideoFilter(true)
+    else setnoVideoFilter(false)
 
-    
+    if(limit[0] === 'video') setlimiter(true)
+    else setlimiter(false)
   }
+  
   const handleRemove = file => {
     const newFile = fileList.filter(item => item !== file);
     setState({
@@ -465,15 +473,16 @@ export default function ModalPost() {
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
+                
                 onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
-                accept="video/*, image/*"
+                accept={noVideoFilter ? "image/*" : "video/*, image/*"}
                 onPreview={handlePreview}
                 onChange={handleChange}
               >
-                {fileList.length >= 5 ? null : <UploadButton />}
+                {fileList.length >= 5 || limiter ? null : <UploadButton />}
               </Upload>
             </Form.Item>
           )}
@@ -486,9 +495,10 @@ export default function ModalPost() {
               height: '0.2px'
             }} />
             <Col span={12}>
-              <Form.Item name="foto" style={{ marginBottom: 0 }}>
+              <Form.Item name="foto" style={{ marginBottom: 0, cursor: 'pointer' }}>
                 <Upload
-                  accept="video/*, image/*"
+                  disabled={limiter}
+                  accept={noVideoFilter ? "image/*" : "video/*, image/*"}
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   fileList={fileList}
                   showUploadList={null}

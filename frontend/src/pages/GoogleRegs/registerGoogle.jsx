@@ -53,8 +53,10 @@ const RegisterGoogle = (props) => {
 
     const onFinish = (values) => {
         const { birthday, gender, phone, phoneCode } = values
+
+        console.log(phone, "value", values);
         const { email, username, imageUrl, token, id } = context.googleData
-        registerUserGoogle({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode + phone}`, username, email, imageUrl, token, id } })
+        registerUserGoogle({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode ? phoneCode : '+62'  + phone}`, username, email, imageUrl, token, id } })
     };
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
@@ -63,10 +65,10 @@ const RegisterGoogle = (props) => {
     const dialData = dial.map(item => {
         return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
        })
-        const phoneCode = (
+        const phoneForm = (
             <Form.Item name="phoneCode" noStyle>
                 <Select
-                    defaultValue="+62"
+                defaultValue="+62"
                     style={{
                         width: 70,
                     }}>
@@ -121,7 +123,7 @@ const RegisterGoogle = (props) => {
             >
                 <Input
                 placeholder="Your Phone Number Here"
-                    addonBefore={phoneCode}
+                    addonBefore={phoneForm}
                     style={{
                         width: '100%',
                     }}

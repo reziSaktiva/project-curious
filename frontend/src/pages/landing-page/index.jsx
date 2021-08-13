@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Col, Row, Button } from 'antd'
 
 import LoginFacebook from '../../components/LoginFacebookButton';
@@ -8,10 +8,15 @@ import { Link } from 'react-router-dom'
 import BGLanding from '../../assets/bg-landing.png';
 
 import './style.css';
-
+import BackDrop from '../../components/BackDrop'
+import { AuthContext } from '../../context/auth'
+import { LoadingOutlined } from "@ant-design/icons";
 export default function SignIn(props) {
+ const { loginLoader } = useContext(AuthContext)
   return (
   <div className="landing-container">
+
+      {loginLoader && <BackDrop ><LoadingOutlined style={{fontSize: 80}} /></BackDrop> }
     <div className="left-grid__wrapper">
       <div className="landingimage" />
       <div className="curiouslanding" />
@@ -20,6 +25,7 @@ export default function SignIn(props) {
     <div className="content__wrapper">
       <img src={BGLanding}  className="landing-bg__mobile" />
         <div >
+            
         <h1>Welcome to <br/> Curious! </h1>
         </div>
         <div  style={{maxWidth: 343}}>

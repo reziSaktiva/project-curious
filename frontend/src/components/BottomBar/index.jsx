@@ -53,7 +53,7 @@ const BottomBar = () => {
           
         </div>
         <div className="bottom-bar__items">
-          <Link className={`${currentPath === 'profile' ? 'active' : '' }`} to={`/profile/user/${user.id}`}>
+          <Link className={`${currentPath === `profile/user/${user.id}` ? 'active' : '' }`} to={`/profile/user/${user.id}`}>
             <UserOutlined style={{ fontSize: 20 }} />
           </Link>
         </div>
