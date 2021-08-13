@@ -18,13 +18,9 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import NotFound from './NotFound';
 
 const Search = () => {
-<<<<<<< HEAD
-  const [getSearch, { data, loading }] = useMutation(SEARCH_POSTS);
-=======
   const [searched, setSearched] = useState(false);
 
   const [getSearch, { data, loading }] =useMutation(SEARCH_POSTS);
->>>>>>> 1d80d3ba0b33581138c8907dcdd7de42b4d694d4
   const history = useHistory().location.pathname
   let hits = get(data, 'textSearch.hits') || undefined;
 
@@ -61,17 +57,6 @@ const Search = () => {
     <AppBar title="Seach" />
     
     <div className="search_page">
-<<<<<<< HEAD
-    <Input placeholder="seach something.." className="test" onPressEnter={searchPosts} prefix={<SearchOutlined />} style={{marginBottom: 10}} />
-      {doSearchData ? (
-        <>{hits.map((post, key) => (
-          <div key={`posts${post.id} ${key}`}>
-            <PostCard post={post} loading={loading} />
-          </div>
-        ))}</>
-      ) : (
-        <ExplorePlace />
-=======
     <Input.Search
       className="search_input_wrapper"
       placeholder="input search text"
@@ -123,7 +108,6 @@ const Search = () => {
                 </div>
               </div>
           </>
->>>>>>> 1d80d3ba0b33581138c8907dcdd7de42b4d694d4
       )}
     </div>
     </>
