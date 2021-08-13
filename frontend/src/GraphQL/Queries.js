@@ -106,3 +106,19 @@ export const GET_VISITED = gql`
     }
   }
 `;
+
+export const EXPLORE_PLACE = gql`
+  query explorePlace {
+    explorePlace {
+      administrative_area_level_1
+      administrative_area_level_2
+      administrative_area_level_3
+      administrative_area_level_4
+      country
+      location {
+        lat
+        lng
+      }
+    }
+  }
+`;

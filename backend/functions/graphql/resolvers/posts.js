@@ -140,7 +140,7 @@ module.exports = {
         throw new UserInputError('Lat and Lng is Required')
       }
 
-      const data = await db.collection('posts').orderBy('likeCount', 'desc').orderBy('commentCount', 'desc').limit(8).get()
+      const data = await db.collection('posts').orderBy('likeCount && commentCount', 'desc').limit(8).get()
       const docs = data.docs.map((doc) => doc.data())
 
       if (docs.length) {
@@ -192,7 +192,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 15)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {

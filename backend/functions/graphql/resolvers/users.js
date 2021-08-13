@@ -16,7 +16,7 @@ firebase.initializeApp(config)
 module.exports = {
     Subscription: {
         notificationAdded: {
-            subscribe : withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
+            subscribe: withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
                 console.log(variables);
                 return payload.notificationAdded.owner === variables.username
             })
@@ -40,6 +40,77 @@ module.exports = {
         }
     },
     Query: {
+        async explorePlace(_, args, context) {
+            const googleMapsClient = new Client({ axiosInstance: axios })
+            const time = new Date();
+            time.setDate(time.getDate() - 7);
+
+            const oneWeekAgo = new Date(time).toISOString()
+
+            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '<=', oneWeekAgo).get()
+
+            const promises = getPosts.docs.map(async doc => {
+                const {lat, lng} = doc.data().location
+                const request = await googleMapsClient
+                    .reverseGeocode({
+                        params: {
+                            latlng: `${lat}, ${lng}`,
+                            language: 'en',
+                            result_type: 'street_address|administrative_area_level_4',
+                            location_type: 'APPROXIMATE',
+                            key: 'AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA'
+                        },
+                        timeout: 1000 // milliseconds
+                    }, axios)
+                    .then(r => {
+                        const { address_components } = r.data.results[0];
+                        const addressComponents = address_components;
+
+                        const geoResult = {}
+
+                        addressComponents.map(({ types, long_name }) => {
+                            const point = types[0];
+
+                            geoResult[point] = long_name;
+                        });
+
+                        return { ...geoResult, location: { lat, lng } };
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        return e
+                    });
+
+                return request;
+            });
+
+            const response = await Promise.all(promises);
+
+            response.sort(function(a, b) {
+                var nameA = a.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
+                var nameB = b.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+              
+                // names must be equal
+                return 0;
+              })
+
+            const filterLocation = response.filter((value, idx) => {
+                const { administrative_area_level_3: currentArea } = value;
+                const prevArea = get(response[idx - 1], 'administrative_area_level_3') || '';
+
+                if (currentArea != prevArea) {
+                    return value
+                }
+            })
+
+            return filterLocation;
+        },
         async getUserData(_, args, context) {
             const { username } = await fbAuthContext(context)
 
@@ -560,42 +631,48 @@ module.exports = {
             const { valid, errors } = validateLoginInput(username, password)
             if (!valid) throw new UserInputError("Errors", { errors })
 
-            let userList = db
+            const findUserWithEmail = await db
                 .collection(`users`)
                 .where('email', '==', username)
-                .limit(1)
+                .limit(1).get()
 
-            let nama;
+            const findUserWithUsername = await db
+                .collection(`users`)
+                .where('username', '==', username)
+                .limit(1).get()
+
+            const findUserWithNewusername = await db
+                .collection(`users`)
+                .where('newUsername', '==', username)
+                .limit(1).get()
+
+            let data;
 
             try {
-                let list;
-                await db.doc(`/users/${username}`).get()
-                    .then(doc => {
-                        if (!doc.exists) {
-                            return userList.get()
-                                .then(data => {
-                                    data.forEach(doc => {
-                                        return nama = doc.data().username
-                                    })
-                                    return db.doc(`/users/${nama}`).get()
-                                        .then(doc => {
-                                            if (!doc.exists) {
-                                                throw new UserInputError('username/email tidak ditemukan', {
-                                                    errors: { username: "username/email tidak ditemukan" }
-                                                })
-                                            } else {
-                                                list = doc.data()
-                                            }
+                if (!findUserWithEmail.empty) {
 
-                                        })
-                                })
+                    data = findUserWithEmail.docs[0].data()
 
-                        } else {
-                            list = doc.data()
-                        }
+                } else if (!findUserWithUsername.empty) {
+
+                    if (findUserWithUsername.docs[0].data().newUsername) {
+                        throw new UserInputError('username/email tidak ditemukan', {
+                            errors: { username: "username/email tidak ditemukan" }
+                        })
+                    } else {
+                        data = findUserWithUsername.docs[0].data()
+                    }
+
+                } else if (!findUserWithNewusername.empty) {
+                    data = findUserWithNewusername.docs[0].data()
+
+                } else {
+                    throw new UserInputError('username/email tidak ditemukan', {
+                        errors: { username: "username/email tidak ditemukan" }
                     })
+                }
 
-                const { email } = list
+                const { email } = data
 
                 const token = await firebase.auth().signInWithEmailAndPassword(email, password)
                     .then(data => data.user.getIdToken())
@@ -819,7 +896,7 @@ module.exports = {
 
                         doc.ref.update(newUserData)
                     })
-                    
+
                 return await (await db.doc(`users/${oldName}`).get()).data()
             } catch (error) {
                 console.log(error);

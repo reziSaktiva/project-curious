@@ -12,7 +12,7 @@ export default function NavBar(props) {
   const handleToggle = e => {
     setNav(e.target.value)
   }
-  const notificationLength = notifications && notifications.filter(notif => notif.read === false).length
+  const notificationLength = notifications.length && notifications.filter(notif => notif.read === false).length
   return (
     <header className="toolbar">
       <div className="toolbar__nav">
