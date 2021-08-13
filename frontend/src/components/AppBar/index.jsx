@@ -13,7 +13,7 @@ const AppBar = props => {
     <div className="app-bar">
       <Row>
           <Col span={6}>
-            <button className="ui inverted basic button" type="text" onClick={() => history.goBack()}>
+            <button className="ui inverted basic button" type="text" onClick={props.postsLocation ? props.onClick : () => history.goBack()}>
               <i className="chevron left icon" style={{ color: 'black' }}></i>
             </button>
           </Col>

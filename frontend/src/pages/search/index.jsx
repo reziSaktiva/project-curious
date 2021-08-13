@@ -1,4 +1,4 @@
-import { Input, Col } from 'antd';
+import { Input } from 'antd';
 import { useMutation } from '@apollo/client'
 import SkeletonLoading from '../../components/SkeletonLoading'
 import { debounce, get } from 'lodash';
@@ -8,6 +8,8 @@ import PostCard from '../../components/PostCard/index'
 import { SEARCH_POSTS } from '../../GraphQL/Mutations';
 
 import { getSession } from '../../util/Session';
+
+import ExplorePlace from './explorePlace';
 
 import './style.css';
 import { useContext, useEffect, useState } from 'react';

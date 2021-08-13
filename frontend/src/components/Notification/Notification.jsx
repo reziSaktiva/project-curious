@@ -19,13 +19,13 @@ export default function Notification() {
   const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
   const { clearNotifications, user } = useContext(AuthContext);
 
-  useSubscription(NOTIFICATION_ADDED, {
-    onSubscriptionData: ({ client, subscriptionData }) => {
-      console.log(subscriptionData.data.notificationAdded);
-      notificationAdded(subscriptionData.data.notificationAdded);
-    },
-    variables: { username: user.username }
-  })
+  // useSubscription(NOTIFICATION_ADDED, {
+  //   onSubscriptionData: ({ client, subscriptionData }) => {
+  //     console.log(subscriptionData.data.notificationAdded);
+  //     notificationAdded(subscriptionData.data.notificationAdded);
+  //   },
+  //   variables: { username: user.username }
+  // })
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {

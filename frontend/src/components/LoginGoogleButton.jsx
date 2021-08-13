@@ -24,10 +24,11 @@ export default function LoginGoogleButton() {
         history.push('/register/google')
       } else {
         const { token } = dataGoogle
-
+        
         login(token)
-        setLoginLoader(false)
-        history.push('/')
+        setTimeout(() => {
+          history.push('/')
+        }, 1000);
       }
     },
     onError(err) {

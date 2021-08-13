@@ -21,12 +21,12 @@ export default function NotificationMobile() {
   const { notifications, notificationRead, readAllNotificatons, notificationAdded, user } = useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
 
-  useSubscription(NOTIFICATION_ADDED, {
-    onSubscriptionData: ({ client, subscriptionData }) => {
-      notificationAdded(subscriptionData.data.notificationAdded);
-    },
-    variables: { username: user.username }
-  })
+  // useSubscription(NOTIFICATION_ADDED, {
+  //   onSubscriptionData: ({ client, subscriptionData }) => {
+  //     notificationAdded(subscriptionData.data.notificationAdded);
+  //   },
+  //   variables: { username: user.username }
+  // })
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
