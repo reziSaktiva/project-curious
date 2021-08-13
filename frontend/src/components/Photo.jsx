@@ -39,10 +39,18 @@ export default function Photo({photo}) {
                 <tr>
                   <Image.PreviewGroup>
                     <td style={{ width: "50%" }}>
+                      {photo[0].split(".")[5].split("?")[0] === "mp4" ? (
+                        <video width={"100%"} height={"100%"} style={{objectFit:"cover", height: '20%'}} controls>
+                        <source src={photo[0]} />
+                      </video>
+                        
+                      ) : (
                       <Image
                         style={{ borderRadius: "10px 0px 0px 10px" }}
                         src={photo[0]}
                       />
+                      )}
+                      
                     </td>
                     <td>
                       <Image
