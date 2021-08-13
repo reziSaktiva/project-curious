@@ -16,15 +16,15 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import NotFound from './NotFound';
 
 const Search = () => {
-  const [notFound, setnotFound] = useState(false);
+  const [searched, setSearched] = useState(false);
 
   const [getSearch, { data, loading }] =useMutation(SEARCH_POSTS);
   const history = useHistory().location.pathname
-  let hits = get(data, 'textSearch.hits') || [];
+  let hits = get(data, 'textSearch.hits') || undefined;
 
   const searchPosts = debounce(
     (value) => {
-
+      setSearched(true)
       const { location } = getSession();
       const { lat, lng } = JSON.parse(location);
       const payload = {
@@ -40,20 +40,16 @@ const Search = () => {
       getSearch({ variables: payload })
   }, 500)
 
-  useEffect(() => {
-    if ( data == undefined) setnotFound(false);
-  }, [])
+  // useEffect(() => {
+  //   if ( data == undefined) setnotFound(false);
+  // }, [])
   
-
-  const doSearchData = hits.length == 0
- 
 
   const { setPathname } = useContext(AuthContext)
 
-  useEffect(() => {
-      setPathname(history)
-  }, [])
-console.log(data);
+  // useEffect(() => {
+
+  // }, [hits])
   return (
     <>
     <AppBar title="Seach" />
@@ -68,56 +64,9 @@ console.log(data);
       loading={loading}
     />
     {loading && <SkeletonLoading />}
-      {/* {!loading && (!notFound || hits.length == 0) ? (
-        <>
-            <div className="explore-place">
-              <span className="title">Explore Place</span>
-              <div className="explore-place__btn-more">More</div>
-              <div className="list-place">
-                <Col lg={8} xs={9}>
-                  <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg"/>
-                  <span className="item-place__title">Karachi</span>
-                </Col>
-                <Col lg={8} xs={9}>
-                  <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg"/>
-                  <span className="item-place__title">Karachi</span>
-                </Col>
-                <Col lg={8} xs={9}>
-                  <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg"/>
-                  <span className="item-place__title">Karachi</span>
-                </Col>
-                <Col lg={8} xs={9}>
-                  <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg"/>
-                  <span className="item-place__title">Karachi</span>
-                </Col>
-              </div>
-              </div>
-  
-              <div className="popular-section">
-                <div className="popular-section__header">
-                  <h3>More For You</h3>
-                  <span>The most popular posts around the world</span>
-                </div>
-              </div>
-          </>
-      ) : (
-        !loading && (!notFound && hits.length !== 0) ? (
-          <>
-                {hits.map((post, key) => (
-                  <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} loading={loading} />
-                  </div>
-                ))}
-                </>
-        ) : (
-          <NotFound />
-        )
-      )} */}
-      {/* {notFound ? (
-            <NotFound />
-          ) : (
-            loading ? (<SkeletonLoading />) : (
-              doSearchData  ? (
+      {console.log("hits", hits)}
+      {hits ? (
+        searched && hits.length == 0 ? <NotFound /> : 
                 <>
                 {hits.map((post, key) => (
                   <div key={`posts${post.id} ${key}`}>
@@ -157,10 +106,7 @@ console.log(data);
                 </div>
               </div>
           </>
-            )
-          
-        )
-      )} */}
+      )}
     </div>
     </>
   )
