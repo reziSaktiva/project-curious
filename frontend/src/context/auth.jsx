@@ -24,7 +24,8 @@ import {
   NOTIFICATIONS_READ,
   SET_PROFILE_PICTURE,
   SET_ROOM,
-  NOTIFICATION_ADDED
+  NOTIFICATION_ADDED,
+  LOGIN_LOADER
 } from "./constant";
 
 const initialState = {
@@ -35,7 +36,8 @@ const initialState = {
   room: null,
   facebookData: null,
   googleData: null,
-  pathname: ''
+  pathname: '',
+  loginLoader: false
 };
 
 const { location, user } = Session({ onLogout: () => {} });
@@ -69,6 +71,11 @@ function authReducer(state, action) {
         ...state,
         notifications: action.payload,
       };
+    case LOGIN_LOADER:
+        return {
+          ...state,
+          loginLoader: action.payload,
+        }
     case "SET_LIKED_DATA":
       return {
         ...state,
@@ -162,7 +169,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications, room, pathname } = state
+  const { user, facebookData, googleData, liked, notifications, room, pathname, loginLoader } = state
 
   // Mutations
   const [
@@ -247,6 +254,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function setLoginLoader(loginLoader) {
+    dispatch({
+      type: LOGIN_LOADER,
+      payload: loginLoader
+    })
+  }
+
   function changeProfile(data) {
     // dispatch({
     //   type: SET_PROFILE_PICTURE,
@@ -316,6 +330,8 @@ export function AuthProvider(props) {
       notifications,
       room,
       pathname,
+      loginLoader,
+      setLoginLoader,
       setRoom,
       notificationAdded,
       setPathname,

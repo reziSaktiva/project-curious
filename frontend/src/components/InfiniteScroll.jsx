@@ -6,7 +6,7 @@ import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { getSession } from '../util/Session'
-import SkeletonLoading from './SkeletonLoading'
+
 import { LoadingOutlined } from '@ant-design/icons';
 import { Skeleton } from 'antd'
 

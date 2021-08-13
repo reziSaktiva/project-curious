@@ -13,18 +13,20 @@ const CHECK_USER_BY_GOOGLE = gql`
 
 export default function LoginGoogleButton() {
   let history = useHistory()
-  const { loadGoogleData, login } = useContext(AuthContext)
+  const { loadGoogleData, login, setLoginLoader } = useContext(AuthContext)
   const [dataGoogle, setGoogleData] = useState({})
 
   const [check] = useMutation(CHECK_USER_BY_GOOGLE, {
     update(_, { data: { checkUserWithGoogle } }) {
       if (!checkUserWithGoogle) {
         loadGoogleData(dataGoogle)
+        setLoginLoader(false)
         history.push('/register/google')
       } else {
         const { token } = dataGoogle
 
         login(token)
+        setLoginLoader(false)
         history.push('/')
       }
     },
@@ -34,7 +36,9 @@ export default function LoginGoogleButton() {
   })
 
   const signInWithGoogle = async () => {
+    
     auth.signInWithPopup(GoogleProvider).then(function (result) {
+      setLoginLoader(true)
       let user = result.user;
       let googleData = {
         username: user.displayName,

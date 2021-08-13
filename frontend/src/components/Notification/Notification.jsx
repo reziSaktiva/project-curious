@@ -144,7 +144,12 @@ export default function Notification() {
                 );
               })
             ) : (
-              <div className="noNotif" />
+              <div>
+                <div className="noNotif" />
+              
+              <p style={{textAlign: "center", fontWeight: 700}}>No Notifications yet</p>
+                </div>
+              
             )
             )
             }

@@ -1261,7 +1261,7 @@ module.exports = {
       const index = client.initIndex('search_posts');
 
       const defaultPayload = {
-        "attributesToRetrieve": "*",
+        "attributesToRetrieve": "*",  
         "attributesToSnippet": "*:20",
         "snippetEllipsisText": "…",
         "responseFields": "*",
@@ -1288,6 +1288,8 @@ module.exports = {
             
             const newHits = []
             if (hits.length) {
+              let found = true
+              if(hits.length == 0) found = false
               hits.forEach(async data => {
                 // Likes
                 const likes = async () => {

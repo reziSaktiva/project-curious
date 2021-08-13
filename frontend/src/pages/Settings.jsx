@@ -2,13 +2,13 @@ import { List, message, Avatar, Spin } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
 import AppBar from "../components/AppBar";
-import { RightOutlined } from '@ant-design/icons'
+import { RightOutlined, LoadingOutlined } from '@ant-design/icons'
 import { useMutation } from '@apollo/client';
 import { DELETE_ACCOUNT } from '../GraphQL/Mutations';
 import { AuthContext } from '../context/auth'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import Modal from '../components/Modal';
-import { PostContext } from '../context/posts';
+import BackDrop from '../components/BackDrop';
 
 export default function Settings() {
   const [deleteModal, setDeleteModal] = useState(false)
@@ -16,7 +16,7 @@ export default function Settings() {
   const history = useHistory()
   const path = useHistory().location.pathname
   const { setPathname } = useContext(AuthContext)
-  const { user } = useContext(AuthContext)
+  const { user, loginLoader, setLoginLoader } = useContext(AuthContext)
   const [deleteAccount] = useMutation(DELETE_ACCOUNT ,{
     update(){
       handleLogout()
@@ -51,6 +51,7 @@ export default function Settings() {
 
 
   const handleLogout = () => {
+    setLoginLoader(true)
     localStorage.clear()
     history.go('/')
     
@@ -112,6 +113,7 @@ export default function Settings() {
           </List.Item>
         </Link>
         <Modal title={ModalSource? "logout": "delete this account"} handleYes={ModalSource? handleLogout : handleDeleteAccount} deleteModal={deleteModal} setDeleteModal={setDeleteModal}/>
+        {loginLoader && <BackDrop ><LoadingOutlined style={{fontSize: 80}} /></BackDrop> }
       </List>
     </div>
   )
