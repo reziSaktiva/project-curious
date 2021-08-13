@@ -2,6 +2,7 @@ import React from 'react'
 import { Col } from 'antd';
 import { useQuery } from '@apollo/client';
 import { EXPLORE_PLACE } from '../../GraphQL/Queries';
+import MoreForYou from './moreForYou';
 
 export default function ExplorePlace() {
     const { data, loading, errors } = useQuery(EXPLORE_PLACE)
@@ -36,10 +37,7 @@ export default function ExplorePlace() {
             </div>
 
             <div className="popular-section">
-                <div className="popular-section__header">
-                    <h3>More For You</h3>
-                    <span>The most popular posts around the world</span>
-                </div>
+                <MoreForYou />
             </div>
         </>
     )

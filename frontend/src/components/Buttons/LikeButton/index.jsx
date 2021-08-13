@@ -11,13 +11,16 @@ export default function LikeButton({ likeCount, id, likes, room, type }) {
   const { like } = useContext(PostContext);
   const { user } = useContext(AuthContext);
 
+  const isLike = user && likes.find((like) => like.owner === user.username)
+
   const [likePost] = useMutation(LIKE_POST, {
-    update(_, { data: { likePost } }) {
-      like(likePost, id, room, type);
-    },
+    onError (){
+      like({ owner : user.username, isLike : likes.find((like) => like.owner === user.username) }, id, room, type)
+    }
   });
 
   const onLike = () => {
+    like({ owner : user.username, isLike: !likes.find((like) => like.owner === user.username) }, id, room, type)
     likePost({ variables: { id, room } });
   };
 
@@ -30,7 +33,7 @@ export default function LikeButton({ likeCount, id, likes, room, type }) {
           className="likeButton"
           icon={
             // <HeartOutlined />
-            user && likes.find((like) => like.owner === user.username) ? (
+            isLike ? (
               <HeartFilled style={{ color: "#FF0073" }} />
             ) : (
               <HeartOutlined />

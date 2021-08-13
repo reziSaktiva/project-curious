@@ -69,7 +69,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / (1000)) <= (range || 1)) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -140,7 +140,7 @@ module.exports = {
         throw new UserInputError('Lat and Lng is Required')
       }
 
-      const data = await db.collection('posts').orderBy('likeCount && commentCount', 'desc').limit(8).get()
+      const data = await db.collection('posts').orderBy('likeCount', 'desc').orderBy('commentCount', 'desc').limit(8).get()
       const docs = data.docs.map((doc) => doc.data())
 
       if (docs.length) {
@@ -192,7 +192,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 15)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -740,6 +740,7 @@ module.exports = {
             likeCount: 0,
             commentCount: 0,
             repostCount: 0,
+            rank: 0,
             location,
             _tags: hastags,
             room
@@ -751,6 +752,7 @@ module.exports = {
             likeCount: 0,
             commentCount: 0,
             repostCount: 0,
+            rank: 0,
             location,
             _tags: hastags
           };
@@ -759,7 +761,7 @@ module.exports = {
             newPost.repost = repost
             db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
               .then(async doc => {
-                doc.ref.update({ repostCount: doc.data().repostCount + 1 })
+                doc.ref.update({ repostCount: doc.data().repostCount + 1 , rank : doc.data().rank + 1})
                 if (doc.data().owner !== username) {
                   const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
 
@@ -957,7 +959,7 @@ module.exports = {
             if (!isLiked) {
               // Unlike
               post.likeCount--;
-              doc.ref.update({ likeCount: doc.data().likeCount - 1 });
+              doc.ref.update({ likeCount: doc.data().likeCount - 1, rank : doc.data().rank - 1 });
 
               likeData = {
                 owner: username,
@@ -1012,7 +1014,7 @@ module.exports = {
             } else {
               // Like
               post.likeCount++;
-              doc.ref.update({ likeCount: doc.data().likeCount + 1 });
+              doc.ref.update({ likeCount: doc.data().likeCount + 1, rank : doc.data().rank + 1 });
               return likeCollection
                 .add({
                   owner: username,
@@ -1261,7 +1263,7 @@ module.exports = {
       const index = client.initIndex('search_posts');
 
       const defaultPayload = {
-        "attributesToRetrieve": "*",  
+        "attributesToRetrieve": "*",
         "attributesToSnippet": "*:20",
         "snippetEllipsisText": "…",
         "responseFields": "*",
@@ -1288,8 +1290,6 @@ module.exports = {
             
             const newHits = []
             if (hits.length) {
-              let found = true
-              if(hits.length == 0) found = false
               hits.forEach(async data => {
                 // Likes
                 const likes = async () => {
