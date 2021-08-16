@@ -33,17 +33,6 @@ server.applyMiddleware({ app, path:'/', cors: true })
 // server.installSubscriptionHandlers(httpServer)
 // httpServer.listen(PORT, console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`))
 
-// exports.explorPlace = functions.firestore.document('posts/{id}')
-//     .onCreate(async (snapShot) => {
-        
-//         const getPosts = await db.collection('posts').get()
-//         const posts = getPosts.docs.forEach(doc => doc.data())
-
-//         const location = posts.map(post => new LatLng(parseFloat(post.lat), parseFloat(post.lng)))
-
-//         console.log(location, 'onExplorePlace');
-//     })
-
 exports.graphql = functions.https.onRequest(app)
 
 

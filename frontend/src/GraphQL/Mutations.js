@@ -125,11 +125,9 @@ export const MUTE_POST = gql`
   }
 `
 
-
-
 export const GET_MORE_POSTS = gql`
-  mutation nextPosts($id: ID! $lat: Float! $lng: Float!) {
-    nextPosts(id: $id, lat:$lat ,lng: $lng) {
+  mutation nextPosts($id: ID! $lat: Float! $lng: Float! $range: Float) {
+    nextPosts(id: $id, lat:$lat ,lng: $lng, range: $range) {
       ...PostDetail
     }
   }
@@ -137,8 +135,8 @@ export const GET_MORE_POSTS = gql`
 `;
 
 export const GET_MORE_POPULAR = gql`
-mutation nextPopular($id: ID! $lat: Float! $lng: Float!) {
-  nextPopularPosts(id: $id, lat:$lat ,lng: $lng) {
+mutation nextPopular($id: ID! $lat: Float! $lng: Float! $range: Float) {
+  nextPopularPosts(id: $id, lat:$lat ,lng: $lng range: $range) {
       ...PostDetail
     }
   }

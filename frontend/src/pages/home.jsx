@@ -92,7 +92,7 @@ function Home() {
             
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
+            {user ? (<InfiniteScroll isLoading={loadingPosts} >
                 {!_isMounted.current && <SkeletonLoading />}
                 {(_isMounted.current && !loading && !posts.length) ? (
                 <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>

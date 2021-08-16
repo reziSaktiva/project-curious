@@ -4,7 +4,7 @@ const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { db, auth, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
+const { db, auth, NOTIFICATION_ADDED, pubSub, API_KEY } = require('../../utility/admin')
 const firebase = require('firebase')
 const config = require('../../utility/config')
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -58,15 +58,21 @@ module.exports = {
                             language: 'en',
                             result_type: 'street_address|administrative_area_level_4',
                             location_type: 'APPROXIMATE',
-                            key: 'AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA'
+                            key: API_KEY
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
-                    .then(r => {
-                        const { address_components } = r.data.results[0];
+                    .then(async r => {
+                        const { address_components, place_id } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
+
+                        const photo_reference = await axios({
+                            method: 'get',
+                            url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=photo&key=${API_KEY}`,
+                            headers: { }
+                          }).then(response => `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${response.data.result.photos[0].photo_reference}&maxwidth=400&key=${API_KEY}`)
 
                         addressComponents.map(({ types, long_name }) => {
                             const point = types[0];
@@ -74,7 +80,7 @@ module.exports = {
                             geoResult[point] = long_name;
                         });
 
-                        return { ...geoResult, location: { lat, lng } };
+                        return { ...geoResult , photo_reference , location: { lat, lng } };
                     })
                     .catch(e => {
                         console.log(e);
