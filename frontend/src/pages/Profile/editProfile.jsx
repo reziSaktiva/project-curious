@@ -5,13 +5,12 @@ import AppBar from "../../components/AppBar";
 import { AuthContext } from "../../context/auth";
 import './style.css'
 import ImgCrop from "antd-img-crop";
-
+import { LoadingOutlined } from "@ant-design/icons";
 // Init Firebase
 import firebase from "firebase/app";
 import "firebase/storage";
 import { useMutation } from "@apollo/client";
 import { CHANGE_PROFILE } from "../../GraphQL/Mutations";
-import { useEffect } from "react";
 const storage = firebase.storage();
 
 const gender = [
@@ -32,7 +31,7 @@ const gender = [
 export default function EditProfile() {
   const history = useHistory()
 
-  const [changeProfileUser] = useMutation(CHANGE_PROFILE, {
+  const [changeProfileUser, { loading } ] = useMutation(CHANGE_PROFILE, {
     update(_, { data: { changeProfileUser } }) {
 
       changeProfile(changeProfileUser)
@@ -42,6 +41,7 @@ export default function EditProfile() {
       console.log(err.message)
     }
   });
+  console.log("loading", loading);
   const { user, changeProfile } = useContext(AuthContext);
   const [newUserData, setUserData] = useState({});
 
@@ -107,6 +107,23 @@ export default function EditProfile() {
             </Form.Item>
 
             <Form.Item
+            rules={[
+              // {
+              //     required: true,
+              //     message: 'Please ENter Your Username',
+              // },
+              {
+                validator(_, value) {
+                  const regexlength = /^(?=.{8,20}$)/
+                  if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
+                  const regex_ = /^(?![_.])/
+                  if ( !(value.match(regex_)) )  return Promise.reject('cant use "_" or "." at the begining ');
+                  const regex = /^(?=.{8,20}$)(?![_.])[a-zA-Z0-9._]+(?<![])$/
+                  if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
+                  else return Promise.resolve();
+                }
+              }
+          ]}
               name="username"
               className="edit-profile__textfield"
             >
@@ -125,9 +142,9 @@ export default function EditProfile() {
             </Form.Item>
 
             <Form.Item>
-              <button className="ui  facebook button body-page__btn-send" type="submit"
-                style={{ fontSize: '18px', padding: 0, width: "100%" }}>
-                Update Profile
+              <button className="ui  facebook button body-page__btn-send" type="submit" 
+              style={{ fontSize: '18px',padding: 0, width:"100%" }}>
+                {loading ? (<LoadingOutlined />): ("Update Profile")} 
               </button>
             </Form.Item>
 

@@ -15,13 +15,6 @@ import Pin from "../assets/pin-svg-25px.svg";
 
 //antd
 import { Layout, Menu, List } from "antd";
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  SettingOutlined,
-  StarOutlined,
-  AudioMutedOutlined
-} from "@ant-design/icons";
 import { MuteIcon, NearbyIcon, RoomIcon, SearchIcon, SettingIcon, SubIcon, VisitIcon } from "../library/Icon";
 
 const { SubMenu } = Menu;
@@ -43,7 +36,6 @@ const Sidebar = () => {
 
   const { user, pathname } = useContext(AuthContext);
 
-  
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;

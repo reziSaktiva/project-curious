@@ -11,7 +11,11 @@ import NavBar from '../components/NavBar'
 import SidebarMobile from '../components/SidebarMobile'
 import NotificationMobile from '../components/NotificationMobile'
 
+
 import { getRangeSearch, getSession } from '../util/Session';
+import SkeletonLoading from '../components/SkeletonLoading'
+import No_result from '../assets/NoResults/No_posts.png'
+import BackDrop from '../components/BackDrop'
 
 
 function Popular() {
@@ -36,6 +40,9 @@ function Popular() {
                 toggle : !prevState.toggle
             }
         })
+    }
+    const handleBackdropClose = () => {
+        setBurger({toggle: false})
     }
     const handleNotif = () => {
         setNotif(prevState => {
@@ -73,8 +80,18 @@ function Popular() {
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
             <NotificationMobile show={notif.toggle} />
             <SidebarMobile show={burger.toggle} />
+            {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
+
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
-                {!posts ? null
+                {!_isMounted.current && <SkeletonLoading />}
+                {(_isMounted.current && !loading && !posts.length) ? (
+                <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
+                <img src={No_result} style={{ width: 300}} />
+                <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+                <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+                <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+            </div>
+                ) 
                     : posts.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
