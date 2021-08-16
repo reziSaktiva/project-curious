@@ -69,7 +69,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / (1000)) <= (range || 1)) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -135,12 +135,67 @@ module.exports = {
 
       return [];
     },
+    async moreForYou(_, _args, _context) {
+      try {
+        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
+        const docs = data.docs.map((doc) => doc.data())
+        const posts = []
+        
+        if (docs.length) {
+            docs.forEach(async data => {
+            const { repost: repostId } = data;
+
+            const repostData = async () => {
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                return repostData.data() || {}
+              }
+            }
+
+            // Likes
+            const likes = async () => {
+
+              const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+              const likes = likesData.docs.map(doc => doc.data())
+
+              return likes;
+            };
+
+            // Comments
+            const comments = async () => {
+              const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+              return commentsData.docs.map(doc => doc.data())
+            }
+
+            // Muted
+            const muted = async () => {
+              const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+              return mutedData.docs.map(doc => doc.data());
+            }
+
+            const subscribe = async () => {
+              const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+              return subscribeData.docs.map(doc => doc.data());
+            }
+
+            const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+            posts.push(newData)
+          });
+        } 
+
+        return posts
+      }
+      catch (err) {
+        console.log(err);
+      }
+    },
     async getPopularPosts(_, { lat, lng, range }, context) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
 
-      const data = await db.collection('posts').orderBy('likeCount && commentCount', 'desc').limit(8).get()
+      const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
       const docs = data.docs.map((doc) => doc.data())
 
       if (docs.length) {
@@ -192,7 +247,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 15)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -345,7 +400,7 @@ module.exports = {
       if (!index) {
         throw new UserInputError('index search is required, check index name on algolia dashboard')
       }
-      
+
       if (!rank || !rank.length) {
         throw new UserInputError('rank is Required')
       }
@@ -520,7 +575,7 @@ module.exports = {
     }
   },
   Mutation: {
-    async nextPosts(_, { id, lat, lng }, context) {
+    async nextPosts(_, { id, lat, lng, range }, context) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -578,7 +633,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= 1000) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -650,14 +705,14 @@ module.exports = {
 
       return [];
     },
-    async nextPopularPosts(_, { id, lat, lng }) {
+    async nextPopularPosts(_, { id, lat, lng, range }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
       const lastPosts = await db.doc(`/posts/${id}/`).get();
       const doc = lastPosts
 
-      const data = await db.collection("posts").orderBy('likeCount', 'desc').orderBy('commentCount', 'desc').startAfter(doc).limit(3).get()
+      const data = await db.collection("posts").where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
       const docs = data.docs.map(doc => doc.data())
 
       if (docs.length) {
@@ -708,7 +763,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= 1000) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -740,6 +795,7 @@ module.exports = {
             likeCount: 0,
             commentCount: 0,
             repostCount: 0,
+            rank: 0,
             location,
             _tags: hastags,
             room
@@ -751,6 +807,7 @@ module.exports = {
             likeCount: 0,
             commentCount: 0,
             repostCount: 0,
+            rank: 0,
             location,
             _tags: hastags
           };
@@ -759,7 +816,7 @@ module.exports = {
             newPost.repost = repost
             db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
               .then(async doc => {
-                doc.ref.update({ repostCount: doc.data().repostCount + 1 })
+                doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
                 if (doc.data().owner !== username) {
                   const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
 
@@ -853,10 +910,10 @@ module.exports = {
           if (doc.data().owner !== username) {
             throw new AuthenticationError("Unauthorized");
           } else {
-            if ( doc.data().repost && doc.data().repost.repost) {
+            if (doc.data().repost && doc.data().repost.repost) {
               const { repost } = doc.data()
               db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
-                .then(doc => doc.ref.update({repostCount: doc.data().repostCount - 1}))
+                .then(doc => doc.ref.update({ repostCount: doc.data().repostCount - 1 }))
             }
             return likesData.get()
               .then(data => {
@@ -957,7 +1014,7 @@ module.exports = {
             if (!isLiked) {
               // Unlike
               post.likeCount--;
-              doc.ref.update({ likeCount: doc.data().likeCount - 1 });
+              doc.ref.update({ likeCount: doc.data().likeCount - 1, rank: doc.data().rank - 1 });
 
               likeData = {
                 owner: username,
@@ -1012,7 +1069,7 @@ module.exports = {
             } else {
               // Like
               post.likeCount++;
-              doc.ref.update({ likeCount: doc.data().likeCount + 1 });
+              doc.ref.update({ likeCount: doc.data().likeCount + 1, rank: doc.data().rank + 1 });
               return likeCollection
                 .add({
                   owner: username,
@@ -1261,7 +1318,7 @@ module.exports = {
       const index = client.initIndex('search_posts');
 
       const defaultPayload = {
-        "attributesToRetrieve": "*",  
+        "attributesToRetrieve": "*",
         "attributesToSnippet": "*:20",
         "snippetEllipsisText": "…",
         "responseFields": "*",
@@ -1282,24 +1339,22 @@ module.exports = {
       }
 
       return new Promise((resolve, reject) => {
-        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination})
+        index.search(search, { ...defaultPayload, ...geoLocPayload, ...pagination })
           .then(res => {
             const { hits, page, nbHits, nbPages, hitsPerPage, processingTimeMS } = res;
-            
+
             const newHits = []
             if (hits.length) {
-              let found = true
-              if(hits.length == 0) found = false
               hits.forEach(async data => {
                 // Likes
                 const likes = async () => {
-  
+
                   const likesData = await db.collection(`/posts/${data.id}/likes`).get()
                   const likes = likesData.docs.map(doc => doc.data())
-  
+
                   return likes;
                 };
-  
+
                 newHits.push({ ...data, likes: likes() })
               })
             }

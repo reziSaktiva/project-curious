@@ -11,10 +11,11 @@ import NavBar from '../components/NavBar'
 import SidebarMobile from '../components/SidebarMobile'
 import NotificationMobile from '../components/NotificationMobile'
 
-import { getSession } from '../util/Session';
+import { getRangeSearch, getSession } from '../util/Session';
 import SkeletonLoading from '../components/SkeletonLoading'
 import No_result from '../assets/NoResults/No_posts.png'
 import BackDrop from '../components/BackDrop'
+
 
 function Popular() {
     const _isMounted = useRef(false);
@@ -29,6 +30,7 @@ function Popular() {
     const { user } = useContext(AuthContext)
 
     const { location } = getSession();
+    const range = getRangeSearch();
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POPULAR_POSTS);
 
     const handleBurger = () => {
@@ -52,8 +54,7 @@ function Popular() {
     useEffect(() => {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
-
-            getPosts({ variables: loc });
+            getPosts({ variables: { ...loc, range: range ? parseFloat(range) : undefined } });
         }
     }, [location]);
 

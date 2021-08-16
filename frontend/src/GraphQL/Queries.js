@@ -1,6 +1,15 @@
 import { gql } from "@apollo/client";
 import { postDetailFragment, userDataFragment } from './Fragment'
 
+export const MORE_FOR_YOU = gql`
+  query {
+    moreForYou {
+      ...PostDetail
+    }
+  }
+  ${postDetailFragment}
+`
+
 export const GET_POSTS = gql`
   query getPostNearby($lat: Float, $lng: Float, $range: Float) {
     getPosts(lat: $lat, lng: $lng, range: $range) {
@@ -98,6 +107,7 @@ export const GET_VISITED = gql`
       administrative_area_level_2
       administrative_area_level_3
       administrative_area_level_4
+      photo_reference
       country
       location {
         lat
@@ -114,6 +124,7 @@ export const EXPLORE_PLACE = gql`
       administrative_area_level_2
       administrative_area_level_3
       administrative_area_level_4
+      photo_reference
       country
       location {
         lat

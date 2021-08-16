@@ -49,6 +49,7 @@ module.exports = gql`
         administrative_area_level_2: String
         administrative_area_level_1: String
         country: String
+        photo_reference: String
         location: LatLong
     }
     type User {
@@ -139,6 +140,7 @@ module.exports = gql`
         notificationAdded(username: String): Notification
     }
     type Query {
+        moreForYou: [Post]!
         getPosts(lat: Float, lng: Float, range: Float): [Post]!
         getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
         getVisited: [GeoLocation]
@@ -212,9 +214,9 @@ module.exports = gql`
         deleteAccount( id: ID! ): String!
 
         # posts mutation
-        nextPosts( id:ID! lat: Float, lng: Float ): [Post]!
+        nextPosts( id:ID! lat: Float, lng: Float, range: Float ): [Post]!
         nextRoomPosts( id:ID!, room: String ): [Post]!
-        nextPopularPosts( id:ID! lat: Float, lng: Float ): [Post]!
+        nextPopularPosts( id:ID! lat: Float, lng: Float, range: Float): [Post]!
         createPost(text:String, media: [String] location: Location! repost: Data room: String): Post!
         subscribePost( postId: ID! room: String ): Subscribe!
         mutePost ( postId: ID! room: String ): Mute!
