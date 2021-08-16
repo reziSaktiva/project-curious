@@ -11,7 +11,7 @@ import NavBar from '../components/NavBar'
 import SidebarMobile from '../components/SidebarMobile'
 import NotificationMobile from '../components/NotificationMobile'
 
-import { getSession } from '../util/Session';
+import { getRangeSearch, getSession } from '../util/Session';
 
 
 function Popular() {
@@ -27,6 +27,7 @@ function Popular() {
     const { user } = useContext(AuthContext)
 
     const { location } = getSession();
+    const range = getRangeSearch();
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POPULAR_POSTS);
 
     const handleBurger = () => {
@@ -47,8 +48,7 @@ function Popular() {
     useEffect(() => {
         if (Object.keys(location).length) {
             const loc = JSON.parse(location);
-
-            getPosts({ variables: loc });
+            getPosts({ variables: { ...loc, range: range ? parseFloat(range) : undefined } });
         }
     }, [location]);
 
