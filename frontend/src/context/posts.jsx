@@ -19,11 +19,11 @@ const reducer = (state, action) => {
       };
 
       case "SET_NAV":
-
       return {
         ...state,
         active: action.payload,
       };
+
       case "SET_NAV_MOBILE_OPEN":
 
       return {
@@ -595,7 +595,6 @@ export const PostContext = createContext({
   isMorePost: true,
   isOpenNewPost: false,
   repost: false,
-  active: "latest",
   isNavMobileOpen: false,
   setModal: () => {},
   setNavMobileOpen: () => {},
@@ -621,7 +620,6 @@ const initialState = {
   posts: [],
   room_1: [],
   room_2: [],
-  active: "latest",
   isNavMobileOpen: false,
   isModalActive: false,
   likedPosts: [],

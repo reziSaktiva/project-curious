@@ -14,12 +14,12 @@ import SkeletonLoading from '../components/SkeletonLoading'
 import { getSession, getRangeSearch } from '../util/Session';
 
 //gambar
-import Radius from '../assets/no_post.png'
+import No_result from '../assets/NoResults/No_posts.png'
 import SidebarMobile from '../components/SidebarMobile'
 import BackDrop from '../components/BackDrop'
 import NotificationMobile from '../components/NotificationMobile'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import Modal from '../components/Modal'
+
 
 
 function Home() {
@@ -96,7 +96,7 @@ function Home() {
                 {!_isMounted.current && <SkeletonLoading />}
                 {(_isMounted.current && !loading && !posts.length) ? (
                 <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-                <img src={Radius} style={{ width: 300}} />
+                <img src={No_result} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
                 <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
                 <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>

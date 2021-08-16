@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { BellOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
 import '../App.css'
@@ -8,10 +9,17 @@ import { AuthContext } from '../context/auth';
 export default function NavBar(props) {
   const { notifications } = useContext(AuthContext);
   const { setNav, active } = useContext(PostContext)
+  let history= useHistory().location.pathname
+  const { user, pathname } = useContext(AuthContext)
   
+  useEffect(() => {
+    if(pathname !== "/" && pathname !== "/popular") setNav("latest")
+    if(history ==  "/popular") setNav("popular")
+  }, [])
   const handleToggle = e => {
     setNav(e.target.value)
   }
+
   const notificationLength = notifications.length && notifications.filter(notif => notif.read === false).length
   return (
     <header className="toolbar">

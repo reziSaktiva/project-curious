@@ -2,36 +2,28 @@ import React from 'react'
 import { Col } from 'antd';
 import { useQuery } from '@apollo/client';
 import { EXPLORE_PLACE } from '../../GraphQL/Queries';
+import SkeletonLoading from '../../components/SkeletonLoading';
 
 export default function ExplorePlace() {
     const { data, loading, errors } = useQuery(EXPLORE_PLACE)
-
     console.log(data);
-    return (
+
+
+    
+    return loading ? <SkeletonLoading /> : (
         <>
             <div className="explore-place">
                 <span className="title">Explore Place</span>
                 <div className="explore-place__btn-more">More</div>
                 <div className="list-place">
-                    <Col lg={8} xs={9}>
-                        <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg" />
-                        <span className="item-place__title">Karachi</span>
-                    </Col>
-
-                    <Col lg={8} xs={9}>
-                        <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg" />
-                        <span className="item-place__title">Karachi</span>
-                    </Col>
-
-                    <Col lg={8} xs={9}>
-                        <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg" />
-                        <span className="item-place__title">Karachi</span>
-                    </Col>
-
-                    <Col lg={8} xs={9}>
-                        <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg" />
-                        <span className="item-place__title">Karachi</span>
-                    </Col>
+                    {data &&    
+                       data.explorePlace.map(data => {
+                        return (<Col lg={8} xs={9}>
+                                        <img className="item-place__image" src="https://i.pinimg.com/originals/40/fa/a6/40faa6ee309d8a420f54f6420fd28955.jpg" />
+                                        <span className="item-place__title">{data.administrative_area_level_3}</span>
+                                    </Col>)
+                    }) 
+                    }
                 </div>
             </div>
 
