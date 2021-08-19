@@ -15,6 +15,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: action.payload,
+        isMorePost: true,
         lastIdPosts,
       };
 
