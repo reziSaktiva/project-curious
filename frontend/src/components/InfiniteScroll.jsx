@@ -44,10 +44,10 @@ function ScrollInfinite(props) {
         const loc = JSON.parse(location)
         switch (pathname) {
             case '/popular':
-                nextPopular({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                 break;
             default:
-                nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                 break;
         }
     }
