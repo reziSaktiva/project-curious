@@ -15,7 +15,9 @@ import { EditOutlined } from "@ant-design/icons";
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
 import IconCrash from "../../assets/ic-crash.png";
-import Radius from '../../assets/no_post.png'
+import no_media from '../../assets/NoResults/no-img-on-profile.png'
+import no_likes from '../../assets/NoResults/no-likes-on-profile.png'
+import no_posts from '../../assets/NoResults/No_posts.png'
 
 //location
 import Geocode from "react-geocode";
@@ -142,7 +144,7 @@ function Profile() {
         ) : (
           !posts.length ? (
             <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-                <img src={Radius} style={{ width: 300}} />
+                <img src={no_posts} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
                 <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
                 <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
@@ -177,10 +179,9 @@ function Profile() {
             })
           ) : (
             <div className="centeringButton">
-              <img src={Radius} style={{ width: 300 }} />
-              <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
-              <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
-              <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
+              <img src={no_likes} style={{ width: 300 }} />
+              <h4 style={{ textAlign: 'center' }}>Try Likes Some Posts</h4>
+              <h4 style={{ textAlign: 'center' }}>and it will displayed here</h4>
             </div>
           )
         )}
@@ -214,7 +215,7 @@ function Profile() {
           ))
         ) : (
           <div className="centeringButton">
-            <img src={Radius} style={{ width: 300 }} />
+            <img src={no_media} style={{ width: 300 }} />
             <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
             <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
             <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
@@ -283,7 +284,7 @@ function Profile() {
         </div>
       </div>
 
-      <h4 style={{ textAlign: "center" }}>{user.username}</h4>
+      <h4 style={{ textAlign: "center" }}>{user.newUsername ? user.newUsername : user.username }</h4>
       <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
         <Link to="/maps">
           <img src={Pin} style={{ width: 20, marginTop: -5 }} />

@@ -76,7 +76,6 @@ const Search = () => {
                 ))}
                 </>
               ) : (
-
            <ExplorePlace />
       )}
     </div>

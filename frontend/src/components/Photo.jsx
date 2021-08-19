@@ -11,7 +11,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
           photo.length == 1 ? (
             <div>
               {photo[0].split(".")[5].split("?")[0] === "mp4" ? (
-                <video className="hover_media" controls style={{objectFit: 'cover', borderRadius: 10, maxHeight: 300}} width={"100%"}>
+                <video className="hover_media" controls style={{ borderRadius: 10, maxHeight: 300}} width={"100%"}>
               <source src={photo} />
             </video>
               ) : (
