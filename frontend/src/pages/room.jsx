@@ -51,7 +51,6 @@ function Room(props) {
             return;
         }
     }, [data, _isMounted])
-    console.log(room_2);
     return (
         <div>
             <NavBar />
