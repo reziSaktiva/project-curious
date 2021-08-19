@@ -33,7 +33,6 @@ const reducer = (state, action) => {
       };
     case "SET_Insvire E-Sport":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
-
       return {
         ...state,
         loading: false,
@@ -42,7 +41,6 @@ const reducer = (state, action) => {
       };
     case "SET_BMW Club Bandung":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
-
       return {
         ...state,
         loading: false,
