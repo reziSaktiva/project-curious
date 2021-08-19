@@ -64,7 +64,7 @@ export default function Settings() {
       style={{marginTop: -15}}
         size="large"
         bordered>
-        <Link to="/">
+        <Link to="/TermOfUse">
           <List.Item key='1'>
             <List.Item.Meta
               title="Term of Use"
@@ -80,7 +80,7 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <Link to="/">
+        <Link to="/CommunityGuidelines">
           <List.Item key='3'>
             <List.Item.Meta
               title="Community Guidelines"
@@ -88,15 +88,15 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-
-          <List.Item onClick={handleClickLogout} key='4'>
+        <Link to="/PrivacyPolicy">
+        <List.Item onClick={handleClickLogout} key='4'>
             <List.Item.Meta
               title="Privacy Policy"
             />
             <div><RightOutlined /></div>
           </List.Item>
-
-          <List.Item onClick={handleClickLogout} key='5'>
+        </Link>
+          <List.Item style={{cursor: 'pointer'}} onClick={handleClickLogout} key='5'>
             <List.Item.Meta
               title="Logout"
             />
@@ -105,7 +105,7 @@ export default function Settings() {
           </List.Item>
 
         <Link onClick={handleClickDeleteAccount}>
-          <List.Item key='6'>
+          <List.Item style={{cursor: 'pointer'}} key='6'>
             <List.Item.Meta
               title="Delete Account"
             />

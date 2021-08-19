@@ -36,7 +36,9 @@ import settings from './pages/Settings';
 
 import Search from './pages/search/index';
 import EditProfile from './pages/Profile/editProfile';
-import SkeletonProfile from './pages/Profile/SkeletonProfile';
+import TOU from './pages/legal/TeromOfUse';
+import CG from './pages/legal/CommunityGuidelines';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 
 
 function App() {
@@ -65,6 +67,9 @@ function App() {
             <UserRoute exact path="/search" component={Search} />
             <UserRoute exact path="/chat" component={Chat} />
             <UserRoute exact path="/settings" component={settings} />
+            <UserRoute exact path="/TermOfUse" component={TOU} />
+            <UserRoute exact path="/CommunityGuidelines" component={CG} />
+            <UserRoute exact path="/PrivacyPolicy" component={PrivacyPolicy} />
             <UserRoute exact path="/maps" component={map} />
           </Switch>
         </Grid>
