@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import React from 'react'
 import PostCard from '../../components/PostCard'
+import SkeletonLoading from '../../components/SkeletonLoading'
 import { MORE_FOR_YOU } from '../../GraphQL/Queries'
 
 export default function MoreForYou() {
@@ -14,7 +15,7 @@ export default function MoreForYou() {
             </div>
             <br />
             {
-                loading ? <p>loading...</p> : data ? data.moreForYou.map((post, key) => {
+                loading ? <SkeletonLoading /> : data ? data.moreForYou.map((post, key) => {
                      return(
                         <div key={`more for you posts${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
                             <PostCard post={post} type="moreForYou" loading={loading} />

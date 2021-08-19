@@ -30,6 +30,11 @@ body {
     -ms-transform: translate(-50%, 20%);
     transform: translate(-50%, 20%);
 }
+.centering-flex {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
 
 .centeringImage {
@@ -225,6 +230,10 @@ body {
 .likeButton:hover{
   color: red;
   border: 1px solid black;
+}
+/* LEGAL */
+.legal h1 {
+  font-size: 1.1rem;
 }
 
 /* SIDE BAR */

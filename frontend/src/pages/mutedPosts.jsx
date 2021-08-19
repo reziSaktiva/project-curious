@@ -9,7 +9,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
-import Radius from '../assets/Radius.jpg'
+import no_muted from '../assets/NoResults/No_muted.png'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
@@ -48,8 +48,8 @@ function MutedPost() {
             <NavBar />
             {user ? (<div>
                 {!mutedPost || mutedPost.length < 1 ? (
-                    <div className="centeringButton">
-                        <img src={Radius} style={{ width: 300}} />
+                    <div className="centering-flex">
+                        <img src={no_muted} style={{ width: 300}} />
                         <h4 style={{textAlign: 'center'}}>Here you can mute a post u dont like</h4>
                         <h4 style={{textAlign: 'center'}}>and unmute to see it again</h4>
                     </div>

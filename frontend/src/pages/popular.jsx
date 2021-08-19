@@ -11,7 +11,6 @@ import NavBar from '../components/NavBar'
 import SidebarMobile from '../components/SidebarMobile'
 import NotificationMobile from '../components/NotificationMobile'
 
-
 import { getRangeSearch, getSession } from '../util/Session';
 import SkeletonLoading from '../components/SkeletonLoading'
 import No_result from '../assets/NoResults/No_posts.png'

@@ -3,14 +3,13 @@ import { Col } from 'antd';
 import { useQuery } from '@apollo/client';
 import { EXPLORE_PLACE } from '../../GraphQL/Queries';
 import SkeletonLoading from '../../components/SkeletonLoading';
-
 import MoreForYou from './moreForYou';
-
+import SearchSkeleton from './SearchSkleleton';
 
 export default function ExplorePlace() {
     const { data, loading, errors } = useQuery(EXPLORE_PLACE)
     
-    return loading ? <SkeletonLoading /> : (
+    return loading ? <SearchSkeleton /> : (
         <>
             <div className="explore-place">
                 <span className="title">Explore Place</span>

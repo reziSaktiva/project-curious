@@ -8,7 +8,8 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-
+import No_result from '../assets/NoResults/No_posts.png'
+import SkeletonLoading from '../components/SkeletonLoading'
 
 
 function Room(props) {
@@ -39,7 +40,6 @@ function Room(props) {
         if (data  && !_isMounted.current) { // check if doesn't fetch data
             if (!data) {
                 loadingData();
-
                 return;
             }
             setRoom(data.getRoomPosts)
@@ -48,15 +48,21 @@ function Room(props) {
                 _isMounted.current = true
             }
             // set did mount react
-
             return;
         }
     }, [data, _isMounted])
-
+    console.log(room_2);
     return (
         <div>
             <NavBar />
-            {room === "/Insvire E-Sport" ? (user ? ( !room_1 ? null
+            {_isMounted.current && <SkeletonLoading />}
+            {room === "/Insvire E-Sport" ? (user ? ( room_1.length == 0 ? (
+            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
+            <img src={No_result} style={{ width: 300}} />
+            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+        </div>)
                     : room_1.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
@@ -66,7 +72,15 @@ function Room(props) {
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
                         )
-                    })) : null) : (user ? ( !room_2 ? null
+                    })) : null) : (user ? ( room_2.length == 0 ? (
+                        (
+                            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
+                            <img src={No_result} style={{ width: 300}} />
+                            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
+                            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
+                            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+                        </div>)
+                    )
                         : room_2.map((post, key) => {
                             const { muted, id } = post;
                             const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
