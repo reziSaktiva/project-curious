@@ -76,7 +76,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: [...state.posts, ...action.payload],
-        isMorePost: action.payload.length === 3,
+        isMorePost: true,
         lastIdPosts: state.posts[state.posts.length - 1].id,
       };
     case "CREATE_POST_ROOM_1":

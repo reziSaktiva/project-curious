@@ -5,6 +5,8 @@ import Config from './Config';
 
 firebase.initializeApp(Config);
 
+export const db = firebase.firestore();
+
 export const auth = firebase.auth();
 
 export const FacebookProvider = new firebase.auth.FacebookAuthProvider();
