@@ -143,6 +143,16 @@ mutation nextPopular($id: ID! $lat: Float! $lng: Float! $range: Float) {
   ${postDetailFragment}
 `;
 
+export const GET_MORE_ROOM = gql`
+mutation nextRoom($id: ID! $room: String) {
+  nextRoomPosts(id: $id, room: $room) {
+      ...PostDetail
+      room
+    }
+  }
+  ${postDetailFragment}
+`;
+
 export const LIKE_POST = gql`
   mutation likePost($id: ID! $room:String) {
     likePost(id: $id room: $room) {
