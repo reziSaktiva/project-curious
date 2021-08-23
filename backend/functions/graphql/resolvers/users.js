@@ -288,11 +288,12 @@ module.exports = {
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
-                    .then(r => {
+                    .then(async r => {
                         const { address_components } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
+
 
                         addressComponents.map(({ types, long_name }) => {
                             const point = types[0];
@@ -300,7 +301,15 @@ module.exports = {
                             geoResult[point] = long_name;
                         });
 
-                        return { ...geoResult, location: { lat, lng } };
+                        const photo_reference = await axios({
+                            method: 'get',
+                            url: `https://api.unsplash.com/search/photos?page=1&query=${geoResult.administrative_area_level_2}&client_id=UglyC0ivuaZUA-2eeaUPc-v8_haYK8tdvxtCl0DqXpY`,
+                            headers: {}
+                          }).then(({data}) => {
+                              return data.results[0].urls.small
+                          })
+
+                        return { ...geoResult, photo_reference, location: { lat, lng } };
                     })
                     .catch(e => {
                         console.log(e);

@@ -2,12 +2,11 @@ import React, { useContext, useEffect } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   READ_ALL_NOTIFICATIONS,
   READ_NOTIFICATION,
 } from "../../GraphQL/Mutations";
-import { NOTIFICATION_ADDED } from '../../GraphQL/Subsriptions'
 import { Row, Col, Dropdown, Menu } from "antd";
 
 import { CLEAR_ALL_NOTIF } from "../../GraphQL/Mutations";
@@ -19,7 +18,7 @@ import './notif-style.css'
 import { useState } from "react";
 
 export default function Notification() {
-  const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
+  const {  notificationRead, readAllNotificatons } = useContext(AuthContext);
   const { clearNotifications, user } = useContext(AuthContext);
   const [state, setstate] = useState([])
   const [loading, setLoading] = useState(false)
