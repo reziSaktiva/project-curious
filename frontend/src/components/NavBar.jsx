@@ -6,8 +6,7 @@ import '../App.css'
 import { PostContext } from '../context/posts';
 import { AuthContext } from '../context/auth';
 
-export default function NavBar(props) {
-  console.log("props from visit", props);
+export default function NavBar({toggleOpen,toggleOpenNotif,location}) {
   const { notifications } = useContext(AuthContext);
   const { setNav, active } = useContext(PostContext)
   let history= useHistory().location.pathname
@@ -18,6 +17,7 @@ export default function NavBar(props) {
     if(history ==  "/popular") setNav("popular")
   }, [])
   const handleToggle = e => {
+    console.log(`/${location}/popular`);
     setNav(e.target.value)
   }
 
@@ -33,7 +33,7 @@ export default function NavBar(props) {
           justifyContent: 'space-between'
         }}>
           <div>
-          <button className="toggle-button" onClick={props.toggleOpen}>
+          <button className="toggle-button" onClick={toggleOpen}>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
@@ -46,7 +46,7 @@ export default function NavBar(props) {
                 onClick={handleToggle}
                value="latest">Latest</button>
               </Link>
-              <Link to='/popular'>
+              <Link to={location ? `/${location}/popular` :  '/popular'}>
               <button className={ active == 'popular' ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
                 onClick={handleToggle}
                value="popular">Popular</button>
@@ -61,7 +61,7 @@ export default function NavBar(props) {
               fontSize: "25px",
               color: "black",
               strokeWidth: "30",
-              }} onClick={props.toggleOpenNotif} />
+              }} onClick={toggleOpenNotif} />
               {
           notifications.length > 1 && <div className="notifCounter__mobile">
             <p style={{fontSize:10,display: 'flex', justifyContent: 'center'}}> {notifications.length > 99 ?

@@ -21,7 +21,7 @@ import NotificationMobile from '../../components/NotificationMobile'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Modal from '../../components/Modal'
 
-export default function VisitedPosts({ postsLocation }) {
+export default function VisitedPopular({ postsLocation }) {
     const history = useHistory().location.pathname
     const [burger, setBurger] = useState({
         toggle : false
@@ -81,7 +81,8 @@ export default function VisitedPosts({ postsLocation }) {
 
     return (
         <div style={{height: "100%"}}>
-            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
+            <p>hello</p>
+            {/* <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
             <NotificationMobile />
             <SidebarMobile show={burger.toggle} />
             
@@ -106,7 +107,7 @@ export default function VisitedPosts({ postsLocation }) {
                             </div>
                         )
                     })}
-            </InfiniteScroll>) : null}
+            </InfiniteScroll>) : null} */}
         </div>
     )
 }
