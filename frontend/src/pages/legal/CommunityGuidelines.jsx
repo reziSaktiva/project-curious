@@ -2,14 +2,15 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import AppBar from "../../components/AppBar";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/auth";
-const CG = () => {
+
+const CG = ({setOpenModal}) => {
     const { setPathname } = useContext(AuthContext)
     useEffect(() => {
         setPathname("/settings")
     }, [])
     return (
         <div className="legal">
-            <AppBar title="Community Guidelines" />
+            {!setOpenModal && <AppBar title="Community Guidelines"  />}
             <p>
             We want Curious to continue to be an authentic and safe place for 
             inspiration and expression. Help us foster this community. Post only your 

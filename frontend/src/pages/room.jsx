@@ -51,7 +51,7 @@ function Room(props) {
             return;
         }
     }, [data, _isMounted])
-    console.log(room_2);
+    console.log(room_1);
     return (
         <div>
             <NavBar />

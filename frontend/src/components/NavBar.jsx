@@ -7,6 +7,7 @@ import { PostContext } from '../context/posts';
 import { AuthContext } from '../context/auth';
 
 export default function NavBar(props) {
+  console.log("props from visit", props);
   const { notifications } = useContext(AuthContext);
   const { setNav, active } = useContext(PostContext)
   let history= useHistory().location.pathname

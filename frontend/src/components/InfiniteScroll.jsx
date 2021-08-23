@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useEffect } from 'react'
 
 function ScrollInfinite(props) {
+    console.log("props", props);
     const pathname = useHistory().location.pathname
 
     const { isLoading } = props;
@@ -73,7 +74,10 @@ function ScrollInfinite(props) {
                     <Skeleton avatar active paragraph={{rows: 2}} />
                        : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>): <Skeleton avatar active paragraph={{rows: 2}} />}
                 scrollableTarget="scrollableDiv"
+
                 {...props}
+
+                
             />
         </div>
     )

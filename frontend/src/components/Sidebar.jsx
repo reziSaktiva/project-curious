@@ -142,9 +142,11 @@ const Sidebar = () => {
         </Sider>
         {windowWidth <= 1071 ? null : <div>
           <Link to='/' ><div className="curious" /></Link>
-          <p style={{color: '#B7B7B7', fontSize:12, marginTop: 16}}>Terms of Use .  Community <br/> 
-          Guidelines .  Privacy Policy <br/>
-© 2021 Curious</p>
+          <p style={{color: '#B7B7B7', fontSize:12, marginTop: 16}}>
+          <Link style={{color: '#B7B7B7'}} to="/TermOfUse">Terms of Use. </Link>
+          <Link style={{color: '#B7B7B7'}} to="/CommunityGuidelines">Community <br/>Guidelines .</Link>
+          <Link style={{color: '#B7B7B7'}} to="/PrivacyPolicy">Privacy Policy</Link> <br/>
+          © 2021 Curious</p>
           </div>}
       </div>
     </React.Fragment>

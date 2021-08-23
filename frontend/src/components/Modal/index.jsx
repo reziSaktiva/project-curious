@@ -12,8 +12,8 @@ export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
         
     return (
         <>
-
         <div className={classes}>
+            
             <div className="modal">
                 <p>Are you sure want to {title}?</p>
                 <div className="btn-container">

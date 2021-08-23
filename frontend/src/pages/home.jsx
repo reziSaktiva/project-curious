@@ -12,7 +12,7 @@ import NavBar from '../components/NavBar'
 import SkeletonLoading from '../components/SkeletonLoading'
 
 import { getSession, getRangeSearch } from '../util/Session';
-
+import AdSense from 'react-adsense';
 //gambar
 import No_result from '../assets/NoResults/No_posts.png'
 import SidebarMobile from '../components/SidebarMobile'
@@ -81,9 +81,7 @@ function Home() {
             return;
         }
     }, [data, _isMounted])
-
-
-
+    console.log(Math.floor(1%7) );
     return (
         <div style={{height: "100%"}}>
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
@@ -102,15 +100,32 @@ function Home() {
                 <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
             </div>
                 )
-                    : posts.map((post, key) => {
-                        const { muted, id } = post;
-                        const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
-                         return(
-                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
-                                {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
-                            </div>
-                        )
-                    })}
+                    :
+                    <div>
+                        {
+                            posts.map((post, key) => {
+                                const { muted, id } = post;
+                                const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+                                 return(
+                                 <div>
+                                    <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
+                                        {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
+                                    </div>
+                                    { key > 1 && Math.ceil(key%7) === 0 && <AdSense.Google
+                        client='pub-9126030075206824'
+                        slot='9964874359'
+                        style={{ display: 'block' }}
+                        format='auto'
+                        responsive='true'
+                        layoutKey='-gw-1+2a-9x+5c'
+                        /> }
+                                 </div>
+                                    
+                                )
+                            })
+                        }
+                    </div> 
+                    }
             </InfiniteScroll>) : null}
         </div>
     );
