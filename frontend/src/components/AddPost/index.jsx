@@ -225,7 +225,6 @@ export default function ModalPost() {
       fileList: newFiles
     });
     let limit = fileList.map( file => file.type.split("/")[0])
-    console.log(FileList);
     if(limit[0] === "image") setnoVideoFilter(true)
     else setnoVideoFilter(false)
 

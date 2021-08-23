@@ -52,7 +52,6 @@ function Room(props) {
             return;
         }
     }, [data, _isMounted])
-    console.log("room loading", loadingPosts);
     return (
         <div>
             <NavBar />

@@ -3,7 +3,6 @@ import { AuthContext } from "../context/auth";
 import { TagRemove } from "../library/Icon"
 
 const ImgPreview = ({children, photo }) => {
-    console.log(photo);
     const { setLoginLoader } = useContext(AuthContext)
     return (
         <div style={{
