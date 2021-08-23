@@ -39,6 +39,7 @@ import EditProfile from './pages/Profile/editProfile';
 import TOU from './pages/legal/TeromOfUse';
 import CG from './pages/legal/CommunityGuidelines';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import VisitedPopular from './pages/visited/visitedPopular';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
+            <UserRoute exact path="/visited/popular" component={VisitedPopular} />
             <UserRoute exact path="/:room/:id" component={SinglePost} />
             <UserRoute exact path="/nearby" component={Nearby} />
             <UserRoute exact path="/popular" component={Popular} />
