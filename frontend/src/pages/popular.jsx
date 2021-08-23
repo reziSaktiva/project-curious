@@ -7,24 +7,14 @@ import { PostContext } from '../context/posts'
 import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
-import NavBar from '../components/NavBar'
-import SidebarMobile from '../components/SidebarMobile'
-import NotificationMobile from '../components/NotificationMobile'
 
 import { getRangeSearch, getSession } from '../util/Session';
 import SkeletonLoading from '../components/SkeletonLoading'
 import No_result from '../assets/NoResults/No_posts.png'
-import BackDrop from '../components/BackDrop'
 
 
 function Popular() {
     const _isMounted = useRef(false);
-    const [burger, setBurger] = useState({
-        toggle : false
-    })
-    const [notif, setNotif] = useState({
-        toggle : false
-    })
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
@@ -32,24 +22,6 @@ function Popular() {
     const { location } = getSession();
     const range = getRangeSearch();
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POPULAR_POSTS);
-
-    const handleBurger = () => {
-        setBurger(prevState => {
-            return {
-                toggle : !prevState.toggle
-            }
-        })
-    }
-    const handleBackdropClose = () => {
-        setBurger({toggle: false})
-    }
-    const handleNotif = () => {
-        setNotif(prevState => {
-            return {
-                toggle : !prevState.toggle
-            }
-        })
-    }
     
     useEffect(() => {
         if (Object.keys(location).length) {
@@ -76,10 +48,6 @@ function Popular() {
 
     return (
         <div>
-            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
-            <NotificationMobile show={notif.toggle} />
-            <SidebarMobile show={burger.toggle} />
-            {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
             {user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!_isMounted.current && <SkeletonLoading />}

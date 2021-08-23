@@ -22,7 +22,7 @@ import RegisterGoogle from './pages/GoogleRegs/registerGoogle';
 import LandingPage from './pages/landing-page';
 import Grid from './pages/grid/grid';
 import SinglePost from './pages/detailPost/detailPost';
-import Nearby from './pages/nearby';
+// import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile/Profile'
@@ -55,9 +55,10 @@ function App() {
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
-            <UserRoute exact path="/visited/popular" component={VisitedPopular} />
-            <UserRoute exact path="/:room/:id" component={SinglePost} />
-            <UserRoute exact path="/nearby" component={Nearby} />
+            {/* <UserRoute exact path="/visited/popular" component={VisitedPopular} /> */}
+            <UserRoute exact path="/room/:room/:id" component={SinglePost} />
+            <UserRoute exact path="/post/:id" component={SinglePost} />
+            {/* <UserRoute exact path="/nearby" component={Nearby} /> */}
             <UserRoute exact path="/popular" component={Popular} />
             <UserRoute exact path="/Insvire E-Sport" component={Room} />
             <UserRoute exact path="/BMW Club Bandung" component={Room} />

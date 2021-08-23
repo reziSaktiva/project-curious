@@ -41,7 +41,6 @@ export default function EditProfile() {
       console.log(err.message)
     }
   });
-  console.log("loading", loading);
   const { user, changeProfile } = useContext(AuthContext);
   const [newUserData, setUserData] = useState({});
 

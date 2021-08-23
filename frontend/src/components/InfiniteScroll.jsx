@@ -13,11 +13,10 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useEffect } from 'react'
 
 function ScrollInfinite(props) {
-    console.log("props", props);
     const pathname = useHistory().location.pathname
 
-    const { isLoading } = props;
-    const { posts, morePosts, lastIdPosts, isMorePost, room_1, room_2 } = useContext(PostContext)
+    const { isLoading, visitedLocation } = props;
+    const { posts, morePosts, isMorePost, room_1, room_2, active} = useContext(PostContext)
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -60,8 +59,19 @@ function ScrollInfinite(props) {
             case '/BMW Club Bandung':
                 nextRoom({ variables: { id: room_2[room_2.length - 1].id, room: 'BMW Club Bandung' } })
                 break;
-            case '/popular':
-                nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+            case '/':
+                if (active == 'latest') {
+                    nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                } else {
+                    nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                }
+                break;
+            case '/visited':
+                if (active == 'latest') {
+                    nextPosts({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                } else {
+                    nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                }
                 break;
             default:
                 nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
