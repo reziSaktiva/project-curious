@@ -1,17 +1,20 @@
 import { useContext, useEffect } from "react";
 import AppBar from "../../components/AppBar";
 import { AuthContext } from "../../context/auth";
-const TOU = () => {
+
+const TOU = ({ setOpenModal}) => {
+
     const { setPathname } = useContext(AuthContext)
     useEffect(() => {
         setPathname("/settings")
     }, [])
+
     return (<div className="legal">
-        <AppBar title={"Term Of Use"} />
+        {!setOpenModal && <AppBar title={"Term Of Use"} />}
+        <div>
         <h1>About Us <br /> 
         Welcome to Curious!
         </h1>
-
         <p>
         These Terms of Use govern your use of Curious and provide information about the
         Curious Service, outlined below. When user creates an Curious account or use Curious, user agree to these terms
@@ -185,6 +188,8 @@ const TOU = () => {
             binding between the User and the Curious Community. 
             </li>
         </ul>
+        </div>
+        
     </div>);
 }
  

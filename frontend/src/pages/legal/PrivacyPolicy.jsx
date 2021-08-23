@@ -2,14 +2,15 @@ import { useContext, useEffect } from "react";
 import AppBar from "../../components/AppBar";
 import { AuthContext } from "../../context/auth";
 
-const PrivacyPolicy = () => {
+const PrivacyPolicy = ({setOpenModal}) => {
   const { setPathname } = useContext(AuthContext)
     useEffect(() => {
         setPathname("/settings")
     }, [])
     return (
-        <div className="legal" style={{padding:10}}>
-            <AppBar title="Privacy Policy" />
+        <div className="legal">
+            {!setOpenModal && <AppBar title="Privacy Policy"  />}
+            
             <h1>Data Policy</h1>
             <p>
             Anyone around the world can see Curious. You can also use Curious safely 

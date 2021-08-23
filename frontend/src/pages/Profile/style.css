@@ -9,6 +9,9 @@
     display: flex;
     justify-content: center;
 }
+.gallery {
+ margin-bottom: 16px;
+}
 .form__container {
     width: 100%;
     max-width: 342px;

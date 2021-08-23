@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Col, Row, Button } from 'antd'
 
 import LoginFacebook from '../../components/LoginFacebookButton';
@@ -11,11 +11,28 @@ import './style.css';
 import BackDrop from '../../components/BackDrop'
 import { AuthContext } from '../../context/auth'
 import { LoadingOutlined } from "@ant-design/icons";
+import CustomModal from '../../components/Modal/customModal';
+import TOU from '../legal/TeromOfUse';
+import PrivacyPolicy from '../legal/PrivacyPolicy';
+import CG from '../legal/CommunityGuidelines';
+
 export default function SignIn(props) {
- const { loginLoader } = useContext(AuthContext)
+    const [openModal, setOpenModal] = useState(false)
+    const [legal, setlegal] = useState(undefined)
+    const { loginLoader } = useContext(AuthContext)
+
+    const handleOpenModalLegal = e => {
+        setOpenModal(true)
+        setlegal(e.target.innerText)
+    }
+    let legalKey;
+    if(legal == "Terms of Service" || legal =="Terms") legalKey = <TOU  setOpenModal={setOpenModal} />
+    if(legal == "Privacy Policy") legalKey = <PrivacyPolicy setOpenModal={setOpenModal} />
+    if(legal == "Community Guidelines") legalKey = <CG  setOpenModal={setOpenModal} />
+
   return (
   <div className="landing-container">
-
+      <CustomModal click={openModal} setOpenModal={setOpenModal} title={legal} >{legalKey}</CustomModal>
       {loginLoader && <BackDrop ><LoadingOutlined style={{fontSize: 80}} /></BackDrop> }
     <div className="left-grid__wrapper">
       <div className="landingimage" />
@@ -50,7 +67,10 @@ export default function SignIn(props) {
               </Col>
           </Row>
 
-        <p style={{ marginTop: 10, fontSize: 14, color: "#352A39" }}>By signing up, you agree to our <span className="terms">Terms & Privacy Policy</span></p>
+        <p style={{ marginTop: 10, fontSize: 14, color: "#352A39" }}>By signing up, you agree to our
+        <span onClick={handleOpenModalLegal}  className="terms">Terms</span>
+        <span> & </span>
+        <span onClick={handleOpenModalLegal} className="terms">Privacy Policy</span></p>
         
     </div>
     </div>
@@ -58,26 +78,22 @@ export default function SignIn(props) {
      <footer>
     <p className="copy-right" style={{textAlign: 'center'}}>&copy; 2020 Curious</p> 
       <Row style={{textAlign: 'center'}}>
-                <Col span={6}>
-                    <Button type="text" style={{ fontSize: 12, color: "#352A39" }}>
+                <Col span={8}>
+                    <Button key="tou" onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
                         Terms of Service
                     </Button>
                 </Col>
-                <Col span={6}>
-                    <Button type="text" style={{ fontSize: 12, color: "#352A39" }}>
+                <Col span={7}>
+                    <Button onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
                         Privacy Policy
                     </Button>
                 </Col>
-                <Col span={6}>
-                    <Button type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                        Cookie Policy
+                <Col span={9}>
+                    <Button onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
+                        Community Guidelines
                     </Button>
                 </Col>
-                <Col span={6}>
-                    <Button type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                        Ads Info
-                    </Button>
-                </Col>
+
             </Row>
       </footer>
       </div>    

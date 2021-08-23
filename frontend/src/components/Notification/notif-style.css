@@ -47,7 +47,6 @@
     .notifContainer :hover {
       background-color: #7958f5;
       color: white;
-      padding: 2px;
     }
     .notifContainer {
       padding: 4px;

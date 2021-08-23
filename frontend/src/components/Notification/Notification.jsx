@@ -15,6 +15,7 @@ import { DropIcon } from "../../library/Icon";
 import { db } from "../../util/Firebase";
 
 import './notif-style.css'
+import moment from "moment";
 import { useState } from "react";
 
 export default function Notification() {
@@ -154,6 +155,7 @@ export default function Notification() {
                             {notif.displayName}{" "}
                             <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
                           </p>
+                          <p style={{fontWeight:200, fontSize: 12}}>{moment(notif.createdAt).fromNow()}</p>
                         </Col>
                         <Col span={2} style={{ color: "#7958f5" }}>
                           {!notif.read && <p style={{ textAlign: 'right' }}>&#8226;</p>}
