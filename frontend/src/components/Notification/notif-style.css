@@ -22,7 +22,7 @@
     }
     .notifCounter {
       display: inline;
-      background: #7958f5;
+      background: var(--primary-color);
       position: absolute;
       margin-left: 5px;
       width: 22px;
@@ -33,7 +33,7 @@
     }
     .notifCounter__mobile {
       display: inline;
-      background: #7958f5;
+      background: var(--primary-color);
       position: absolute;
       right: 0;
       top: 0;
@@ -45,7 +45,7 @@
       color: white;
     }
     .notifContainer :hover {
-      background-color: #7958f5;
+      background-color: var(--primary-color);
       color: white;
     }
     .notifContainer {

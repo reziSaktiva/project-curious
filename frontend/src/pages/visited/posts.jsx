@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Modal from '../../components/Modal'
 
 export default function VisitedPosts({ postsLocation }) {
+    const { active } = useContext(PostContext)
     const history = useHistory().location.pathname
     const [burger, setBurger] = useState({
         toggle : false
@@ -67,9 +68,8 @@ export default function VisitedPosts({ postsLocation }) {
 
                 return;
             }
-            
-            setPosts(data.getPosts)
-            
+        setPosts(data.getPosts)
+
             // set did mount react
             _isMounted.current = true;
 

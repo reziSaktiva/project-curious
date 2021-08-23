@@ -13,11 +13,11 @@ export default function NavBar({toggleOpen,toggleOpenNotif,location}) {
   const { user, pathname } = useContext(AuthContext)
   
   useEffect(() => {
-    if(pathname !== "/" && pathname !== "/popular") setNav("latest")
-    if(history ==  "/popular") setNav("popular")
+    if(pathname !== "/" && pathname !== "/popular" && pathname !== `/${location}/popular`) setNav("latest")
+    if(history ==  "/popular" || history == `/${location}/popular` ) setNav("popular")
   }, [])
   const handleToggle = e => {
-    console.log(`/${location}/popular`);
+    console.log(e.target.value);
     setNav(e.target.value)
   }
 
@@ -41,13 +41,13 @@ export default function NavBar({toggleOpen,toggleOpenNotif,location}) {
           </div>
           <div>
             <div className="radio-center">
-              <Link to='/'>
+              <Link to={location ? `/${location}`: "/"}>
               <button className={ active == 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
                 onClick={handleToggle}
                value="latest">Latest</button>
               </Link>
               <Link to={location ? `/${location}/popular` :  '/popular'}>
-              <button className={ active == 'popular' ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
+              <button className={ active == 'popular' ||  active == `/${location}/popular` ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
                 onClick={handleToggle}
                value="popular">Popular</button>
               </Link>

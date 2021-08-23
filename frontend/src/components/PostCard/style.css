@@ -11,8 +11,16 @@
 @media only screen and (max-width: 320px) {
   .action-post {
     display: grid;
+    padding: 1px 2px;
     grid-template-columns: 31% 38.5% 33%;
     grid-column-gap: 5px;
+  }
+  .postCard_container > .ant-list > .ant-spin-nested-loading > .ant-spin-container >.ant-list-item.ant-list-item-no-flex.list-actions {
+    padding: 10px 12px;
+  }
+  
+  .ant-list-item-action >li {
+    padding: 0;
   }
 }
 @media only screen and (max-width: 883px) {

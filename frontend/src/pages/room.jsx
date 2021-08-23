@@ -52,10 +52,12 @@ function Room(props) {
             return;
         }
     }, [data, _isMounted])
+    console.log("room loading", loadingPosts);
     return (
         <div>
             <NavBar />
             {_isMounted.current && <SkeletonLoading />}
+            <InfiniteScroll isLoading={loadingPosts}>
             {room === "/Insvire E-Sport" ? (user ? (room_1.length == 0 ? (
                 <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
                     <img src={No_result} style={{ width: 300 }} />
@@ -68,11 +70,9 @@ function Room(props) {
                     const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
 
                     return (
-                        <InfiniteScroll isLoading={loadingPosts}>
                             <div key={`posts${id} ${key}`}>
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
-                        </InfiniteScroll>
                     )
                 })) : null) : (user ? (room_2.length == 0 ? (
                     (
@@ -88,13 +88,12 @@ function Room(props) {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
 
                         return (
-                            <InfiniteScroll isLoading={loadingPosts}>
                                 <div key={`posts${id} ${key}`}>
                                     {!isMuted && <PostCard post={post} loading={loading} />}
                                 </div>
-                            </InfiniteScroll>
                         )
                     })) : null)}
+                    </InfiniteScroll>
         </div>
     );
 }

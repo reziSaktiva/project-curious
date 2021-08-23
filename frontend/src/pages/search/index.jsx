@@ -51,7 +51,6 @@ const Search = () => {
       getSearch({ variables: payload })
   }, 500)
 
-
   return (
     <>
     <AppBar title="Seach" />

@@ -41,7 +41,7 @@ const BottomBar = () => {
         </div>
         <div className="bottom-bar__items">
           <div className="ui circular outlined icon button fixed"
-            style={{ position: 'relative', backgroundColor: '#7958F5', borderRadius: '100%', margin: 0 }}
+            style={{ position: 'relative', backgroundColor: 'var(--primary-color)', borderRadius: '100%', margin: 0 }}
             onClick={handleOpenAddPost}>
             <i className="plus icon" style={{ color: 'white' }}></i>
           </div>

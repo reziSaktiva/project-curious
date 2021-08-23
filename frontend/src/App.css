@@ -1,9 +1,16 @@
 :root {
   --primary-color: #7958f5;
 }
-:is(h1,h2,h3,h4,h5,p) a {
-  color: #352A39;
+h1,h2,
+h3,h4,
+h5,a {
+  color: #352A39; 
 }
+p{
+  color: #352A39;
+  font-size: clamp(0.1rem, 0.1rem + 2.5vw , 0.9rem);
+}
+
 
 @font-face {
   font-family: SF Pro Display;
@@ -533,7 +540,7 @@ transform: translate(-50%, 30%);
 }
 
 .btn-curious-colors {
-  background-color: #7958f5
+  background-color: var(--primary-color);
 }
 
 .gallery {

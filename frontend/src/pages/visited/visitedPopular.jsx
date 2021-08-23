@@ -20,6 +20,7 @@ import BackDrop from '../../components/BackDrop'
 import NotificationMobile from '../../components/NotificationMobile'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Modal from '../../components/Modal'
+import AppBar from '../../components/AppBar'
 
 export default function VisitedPopular({ postsLocation }) {
     const history = useHistory().location.pathname
@@ -81,14 +82,14 @@ export default function VisitedPopular({ postsLocation }) {
 
     return (
         <div style={{height: "100%"}}>
-            <p>hello</p>
-            {/* <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
+            <AppBar />
+            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
             <NotificationMobile />
             <SidebarMobile show={burger.toggle} />
             
             {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
+            {!user ? (<InfiniteScroll isLoading={loadingPosts}>
                 {!_isMounted.current && <SkeletonLoading />}
                 {(_isMounted.current && !loading && !posts.length) ? (
                 <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
@@ -107,7 +108,7 @@ export default function VisitedPopular({ postsLocation }) {
                             </div>
                         )
                     })}
-            </InfiniteScroll>) : null} */}
+            </InfiniteScroll>) : null}
         </div>
     )
 }
