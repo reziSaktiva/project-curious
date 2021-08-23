@@ -49,7 +49,7 @@ module.exports = {
 
             const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '<=', oneWeekAgo).get()
 
-            const promises = getPosts.docs.map(async doc => {
+            const promises = getPosts.docs.map(async (doc, index) => {
                 const {lat, lng} = doc.data().location
                 const request = await googleMapsClient
                     .reverseGeocode({
@@ -68,17 +68,25 @@ module.exports = {
 
                         const geoResult = {}
 
-                        const photo_reference = await axios({
-                            method: 'get',
-                            url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=photo&key=${API_KEY}`,
-                            headers: { }
-                          }).then(response => `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${response.data.result.photos[0].photo_reference}&maxwidth=400&key=${API_KEY}`)
+                        // const photo_reference = await axios({
+                        //     method: 'get',
+                        //     url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=photo&key=${API_KEY}`,
+                        //     headers: {}
+                        //   }).then(response => `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${response.data.result.photos[0].photo_reference}&maxwidth=400&key=${API_KEY}`)
 
                         addressComponents.map(({ types, long_name }) => {
                             const point = types[0];
 
                             geoResult[point] = long_name;
                         });
+
+                        const photo_reference = await axios({
+                            method: 'get',
+                            url: `https://api.unsplash.com/search/photos?page=1&query=${geoResult.administrative_area_level_2}&client_id=UglyC0ivuaZUA-2eeaUPc-v8_haYK8tdvxtCl0DqXpY`,
+                            headers: {}
+                          }).then(({data}) => {
+                              return data.results[0].urls.small
+                          })
 
                         return { ...geoResult , photo_reference , location: { lat, lng } };
                     })
@@ -148,13 +156,13 @@ module.exports = {
                             data.docs.forEach(doc => {
                                 dataUser.liked.push(doc.data())
                             })
-                            return db.collection(`/users/${username}/notifications`).orderBy('createdAt', 'desc').get()
+                            // return db.collection(`/users/${username}/notifications`).orderBy('createdAt', 'desc').get()
                         })
-                        .then(data => {
-                            data.docs.forEach(doc => {
-                                dataUser.notifications.push(doc.data())
-                            })
-                        })
+                        // .then(data => {
+                        //     data.docs.forEach(doc => {
+                        //         dataUser.notifications.push(doc.data())
+                        //     })
+                        // })
 
                 }
 
@@ -280,11 +288,12 @@ module.exports = {
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
-                    .then(r => {
+                    .then(async r => {
                         const { address_components } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
+
 
                         addressComponents.map(({ types, long_name }) => {
                             const point = types[0];
@@ -292,7 +301,15 @@ module.exports = {
                             geoResult[point] = long_name;
                         });
 
-                        return { ...geoResult, location: { lat, lng } };
+                        const photo_reference = await axios({
+                            method: 'get',
+                            url: `https://api.unsplash.com/search/photos?page=1&query=${geoResult.administrative_area_level_2}&client_id=UglyC0ivuaZUA-2eeaUPc-v8_haYK8tdvxtCl0DqXpY`,
+                            headers: {}
+                          }).then(({data}) => {
+                              return data.results[0].urls.small
+                          })
+
+                        return { ...geoResult, photo_reference, location: { lat, lng } };
                     })
                     .catch(e => {
                         console.log(e);

@@ -8,9 +8,6 @@ import SearchSkeleton from './SearchSkleleton';
 
 export default function ExplorePlace() {
     const { data, loading, errors } = useQuery(EXPLORE_PLACE)
-    console.log(data);
-
-
     
     return loading ? <SearchSkeleton /> : (
         <>

@@ -1,24 +1,44 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   READ_ALL_NOTIFICATIONS,
   READ_NOTIFICATION,
 } from "../../GraphQL/Mutations";
-import { NOTIFICATION_ADDED } from '../../GraphQL/Subsriptions'
 import { Row, Col, Dropdown, Menu } from "antd";
 
 import { CLEAR_ALL_NOTIF } from "../../GraphQL/Mutations";
 import { DropIcon } from "../../library/Icon";
 
+import { db } from "../../util/Firebase";
+
 import './notif-style.css'
 import moment from "moment";
+import { useState } from "react";
 
 export default function Notification() {
-  const { notifications, notificationRead, readAllNotificatons, notificationAdded } = useContext(AuthContext);
+  const {  notificationRead, readAllNotificatons } = useContext(AuthContext);
   const { clearNotifications, user } = useContext(AuthContext);
+  const [state, setstate] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  function getNotifications(){
+    setLoading(true)
+    db.collection(`users/${user.username}/notifications`).orderBy('createdAt', 'desc').onSnapshot((data) => {
+      const notifications = []
+      data.forEach(doc => {
+        notifications.push(doc.data())
+      });
+      setstate(notifications)
+      setLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    getNotifications();
+  }, [user])
 
   // useSubscription(NOTIFICATION_ADDED, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -46,7 +66,7 @@ export default function Notification() {
     },
   });
 
-  const notificationLength = notifications && notifications.filter(notif => notif.read === false).length
+  const notificationLength = state && state.filter(notif => notif.read === false).length
 
   return (
     <div className="notif__fixed">
@@ -54,7 +74,7 @@ export default function Notification() {
         <Card
           title={
             <h3 style={{ textAlign: 'center' }}>Notification  {
-              notifications.length > 1 && <div className="notifCounter">
+              state.length > 1 && <div className="notifCounter">
                 <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>{notificationLength > 99 ?
                   ('99+') :
                   (notificationLength)}</p>
@@ -88,8 +108,8 @@ export default function Notification() {
           className="testttttt"
         >
           <div style={{ margin: -22, overflowY: "auto", overflowX: 'hidden', height: 342 }}>
-            {(notifications && notifications.length ? (
-              notifications.map((notif, key) => {
+            {(state && state.length ? (
+              state.map((notif, key) => {
                 let type = "";
                 let text = "";
 
@@ -148,9 +168,10 @@ export default function Notification() {
             ) : (
               <div>
                 <div className="noNotif" />
-              
-              <p style={{textAlign: "center", fontWeight: 700}}>No Notifications yet</p>
-                </div>
+
+                <p style={{ textAlign: "center", fontWeight: 700 }}>No Notifications yet</p>
+              </div>
+
             )
             )
             }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
@@ -14,12 +14,30 @@ import { DropIcon } from "../library/Icon";
 import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
 import NoNotif from "../assets/NoNotif.jpg";
 import { PostContext } from "../context/posts";
+import { db } from "../util/Firebase";
 
 export default function NotificationMobile() {
-
   const { isNavMobileOpen, setNavMobileOpen } = useContext(PostContext)
-  const { notifications, notificationRead, readAllNotificatons, notificationAdded, user } = useContext(AuthContext);
+  const { notificationRead, readAllNotificatons, user } = useContext(AuthContext);
   const { clearNotifications } = useContext(AuthContext);
+  const [state, setstate] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  function getNotifications(){
+    setLoading(true)
+    db.collection(`users/${user.username}/notifications`).orderBy('createdAt', 'desc').onSnapshot((data) => {
+      const notifications = []
+      data.forEach(doc => {
+        notifications.push(doc.data())
+      });
+      setstate(notifications)
+      setLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    getNotifications();
+  }, [user])
 
   // useSubscription(NOTIFICATION_ADDED, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -87,8 +105,8 @@ export default function NotificationMobile() {
           </Col>
       </Row>
           </div>
-            {(notifications && notifications.length ? (
-                notifications.map((notif, key) => {
+            {(state && state.length ? (
+                state.map((notif, key) => {
                   let type = "";
                   let text = "";
                   switch (notif.type) {

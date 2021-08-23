@@ -15,16 +15,17 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: action.payload,
+        isMorePost: true,
         lastIdPosts,
       };
 
-      case "SET_NAV":
+    case "SET_NAV":
       return {
         ...state,
         active: action.payload,
       };
 
-      case "SET_NAV_MOBILE_OPEN":
+    case "SET_NAV_MOBILE_OPEN":
 
       return {
         ...state,
@@ -32,7 +33,6 @@ const reducer = (state, action) => {
       };
     case "SET_Insvire E-Sport":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
-
       return {
         ...state,
         loading: false,
@@ -41,7 +41,6 @@ const reducer = (state, action) => {
       };
     case "SET_BMW Club Bandung":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
-
       return {
         ...state,
         loading: false,
@@ -77,7 +76,23 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: [...state.posts, ...action.payload],
-        isMorePost: action.payload.length === 3,
+        isMorePost: action.payload.length === 0,
+        lastIdPosts: state.posts[state.posts.length - 1].id,
+      };
+    case "MORE_Insvire E-Sport":
+      return {
+        ...state,
+        loading: false,
+        room_1: [...state.room_1, ...action.payload],
+        isMorePost: action.payload.length < 3,
+        lastIdPosts: state.posts[state.posts.length - 1].id,
+      };
+    case "MORE_BMW Club Bandung":
+      return {
+        ...state,
+        loading: false,
+        room_2: [...state.room_2, ...action.payload],
+        isMorePost: action.payload.length < 3,
         lastIdPosts: state.posts[state.posts.length - 1].id,
       };
     case "CREATE_POST_ROOM_1":
@@ -142,19 +157,19 @@ const reducer = (state, action) => {
       //       const recursive = (list) => {
       //         return list.map((itm) => {
       //           if (itm.id === payload.reply.id) {
-  
+
       //             return { ...itm, replyList: itm.replyList.concat(payload) };
-  
+
       //           } else {
       //             if (!itm.replyList) return itm;
-  
+
       //             return recursive(itm.replyList);
       //           }
       //         });
       //       };
-  
+
       //       const newComments = recursive(state.post.comments);
-  
+
       //       return {
       //         ...state,
       //         post: {
@@ -233,11 +248,11 @@ const reducer = (state, action) => {
           return post;
         }),
       };
-      case "SET_MODAL":
-        return {
-          ...state,
-          isModalActive: action.payload
-        }
+    case "SET_MODAL":
+      return {
+        ...state,
+        isModalActive: action.payload
+      }
     case "LIKE_MUTED":
       return {
         ...state,
@@ -596,24 +611,24 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
-  setModal: () => {},
-  setNavMobileOpen: () => {},
-  setRoom: () => {},
-  setLikedPosts: () => {},
-  setComment: () => {},
-  setPost: () => {},
-  setNav: () => {},
-  setSubscribePosts: () => {},
-  setMutedPost: () => {},
-  subscribePost: () => {},
-  loadingData: () => {},
-  setPosts: (posts) => {},
-  morePosts: () => {},
-  createPost: () => {},
-  deletePost: () => {},
-  like: () => {},
-  mutePost: () => {},
-  commentDelete: () => {},
+  setModal: () => { },
+  setNavMobileOpen: () => { },
+  setRoom: () => { },
+  setLikedPosts: () => { },
+  setComment: () => { },
+  setPost: () => { },
+  setNav: () => { },
+  setSubscribePosts: () => { },
+  setMutedPost: () => { },
+  subscribePost: () => { },
+  loadingData: () => { },
+  setPosts: (posts) => { },
+  morePosts: () => { },
+  createPost: () => { },
+  deletePost: () => { },
+  like: () => { },
+  mutePost: () => { },
+  commentDelete: () => { },
 });
 
 const initialState = {
@@ -785,10 +800,10 @@ export const PostProvider = (props) => {
   };
 
   const setPosts = (posts) => {
-      dispatch({
-        type: "SET_POSTS",
-        payload: posts.length === 0 ? [] : posts,
-      });
+    dispatch({
+      type: "SET_POSTS",
+      payload: posts.length === 0 ? [] : posts,
+    });
   };
 
   const setNav = (active) => {
@@ -841,10 +856,17 @@ export const PostProvider = (props) => {
 
   const morePosts = (posts) => {
     setTimeout(() => {
-      dispatch({
-        type: "MORE_POSTS",
-        payload: posts,
-      });
+      if (posts[0].room) {
+        dispatch({
+          type: `MORE_${posts[0].room}`,
+          payload: posts,
+        })
+      } else {
+        dispatch({
+          type: "MORE_POSTS",
+          payload: posts,
+        });
+      }
     }, 2000);
   };
 

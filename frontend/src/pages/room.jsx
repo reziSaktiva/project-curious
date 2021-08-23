@@ -10,26 +10,27 @@ import NavBar from '../components/NavBar'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import No_result from '../assets/NoResults/No_posts.png'
 import SkeletonLoading from '../components/SkeletonLoading'
+import InfiniteScroll from '../components/InfiniteScroll'
 
 
 function Room(props) {
     const history = useHistory().location.pathname
 
     const { setPathname } = useContext(AuthContext)
-  
-      useEffect(() => {
-          setPathname(history)
-      }, [history])
+
+    useEffect(() => {
+        setPathname(history)
+    }, [history])
 
     const room = props.match.path
     const _isMounted = useRef(false);
     const { room_1, setRoom, room_2, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
 
-    const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_ROOM_POSTS, {
+    const [getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_ROOM_POSTS, {
         fetchPolicy: "network-only",
-      });
-    
+    });
+
     useEffect(() => {
         if (room) {
             getPosts({ variables: { room } });
@@ -37,60 +38,63 @@ function Room(props) {
     }, [room]);
 
     useEffect(() => {
-        if (data  && !_isMounted.current) { // check if doesn't fetch data
+        if (data && !_isMounted.current) { // check if doesn't fetch data
             if (!data) {
                 loadingData();
                 return;
             }
             setRoom(data.getRoomPosts)
 
-            if(room_1.length && room_2.length){
+            if (room_1.length && room_2.length) {
                 _isMounted.current = true
             }
             // set did mount react
             return;
         }
     }, [data, _isMounted])
-    console.log(room_1);
     return (
         <div>
             <NavBar />
             {_isMounted.current && <SkeletonLoading />}
-            {room === "/Insvire E-Sport" ? (user ? ( room_1.length == 0 ? (
-            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-            <img src={No_result} style={{ width: 300}} />
-            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
-            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
-            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
-        </div>)
-                    : room_1.map((post, key) => {
-                        const { muted, id } = post;
-                        const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
-                        
-                        return (
+            {room === "/Insvire E-Sport" ? (user ? (room_1.length == 0 ? (
+                <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                    <img src={No_result} style={{ width: 300 }} />
+                    <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                    <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                    <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                </div>)
+                : room_1.map((post, key) => {
+                    const { muted, id } = post;
+                    const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+
+                    return (
+                        <InfiniteScroll isLoading={loadingPosts}>
                             <div key={`posts${id} ${key}`}>
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
-                        )
-                    })) : null) : (user ? ( room_2.length == 0 ? (
-                        (
-                            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-                            <img src={No_result} style={{ width: 300}} />
-                            <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
-                            <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
-                            <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
-                        </div>)
+                        </InfiniteScroll>
                     )
-                        : room_2.map((post, key) => {
-                            const { muted, id } = post;
-                            const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
-                            
-                            return (
+                })) : null) : (user ? (room_2.length == 0 ? (
+                    (
+                        <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                            <img src={No_result} style={{ width: 300 }} />
+                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                        </div>)
+                )
+                    : room_2.map((post, key) => {
+                        const { muted, id } = post;
+                        const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+
+                        return (
+                            <InfiniteScroll isLoading={loadingPosts}>
                                 <div key={`posts${id} ${key}`}>
                                     {!isMuted && <PostCard post={post} loading={loading} />}
                                 </div>
-                            )
-                        })) : null)}
+                            </InfiniteScroll>
+                        )
+                    })) : null)}
         </div>
     );
 }
