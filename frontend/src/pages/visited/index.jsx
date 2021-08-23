@@ -77,6 +77,7 @@ export default function Visited() {
                                 administrative_area_level_1: province,
                                 administrative_area_level_2: city,
                                 administrative_area_level_3: districts,
+                                photo_reference,
                                 createAt,
                                 location
                               } = loc;
@@ -98,7 +99,7 @@ export default function Visited() {
                                   }}
                                   cover={
                                   <>
-                                    <img alt="example" src={imageOne} style={{width: '100%', height: '100%', borderRadius: 15}} />
+                                    <img alt="example" src={photo_reference} style={{width: '100%', height: '100%', borderRadius: 15}} />
                                     <div style={{
                                       position: "absolute",
                                       bottom: 10,
