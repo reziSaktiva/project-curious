@@ -108,7 +108,7 @@ function Home() {
                                 const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                                  return(
                                  <div>
-                                    <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
+                                    <div className="postCard_container" key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
                                         {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                                     </div>
                                     { key > 1 && Math.ceil(key%7) === 0 && <AdSense.Google

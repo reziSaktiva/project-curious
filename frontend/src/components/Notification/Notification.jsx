@@ -75,7 +75,7 @@ export default function Notification() {
           title={
             <h3 style={{ textAlign: 'center' }}>Notification  {
               state.length > 1 && <div className="notifCounter">
-                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>{notificationLength > 99 ?
+                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2, color: "white" }}>{notificationLength > 99 ?
                   ('99+') :
                   (notificationLength)}</p>
               </div>}</h3>
@@ -157,7 +157,7 @@ export default function Notification() {
                           </p>
                           <p style={{fontWeight:200, fontSize: 12}}>{moment(notif.createdAt).fromNow()}</p>
                         </Col>
-                        <Col span={2} style={{ color: "#7958f5" }}>
+                        <Col span={2} style={{ color: "var(--primary-color)" }}>
                           {!notif.read && <p style={{ textAlign: 'right' }}>&#8226;</p>}
                         </Col>
                       </Row>

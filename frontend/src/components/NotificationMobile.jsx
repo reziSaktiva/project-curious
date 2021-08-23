@@ -147,7 +147,7 @@ export default function NotificationMobile() {
                               <span>{`${type} your post.`}</span>{" "}
                             </p>
                           </Col>
-                          <Col span={2} style={{ color: "#7958f5" }}>
+                          <Col span={2} style={{ color: "var(--primary-color)" }}>
                             {!notif.read && <p>&#8226;</p>}
                           </Col>
                         </Row>

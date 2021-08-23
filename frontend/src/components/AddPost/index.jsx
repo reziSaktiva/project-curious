@@ -510,7 +510,7 @@ export default function ModalPost() {
               </Form.Item>
             </Col>
             <Button htmlType="submit" key="submit" type="primary" loading={loadingCreatePost}
-              style={{ backgroundColor: '#7958f5', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
+              style={{ backgroundColor: 'var(--primary-color)', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
               Post
             </Button>
           </div>
