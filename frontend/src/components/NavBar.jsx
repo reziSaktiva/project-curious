@@ -1,7 +1,5 @@
-import React, { useContext, useEffect } from 'react'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import React, { useContext } from 'react'
 import { BellOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom'
 import '../App.css'
 import { PostContext } from '../context/posts';
 import { AuthContext } from '../context/auth';
@@ -9,7 +7,6 @@ import { AuthContext } from '../context/auth';
 export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
   const { notifications } = useContext(AuthContext);
   const { setNav, active } = useContext(PostContext)
-  // let history= useHistory().location.pathname
   
   const handleToggle = e => {
     setNav(e.target.value)
@@ -35,11 +32,11 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
           </div>
           <div>
             <div className="radio-center">
-              <button className={ active == 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
+              <button className={ active === 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
                 onClick={handleToggle}
                value="latest">Latest</button>
                
-              <button className={ active == 'popular' ||  active == `/${location}/popular` ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
+              <button className={ active === 'popular' ||  active === `/${location}/popular` ? "toogle-popular toggle-active__navbar" : "toogle-popular"}
                 onClick={handleToggle}
                value="popular">Popular</button>
             </div>

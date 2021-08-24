@@ -28,7 +28,6 @@ import "./style.css";
 import { MAP_API_KEY } from "../../util/ConfigMap";
 import Modal from "../Modal";
 import BackDrop from "../BackDrop";
-import ImgPreview from "../ImgPreview";
 
 Geocode.setApiKey(MAP_API_KEY);
 

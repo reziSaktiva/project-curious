@@ -125,6 +125,15 @@ export const MUTE_POST = gql`
   }
 `
 
+export const GET_MORE_MORE_FOR_YOU = gql`
+  mutation nextMoreForYou($id: ID) {
+    nextMoreForYou(id: $id) {
+      ...PostDetail
+    }
+  }
+  ${postDetailFragment}
+`;
+
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float! $range: Float) {
     nextPosts(id: $id, lat:$lat ,lng: $lng, range: $range) {
