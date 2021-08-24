@@ -635,6 +635,7 @@ const initialState = {
   posts: [],
   room_1: [],
   room_2: [],
+  active: 'latest',
   isNavMobileOpen: false,
   isModalActive: false,
   likedPosts: [],

@@ -33,13 +33,11 @@ export default function Settings() {
   const handleClickLogout = () => {
     setModalSource(true)
     setDeleteModal(true)
-    console.log(ModalSource)
     
   }
   const handleClickDeleteAccount = () => {
     setModalSource(false)
     setDeleteModal(true)
-    console.log(ModalSource)
     
   }
   

@@ -54,7 +54,6 @@ const RegisterGoogle = (props) => {
     const onFinish = (values) => {
         const { birthday, gender, phone, phoneCode, username } = values
 
-        console.log(phone, "value", values);
         const { email, imageUrl, token, id } = context.googleData
         registerUserGoogle({ variables: { gender: gender[0], birthday: birthday._d, mobileNumber: `${phoneCode ? phoneCode : '+62'  + phone}`, username, email, imageUrl, token, id } })
     };

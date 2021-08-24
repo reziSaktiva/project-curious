@@ -7,49 +7,24 @@ import { PostContext } from '../../context/posts'
 import InfiniteScroll from '../../components/InfiniteScroll'
 import PostCard from '../../components/PostCard/index'
 import { AuthContext } from '../../context/auth'
-import NavBar from '../../components/NavBar'
 
 import SkeletonLoading from '../../components/SkeletonLoading'
 
-import { getSession, getRangeSearch } from '../../util/Session';
-
 //gambar
 import Radius from '../../assets/no_post.png'
-import SidebarMobile from '../../components/SidebarMobile'
-import BackDrop from '../../components/BackDrop'
-import NotificationMobile from '../../components/NotificationMobile'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import Modal from '../../components/Modal'
 
 export default function VisitedPosts({ postsLocation }) {
-    const { active } = useContext(PostContext)
     const history = useHistory().location.pathname
-    const [burger, setBurger] = useState({
-        toggle : false
-    })
 
     const _isMounted = useRef(false);
     
-    const { posts, setPosts, setNavMobileOpen,  loadingData, loading } = useContext(PostContext)
+    const { posts, setPosts,  loadingData, loading } = useContext(PostContext)
     const { user, setPathname } = useContext(AuthContext)
 
     useEffect(() => {
         setPathname(history)
     }, [])
-
-    const handleBurger = () => {
-        setBurger(prevState => {
-            return {
-                toggle : !prevState.toggle
-            }
-        })
-    }
-    const handleNotif = () => {
-        setNavMobileOpen(true)
-    }
-    const handleBackdropClose = () => {
-        setBurger({toggle: false})
-    }
 
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POSTS, {
         fetchPolicy: "network-only"
@@ -81,13 +56,8 @@ export default function VisitedPosts({ postsLocation }) {
 
     return (
         <div style={{height: "100%"}}>
-            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
-            <NotificationMobile />
-            <SidebarMobile show={burger.toggle} />
-            
-            {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
 
-            {user ? (<InfiniteScroll isLoading={loadingPosts}>
+            {user ? (<InfiniteScroll isLoading={loadingPosts} visitedLocation={postsLocation}>
                 {!_isMounted.current && <SkeletonLoading />}
                 {(_isMounted.current && !loading && !posts.length) ? (
                 <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>

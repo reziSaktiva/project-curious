@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
-import home from '../pages/home';
+import nearby from '../pages/nearby';
 
 function HomeRoute({ component: Component, ...rest }) {
     const user = localStorage.token
@@ -9,7 +9,7 @@ function HomeRoute({ component: Component, ...rest }) {
         <Route
             {...rest}
             render={props =>
-                user ? <Route exact path="/" component={home} /> : <Component {...props} />
+                user ? <Route exact path="/" component={nearby} /> : <Component {...props} />
             }
         />
     )

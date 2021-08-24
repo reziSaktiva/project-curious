@@ -10,7 +10,6 @@ import Container from '../../library/Container';
 
 
 export default function Grid({ children }) {
-    console.log(children);
     const { user } = useContext(AuthContext)
     if (user) {
         return (

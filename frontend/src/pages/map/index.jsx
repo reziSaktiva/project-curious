@@ -50,7 +50,6 @@ const sliderValidator = () => {
     return 100
   }
 }
-// console.log(sliderValidator());
 
 const MapHeader = props => {
   

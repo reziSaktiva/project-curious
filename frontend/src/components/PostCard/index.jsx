@@ -123,7 +123,7 @@ export default function PostCard({ post, loading, type }) {
                   />
                 </div>
                 <div className="action-post__item">
-                  <Link to={`/${post.room ? post.room : "post"}/${post.id}`}>
+                  <Link to={post.room ? `/room/${post.room}/${post.id}` : `/post/${post.id}` }>
                   <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
                   </Link>
                 </div>
@@ -141,7 +141,7 @@ export default function PostCard({ post, loading, type }) {
             <div>
               <Row>
                 <Col span={20}>
-                  <Link to={`/${post.room ? post.room : "post"}/${post.id}`} style={{ fontSize: 15 }}>
+                  <Link to={post.room ? `/room/${post.room}/${post.id}` : `/post/${post.id}`} style={{ fontSize: 15 }}>
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
                   </Link>
