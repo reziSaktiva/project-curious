@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { TagRemove } from '../../library/Icon'
+import React from 'react'
 import AppBar from '../AppBar'
 import './style.css'
 

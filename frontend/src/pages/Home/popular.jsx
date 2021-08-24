@@ -71,7 +71,7 @@ function Popular() {
                         
                         return (
                             <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 } : { marginTop: 0 }}>
-                                {!isMuted && <PostCard post={post} loading={loading} />}
+                                {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )
                     })}

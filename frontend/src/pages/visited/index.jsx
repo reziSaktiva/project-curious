@@ -8,7 +8,7 @@ import moment from 'moment';
 import { chunk } from 'lodash';
 import { Card, Skeleton } from 'antd';
 import VisitedLatest from './latest';
-import VisitedPopular from './visitedPopular';
+import VisitedPopular from './popular';
 
 import NavBar from '../../components/NavBar'
 import AppBar from '../../components/AppBar'
@@ -42,6 +42,7 @@ const InitialStyles = {
     }
 }
 const { textContainer, textStyles } = InitialStyles
+
 export default function Visited() {
   const [postsLocation, setPostsLocation] = useState(null)
   const [location, setLocation] = useState([]);
@@ -119,9 +120,9 @@ export default function Visited() {
 
                     const containerClass = cn({
                       'VisitedClass': true,
-                      'gallery-location__item-right': idx == 1,
-                      'gallery-location__item-left': idx == 2,
-                      'gallery-location__img': idx != 1 || idx != 2
+                      'gallery-location__item-right': idx === 1,
+                      'gallery-location__item-left': idx === 2,
+                      'gallery-location__img': idx != 1 || idx !== 2
                     });
                     const address = `${province}, ${city}, ${districts}`;
 
