@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import { useMutation } from '@apollo/client'
-import { GET_MORE_POPULAR, GET_MORE_POSTS, GET_MORE_ROOM } from '../GraphQL/Mutations'
+import { GET_MORE_MORE_FOR_YOU, GET_MORE_POPULAR, GET_MORE_POSTS, GET_MORE_ROOM } from '../GraphQL/Mutations'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -16,7 +16,7 @@ function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
     const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, isMorePost, room_1, room_2, active} = useContext(PostContext)
+    const { posts, morePosts, isMorePost, room_1, room_2, active } = useContext(PostContext)
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -49,6 +49,14 @@ function ScrollInfinite(props) {
         }
     })
 
+    const [nextMoreForYou, { loading: loadingMoreForYou }] = useMutation(GET_MORE_MORE_FOR_YOU, {
+        update(_, { data: { nextMoreForYou: postsData } }) {
+            morePosts(postsData)
+        },
+        onError(err) {
+            console.log(err.message);
+        }
+    })
 
     const loadMore = () => {
         const loc = JSON.parse(location)
@@ -73,6 +81,11 @@ function ScrollInfinite(props) {
                     nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
                 }
                 break;
+            case '/search':
+                if (active == 'moreForYou') {
+                    nextMoreForYou({ variables: { id: posts[posts.length - 1].id } })
+                }
+                break;
             default:
                 nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                 break;
@@ -87,7 +100,10 @@ function ScrollInfinite(props) {
             case '/popular':
                 loading = loadingPopular
                 break;
-
+            case '/search':
+                if (active == 'moreForYou') {
+                    loading = loadingMoreForYou
+                }
             default:
                 loading = loadingNearby
                 break;
@@ -106,7 +122,7 @@ function ScrollInfinite(props) {
 
                 {...props}
 
-                
+
             />
         </div>
     )
