@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   READ_ALL_NOTIFICATIONS,
   READ_NOTIFICATION,
 } from "../GraphQL/Mutations";
-import { NOTIFICATION_ADDED } from "../GraphQL/Subsriptions";
 import { Row, Col, Dropdown, Menu } from "antd";
 
 import { DropIcon } from "../library/Icon";
@@ -39,13 +38,6 @@ export default function NotificationMobile() {
     getNotifications();
   }, [user])
 
-  // useSubscription(NOTIFICATION_ADDED, {
-  //   onSubscriptionData: ({ client, subscriptionData }) => {
-  //     notificationAdded(subscriptionData.data.notificationAdded);
-  //   },
-  //   variables: { username: user.username }
-  // })
-
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
       notificationRead(readNotification);
@@ -60,7 +52,7 @@ export default function NotificationMobile() {
 
   const [clearNotif] = useMutation(CLEAR_ALL_NOTIF, {
     update(_, { data: { clearAllNotif } }) {
-      clearNotifications();
+      clearNotifications(clearAllNotif);
     },
   });
   

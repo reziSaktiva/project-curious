@@ -68,21 +68,21 @@ function ScrollInfinite(props) {
                 nextRoom({ variables: { id: room_2[room_2.length - 1].id, room: 'BMW Club Bandung' } })
                 break;
             case '/':
-                if (active == 'latest') {
+                if (active === 'latest') {
                     nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                 } else {
                     nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                 }
                 break;
             case '/visited':
-                if (active == 'latest') {
+                if (active === 'latest') {
                     nextPosts({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
                 } else {
                     nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
                 }
                 break;
             case '/search':
-                if (active == 'moreForYou') {
+                if (active === 'moreForYou') {
                     nextMoreForYou({ variables: { id: posts[posts.length - 1].id } })
                 }
                 break;
@@ -101,9 +101,10 @@ function ScrollInfinite(props) {
                 loading = loadingPopular
                 break;
             case '/search':
-                if (active == 'moreForYou') {
+                if (active === 'moreForYou') {
                     loading = loadingMoreForYou
                 }
+                break;
             default:
                 loading = loadingNearby
                 break;

@@ -68,10 +68,6 @@ export default function Visited() {
     const location = { lat, lng };
 
     setPostsLocation(location);
-
-    // setTimeout(() => {
-    //   history.push('/');
-    // }, 1500);
   }
 
   return (
@@ -107,9 +103,9 @@ export default function Visited() {
 
                     const containerClass = cn({
                       'VisitedClass': true,
-                      'gallery-location__item-right': idx == 1,
-                      'gallery-location__item-left': idx == 2,
-                      'gallery-location__img': idx != 1 || idx != 2
+                      'gallery-location__item-right': idx === 1,
+                      'gallery-location__item-left': idx === 2,
+                      'gallery-location__img': idx != 1 || idx !== 2
                     });
                     const address = `${province}, ${city}, ${districts}`;
 
