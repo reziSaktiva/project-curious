@@ -150,12 +150,13 @@ export default function Notification() {
                   >
                     <div className="notifContainer">
                       <Row style={{ paddingLeft: 5, paddingRight: 5 }}>
-                        <Col span={22}>
+                        <Col span={22} style={{color: "red"}}>
                           <p style={{ marginBottom: 5 }}>
                             {notif.displayName}{" "}
-                            <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
+                            <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "} <br />
+                          {moment(notif.createdAt).fromNow()}
                           </p>
-                          <p style={{fontWeight:200, fontSize: 12}}>{moment(notif.createdAt).fromNow()}</p>
+                          
                         </Col>
                         <Col span={2} style={{ color: "var(--primary-color)" }}>
                           {!notif.read && <p style={{ textAlign: 'right' }}>&#8226;</p>}

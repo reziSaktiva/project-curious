@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 
-import NavBar from '../components/NavBar'
-import SidebarMobile from '../components/SidebarMobile'
-import BackDrop from '../components/BackDrop'
-import NotificationMobile from '../components/NotificationMobile'
-import { PostContext } from "../context/posts";
+import NavBar from '../../components/NavBar'
+import SidebarMobile from '../../components/SidebarMobile'
+import BackDrop from '../../components/BackDrop'
+import NotificationMobile from '../../components/NotificationMobile'
+import { PostContext } from "../../context/posts";
 import Popular from "./popular";
 import Latest from './latest'
 

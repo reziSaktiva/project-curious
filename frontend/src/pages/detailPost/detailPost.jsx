@@ -383,6 +383,7 @@ export default function SinglePost(props) {
                  ]}
                >
                  <Input
+                 showCount maxLength={250}
                  name="comment"
                    placeholder="Write your comment..."
                    style={{ borderRadius: 15, width:'100%', height:30, }}

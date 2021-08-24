@@ -1,23 +1,21 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import { useLazyQuery } from '@apollo/client'
-import { GET_POSTS } from '../GraphQL/Queries'
-import { PostContext } from '../context/posts'
+import { GET_POSTS } from '../../GraphQL/Queries'
+import { PostContext } from '../../context/posts'
 
-import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard/index'
-import { AuthContext } from '../context/auth'
-import NavBar from '../components/NavBar'
+import InfiniteScroll from '../../components/InfiniteScroll'
+import PostCard from '../../components/PostCard/index'
+import { AuthContext } from '../../context/auth'
 
-import SkeletonLoading from '../components/SkeletonLoading'
 
-import { getSession, getRangeSearch } from '../util/Session';
+import SkeletonLoading from '../../components/SkeletonLoading'
+
+import { getSession, getRangeSearch } from '../../util/Session';
 import AdSense from 'react-adsense';
 //gambar
-import No_result from '../assets/NoResults/No_posts.png'
-import SidebarMobile from '../components/SidebarMobile'
-import BackDrop from '../components/BackDrop'
-import NotificationMobile from '../components/NotificationMobile'
+import No_result from '../../assets/NoResults/No_posts.png'
+
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 
@@ -89,17 +87,25 @@ function Latest() {
                                         <div className="postCard_container" key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 } : { marginTop: 0 }} >
                                             {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                                         </div>
-                                        {key > 1 && Math.ceil(key % 7) === 0 && <AdSense.Google
-                                            key={`latest ${key}`}
-                                            client='pub-9126030075206824'
-                                            slot='9964874359'
-                                            style={{ display: 'block' }}
-                                            format='auto'
-                                            responsive='true'
-                                            layoutKey='-gw-1+2a-9x+5c'
-                                        />}
-                                    </div>
-
+                                        { key > 1 && Math.ceil(key%7) === 0 && 
+                                    // <ins class="adsbygoogle"
+                                    // style="display:block"
+                                    // data-ad-format="fluid"
+                                    // data-ad-layout-key="-gw-3+1f-3d+2z"
+                                    // data-ad-client="ca-pub-9126030075206824"
+                                    // data-ad-slot="1861909959"></ins>
+                                    <AdSense.Google
+                                    client='ca-pub-9126030075206824'
+                                    slot='1861909959'
+                                    style={{ display: 'block' }}
+                                    format='fluid'
+                                    responsive='true'
+                                    layoutKey='-gw-3+1f-3d+2z'
+                                    />
+                                     }
+                        
+                                 </div>
+                                    
                                 )
                             })
                         }
