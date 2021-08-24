@@ -27,7 +27,6 @@ import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
 import Profile from './pages/Profile/Profile'
 import Visited from './pages/visited/index'
-import Popular from './pages/popular';
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
 import Room from './pages/room'
@@ -39,7 +38,7 @@ import EditProfile from './pages/Profile/editProfile';
 import TOU from './pages/legal/TeromOfUse';
 import CG from './pages/legal/CommunityGuidelines';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import VisitedPopular from './pages/visited/visitedPopular';
+import EPpost from './pages/search/EPpost';
 
 
 function App() {
@@ -55,11 +54,8 @@ function App() {
             <AuthRoute exact path="/resetPassword" component={resetPassword} />
             <AuthRoute exact path="/confirm-reset" component={confirmPassword} />
             <AuthRoute exact path="/register" component={register} />
-            {/* <UserRoute exact path="/visited/popular" component={VisitedPopular} /> */}
             <UserRoute exact path="/room/:room/:id" component={SinglePost} />
             <UserRoute exact path="/post/:id" component={SinglePost} />
-            {/* <UserRoute exact path="/nearby" component={Nearby} /> */}
-            <UserRoute exact path="/popular" component={Popular} />
             <UserRoute exact path="/Insvire E-Sport" component={Room} />
             <UserRoute exact path="/BMW Club Bandung" component={Room} />
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
@@ -68,6 +64,7 @@ function App() {
             <UserRoute exact path="/profile/user/:id" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
+            <UserRoute exact path="/explore/:location" component={EPpost} />
             <UserRoute exact path="/chat" component={Chat} />
             <UserRoute exact path="/settings" component={settings} />
             <UserRoute exact path="/TermOfUse" component={TOU} />

@@ -1,24 +1,30 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import { useLazyQuery } from '@apollo/client'
-import { GET_POPULAR_POSTS } from '../GraphQL/Queries'
-import { PostContext } from '../context/posts'
+import { GET_POPULAR_POSTS } from '../../GraphQL/Queries'
+import { PostContext } from '../../context/posts'
 
-import InfiniteScroll from '../components/InfiniteScroll'
-import PostCard from '../components/PostCard/index'
-import { AuthContext } from '../context/auth'
+import InfiniteScroll from '../../components/InfiniteScroll'
+import PostCard from '../../components/PostCard/index'
+import { AuthContext } from '../../context/auth'
 
-import { getRangeSearch, getSession } from '../util/Session';
-import SkeletonLoading from '../components/SkeletonLoading'
-import No_result from '../assets/NoResults/No_posts.png'
+import { getRangeSearch, getSession } from '../../util/Session';
+import SkeletonLoading from '../../components/SkeletonLoading'
+import No_result from '../../assets/NoResults/No_posts.png'
+import { useHistory } from 'react-router-dom'
 
 
 function Popular() {
-    const _isMounted = useRef(false);
-
+    const {user, setPathname } = useContext(AuthContext)
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
-    const { user } = useContext(AuthContext)
 
+    const history = useHistory().location.pathname
+    useEffect(() => {
+        setPathname(history)
+    }, [])
+
+
+    const _isMounted = useRef(false);
     const { location } = getSession();
     const range = getRangeSearch();
     const [ getPosts, { data, loading: loadingPosts }] = useLazyQuery(GET_POPULAR_POSTS);
