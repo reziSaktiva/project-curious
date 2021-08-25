@@ -49,7 +49,7 @@ function MutedPost() {
             {user ? (<div>
                 {!mutedPost || mutedPost.length < 1 ? (
                     <div className="centering-flex">
-                        <img src={no_muted} style={{ width: 300}} />
+                        <div className="mute_noPost" />
                         <h4 style={{textAlign: 'center'}}>Here you can mute a post u dont like</h4>
                         <h4 style={{textAlign: 'center'}}>and unmute to see it again</h4>
                     </div>
