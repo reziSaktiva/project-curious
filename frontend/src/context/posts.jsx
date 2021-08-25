@@ -856,11 +856,13 @@ export const PostProvider = (props) => {
   };
 
   const morePosts = (posts) => {
+    const room = posts[0].room  
+
     setTimeout(() => {
       if (posts) {
-        if (posts[0].room) {
+        if (room) {
           dispatch({
-            type: `MORE_${posts[0].room}`,
+            type: `MORE_${room}`,
             payload: posts,
           })
         } else {
