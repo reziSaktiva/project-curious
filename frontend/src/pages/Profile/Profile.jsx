@@ -15,9 +15,9 @@ import { EditOutlined } from "@ant-design/icons";
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
 import IconCrash from "../../assets/ic-crash.png";
-import no_media from '../../assets/NoResults/no-img-on-profile.png'
-import no_likes from '../../assets/NoResults/no-likes-on-profile.png'
-import no_posts from '../../assets/NoResults/No_posts.png'
+import no_media from '../../assets/Noresults/No_images_profile.png'
+import no_likes from '../../assets/Noresults/No_likes_profile.png'
+import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
 
 //location
 import Geocode from "react-geocode";

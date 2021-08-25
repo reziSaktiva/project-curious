@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import SkeletonLoading from '../components/SkeletonLoading'
-import no_sub from '../assets/NoResults/No_subscribed.png'
+import no_sub from '../assets/Noresults/No_posts_home_Profile.png'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 function SubscribePosts() {

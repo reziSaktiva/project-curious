@@ -2,7 +2,6 @@ import { Button } from 'antd'
 import React, { useEffect, useState } from 'react'
 import AppStore from '../assets/buttonIphone.png';
 import PlayStore from '../assets/buttonGoogle.png'
-import Chat_img from '../assets/NoResults/No_notifications.png'
 import AppBar from './AppBar';
 
 export default function Chat() {
@@ -16,7 +15,7 @@ export default function Chat() {
         <div>
             <AppBar title="Chat" />
             <div className="centering-flex">
-            <img src={Chat_img} style={{ width: 300}} />
+                <div className="chat_img" />
             
                 <h4 style={{textAlign: 'center'}}>Download our Mobile Version To Use This Features</h4>
                 

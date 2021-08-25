@@ -1,4 +1,4 @@
-import notFound_img from "../../assets/NoResults/No_posts.png"
+import notFound_img from "../../assets/Noresults/No_likes_profile.png"
 const NotFound = () => {
     return (
         <div style={{display: 'flex', justifyContent: "center", alignItems: 'center', flexDirection: "column"}}>
