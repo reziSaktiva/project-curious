@@ -69,7 +69,7 @@ const Register = (props) => {
     const onCloseErr = (e) => {
         console.log(e, 'I was closed.');
     };
-
+console.log(props);
    const dialData = dial.map(item => {
     return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
    })
