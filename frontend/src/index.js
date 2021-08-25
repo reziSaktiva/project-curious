@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat, split } from '@apollo/client/core';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client/core';
 import { onError } from 'apollo-link-error';
 import { isMobile } from "react-device-detect";
-
-import { WebSocketLink } from '@apollo/client/link/ws'
-import { getMainDefinition } from '@apollo/client/utilities'
 
 import { destorySession } from './util/Session';
 
@@ -16,13 +13,8 @@ import './index.css'
 // Importing components
 import App from './App'
 
-// const link = from([
-//   new HttpLink({uri: 'https://us-central1-insvire-curious-app.cloudfunctions.net/graphql'})
-// ])
 //  const httpUrl = 'http://localhost:5000/insvire-curious-app/asia-southeast2/graphql';
  const httpUrl = 'https://asia-southeast2-insvire-curious-app.cloudfunctions.net/graphql';
- 
-// const wsUrl = 'ws://localhost:5000/graphql';
 
 const httpLink = ApolloLink.from([
   new ApolloLink((operation, forward) => {
@@ -67,23 +59,6 @@ const errorLink = onError(
     }
   }
 );
-
-// const wsLink = new WebSocketLink({
-//   uri: wsUrl,
-//   options: {
-//     connectionParams: () => ({
-//       accessToken: localStorage.token
-//     }),
-//     reconnect: true,
-//     lazy: true
-//   }
-// })
-
-// function isSubscription(operation) {
-//   const definition = getMainDefinition(operation.query);
-//   return definition.kind === 'OperationDefinition'
-//     && definition.operation === 'subscription'
-// }
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
