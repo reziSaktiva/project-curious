@@ -134,7 +134,7 @@ body {
   background-repeat: no-repeat;
 }
 .mute_noPost {
-  background-image: url('./assets/NoResults//No_muted.png');
+  background-image: url('./assets/Noresults/No_mutedPosts_sidebar.png');
   background-size: contain;
   object-fit: cover;
   width: 100%;
@@ -317,7 +317,13 @@ body {
   border-radius: 50%;
   margin-top: 10px;
 }
-
+/* CHAT */
+.chat_img {
+ background-image: url('./assets/Noresults/No_messages.png');
+ max-width: 300px;
+ width: 100%;
+ background-size: contain;
+}
 /* NAV BAR */
 .radio-center {
   margin-top: 6px;

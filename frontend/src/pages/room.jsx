@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import No_result from '../assets/NoResults/No_posts.png'
+import No_result from '../assets/Noresults/No_posts_home_Profile.png'
 import SkeletonLoading from '../components/SkeletonLoading'
 import InfiniteScroll from '../components/InfiniteScroll'
 
