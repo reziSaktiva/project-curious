@@ -9,7 +9,6 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 
-import no_muted from '../assets/NoResults/No_muted.png'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
