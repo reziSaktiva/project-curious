@@ -152,7 +152,10 @@ export default function Visited() {
         )
       ) : (
         <div>
-          <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
+          <div style={{marginTop: -15}}>
+          <NavBar noBurger={true} noNotif={true} toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
+          </div>
+          
           <NotificationMobile />
           <SidebarMobile show={burger.toggle} />
 

@@ -23,7 +23,7 @@ export default function EPpost() {
         toggle: !prevState.toggle
       }
     })
-  }
+
   const handleNotif = () => {
     setNavMobileOpen(true)
   }
