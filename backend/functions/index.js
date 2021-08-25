@@ -33,6 +33,6 @@ server.applyMiddleware({ app, path:'/', cors: true })
 // server.installSubscriptionHandlers(httpServer)
 // httpServer.listen(PORT, console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`))
 
-exports.graphql = functions.https.onRequest(app)
+exports.graphql = functions.region('asia-southeast2').https.onRequest(app)
 
 
