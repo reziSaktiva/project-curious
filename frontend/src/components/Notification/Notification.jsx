@@ -17,13 +17,16 @@ import { db } from "../../util/Firebase";
 import './notif-style.css'
 import moment from "moment";
 import { useState } from "react";
+import { PostContext } from "../../context/posts";
 
 export default function Notification() {
   const {  notificationRead, readAllNotificatons } = useContext(AuthContext);
   const { clearNotifications, user } = useContext(AuthContext);
+  const { setNotifLength, notifLength } = useContext(PostContext);
   const [state, setstate] = useState([])
   const [loading, setLoading] = useState(false)
 
+  
   function getNotifications(){
     setLoading(true)
     db.collection(`users/${user.username}/notifications`).orderBy('createdAt', 'desc').onSnapshot((data) => {
@@ -31,14 +34,17 @@ export default function Notification() {
       data.forEach(doc => {
         notifications.push(doc.data())
       });
+      setNotifLength(notifications.filter(notif => notif.read === false).length)
       setstate(notifications)
       setLoading(false)
     })
   }
-
+  
   useEffect(() => {
     getNotifications();
   }, [user])
+
+
 
   // useSubscription(NOTIFICATION_ADDED, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -66,7 +72,7 @@ export default function Notification() {
     },
   });
 
-  const notificationLength = state && state.filter(notif => notif.read === false).length
+  
 
   return (
     <div className="notif__fixed">
@@ -75,9 +81,9 @@ export default function Notification() {
           title={
             <h3 style={{ textAlign: 'center' }}>Notification  {
               state.length > 1 && <div className="notifCounter">
-                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2, color: "white" }}>{notificationLength > 99 ?
+                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2, color: "white" }}>{notifLength > 99 ?
                   ('99+') :
-                  (notificationLength)}</p>
+                  (notifLength)}</p>
               </div>}</h3>
           }
           extra={

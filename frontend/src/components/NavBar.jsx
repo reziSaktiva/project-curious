@@ -6,16 +6,16 @@ import '../App.css'
 import { PostContext } from '../context/posts';
 import { AuthContext } from '../context/auth';
 
-export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
+export default function NavBar({toggleOpen, toggleOpenNotif, location, noBurger, noNotif}) {
+  console.log(noBurger);
   const { notifications } = useContext(AuthContext);
-  const { setNav, active } = useContext(PostContext)
+  const { setNav, active, notifLength } = useContext(PostContext)
   // let history= useHistory().location.pathname
   
   const handleToggle = e => {
     setNav(e.target.value)
   }
 
-  const notificationLength = notifications.length && notifications.filter(notif => notif.read === false).length
   return (
     <header className="toolbar">
       <div className="toolbar__nav">
@@ -27,12 +27,14 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
           justifyContent: 'space-between'
         }}>
           <div>
+          {!noBurger &&
           <button className="toggle-button" onClick={toggleOpen}>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
           <div className="hamburger-line"></div>
-        </button>
+        </button>}
           </div>
+          
           <div>
             <div className="radio-center">
               <button className={ active == 'latest' ? "toogle-latest toggle-active__navbar" : "toogle-latest"}
@@ -45,7 +47,9 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
             </div>
             
           </div>
+          
           <div className='notif'>
+          {!noNotif && 
             <div className="toggle-button">
             <BellOutlined style={{
               marginLeft: -10,
@@ -54,16 +58,15 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location}) {
               strokeWidth: "30",
               }} onClick={toggleOpenNotif} />
               {
-          notifications.length > 1 && <div className="notifCounter__mobile">
-            <p style={{fontSize:10,display: 'flex', justifyContent: 'center'}}> {notifications.length > 99 ?
+          notifLength > 1 && <div className="notifCounter__mobile">
+            <p style={{fontSize:10,display: 'flex', justifyContent: 'center', color: "white"}}> {notifLength > 99 ?
                ('99+') :
-                (notificationLength)}</p>
-              
+                (notifLength)}</p>    
                 </div>}
-              
             </div>
-          
+          }
           </div>
+
         </div>
       </nav>
       <div className="toolbar__nav2" />

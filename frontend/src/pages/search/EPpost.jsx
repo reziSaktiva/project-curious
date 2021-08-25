@@ -22,11 +22,12 @@ export default function EPpost() {
     const handleNotif = () => {
       setNavMobileOpen(true)
     }
+    
     return (
         <div>
         <AppBar title={path.split('/')[2]} />
             <div>
-            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
+            <NavBar noBurger={true} noNotif={true} location="visited" />
             </div>
         
         </div>

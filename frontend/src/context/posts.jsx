@@ -65,6 +65,11 @@ const reducer = (state, action) => {
         loading: false,
         likedPosts: action.payload,
       };
+      case "SET_NOTIF_LENGTH":
+        return {
+          ...state,
+          notifLength : action.payload
+        };
     case "SET_SUBSCRIBE_POSTS":
       return {
         ...state,
@@ -204,6 +209,7 @@ const reducer = (state, action) => {
           commentsCount: state.post.comments + 1,
         },
       };
+      
     case "DELETE_COMMENT":
       return {
         ...state,
@@ -611,6 +617,7 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
+  setNotifLength: () => {},
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
@@ -658,6 +665,7 @@ export const PostProvider = (props) => {
     posts,
     active,
     post,
+    notifLength,
     loading,
     lastIdPosts,
     isMorePost,
@@ -694,6 +702,12 @@ export const PostProvider = (props) => {
     dispatch({
       type: "SET_POST",
       payload: post,
+    });
+  };
+  const setNotifLength = (notifLength) => {
+    dispatch({
+      type: "SET_NOTIF_LENGTH",
+      payload: notifLength,
     });
   };
 
@@ -946,6 +960,8 @@ export const PostProvider = (props) => {
         active,
         isNavMobileOpen,
         isModalActive,
+        notifLength,
+        setNotifLength,
         setModal,
         setPosts,
         setNav,
