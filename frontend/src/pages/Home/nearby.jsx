@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import NavBar from '../../components/NavBar'
 import SidebarMobile from '../../components/SidebarMobile'
@@ -9,10 +9,14 @@ import Popular from "./popular";
 import Latest from './latest'
 
 const NearbyPost = () => {
-  const { setNavMobileOpen, active } = useContext(PostContext)
+  const { setNavMobileOpen, active, setNav } = useContext(PostContext)
   const [burger, setBurger] = useState({
     toggle: false
   })
+
+  useEffect(() => {
+    setNav("latest")
+  }, [])
 
   const handleBurger = () => {
     setBurger(prevState => {
