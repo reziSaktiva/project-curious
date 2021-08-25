@@ -14,6 +14,7 @@ import { CLEAR_ALL_NOTIF } from "../GraphQL/Mutations";
 import NoNotif from "../assets/NoNotif.jpg";
 import { PostContext } from "../context/posts";
 import { db } from "../util/Firebase";
+import moment from "moment";
 
 export default function NotificationMobile() {
   const { isNavMobileOpen, setNavMobileOpen } = useContext(PostContext)
@@ -137,6 +138,8 @@ export default function NotificationMobile() {
                             <p style={{ marginBottom: 15 }}>
                               {notif.displayName}{" "}
                               <span>{`${type} your post.`}</span>{" "}
+                              <br />
+                              <p>{moment(notif.createdAt).fromNow()}</p>
                             </p>
                           </Col>
                           <Col span={2} style={{ color: "var(--primary-color)" }}>
