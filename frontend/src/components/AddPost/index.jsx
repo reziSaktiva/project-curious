@@ -151,17 +151,17 @@ export default function ModalPost() {
   const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded } = state;
 
   ///////// location /////////
-  function showPosition(position) {
-    setState({
-      ...state,
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
-    })
-  }
+  // function showPosition(position) {
+  //   setState({
+  //     ...state,
+  //     lat: position.coords.latitude,
+  //     lng: position.coords.longitude
+  //   })
+  // }
 
-  useEffect(() => {
-    if (isOpenNewPost) navigator.geolocation.getCurrentPosition(showPosition)
-  }, [isOpenNewPost]);
+  // useEffect(() => {
+  //   if (isOpenNewPost) navigator.geolocation.getCurrentPosition(showPosition)
+  // }, [isOpenNewPost]);
 
   useEffect(() => {
     if (repost) {
@@ -171,6 +171,7 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (isOpenNewPost && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
+      const { lat, lng } = location
       const { text = '' } = state;
       const variables = {
         text,
