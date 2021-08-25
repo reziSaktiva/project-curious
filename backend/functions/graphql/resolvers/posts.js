@@ -69,7 +69,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / (1000)) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / (1000)) <= (range || 5)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -135,61 +135,6 @@ module.exports = {
 
       return [];
     },
-    async moreForYou(_, _args, _context) {
-      try {
-        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
-        const docs = data.docs.map((doc) => doc.data())
-        const posts = []
-        
-        if (docs.length) {
-            docs.forEach(async data => {
-            const { repost: repostId } = data;
-
-            const repostData = async () => {
-              if (repostId) {
-                const repostData = await db.doc(`/posts/${repostId}`).get()
-                return repostData.data() || {}
-              }
-            }
-
-            // Likes
-            const likes = async () => {
-
-              const likesData = await db.collection(`/posts/${data.id}/likes`).get()
-              const likes = likesData.docs.map(doc => doc.data())
-
-              return likes;
-            };
-
-            // Comments
-            const comments = async () => {
-              const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
-              return commentsData.docs.map(doc => doc.data())
-            }
-
-            // Muted
-            const muted = async () => {
-              const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
-              return mutedData.docs.map(doc => doc.data());
-            }
-
-            const subscribe = async () => {
-              const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
-              return subscribeData.docs.map(doc => doc.data());
-            }
-
-            const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
-
-            posts.push(newData)
-          });
-        } 
-
-        return posts
-      }
-      catch (err) {
-        console.log(err);
-      }
-    },
     async getPopularPosts(_, { lat, lng, range }, context) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -247,7 +192,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 5)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -572,9 +517,122 @@ module.exports = {
       }
 
       return [];
+    },
+    async moreForYou(_, _args, _context) {
+      try {
+        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
+        const docs = data.docs.map((doc) => doc.data())
+        const posts = []
+
+        if (docs.length) {
+          docs.forEach(async data => {
+            const { repost: repostId } = data;
+
+            const repostData = async () => {
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                return repostData.data() || {}
+              }
+            }
+
+            // Likes
+            const likes = async () => {
+
+              const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+              const likes = likesData.docs.map(doc => doc.data())
+
+              return likes;
+            };
+
+            // Comments
+            const comments = async () => {
+              const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+              return commentsData.docs.map(doc => doc.data())
+            }
+
+            // Muted
+            const muted = async () => {
+              const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+              return mutedData.docs.map(doc => doc.data());
+            }
+
+            const subscribe = async () => {
+              const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+              return subscribeData.docs.map(doc => doc.data());
+            }
+
+            const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+            posts.push(newData)
+          });
+        }
+
+        return posts
+      }
+      catch (err) {
+        console.log(err);
+      }
     }
   },
   Mutation: {
+    async nextMoreForYou(_, { id }, _context) {
+      try {
+        const lastPosts = await db.doc(`/posts/${id}/`).get();
+        const doc = lastPosts
+
+        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
+        const docs = data.docs.map((doc) => doc.data())
+        const posts = []
+
+        if (docs.length) {
+          docs.forEach(async data => {
+            const { repost: repostId } = data;
+
+            const repostData = async () => {
+              if (repostId) {
+                const repostData = await db.doc(`/posts/${repostId}`).get()
+                return repostData.data() || {}
+              }
+            }
+
+            // Likes
+            const likes = async () => {
+
+              const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+              const likes = likesData.docs.map(doc => doc.data())
+
+              return likes;
+            };
+
+            // Comments
+            const comments = async () => {
+              const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+              return commentsData.docs.map(doc => doc.data())
+            }
+
+            // Muted
+            const muted = async () => {
+              const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+              return mutedData.docs.map(doc => doc.data());
+            }
+
+            const subscribe = async () => {
+              const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+              return subscribeData.docs.map(doc => doc.data());
+            }
+
+            const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+            posts.push(newData)
+          });
+        }
+
+        return posts
+      }
+      catch (err) {
+        console.log(err);
+      }
+    },
     async nextPosts(_, { id, lat, lng, range }, context) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
@@ -633,7 +691,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 5)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {
@@ -763,7 +821,7 @@ module.exports = {
 
             const distance = computeDistanceBetween(currentLatLng, contentLocation)
 
-            if ((distance / 1000) <= (range || 1000)) { // should be show in range 40 km
+            if ((distance / 1000) <= (range || 5)) { // should be show in range 40 km
               nearby.push(newData);
             }
           } catch (e) {

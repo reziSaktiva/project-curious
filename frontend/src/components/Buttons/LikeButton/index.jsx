@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { Button } from "antd";
 import { useMutation } from "@apollo/client";

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 
 import { useLazyQuery } from '@apollo/client'
 import { GET_POSTS } from '../../GraphQL/Queries'
@@ -71,7 +71,7 @@ export default function VisitedPosts({ postsLocation }) {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                          return(
-                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 }: { marginTop: 0 }} >
+                            <div key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 }: { marginTop: 0 }} >
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )

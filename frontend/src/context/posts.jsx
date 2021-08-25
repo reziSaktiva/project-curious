@@ -613,7 +613,7 @@ export const PostContext = createContext({
   newPosts: null,
   loading: false,
   lastIdPosts: null,
-  isMorePost: true,
+  isMorePost: false,
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
@@ -871,16 +871,18 @@ export const PostProvider = (props) => {
 
   const morePosts = (posts) => {
     setTimeout(() => {
-      if (posts[0].room) {
-        dispatch({
-          type: `MORE_${posts[0].room}`,
-          payload: posts,
-        })
-      } else {
-        dispatch({
-          type: "MORE_POSTS",
-          payload: posts,
-        });
+      if (posts) {
+        if (posts[0].room) {
+          dispatch({
+            type: `MORE_${posts[0].room}`,
+            payload: posts,
+          })
+        } else {
+          dispatch({
+            type: "MORE_POSTS",
+            payload: posts,
+          });
+        }
       }
     }, 2000);
   };
@@ -928,7 +930,6 @@ export const PostProvider = (props) => {
     } else if (type == "detail_post") {
       name = "LIKE_DETAIL";
     }
-
     if (likeData.isLike) {
       dispatch({
         type: room ? `LIKE_POST_${locationRoom}` : name,
