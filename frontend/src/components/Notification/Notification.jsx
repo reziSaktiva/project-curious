@@ -177,10 +177,13 @@ export default function Notification() {
               
               <div>
                 {loading ?<div style={{margin: 10, width: "100%" }}>
+                  
+                <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
                   <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
                   <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
                   <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
-                  <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
+
+                  
                 </div>  : <div>
                   <div className="noNotif" />
                 <p style={{ textAlign: "center", fontWeight: 700 }}>No Notifications yet</p>
