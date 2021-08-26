@@ -15,10 +15,9 @@ export default function ExplorePlace() {
     const { data, loading } = useQuery(EXPLORE_PLACE)
     return loading ? <SearchSkeleton /> : (
         <>
-            <div className="explore-place">
+            <div className="explore-place" >
                 <span className="title">Explore Place</span>
-                <div className="explore-place__btn-more">More</div>
-                <div className="list-place">
+                <div className="list-place" style={{overflowX: 'scroll'}}>
                     {data &&
                         data.explorePlace.map(data => {
                             return (<Col lg={8} xs={9}>
