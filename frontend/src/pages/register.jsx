@@ -64,7 +64,7 @@ const Register = (props) => {
         },
         onError(err) {
             console.log(err.message);
-            setErrors(err.message.split(":")[0] || err.message)
+            setErrors(err.message.split(":")[1] || err.message)
         }
     })
 
@@ -139,8 +139,6 @@ const Register = (props) => {
                                         message: 'Please input your phone number!',
                                     },
                                 ]}
-
-
                             >
                                 <Input
                                     addonBefore={phoneCode}
@@ -157,6 +155,17 @@ const Register = (props) => {
                                         message: 'Please input your nickname!',
                                         whitespace: true,
                                     },
+                                    {
+                                        validator(_, value) {
+                                        const regexlength = /^(?=.{8,20}$)/
+                                        if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
+                                        const regex_ = /^(?![_.])/
+                                        if ( !(value.match(regex_)) )  return Promise.reject('cant use "_" or "." at the begining ');
+                                        const regex = /^(?=.{8,20}$)(?![_.])[a-zA-Z0-9._]+(?<![])$/
+                                        if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
+                                        else return Promise.resolve();
+                                        }
+                                    }
                                 ]}
                             >
                                 <Input placeholder="Username"  style={{width:"100%"}}/>
@@ -167,7 +176,7 @@ const Register = (props) => {
                                     {
                                         required: true,
                                         message: 'Please input your password!',
-                                    },
+                                    }
                                 ]}
                                 hasFeedback
                             >

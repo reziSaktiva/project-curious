@@ -834,7 +834,7 @@ module.exports = {
             const checkUsername = await db.collection('user').where('username', "==", username).get()
 
             if (!valid) throw new UserInputError("Errors", { errors })
-            if (checkUsername) throw new UserInputError("username has been used")
+            if (!checkUsername.empty) throw new UserInputError("username has been used")
 
             let newUser = {
                 username,
@@ -852,7 +852,7 @@ module.exports = {
                 await db.doc(`users/${username}`).get()
                     .then(doc => {
                         if (doc.exists) {
-                            throw new UserInputError("username telah tersedia")
+                            throw new UserInputError("username telah digunakan")
                         }
                         else return firebase.auth().createUserWithEmailAndPassword(email, password)
                     })
