@@ -53,7 +53,7 @@ export default function PhotoGalerry({ post, loading }) {
     <List itemLayout="vertical" size="large">
       <List.Item>
                 {post.media? (
-                  post.media.length == 1? (
+                  post.media.length === 1? (
                     <Image
                       style={{ width: "100%", borderRadius: 10, objectFit: "cover" }}
                       src={post.media}
@@ -62,7 +62,7 @@ export default function PhotoGalerry({ post, loading }) {
                 ) : null}
 
                 {post.media? (
-                  post.media.length == 2? (
+                  post.media.length === 2? (
                     <table className="row-card-2">
                       <Image.PreviewGroup>
                       <td style={{width:"50%"}}>

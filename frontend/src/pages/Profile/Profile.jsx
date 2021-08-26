@@ -194,8 +194,8 @@ function Profile() {
               {media.length &&
                 media.map((photo, idx) => {
                   const imgClass = cn({
-                    gallery_item_right: idx == 1,
-                    gallery_item_left: idx == 2,
+                    gallery_item_right: idx === 1,
+                    gallery_item_left: idx === 2,
                     gallery__img: idx != 1 || idx != 2,
                   });
                   return (

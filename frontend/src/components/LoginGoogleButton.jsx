@@ -6,8 +6,8 @@ import { GoogleProvider, auth } from '../util/Firebase'
 import { gql, useMutation } from '@apollo/client'
 
 const CHECK_USER_BY_GOOGLE = gql`
-  mutation check($username: String!){
-    checkUserWithGoogle(username: $username)
+  mutation check($email: String!){
+    checkUserWithGoogle(email: $email)
   }
 `
 
@@ -24,7 +24,7 @@ export default function LoginGoogleButton() {
         history.push('/register/google')
       } else {
         const { token } = dataGoogle
-        
+        setLoginLoader(false)
         login(token)
         setTimeout(() => {
           history.push('/')
@@ -49,7 +49,7 @@ export default function LoginGoogleButton() {
         token: user._lat
       }
       setGoogleData(googleData)
-      check({ variables: { username: user.displayName } })
+      check({ variables: { email: user.email } })
     })
   }
 

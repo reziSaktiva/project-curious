@@ -148,20 +148,7 @@ export default function ModalPost() {
     }
   )
 
-  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded } = state;
-
-  ///////// location /////////
-  // function showPosition(position) {
-  //   setState({
-  //     ...state,
-  //     lat: position.coords.latitude,
-  //     lng: position.coords.longitude
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   if (isOpenNewPost) navigator.geolocation.getCurrentPosition(showPosition)
-  // }, [isOpenNewPost]);
+  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, uploaded } = state;
 
   useEffect(() => {
     if (repost) {
@@ -316,7 +303,7 @@ export default function ModalPost() {
                 </Radio.Button>
 
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="BMW Club Bandung" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
-                  <img src={Bmw} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <img src={Bmw} alt="room Picture" style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
                   <div style={{ display: 'inline-block' }}>
                     <h4 style={{ fontWeight: "bold" }}>BMW Club Bandung</h4>
                     <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>

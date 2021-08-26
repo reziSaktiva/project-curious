@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card } from "antd";
+import { Card, Skeleton } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
@@ -114,6 +114,7 @@ export default function NotificationMobile() {
                     case "COMMENT":
                       type = "commented";
                       text = "comment";
+                      break;
                     default:
                       break;
                   }
@@ -151,7 +152,7 @@ export default function NotificationMobile() {
                   );
                 })
               ) : (
-              <img src={NoNotif} className="centeringButton" style={{height: 200}} />
+              <img alt="no notifications"src={NoNotif} className="centeringButton" style={{height: 200}} />
               )
             )
             }

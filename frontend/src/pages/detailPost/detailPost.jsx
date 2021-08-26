@@ -174,7 +174,7 @@ export default function SinglePost(props) {
   const onFinish = async value => {
     const { comment } = value;
     const newComment = comment ? comment.substring(comment.indexOf(':')+1) : ''
-    const finalComment = newComment == undefined ? comment : newComment
+    const finalComment = newComment === undefined ? comment : newComment
     
     const isReply = form.getFieldValue(["comment"]).includes(reply.username && reply.id)
 
@@ -325,7 +325,7 @@ export default function SinglePost(props) {
  
          </Skeleton>
        </List.Item>
-       {post && post.comments && post.comments.length == 0 ? (
+       {post && post.comments && post.comments.length === 0 ? (
          null) :
           <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
        <Form

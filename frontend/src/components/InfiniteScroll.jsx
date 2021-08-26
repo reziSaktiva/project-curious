@@ -17,7 +17,7 @@ function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
     const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, isMorePost, room_1, room_2, active } = useContext(PostContext)
+    const { posts, morePosts, room_1, room_2, active } = useContext(PostContext)
     const [hasMore, setHasMore] = useState(true)
 
     const { location } = getSession()

@@ -154,7 +154,7 @@ const reducer = (state, action) => {
 
       // if (hasReply) {
       //   const match = state.post.comments.findIndex(
-      //     (itm) => itm.id == payload.reply.id
+      //     (itm) => itm.id === payload.reply.id
       //   );
 
       //   if (!match) {
@@ -921,15 +921,15 @@ export const PostProvider = (props) => {
       locationRoom = "ROOM_2";
     }
 
-    if (type == "subscribe_posts") {
+    if (type === "subscribe_posts") {
       name = "LIKE_SUBSCRIBE";
-    } else if (type == "muted_posts") {
+    } else if (type === "muted_posts") {
       name = "LIKE_MUTED";
-    } else if (type == "liked_posts") {
+    } else if (type === "liked_posts") {
       name = "LIKE_LIKED";
-    } else if (type == "nearby") {
+    } else if (type === "nearby") {
       name = "LIKE_POST";
-    } else if (type == "detail_post") {
+    } else if (type === "detail_post") {
       name = "LIKE_DETAIL";
     }
     if (likeData.isLike) {
