@@ -44,7 +44,7 @@ export default function MoreForYou() {
             {
                 loadingPosts ? <SkeletonLoading /> : posts ? posts.map((post, key) => {
                      return(
-                        <div key={`more for you posts${key}`} style={key == 0 ? { marginTop: 16, marginLeft:-15 }: { marginTop: 0,marginLeft:-15 }} >
+                        <div key={`more for you posts${key}`} style={key === 0 ? { marginTop: 16, marginLeft:-15 }: { marginTop: 0,marginLeft:-15 }} >
                             <PostCard post={post} type="nearby" loading={loadingPosts} />
                         </div>
                     )

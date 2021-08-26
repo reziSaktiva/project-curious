@@ -16,6 +16,8 @@ import { AuthContext } from '../context/auth'
 import { LoadingOutlined } from "@ant-design/icons";
 
 import {dial} from './Countries'
+import CustomModal from '../components/Modal/customModal';
+import TOU from './legal/TeromOfUse';
 
 const { Option } = Select;
 const gender = [
@@ -46,7 +48,11 @@ const tailFormItemLayout = {
     },
 };
 
+
+
+
 const Register = (props) => {
+    const [openModal, setOpenModal] = useState(false)
     const context = useContext(AuthContext)
     const [form] = Form.useForm();
     const [errors, setErrors] = useState({});
@@ -58,7 +64,7 @@ const Register = (props) => {
         },
         onError(err) {
             console.log(err.message);
-            setErrors(err.message)
+            setErrors(err.message.split(":")[0] || err.message)
         }
     })
 
@@ -66,10 +72,7 @@ const Register = (props) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
         registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || dial[0].dial_code) + phone}` } })
     };
-    const onCloseErr = (e) => {
-        console.log(e, 'I was closed.');
-    };
-console.log(props);
+
    const dialData = dial.map(item => {
     return <Option key={item.code} value={item.dial_code}>{item.dial_code}</Option>
    })
@@ -90,6 +93,7 @@ console.log(props);
 
     return (
         <div >
+            <CustomModal click={openModal} setOpenModal={setOpenModal} title={"Term Of Use"} ><TOU  setOpenModal={setOpenModal} /></CustomModal>
             <div >
                 <Link to ='/'>
                 <div className="centeringImage">
@@ -191,7 +195,7 @@ console.log(props);
                                     },
                                 ]}
                             >
-                                <Cascader style={{backgroundColor: '#FAFAFF', width: "100%"}} options={gender} />
+                                <Cascader style={{backgroundColor: '#FAFAFF', height:"100%"}} options={gender} />
                             </Form.Item>
                             <Form.Item
                                 name="agreement"
@@ -209,21 +213,24 @@ console.log(props);
                                     I have read the agreement
                                 </Checkbox>
                             </Form.Item>
-                            <Form.Item>
-                            <button className="ui facebook button body-page__btn-send" type="submit" 
-                                style={{ fontSize: '18px',padding: 0 }}>
-                                    {loading ? (<LoadingOutlined />): ("Register")} 
-                                </button>
-                                <p style={{ fontSize: 12, textAlign: 'center', marginTop: 60 }}>By signing up, you agree to our <span style={{ fontWeight: 'bold' }}>Terms & Privacy Policy</span></p>
-                            </Form.Item>
+
                             {Object.keys(errors).length > 0 && (
                                 <Alert
                                     message={errors}
                                     type="error"
                                     closable
-                                    onClose={onCloseErr}
+                                    style={{marginBottom: 10}}
                                 />
                             )}
+
+                            <Form.Item>
+                            <button className="ui facebook button body-page__btn-send" type="submit" 
+                                style={{ fontSize: '18px',padding: 0 }}>
+                                    {loading ? (<LoadingOutlined />): ("Register")} 
+                                </button>
+                                <p style={{ fontSize: 12, textAlign: 'center', marginTop: 60 }}>By signing up, you agree to our <span onClick={ () => setOpenModal(true)} style={{ fontWeight: 'bold', cursor: 'pointer' }}>Terms & Privacy Policy</span></p>
+                            </Form.Item>
+                            
                         </Form>
 
                     </div>

@@ -50,7 +50,7 @@ module.exports = {
             const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '<=', oneWeekAgo).get()
 
             const promises = getPosts.docs.map(async (doc, index) => {
-                const {lat, lng} = doc.data().location
+                const { lat, lng } = doc.data().location
                 const request = await googleMapsClient
                     .reverseGeocode({
                         params: {
@@ -84,11 +84,11 @@ module.exports = {
                             method: 'get',
                             url: `https://api.unsplash.com/search/photos?page=1&query=${geoResult.administrative_area_level_2}&client_id=UglyC0ivuaZUA-2eeaUPc-v8_haYK8tdvxtCl0DqXpY`,
                             headers: {}
-                          }).then(({data}) => {
-                              return data.results[0].urls.small
-                          })
+                        }).then(({ data }) => {
+                            return data.results[0].urls.small
+                        })
 
-                        return { ...geoResult , photo_reference , location: { lat, lng } };
+                        return { ...geoResult, photo_reference, location: { lat, lng } };
                     })
                     .catch(e => {
                         console.log(e);
@@ -100,19 +100,19 @@ module.exports = {
 
             const response = await Promise.all(promises);
 
-            response.sort(function(a, b) {
+            response.sort(function (a, b) {
                 var nameA = a.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
                 var nameB = b.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
-                  return -1;
+                    return -1;
                 }
                 if (nameA > nameB) {
-                  return 1;
+                    return 1;
                 }
-              
+
                 // names must be equal
                 return 0;
-              })
+            })
 
             const filterLocation = response.filter((value, idx) => {
                 const { administrative_area_level_3: currentArea } = value;
@@ -158,11 +158,11 @@ module.exports = {
                             })
                             // return db.collection(`/users/${username}/notifications`).orderBy('createdAt', 'desc').get()
                         })
-                        // .then(data => {
-                        //     data.docs.forEach(doc => {
-                        //         dataUser.notifications.push(doc.data())
-                        //     })
-                        // })
+                    // .then(data => {
+                    //     data.docs.forEach(doc => {
+                    //         dataUser.notifications.push(doc.data())
+                    //     })
+                    // })
 
                 }
 
@@ -305,9 +305,9 @@ module.exports = {
                             method: 'get',
                             url: `https://api.unsplash.com/search/photos?page=1&query=${geoResult.administrative_area_level_2}&client_id=UglyC0ivuaZUA-2eeaUPc-v8_haYK8tdvxtCl0DqXpY`,
                             headers: {}
-                          }).then(({data}) => {
-                              return data.results[0].urls.small
-                          })
+                        }).then(({ data }) => {
+                            return data.results[0].urls.small
+                        })
 
                         return { ...geoResult, photo_reference, location: { lat, lng } };
                     })
@@ -679,9 +679,7 @@ module.exports = {
                 } else if (!findUserWithUsername.empty) {
 
                     if (findUserWithUsername.docs[0].data().newUsername) {
-                        throw new UserInputError('username/email tidak ditemukan', {
-                            errors: { username: "username/email tidak ditemukan" }
-                        })
+                        throw new UserInputError('Username/email tidak ditemukan')  
                     } else {
                         data = findUserWithUsername.docs[0].data()
                     }
@@ -690,9 +688,7 @@ module.exports = {
                     data = findUserWithNewusername.docs[0].data()
 
                 } else {
-                    throw new UserInputError('username/email tidak ditemukan', {
-                        errors: { username: "username/email tidak ditemukan" }
-                    })
+                    throw new UserInputError('username/email tidak ditemukan')
                 }
 
                 const { email } = data
@@ -733,14 +729,13 @@ module.exports = {
                 console.log(err);
             }
         },
-        async checkUserWithGoogle(_, args, content) {
-            const { username } = args;
+        async checkUserWithGoogle(_, { email }, content) {
 
             try {
                 let user;
-                await db.doc(`users/${username}`).get()
-                    .then(doc => {
-                        if (doc.exists) {
+                await db.collection(`users`).where('email', '==', email).get()
+                    .then(data => {
+                        if (!data.empty) {
                             user = true
                         } else {
                             user = false
@@ -803,6 +798,9 @@ module.exports = {
         async registerUserWithGoogle(_, args, content, info) {
             const { googleData: { username, email, imageUrl, token, mobileNumber, gender, birthday, id } } = args
 
+            const checkUsername = await db.collection('user').where('username', "==", username).get()
+            if (checkUsername) throw new UserInputError("username has been used")
+
             let newUser = {
                 username,
                 id,
@@ -833,8 +831,10 @@ module.exports = {
             //TODO: cek apakan user menginput data dengan benar -> BUat validator function
 
             const { valid, errors } = validateRegisterInput(email, password, username)
+            const checkUsername = await db.collection('user').where('username', "==", username).get()
 
             if (!valid) throw new UserInputError("Errors", { errors })
+            if (checkUsername) throw new UserInputError("username has been used")
 
             let newUser = {
                 username,
@@ -900,6 +900,11 @@ module.exports = {
             const { url, phoneNumber, gender, birthday, newUsername } = profile
             const { username: oldName } = await fbAuthContext(context)
 
+            if (newUsername) {
+                const checkUsername = await db.collection('user').where('username', "==", newUsername).get()
+                const checkNewUsername = await db.collection('user').where('newUsername', "==", newUsername).get()
+                if (checkUsername || checkNewUsername) throw new UserInputError("username has been used")
+            }
             const userData = await (await db.doc(`users/${oldName}`).get()).data()
             try {
                 await db.doc(`users/${oldName}`).get()

@@ -31,7 +31,7 @@ const Search = () => {
   const searchPosts = debounce(
     (value) => {
       setSearched(true)
-      if(value == "") {
+      if(value === "") {
         setbacktoDefault(true)
       return
       }
@@ -66,7 +66,7 @@ const Search = () => {
     />
     {loading && <SkeletonLoading />}
       {hits && !backtoDefault ? (
-        searched && hits.length == 0 ? <NotFound /> : 
+        searched && hits.length === 0 ? <NotFound /> : 
                 <>
                 {hits.map((post, key) => (
                   <div key={`posts${post.id} ${key}`}>

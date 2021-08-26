@@ -160,7 +160,7 @@ export default function Visited() {
           <SidebarMobile show={burger.toggle} />
 
           {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
-          {active == 'latest' ? <VisitedLatest postsLocation={postsLocation} /> : <VisitedPopular postsLocation={postsLocation} />}
+          {active === 'latest' ? <VisitedLatest postsLocation={postsLocation} /> : <VisitedPopular postsLocation={postsLocation} />}
         </div>
       )}
     </div>

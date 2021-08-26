@@ -20,9 +20,19 @@ export default function Chat() {
                 <h4 style={{textAlign: 'center'}}>Download our Mobile Version To Use This Features</h4>
                 
                 <div >
-                    <a href="https://play.google.com/store/apps/details?id=com.ramadhan.curious">
-                    <Button type="link" > <img src={device === 'iPhone' || device === 'iPad'? AppStore : PlayStore} style={{width: 150}} /></Button>
+                    {device === 'iPhone' || device === 'iPad'? (
+                        <a href="https://www.apple.com/app-store/">
+                    <Button type="link" > <img src={ AppStore } style={{width: 150}} /></Button>
                     </a>
+                    ) : (
+                        <a href="https://play.google.com/store/apps/details?id=com.ramadhan.curious">
+                    <Button type="link" > <img src={PlayStore} style={{width: 150}} /></Button>
+                    </a>
+                    )
+
+                    }
+                    
+                    
                 </div>
                 <h4 style={{textAlign: 'center', marginTop: 90}}> Click This Button Below To Download Mobile Version to get best experience</h4>
                 </div>
