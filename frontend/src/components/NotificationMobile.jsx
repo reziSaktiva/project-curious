@@ -37,7 +37,7 @@ export default function NotificationMobile() {
 
   useEffect(() => {
     getNotifications();
-  }, [user])
+  }, [])
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {

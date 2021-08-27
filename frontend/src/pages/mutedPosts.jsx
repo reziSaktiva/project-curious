@@ -1,26 +1,41 @@
-import React, { useContext, useEffect, useRef } from 'react'
-
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_MUTED_POSTS, GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
-
-import InfiniteScroll from '../components/InfiniteScroll'
 import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
-
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import NotificationMobile from '../components/NotificationMobile'
+import SidebarMobile from '../components/SidebarMobile'
+import BackDrop from '../components/BackDrop'
+
 function MutedPost() {
     const { data } = useQuery(GET_MUTED_POSTS);
-
     const _isMounted = useRef(false);
-    const { mutedPost, setMutedPost, loadingData, loading } = useContext(PostContext)
+    const { mutedPost,setNavMobileOpen, setMutedPost, loadingData, loading } = useContext(PostContext)
     const { user } = useContext(AuthContext)
+
+    const [burger, setBurger] = useState({
+        toggle: false
+      })
 
     const path = useHistory().location.pathname
 
     const { setPathname } = useContext(AuthContext)
   
+    const handleBurger = () => {
+        setBurger(prevState => {
+          return {
+            toggle: !prevState.toggle
+          }
+        })
+      }
+      
+      const handleNotif = () => {
+        setNavMobileOpen(true)
+      }
+
       useEffect(() => {
           setPathname(path)
       }, [])
@@ -41,10 +56,17 @@ function MutedPost() {
             return;
         }
     }, [data, _isMounted])
-
+    const handleBackdropClose = () => {
+        setBurger({ toggle: false })
+      }
     return (
         <div>
-            <NavBar />
+            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
+
+            <NotificationMobile />
+          <SidebarMobile show={burger.toggle} />
+          
+          {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
             {user ? (<div>
                 {!mutedPost || mutedPost.length < 1 ? (
                     <div className="centering-flex">

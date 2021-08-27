@@ -29,6 +29,7 @@ import { CREATE_POST } from '../../GraphQL/Mutations'
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
+import Photo from "../Photo";
 
 const storage = firebase.storage()
 
@@ -341,112 +342,7 @@ export default function ModalPost() {
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
                   
-                  {getPost.media ? (
-          getPost.media.length === 1 ? (
-            <Image
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
-              src={getPost.media}
-            />
-          ) : null
-        ) : null}
-
-        {getPost.media ? (
-          getPost.media.length === 2 ? (
-            <table className="row-card-2">
-              <tbody>
-                <tr>
-                  <Image.PreviewGroup>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={getPost.media[0]}
-                      />
-                    </td>
-                    <td>
-                      <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
-                        src={getPost.media[1]}
-                      />
-                    </td>
-                  </Image.PreviewGroup>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
-
-        {getPost.media ? (
-          getPost.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <Image.PreviewGroup>
-                <tbody>
-                  <tr style={{ margin: 0, padding: 0 }}>
-                    <td
-                      rowspan="2"
-                      style={{ width: "50%", verticalAlign: "top" }}
-                    >
-                      <Image
-                        className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={getPost.media[0]}
-                      />
-                    </td>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
-                        src={getPost.media[1]}
-                      />
-                      <div
-                        className="text-container"
-                        style={{ marginTop: "-6px" }}
-                      >
-                        <Image
-                          className="pict3-3"
-                          style={
-                            getPost.media.length > 3
-                              ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
-                              : { borderRadius: "0px 0px 10px 0px" }
-                          }
-                          src={getPost.media[2]}
-                        />
-                        <div className="text-center">
-                          {getPost.media.length > 3
-                            ? "+" + (getPost.media.length - 3)
-                            : null}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {getPost.media.length > 3 ? (
-                    <div>
-                      <Image
-                        className="pict3-3"
-                        style={{ display: "none" }}
-                        src={getPost.media[3]}
-                      />
-                      {getPost.media.length > 4 ? (
-                        <Image
-                          className="pict3-3"
-                          style={{ display: "none" }}
-                          src={getPost.media[4]}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null}
-                </tbody>
-              </Image.PreviewGroup>
-            </table>
-          ) : null
-        ) : null}
+                  <Photo photo={getPost.media} />
 
                   
                 </Card>
