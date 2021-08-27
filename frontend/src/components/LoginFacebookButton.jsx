@@ -4,7 +4,7 @@ import { Button } from 'antd'
 import { AuthContext } from '../context/auth'
 import { FacebookProvider, auth } from '../util/Firebase'
 import { gql, useMutation } from '@apollo/client'
-// import { LOGIN_USER_FACEBOOK } from '../GraphQL/Mutations'
+import { LOGIN_USER_FACEBOOK } from '../GraphQL/Mutations'
 
 const CHECK_USER_BY_FACEBOOK = gql`
   mutation check($username: String!){

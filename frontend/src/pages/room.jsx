@@ -55,7 +55,7 @@ function Room(props) {
     return (
         <div>
             <NavBar />
-            {!_isMounted.current && <SkeletonLoading />}
+            {_isMounted.current && <SkeletonLoading />}
             <InfiniteScroll isLoading={loadingPosts}>
             {room === "/Insvire E-Sport" ? (user ? (room_1.length == 0 ? (
                 <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>

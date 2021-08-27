@@ -17,16 +17,13 @@ import { db } from "../../util/Firebase";
 import './notif-style.css'
 import moment from "moment";
 import { useState } from "react";
-import { PostContext } from "../../context/posts";
 
 export default function Notification() {
   const {  notificationRead, readAllNotificatons } = useContext(AuthContext);
   const { clearNotifications, user } = useContext(AuthContext);
-  const { setNotifLength, notifLength } = useContext(PostContext);
   const [state, setstate] = useState([])
   const [loading, setLoading] = useState(false)
 
-  
   function getNotifications(){
     setLoading(true)
     db.collection(`users/${user.username}/notifications`).orderBy('createdAt', 'desc').onSnapshot((data) => {
@@ -34,17 +31,14 @@ export default function Notification() {
       data.forEach(doc => {
         notifications.push(doc.data())
       });
-      setNotifLength(notifications.filter(notif => notif.read === false).length)
       setstate(notifications)
       setLoading(false)
     })
   }
-  
+
   useEffect(() => {
     getNotifications();
   }, [user])
-
-
 
   // useSubscription(NOTIFICATION_ADDED, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -72,7 +66,7 @@ export default function Notification() {
     },
   });
 
-  
+  const notificationLength = state && state.filter(notif => notif.read === false).length
 
   return (
     <div className="notif__fixed">
@@ -81,9 +75,9 @@ export default function Notification() {
           title={
             <h3 style={{ textAlign: 'center' }}>Notification  {
               state.length > 1 && <div className="notifCounter">
-                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2, color: "white" }}>{notifLength > 99 ?
+                <p style={{ display: 'flex', justifyContent: 'center', marginTop: 2, color: "white" }}>{notificationLength > 99 ?
                   ('99+') :
-                  (notifLength)}</p>
+                  (notificationLength)}</p>
               </div>}</h3>
           }
           extra={
@@ -156,13 +150,12 @@ export default function Notification() {
                   >
                     <div className="notifContainer">
                       <Row style={{ paddingLeft: 5, paddingRight: 5 }}>
-                        <Col span={22} style={{color: "red"}}>
+                        <Col span={22}>
                           <p style={{ marginBottom: 5 }}>
                             {notif.displayName}{" "}
-                            <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "} <br />
-                          {moment(notif.createdAt).fromNow()}
+                            <span>{type === "reply" ? `${type} your comment` : `${type} your post.`}</span>{" "}
                           </p>
-                          
+                          <p style={{fontWeight:200, fontSize: 12}}>{moment(notif.createdAt).fromNow()}</p>
                         </Col>
                         <Col span={2} style={{ color: "var(--primary-color)" }}>
                           {!notif.read && <p style={{ textAlign: 'right' }}>&#8226;</p>}

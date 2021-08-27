@@ -65,11 +65,6 @@ const reducer = (state, action) => {
         loading: false,
         likedPosts: action.payload,
       };
-      case "SET_NOTIF_LENGTH":
-        return {
-          ...state,
-          notifLength : action.payload
-        };
     case "SET_SUBSCRIBE_POSTS":
       return {
         ...state,
@@ -209,7 +204,6 @@ const reducer = (state, action) => {
           commentsCount: state.post.comments + 1,
         },
       };
-      
     case "DELETE_COMMENT":
       return {
         ...state,
@@ -613,11 +607,10 @@ export const PostContext = createContext({
   newPosts: null,
   loading: false,
   lastIdPosts: null,
-  isMorePost: false,
+  isMorePost: true,
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
-  setNotifLength: () => {},
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
@@ -665,7 +658,6 @@ export const PostProvider = (props) => {
     posts,
     active,
     post,
-    notifLength,
     loading,
     lastIdPosts,
     isMorePost,
@@ -702,12 +694,6 @@ export const PostProvider = (props) => {
     dispatch({
       type: "SET_POST",
       payload: post,
-    });
-  };
-  const setNotifLength = (notifLength) => {
-    dispatch({
-      type: "SET_NOTIF_LENGTH",
-      payload: notifLength,
     });
   };
 
@@ -871,18 +857,16 @@ export const PostProvider = (props) => {
 
   const morePosts = (posts) => {
     setTimeout(() => {
-      if (posts) {
-        if (posts[0].room) {
-          dispatch({
-            type: `MORE_${posts[0].room}`,
-            payload: posts,
-          })
-        } else {
-          dispatch({
-            type: "MORE_POSTS",
-            payload: posts,
-          });
-        }
+      if (posts[0].room) {
+        dispatch({
+          type: `MORE_${posts[0].room}`,
+          payload: posts,
+        })
+      } else {
+        dispatch({
+          type: "MORE_POSTS",
+          payload: posts,
+        });
       }
     }, 2000);
   };
@@ -930,6 +914,7 @@ export const PostProvider = (props) => {
     } else if (type == "detail_post") {
       name = "LIKE_DETAIL";
     }
+
     if (likeData.isLike) {
       dispatch({
         type: room ? `LIKE_POST_${locationRoom}` : name,
@@ -961,8 +946,6 @@ export const PostProvider = (props) => {
         active,
         isNavMobileOpen,
         isModalActive,
-        notifLength,
-        setNotifLength,
         setModal,
         setPosts,
         setNav,

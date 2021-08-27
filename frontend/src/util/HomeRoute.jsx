@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
-import nearby from '../pages/Home/nearby';
+import nearby from '../pages/nearby';
 
 function HomeRoute({ component: Component, ...rest }) {
     const user = localStorage.token

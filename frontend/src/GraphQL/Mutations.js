@@ -125,15 +125,6 @@ export const MUTE_POST = gql`
   }
 `
 
-export const GET_MORE_MORE_FOR_YOU = gql`
-  mutation nextMoreForYou($id: ID) {
-    nextMoreForYou(id: $id) {
-      ...PostDetail
-    }
-  }
-  ${postDetailFragment}
-`;
-
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float! $range: Float) {
     nextPosts(id: $id, lat:$lat ,lng: $lng, range: $range) {
@@ -156,6 +147,7 @@ export const GET_MORE_ROOM = gql`
 mutation nextRoom($id: ID! $room: String) {
   nextRoomPosts(id: $id, room: $room) {
       ...PostDetail
+      room
     }
   }
   ${postDetailFragment}
@@ -264,7 +256,44 @@ export const SEARCH_POSTS = gql`
   mutation Search($search: String, $perPage: Int, $page: Int, $range: Float, $location: Location) {
     textSearch(search: $search, perPage: $perPage, page: $page, range: $range, location: $location){
       hits {
-        ...PostDetail
+        id
+        createdAt
+        owner
+        commentCount
+        likeCount
+        text
+        location {
+          lat
+          lng
+        }
+        likes {
+          id
+          owner
+          createdAt
+          colorCode
+          displayName
+          displayImage
+        }
+        comments {
+          id
+          createdAt
+          owner
+          text
+          displayName
+          photoProfile
+          colorCode
+        }
+        repost {
+            id
+            owner
+            text
+            media
+            createdAt
+            location {
+              lat
+              lng
+            }
+        }
         hastags
       }
       page
@@ -274,5 +303,4 @@ export const SEARCH_POSTS = gql`
       processingTimeMS
     }
   }
-  ${postDetailFragment}
 `

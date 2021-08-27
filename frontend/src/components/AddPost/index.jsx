@@ -29,7 +29,7 @@ import { CREATE_POST } from '../../GraphQL/Mutations'
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
-
+import { AuthContext } from "../../context/auth";
 const storage = firebase.storage()
 
 const { Panel } = Collapse;
@@ -354,7 +354,7 @@ export default function ModalPost() {
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
                   
                   {getPost.media ? (
-          getPost.media.length === 1 ? (
+          getPost.media.length == 1 ? (
             <Image
               style={{
                 width: "100%",
@@ -368,7 +368,7 @@ export default function ModalPost() {
         ) : null}
 
         {getPost.media ? (
-          getPost.media.length === 2 ? (
+          getPost.media.length == 2 ? (
             <table className="row-card-2">
               <tbody>
                 <tr>

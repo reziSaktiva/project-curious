@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { PostContext } from '../../context/posts'
 import './style.css'
 
 export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
