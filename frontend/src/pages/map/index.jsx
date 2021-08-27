@@ -37,16 +37,16 @@ const sliderValidator = () => {
   if ( !localStorage.getItem('rng') ) {
     return  0
   }
-    if ( localStorage.getItem('rng') === 1 ) {
+    if ( localStorage.getItem('rng') == 1 ) {
     return  0
   }
-   if ( localStorage.getItem('rng') === 5 ) {
+   if ( localStorage.getItem('rng') == 5 ) {
       return 33
   }
-   if ( localStorage.getItem('rng') === 10 ) {
+   if ( localStorage.getItem('rng') == 10 ) {
     return  66
   }
-  if ( localStorage.getItem('rng') === 15 ) {
+  if ( localStorage.getItem('rng') == 15 ) {
     return 100
   }
 }
@@ -116,13 +116,13 @@ const Map = () => {
     
   const onChangeSlider = (value) => {
     let range = 1000
-    if (value === 0) {
+    if (value == 0) {
       range = 1000
-    }  if (value === 33) {
+    }  if (value == 33) {
       range = 5000
     }  if (value ==66) {
       range = 10000
-    }  if (value === 100) {
+    }  if (value == 100) {
       range = 15000
     }
 

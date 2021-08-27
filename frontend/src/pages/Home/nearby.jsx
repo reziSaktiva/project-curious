@@ -8,8 +8,6 @@ import { PostContext } from "../../context/posts";
 import Popular from "./popular";
 import Latest from './latest'
 
-
-
 const NearbyPost = () => {
   const { setNavMobileOpen, active, setNav } = useContext(PostContext)
   const [burger, setBurger] = useState({

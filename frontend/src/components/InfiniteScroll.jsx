@@ -11,15 +11,12 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Skeleton } from 'antd'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useEffect } from 'react'
-import { useState } from 'react'
 
 function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
     const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, room_1, room_2, active } = useContext(PostContext)
-    const [hasMore, setHasMore] = useState(true)
-
+    const { posts, morePosts, isMorePost, room_1, room_2, active } = useContext(PostContext)
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -27,11 +24,6 @@ function ScrollInfinite(props) {
 
     const [nextPosts, { loading: loadingNearby }] = useMutation(GET_MORE_POSTS, {
         update(_, { data: { nextPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -41,11 +33,6 @@ function ScrollInfinite(props) {
 
     const [nextPopular, { loading: loadingPopular }] = useMutation(GET_MORE_POPULAR, {
         update(_, { data: { nextPopularPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -55,11 +42,6 @@ function ScrollInfinite(props) {
 
     const [nextRoom, { loading: loadingRoom }] = useMutation(GET_MORE_ROOM, {
         update(_, { data: { nextRoomPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -69,16 +51,11 @@ function ScrollInfinite(props) {
 
     const [nextMoreForYou, { loading: loadingMoreForYou }] = useMutation(GET_MORE_MORE_FOR_YOU, {
         update(_, { data: { nextMoreForYou: postsData } }) {
-            if (postsData.length < 3) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
             console.log(err.message);
-        },
+        }
     })
 
     const loadMore = () => {
@@ -138,7 +115,7 @@ function ScrollInfinite(props) {
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
-                hasMore={hasMore}
+                hasMore={isMorePost && posts.length}
                 loader={(loading || isLoading) ? loading ?
                     <Skeleton avatar active paragraph={{ rows: 2 }} />
                     : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>) : <Skeleton avatar active paragraph={{ rows: 2 }} />}

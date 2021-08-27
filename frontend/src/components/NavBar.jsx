@@ -2,8 +2,11 @@ import React, { useContext } from 'react'
 import { BellOutlined } from '@ant-design/icons';
 import '../App.css'
 import { PostContext } from '../context/posts';
+import { AuthContext } from '../context/auth';
 
 export default function NavBar({toggleOpen, toggleOpenNotif, location, noBurger, noNotif}) {
+  console.log(noBurger);
+  const { notifications } = useContext(AuthContext);
 
   const { setNav, active, notifLength } = useContext(PostContext)
 

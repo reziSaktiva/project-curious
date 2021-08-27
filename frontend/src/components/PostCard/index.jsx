@@ -144,7 +144,7 @@ export default function PostCard({ post, loading, type }) {
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
                   </Link>
-                  {userName === post.owner && (
+                  {userName == post.owner && (
                     <div
                       style={{
                         width: 60,
@@ -225,7 +225,7 @@ export default function PostCard({ post, loading, type }) {
               <img src={Pin} style={{ width: 15, marginTop: -4 }} />
               {repostAddress}
             </Link>
-            {userName === post.owner && (
+            {userName == post.owner && (
               <div
                 style={{
                   width: 60,

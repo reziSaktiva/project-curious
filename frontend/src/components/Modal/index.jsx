@@ -3,7 +3,7 @@ import './style.css'
 
 export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
     const handleClose = () => setDeleteModal(false)
-console.log(deleteModal);
+
     let classes = "modal-bg"
         if(deleteModal) {
             classes = "modal-bg bg-active"

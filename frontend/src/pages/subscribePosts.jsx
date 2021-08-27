@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import SkeletonLoading from '../components/SkeletonLoading'
-import no_sub from '../assets/Noresults/No_posts_home_Profile.png'
+import no_sub from '../assets/NoResults/No_subscribed.png'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 function SubscribePosts() {
@@ -59,7 +59,7 @@ function SubscribePosts() {
             </div>
                 )
                     : subscribePosts.map((post, key) => (
-                        <div key={`posts subscribe ${key}`} style={key === 0 ? { marginTop: 40 }: { marginTop: 0 }}>
+                        <div key={`posts subscribe ${key}`} style={key == 0 ? { marginTop: 40 }: { marginTop: 0 }}>
                         <PostCard post={post} type="subscribe_posts" loading={loading} />
                     </div>
                 ))}

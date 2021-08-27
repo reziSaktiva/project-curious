@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Card, Skeleton } from "antd";
+import { Card } from "antd";
 import { AuthContext } from "../../context/auth";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
@@ -24,7 +24,7 @@ export default function Notification() {
   const { clearNotifications, user } = useContext(AuthContext);
   const { setNotifLength, notifLength } = useContext(PostContext);
   const [state, setstate] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   
   function getNotifications(){
@@ -113,7 +113,6 @@ export default function Notification() {
           }
           className="testttttt"
         >
-          
           <div style={{ margin: -22, overflowY: "auto", overflowX: 'hidden', height: 342 }}>
             {(state && state.length ? (
               state.map((notif, key) => {
@@ -174,23 +173,10 @@ export default function Notification() {
                 );
               })
             ) : (
-              
               <div>
-                {loading ?<div style={{margin: 10, width: "100%" }}>
-                  
-                <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
-                  <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
-                  <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
-                  <Skeleton.Button active style={{width: "clamp(250px, 10px + 205vw , 346px)", marginBottom: 10}} />
+                <div className="noNotif" />
 
-                  
-                </div>  : <div>
-                  <div className="noNotif" />
                 <p style={{ textAlign: "center", fontWeight: 700 }}>No Notifications yet</p>
-                </div>
-                
-                }
-                
               </div>
 
             )

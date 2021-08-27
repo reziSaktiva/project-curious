@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, Skeleton } from "antd";
+import { Card } from "antd";
 import { AuthContext } from "../context/auth";
 import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
@@ -37,7 +37,7 @@ export default function NotificationMobile() {
 
   useEffect(() => {
     getNotifications();
-  }, [])
+  }, [user])
 
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
@@ -114,7 +114,6 @@ export default function NotificationMobile() {
                     case "COMMENT":
                       type = "commented";
                       text = "comment";
-                      break;
                     default:
                       break;
                   }
@@ -152,7 +151,7 @@ export default function NotificationMobile() {
                   );
                 })
               ) : (
-              <img alt="no notifications"src={NoNotif} className="centeringButton" style={{height: 200}} />
+              <img src={NoNotif} className="centeringButton" style={{height: 200}} />
               )
             )
             }

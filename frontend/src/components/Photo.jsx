@@ -8,7 +8,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
     return (
         <div style={{width: "100%"}}>
             {photo ? (
-          photo.length === 1 ? (
+          photo.length == 1 ? (
             <div>
               {photo[0].split(".")[5].split("?")[0] === "mp4" ? (
                 <video className="hover_media" controls style={{ borderRadius: 10, maxHeight: 300}} width={"100%"}>
@@ -29,7 +29,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
         ) : null}
 
         {photo ? (
-          photo.length === 2 ? (
+          photo.length == 2 ? (
             <table className="row-card-2">
               <tbody>
                 <tr>

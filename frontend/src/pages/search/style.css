@@ -43,13 +43,10 @@
   box-shadow: 0px 1px #F4F4F4;
   border: 1px solid #F4F4F4;
 }
-@media (max-width: 600px) {
 
-  .list-place::-webkit-scrollbar {
-    display: none;
-  }
+.list-place::-webkit-scrollbar {
+  display: none;
 }
-
 
 .list-place .item-place__image {
   width: 100%;

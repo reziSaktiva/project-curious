@@ -19,7 +19,7 @@ const AppBar = props => {
             </button>
             }
           </Col>
-          <Col span={12} style={{textAlign: "center", marginTop: "8px" }}>
+          <Col span={12} style={{textAlign: "center", }}>
             <h4>{title}</h4>
           </Col>
           <Col span={6} style={{textAlign: "right", display: 'flex', flexDirection:'row-reverse', alignItems: 'center'}}>
