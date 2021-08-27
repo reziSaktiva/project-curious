@@ -86,12 +86,12 @@ const Sidebar = () => {
             title={
               <Link to="/maps">
                 {" "}
-                {windowWidth > 993 ? (
+                {windowWidth > 1024 &&
                   <div>
                     <img src={Pin} style={{ width: 20, marginTop: -5 }} />
                     {address}
                   </div>
-                ) : null}
+                }
                 
               </Link>
             }
@@ -116,7 +116,7 @@ const Sidebar = () => {
               expandIcon=" "
               key="Room"
               icon={<div className="sidebar-room" style={{display: 'inline',  position:'relative', top:8, marginRight: 9}}><RoomIcon /></div>}
-              title="Available Room"
+              title={windowWidth > 1024 &&"Available Room"}
             >
               <Menu.Item key="/Insvire E-Sport" className="sidebar-sub">
                 <Link to="/Insvire E-Sport">Insvire E-Sport</Link>

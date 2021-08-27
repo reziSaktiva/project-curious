@@ -176,7 +176,7 @@ export default function SinglePost(props) {
     const newComment = comment ? comment.substring(comment.indexOf(':')+1) : ''
     const finalComment = newComment === undefined ? comment : newComment
     
-    const isReply = form.getFieldValue(["comment"]).includes(reply.username && reply.id)
+    const isReply = form.getFieldValue(["comment"]) && form.getFieldValue(["comment"]).includes(reply.username && reply.id) || false
 
     if(!isReply){
       setReply({username: null, id: null})

@@ -261,6 +261,8 @@ body {
 }
 
 /* SIDE BAR */
+
+
 .ant-menu-sub.ant-menu-inline {
   background-color:#FAFAFA;
 }
@@ -312,6 +314,13 @@ body {
 .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
   border-right: none;
 }
+
+
+.ant-menu-submenu.ant-menu-submenu-vertical >  .ant-menu-submenu-title span {
+    color: white; 
+  }
+
+
 .profilefoto{
   height: 60px;
   width: 60px;
@@ -442,7 +451,7 @@ body {
   transform: translateX(0);
   display: block;
 }
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 667px) {
   .notifmobilecoy.open {
     transform: translateX(0);
     display: none;

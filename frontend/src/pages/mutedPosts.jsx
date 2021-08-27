@@ -35,7 +35,9 @@ function MutedPost() {
       const handleNotif = () => {
         setNavMobileOpen(true)
       }
-
+      const handleBackdropClose = () => {
+        setBurger({ toggle: false })
+      }
       useEffect(() => {
           setPathname(path)
       }, [])
@@ -56,9 +58,7 @@ function MutedPost() {
             return;
         }
     }, [data, _isMounted])
-    const handleBackdropClose = () => {
-        setBurger({ toggle: false })
-      }
+
     return (
         <div>
             <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
