@@ -180,7 +180,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications, room, pathname, loginLoader, locationEP } = state
+  const { user, facebookData, googleData, liked, notifications, room, pathname, loginLoader, locationEP, locationAllow } = state
 
   // Mutations
   const [
@@ -357,6 +357,7 @@ export function AuthProvider(props) {
       pathname,
       loginLoader,
       locationEP,
+      locationAllow,
       setLocationEP,
       setLoginLoader,
       setRoom,

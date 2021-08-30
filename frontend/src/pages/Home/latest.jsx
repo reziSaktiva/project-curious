@@ -17,6 +17,7 @@ import AdSense from 'react-adsense';
 import No_result from '../../assets/Noresults/No_posts_home_Profile.png'
 
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import LocationNotAllowed from '../Error/LocationNotAllowed'
 
 
 
@@ -26,7 +27,7 @@ function Latest() {
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loading } = useContext(PostContext)
-    const { user, setPathname } = useContext(AuthContext)
+    const { user, setPathname, locationAllow } = useContext(AuthContext)
 
     useEffect(() => {
         setPathname(history)
@@ -67,14 +68,27 @@ function Latest() {
     return (
         <div style={{ height: "100%" }} key="latest">
             {user ? (<InfiniteScroll isLoading={loadingPosts} >
-                {!_isMounted.current && <SkeletonLoading />}
+                {!_isMounted.current && !locationAllow  && <div>
+                            <h1>Please Enable your location ,because our post are base on your location</h1>
+                            <details>
+                                <summary>1</summary>
+                                <summary>1</summary>
+                                <summary>1</summary>
+                           
+                            </details>
+                        </div>}                
+                {!_isMounted.current && locationAllow  && <SkeletonLoading />}
+
                 {(_isMounted.current && !loading && !posts.length) ? (
+                    !locationAllow? (<LocationNotAllowed />) : (
                     <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                        <img src={No_result} style={{ width: 300 }} />
-                        <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
-                        <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
-                        <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
-                    </div>
+                                            <img src={No_result} style={{ width: 300 }} />
+                                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                                        </div>
+                    )
+                    
                 )
                     :
                     <div>

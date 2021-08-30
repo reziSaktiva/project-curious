@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { Route } from 'react-router-dom'
 import { AuthContext } from '../context/auth';
+import { LS_LOCATION } from '../context/constant';
 import nearby from '../pages/Home/nearby';
 
 function HomeRoute({ component: Component, ...rest }) {
@@ -24,7 +25,11 @@ function HomeRoute({ component: Component, ...rest }) {
             }
     }, [])
     function showPosition(position) {
-        console.log(position);
+        const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+        localStorage.setItem(LS_LOCATION, JSON.stringify(location));
         setLocationAllow(true)
     }
     return (
