@@ -1,5 +1,6 @@
 // Modules
 import React, { useReducer, createContext, useEffect, useMemo } from "react";
+import Geocode from 'react-geocode'
 import { useLazyQuery } from "@apollo/client";
 import { get } from "lodash";
 
@@ -252,17 +253,38 @@ export function AuthProvider(props) {
     })
   }
 
-  function getGeoLocation(position) {
-    const location = {
+  async function getGeoLocation(position) {
+    const data = {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     };
 
-    localStorage.setItem(LS_LOCATION, JSON.stringify(location));
+    const location = await Geocode.fromLatLng(data.lat, data.lng).then(
+      (response) => {
+        const address = response.results[0].address_components[1].short_name;
+        return address
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+
+    console.log({
+      ...data,
+      location
+    });
+
+    localStorage.setItem(LS_LOCATION, JSON.stringify({
+      ...data,
+      location
+    }));
 
     dispatch({
       type: GET_LOCATION,
-      payload: location,
+      payload: {
+        ...data,
+        location
+      },
     });
   }
 

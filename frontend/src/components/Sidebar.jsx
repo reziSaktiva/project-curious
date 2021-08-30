@@ -4,7 +4,6 @@ import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../context/auth";
 
 //location
-import Geocode from "react-geocode";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
@@ -39,17 +38,10 @@ const Sidebar = () => {
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;
-  if (location) {
-    Geocode.fromLatLng(location.lat, location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddress(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
+
+  useEffect(() => {
+    setAddress(location.location)
+  }, [location])
   return (
     <React.Fragment>
       {/* Sidebar */}
