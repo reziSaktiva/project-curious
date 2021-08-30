@@ -154,14 +154,13 @@ const Register = (props) => {
                                         required: true,
                                         message: 'Please input your nickname!',
                                         whitespace: true,
-                                    },
+                                    }
+                                    ,
                                     {
                                         validator(_, value) {
-                                        const regexlength = /^(?=.{8,20}$)/
+                                        const regexlength = /^(?=.{8,20}$)/ 
                                         if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
-                                        const regex_ = /^(?![_.])/
-                                        if ( !(value.match(regex_)) )  return Promise.reject('cant use "_" or "." at the begining ');
-                                        const regex = /^(?=.{8,20}$)(?![_.])[a-zA-Z0-9._]+(?<![])$/
+                                        const regex = /^(?=[a-zA-Z0-9._]{8,20}$)/
                                         if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
                                         else return Promise.resolve();
                                         }

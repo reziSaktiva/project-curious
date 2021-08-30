@@ -87,6 +87,11 @@ function authReducer(state, action) {
         ...state,
         liked: action.payload,
       };
+      case "SET_LOCATION_ALLOW":
+      return {
+        ...state,
+        locationAllow: action.payload,
+      };
     case "CLEAR_ALL_NOTIFICATIONS":
       return {
         ...state,
@@ -225,6 +230,7 @@ export function AuthProvider(props) {
         type: "SET_LIKED_DATA",
         payload: likes,
       });
+      
 
       dispatch({
         type: SET_NOTIFICATIONS,
@@ -266,6 +272,12 @@ export function AuthProvider(props) {
       payload: room
     })
   }
+  function setLocationAllow(location){
+   dispatch({
+    type: "SET_LOCATION_ALLOW",
+    payload: location,
+    })
+  };
 
   function setLoginLoader(loginLoader) {
     dispatch({
@@ -348,6 +360,7 @@ export function AuthProvider(props) {
       setLocationEP,
       setLoginLoader,
       setRoom,
+      setLocationAllow,
       notificationAdded,
       setPathname,
       clearNotifications,
