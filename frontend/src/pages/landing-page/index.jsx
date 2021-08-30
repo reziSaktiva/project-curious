@@ -26,9 +26,9 @@ export default function SignIn(props) {
         setlegal(e.target.innerText)
     }
     let legalKey;
-    if(legal == "Terms of Service" || legal =="Terms") legalKey = <TOU  setOpenModal={setOpenModal} />
-    if(legal == "Privacy Policy") legalKey = <PrivacyPolicy setOpenModal={setOpenModal} />
-    if(legal == "Community Guidelines") legalKey = <CG  setOpenModal={setOpenModal} />
+    if(legal === "Terms of Service" || legal =="Terms") legalKey = <TOU  setOpenModal={setOpenModal} />
+    if(legal === "Privacy Policy") legalKey = <PrivacyPolicy setOpenModal={setOpenModal} />
+    if(legal === "Community Guidelines") legalKey = <CG  setOpenModal={setOpenModal} />
 
   return (
   <div className="landing-container">

@@ -1,7 +1,7 @@
 .replyComment__stick {
   z-index: 1;
   margin-top: 50px;
-  height: 87%;
+  height: 86%;
   position: absolute;
   margin-left: 23px;
   border-left: thick solid #3333;
@@ -9,7 +9,7 @@
 .replyComment__stick-none {
     z-index: 2;
     margin-top: 50px;
-    height: 68%;
+    height: 49%;
     position: absolute;
     margin-left: 23px;
     border-left: thick solid #ececec;

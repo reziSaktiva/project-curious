@@ -65,6 +65,11 @@ const reducer = (state, action) => {
         loading: false,
         likedPosts: action.payload,
       };
+      case "SET_NOTIF_LENGTH":
+        return {
+          ...state,
+          notifLength : action.payload
+        };
     case "SET_SUBSCRIBE_POSTS":
       return {
         ...state,
@@ -149,7 +154,7 @@ const reducer = (state, action) => {
 
       // if (hasReply) {
       //   const match = state.post.comments.findIndex(
-      //     (itm) => itm.id == payload.reply.id
+      //     (itm) => itm.id === payload.reply.id
       //   );
 
       //   if (!match) {
@@ -204,6 +209,7 @@ const reducer = (state, action) => {
           commentsCount: state.post.comments + 1,
         },
       };
+      
     case "DELETE_COMMENT":
       return {
         ...state,
@@ -607,10 +613,11 @@ export const PostContext = createContext({
   newPosts: null,
   loading: false,
   lastIdPosts: null,
-  isMorePost: true,
+  isMorePost: false,
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
+  setNotifLength: () => {},
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
@@ -658,6 +665,7 @@ export const PostProvider = (props) => {
     posts,
     active,
     post,
+    notifLength,
     loading,
     lastIdPosts,
     isMorePost,
@@ -694,6 +702,12 @@ export const PostProvider = (props) => {
     dispatch({
       type: "SET_POST",
       payload: post,
+    });
+  };
+  const setNotifLength = (notifLength) => {
+    dispatch({
+      type: "SET_NOTIF_LENGTH",
+      payload: notifLength,
     });
   };
 
@@ -856,17 +870,21 @@ export const PostProvider = (props) => {
   };
 
   const morePosts = (posts) => {
+    const room = posts[0].room  
+
     setTimeout(() => {
-      if (posts[0].room) {
-        dispatch({
-          type: `MORE_${posts[0].room}`,
-          payload: posts,
-        })
-      } else {
-        dispatch({
-          type: "MORE_POSTS",
-          payload: posts,
-        });
+      if (posts) {
+        if (room) {
+          dispatch({
+            type: `MORE_${room}`,
+            payload: posts,
+          })
+        } else {
+          dispatch({
+            type: "MORE_POSTS",
+            payload: posts,
+          });
+        }
       }
     }, 2000);
   };
@@ -903,18 +921,17 @@ export const PostProvider = (props) => {
       locationRoom = "ROOM_2";
     }
 
-    if (type == "subscribe_posts") {
+    if (type === "subscribe_posts") {
       name = "LIKE_SUBSCRIBE";
-    } else if (type == "muted_posts") {
+    } else if (type === "muted_posts") {
       name = "LIKE_MUTED";
-    } else if (type == "liked_posts") {
+    } else if (type === "liked_posts") {
       name = "LIKE_LIKED";
-    } else if (type == "nearby") {
+    } else if (type === "nearby") {
       name = "LIKE_POST";
-    } else if (type == "detail_post") {
+    } else if (type === "detail_post") {
       name = "LIKE_DETAIL";
     }
-
     if (likeData.isLike) {
       dispatch({
         type: room ? `LIKE_POST_${locationRoom}` : name,
@@ -946,6 +963,8 @@ export const PostProvider = (props) => {
         active,
         isNavMobileOpen,
         isModalActive,
+        notifLength,
+        setNotifLength,
         setModal,
         setPosts,
         setNav,

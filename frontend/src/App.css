@@ -10,7 +10,9 @@ p{
   color: #352A39;
   font-size: clamp(0.1rem, 0.1rem + 2.5vw , 0.9rem);
 }
-
+.ant-cascader-menu {
+  height: 100%;
+}
 
 @font-face {
   font-family: SF Pro Display;
@@ -133,6 +135,14 @@ body {
   height: 30px;
   background-repeat: no-repeat;
 }
+.mute_noPost {
+  background-image: url('./assets/Noresults/No_mutedPosts_sidebar.png');
+  background-size: contain;
+  object-fit: cover;
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+}
 .settings{
   background-image: url('./assets/seticon.png');
   height: 30px;
@@ -251,6 +261,8 @@ body {
 }
 
 /* SIDE BAR */
+
+
 .ant-menu-sub.ant-menu-inline {
   background-color:#FAFAFA;
 }
@@ -302,6 +314,13 @@ body {
 .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after{
   border-right: none;
 }
+
+
+.ant-menu-submenu.ant-menu-submenu-vertical >  .ant-menu-submenu-title span {
+    color: white; 
+  }
+
+
 .profilefoto{
   height: 60px;
   width: 60px;
@@ -309,7 +328,13 @@ body {
   border-radius: 50%;
   margin-top: 10px;
 }
-
+/* CHAT */
+.chat_img {
+ background-image: url('./assets/Noresults/No_messages.png');
+ max-width: 300px;
+ width: 100%;
+ background-size: contain;
+}
 /* NAV BAR */
 .radio-center {
   margin-top: 6px;
@@ -426,7 +451,7 @@ body {
   transform: translateX(0);
   display: block;
 }
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 667px) {
   .notifmobilecoy.open {
     transform: translateX(0);
     display: none;

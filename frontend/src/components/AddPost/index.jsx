@@ -29,7 +29,8 @@ import { CREATE_POST } from '../../GraphQL/Mutations'
 // Init Firebase
 import firebase from 'firebase/app'
 import 'firebase/storage'
-import { AuthContext } from "../../context/auth";
+import Photo from "../Photo";
+
 const storage = firebase.storage()
 
 const { Panel } = Collapse;
@@ -148,20 +149,7 @@ export default function ModalPost() {
     }
   )
 
-  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, lat, lng, uploaded } = state;
-
-  ///////// location /////////
-  function showPosition(position) {
-    setState({
-      ...state,
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
-    })
-  }
-
-  useEffect(() => {
-    if (isOpenNewPost) navigator.geolocation.getCurrentPosition(showPosition)
-  }, [isOpenNewPost]);
+  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, uploaded } = state;
 
   useEffect(() => {
     if (repost) {
@@ -171,6 +159,7 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (isOpenNewPost && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
+      const { lat, lng } = location
       const { text = '' } = state;
       const variables = {
         text,
@@ -315,7 +304,7 @@ export default function ModalPost() {
                 </Radio.Button>
 
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="BMW Club Bandung" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
-                  <img src={Bmw} style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
+                  <img src={Bmw} alt="room Picture" style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
                   <div style={{ display: 'inline-block' }}>
                     <h4 style={{ fontWeight: "bold" }}>BMW Club Bandung</h4>
                     <p style={{ fontSize: 12, marginTop: -15 }}>masuk clubnya walau belom punya mobilnya</p>
@@ -353,112 +342,7 @@ export default function ModalPost() {
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
                   
-                  {getPost.media ? (
-          getPost.media.length == 1 ? (
-            <Image
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                objectFit: "cover",
-                maxHeight: 300,
-              }}
-              src={getPost.media}
-            />
-          ) : null
-        ) : null}
-
-        {getPost.media ? (
-          getPost.media.length == 2 ? (
-            <table className="row-card-2">
-              <tbody>
-                <tr>
-                  <Image.PreviewGroup>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={getPost.media[0]}
-                      />
-                    </td>
-                    <td>
-                      <Image
-                        style={{ borderRadius: "0px 10px 10px 0px" }}
-                        src={getPost.media[1]}
-                      />
-                    </td>
-                  </Image.PreviewGroup>
-                </tr>
-              </tbody>
-            </table>
-          ) : null
-        ) : null}
-
-        {getPost.media ? (
-          getPost.media.length >= 3 ? (
-            <table className="photo-grid-3">
-              <Image.PreviewGroup>
-                <tbody>
-                  <tr style={{ margin: 0, padding: 0 }}>
-                    <td
-                      rowspan="2"
-                      style={{ width: "50%", verticalAlign: "top" }}
-                    >
-                      <Image
-                        className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
-                        src={getPost.media[0]}
-                      />
-                    </td>
-                    <td style={{ width: "50%" }}>
-                      <Image
-                        className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
-                        src={getPost.media[1]}
-                      />
-                      <div
-                        className="text-container"
-                        style={{ marginTop: "-6px" }}
-                      >
-                        <Image
-                          className="pict3-3"
-                          style={
-                            getPost.media.length > 3
-                              ? {
-                                  borderRadius: "0px 0px 10px 0px",
-                                  filter: "blur(2px)",
-                                }
-                              : { borderRadius: "0px 0px 10px 0px" }
-                          }
-                          src={getPost.media[2]}
-                        />
-                        <div className="text-center">
-                          {getPost.media.length > 3
-                            ? "+" + (getPost.media.length - 3)
-                            : null}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {getPost.media.length > 3 ? (
-                    <div>
-                      <Image
-                        className="pict3-3"
-                        style={{ display: "none" }}
-                        src={getPost.media[3]}
-                      />
-                      {getPost.media.length > 4 ? (
-                        <Image
-                          className="pict3-3"
-                          style={{ display: "none" }}
-                          src={getPost.media[4]}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null}
-                </tbody>
-              </Image.PreviewGroup>
-            </table>
-          ) : null
-        ) : null}
+                  <Photo photo={getPost.media} />
 
                   
                 </Card>

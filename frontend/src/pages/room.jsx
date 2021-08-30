@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
 import NavBar from '../components/NavBar'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import No_result from '../assets/NoResults/No_posts.png'
+import No_result from '../assets/Noresults/No_posts_home_Profile.png'
 import SkeletonLoading from '../components/SkeletonLoading'
 import InfiniteScroll from '../components/InfiniteScroll'
 
@@ -55,9 +55,9 @@ function Room(props) {
     return (
         <div>
             <NavBar />
-            {_isMounted.current && <SkeletonLoading />}
+            {!_isMounted.current && <SkeletonLoading />}
             <InfiniteScroll isLoading={loadingPosts}>
-            {room === "/Insvire E-Sport" ? (user ? (room_1.length == 0 ? (
+            {room === "/Insvire E-Sport" ? (user ? (room_1.length === 0 ? (
                 <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
                     <img src={No_result} style={{ width: 300 }} />
                     <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
@@ -73,7 +73,7 @@ function Room(props) {
                                 {!isMuted && <PostCard post={post} loading={loading} />}
                             </div>
                     )
-                })) : null) : (user ? (room_2.length == 0 ? (
+                })) : null) : (user ? (room_2.length === 0 ? (
                     (
                         <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
                             <img src={No_result} style={{ width: 300 }} />

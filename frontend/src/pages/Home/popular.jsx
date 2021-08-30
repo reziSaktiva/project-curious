@@ -10,7 +10,7 @@ import { AuthContext } from '../../context/auth'
 
 import { getRangeSearch, getSession } from '../../util/Session';
 import SkeletonLoading from '../../components/SkeletonLoading'
-import No_result from '../../assets/NoResults/No_posts.png'
+import No_result from '../../assets/Noresults/No_posts_home_Profile.png'
 import { useHistory } from 'react-router-dom'
 
 
@@ -70,7 +70,7 @@ function Popular() {
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`} style={key == 0 ? { marginTop: 16 } : { marginTop: 0 }}>
+                            <div key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 } : { marginTop: 0 }}>
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )

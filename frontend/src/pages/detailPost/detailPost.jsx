@@ -174,9 +174,9 @@ export default function SinglePost(props) {
   const onFinish = async value => {
     const { comment } = value;
     const newComment = comment ? comment.substring(comment.indexOf(':')+1) : ''
-    const finalComment = newComment == undefined ? comment : newComment
+    const finalComment = newComment === undefined ? comment : newComment
     
-    const isReply = form.getFieldValue(["comment"]).includes(reply.username && reply.id)
+    const isReply = form.getFieldValue(["comment"]) && form.getFieldValue(["comment"]).includes(reply.username && reply.id) || false
 
     if(!isReply){
       setReply({username: null, id: null})
@@ -325,7 +325,7 @@ export default function SinglePost(props) {
  
          </Skeleton>
        </List.Item>
-       {post && post.comments && post.comments.length == 0 ? (
+       {post && post.comments && post.comments.length === 0 ? (
          null) :
           <Comments post={post} loading={loading} user={user} setReply={setReply} form={form} />}
        <Form
@@ -383,6 +383,7 @@ export default function SinglePost(props) {
                  ]}
                >
                  <Input
+                 showCount maxLength={250}
                  name="comment"
                    placeholder="Write your comment..."
                    style={{ borderRadius: 15, width:'100%', height:30, }}

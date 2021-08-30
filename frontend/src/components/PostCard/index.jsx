@@ -28,7 +28,6 @@ import "./style.css";
 import { MAP_API_KEY } from "../../util/ConfigMap";
 import Modal from "../Modal";
 import BackDrop from "../BackDrop";
-import ImgPreview from "../ImgPreview";
 
 Geocode.setApiKey(MAP_API_KEY);
 
@@ -145,7 +144,7 @@ export default function PostCard({ post, loading, type }) {
                     <img src={Pin} style={{ width: 15, marginTop: -4 }} />
                     {address}
                   </Link>
-                  {userName == post.owner && (
+                  {userName === post.owner && (
                     <div
                       style={{
                         width: 60,
@@ -226,7 +225,7 @@ export default function PostCard({ post, loading, type }) {
               <img src={Pin} style={{ width: 15, marginTop: -4 }} />
               {repostAddress}
             </Link>
-            {userName == post.owner && (
+            {userName === post.owner && (
               <div
                 style={{
                   width: 60,

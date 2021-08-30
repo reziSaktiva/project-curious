@@ -107,17 +107,16 @@ export default function EditProfile() {
 
             <Form.Item
             rules={[
-              // {
-              //     required: true,
-              //     message: 'Please ENter Your Username',
-              // },
+              {
+                  required: true,
+                  message: 'Please Enter Your Username',
+              }
+              ,
               {
                 validator(_, value) {
-                  const regexlength = /^(?=.{8,20}$)/
+                  const regexlength = /^(?=[a-zA-Z0-9]{8,20}$)/
                   if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
-                  const regex_ = /^(?![_.])/
-                  if ( !(value.match(regex_)) )  return Promise.reject('cant use "_" or "." at the begining ');
-                  const regex = /^(?=.{8,20}$)(?![_.])[a-zA-Z0-9._]+(?<![])$/
+                  const regex = /^(?=[._]$)/
                   if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
                   else return Promise.resolve();
                 }

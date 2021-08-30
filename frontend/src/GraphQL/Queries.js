@@ -23,7 +23,6 @@ export const GET_ROOM_POSTS = gql`
   query getPosts($room: String!) {
     getRoomPosts(room:$room){
       ...PostDetail
-      room
     }
   }
   ${postDetailFragment}

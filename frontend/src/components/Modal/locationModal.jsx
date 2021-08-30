@@ -1,7 +1,7 @@
 import React from 'react'
 import './style.css'
 
-export default function Modal({title, handleYes, deleteModal, setDeleteModal}) {
+export default function LocationModal({title, handleYes, deleteModal, setDeleteModal}) {
     const handleClose = () => setDeleteModal(false)
 console.log(deleteModal);
     let classes = "modal-bg"
@@ -12,16 +12,9 @@ console.log(deleteModal);
     return (
         <>
         <div className={classes}>
-            
             <div className="modal">
-                <p>Are you sure want to {title}?</p>
+                <p>Please Enable Location Setting, for best exprerience</p>
                 <div className="btn-container">
-                    <button
-                     className="modal-btn__footer"
-                      onClick={handleClose}
-                     style={{borderRadius: "0px 0px 0px 15px"}}>
-                         No
-                    </button>
                     <button 
                     onClick={handleYes}
                     className="modal-btn__footer"

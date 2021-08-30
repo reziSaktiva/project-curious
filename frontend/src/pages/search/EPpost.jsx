@@ -23,7 +23,8 @@ export default function EPpost() {
         toggle: !prevState.toggle
       }
     })
-
+  }
+  
   const handleNotif = () => {
     setNavMobileOpen(true)
   }
@@ -35,8 +36,7 @@ export default function EPpost() {
       <div>
         <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} location="visited" />
       </div>
-      {active == 'latest' ? <Latest postsLocation={locationEP} /> : <Popular postsLocation={locationEP} />}
+      {active === 'latest' ? <Latest postsLocation={locationEP} /> : <Popular postsLocation={locationEP} />}
     </div>
   );
-}
 }

@@ -1,52 +1,44 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect } from "react";
+import { get } from "lodash";
+import { useQuery } from "@apollo/client";
+import PostCard from "../components/PostCard/index";
+import InfiniteScroll from "../components/InfiniteScroll";
 
-import NavBar from '../components/NavBar'
-import SidebarMobile from '../components/SidebarMobile'
-import BackDrop from '../components/BackDrop'
-import NotificationMobile from '../components/NotificationMobile'
-import { PostContext } from "../context/posts";
-import Popular from "./popular";
-import Latest from './latest'
+import { GET_POSTS_BASED_ON_NEAREST_LOC } from "../GraphQL/Queries";
+import { AuthContext } from "../context/auth";
 
-const NearbyPost = () => {
-  const { setNavMobileOpen, active } = useContext(PostContext)
-  const [burger, setBurger] = useState({
-    toggle: false
-  })
+const NearbyPost = (props) => {
+  const { user } = useContext(AuthContext)
+  const lat = JSON.parse(localStorage.location).lat;
+  const lng = JSON.parse(localStorage.location).lng;
 
-  const handleBurger = () => {
-    setBurger(prevState => {
-      return {
-        toggle: !prevState.toggle
-      }
-    })
-  }
-  const handleNotif = () => {
-    setNavMobileOpen(true)
-  }
-  const handleBackdropClose = () => {
-    setBurger({ toggle: false })
-  }
+  const { data, loading: loadingPosts } = useQuery(
+    GET_POSTS_BASED_ON_NEAREST_LOC,
+    {
+      variables: { lat: lat.toString(), lng: lng.toString() },
+    }
+  );
 
-  let Component;
-  switch (active) {
-    case "latest" :
-      Component = <Latest />
-      break;
-    case "popular":
-      Component = <Popular />
-      break;
-    default:
-      break;
-  }
+  const posts = get(data, "getPostBasedOnNearestLoc") || [];
+
+  if (loadingPosts) return <div>loading...</div>;
+
   return (
     <div>
-      <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
-      <NotificationMobile />
-      <SidebarMobile show={burger.toggle} />
-
-      {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
-      {Component}
+      <InfiniteScroll isLoading={loadingPosts}>
+        {!posts
+          ? null
+          : posts.map((post, key) => {
+              return user &&
+                post.muted.find((mute) => mute.owner === user.username) ? (
+                <div key={`posts${post.id} ${key}`}></div>
+              ) : (
+                <div key={`posts${post.id} ${key}`}>
+                  <PostCard post={post} loading={loadingPosts} />
+                </div>
+              );
+            })}
+      </InfiniteScroll>
     </div>
   );
 };

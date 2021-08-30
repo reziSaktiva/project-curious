@@ -33,6 +33,7 @@ const initialState = {
   location: "",
   liked: [],
   notifications: [],
+  locationEP: null,
   room: null,
   facebookData: null,
   googleData: null,
@@ -40,7 +41,7 @@ const initialState = {
   loginLoader: false
 };
 
-const { location, user } = Session({ onLogout: () => {} });
+const { location, user } = Session({ onLogout: () => { } });
 
 // Reinit Users
 initialState.user = user;
@@ -58,6 +59,11 @@ function authReducer(state, action) {
           location: action.payload,
         },
       };
+    case "SET_EP_LOCATION":
+      return {
+        ...state,
+        locationEP: action.payload
+      }
     case SET_PROFILE_PICTURE:
       return {
         ...state,
@@ -72,17 +78,22 @@ function authReducer(state, action) {
         notifications: action.payload,
       };
     case LOGIN_LOADER:
-        return {
-          ...state,
-          loginLoader: action.payload,
-        }
+      return {
+        ...state,
+        loginLoader: action.payload,
+      }
     case "SET_LIKED_DATA":
       return {
         ...state,
         liked: action.payload,
       };
+      case "SET_LOCATION_ALLOW":
+      return {
+        ...state,
+        locationAllow: action.payload,
+      };
     case "CLEAR_ALL_NOTIFICATIONS":
-      return{
+      return {
         ...state,
         notifications: []
       }
@@ -96,7 +107,7 @@ function authReducer(state, action) {
         ...state,
         facebookData: action.payload,
       };
-      case REGISTER_WITH_GOOGLE:
+    case REGISTER_WITH_GOOGLE:
       return {
         ...state,
         googleData: action.payload,
@@ -119,7 +130,7 @@ function authReducer(state, action) {
     case NOTIFICATIONS_READ:
       return {
         ...state,
-        notifications : action.payload
+        notifications: action.payload
       }
     case NOTIFICATION_READ:
       return {
@@ -169,7 +180,7 @@ export function AuthProvider(props) {
   // Check Sessions
   const { token } = Session({ onLogout: logout });
 
-  const { user, facebookData, googleData, liked, notifications, room, pathname, loginLoader } = state
+  const { user, facebookData, googleData, liked, notifications, room, pathname, loginLoader, locationEP } = state
 
   // Mutations
   const [
@@ -209,7 +220,7 @@ export function AuthProvider(props) {
       const user = get(data, "getUserData.user", {});
       const notifications = get(data, "getUserData.notifications", []);
       const likes = get(data, "getUserData.liked", []);
-      
+
       dispatch({
         type: SET_USER_DATA,
         payload: user,
@@ -219,6 +230,7 @@ export function AuthProvider(props) {
         type: "SET_LIKED_DATA",
         payload: likes,
       });
+      
 
       dispatch({
         type: SET_NOTIFICATIONS,
@@ -227,7 +239,14 @@ export function AuthProvider(props) {
     }
   }, [loading, data]);
 
-  function clearNotifications(){
+  function setLocationEP(location) {
+    dispatch({
+      type: "SET_EP_LOCATION",
+      payload: location
+    })
+  }
+
+  function clearNotifications() {
     dispatch({
       type: "CLEAR_ALL_NOTIFICATIONS"
     })
@@ -246,13 +265,19 @@ export function AuthProvider(props) {
       payload: location,
     });
   }
-  
-  function setRoom(room){
+
+  function setRoom(room) {
     dispatch({
       type: SET_ROOM,
       payload: room
     })
   }
+  function setLocationAllow(location){
+   dispatch({
+    type: "SET_LOCATION_ALLOW",
+    payload: location,
+    })
+  };
 
   function setLoginLoader(loginLoader) {
     dispatch({
@@ -296,7 +321,7 @@ export function AuthProvider(props) {
     })
   }
 
-  function readAllNotificatons(data){
+  function readAllNotificatons(data) {
     dispatch({
       type: NOTIFICATIONS_READ,
       payload: data
@@ -331,8 +356,11 @@ export function AuthProvider(props) {
       room,
       pathname,
       loginLoader,
+      locationEP,
+      setLocationEP,
       setLoginLoader,
       setRoom,
+      setLocationAllow,
       notificationAdded,
       setPathname,
       clearNotifications,
