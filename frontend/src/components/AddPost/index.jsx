@@ -159,14 +159,13 @@ export default function ModalPost() {
 
   useEffect(() => {
     if (isOpenNewPost && !!uploaded.length || (state.text && !uploaded.length && isFinishUpload)) {
-      const { lat, lng } = location
+      const data = location
       const { text = '' } = state;
       const variables = {
         text,
         media: uploaded,
         location: {
-          lat,
-          lng
+          ...data
         },
         repost: repost.repost || '',
         roomRepost: repost.room || '',
