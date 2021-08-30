@@ -269,7 +269,9 @@ export function AuthProvider(props) {
       }
     );
 
-    console.log({
+    console.log(
+      "hi",{
+      
       ...data,
       location
     });

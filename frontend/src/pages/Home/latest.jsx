@@ -68,15 +68,7 @@ function Latest() {
     return (
         <div style={{ height: "100%" }} key="latest">
             {user ? (<InfiniteScroll isLoading={loadingPosts} >
-                {!_isMounted.current && !locationAllow  && <div>
-                            <h1>Please Enable your location ,because our post are base on your location</h1>
-                            <details>
-                                <summary>1</summary>
-                                <summary>1</summary>
-                                <summary>1</summary>
-                           
-                            </details>
-                        </div>}                
+                {!_isMounted.current && !locationAllow  && <LocationNotAllowed />}                
                 {!_isMounted.current && locationAllow  && <SkeletonLoading />}
 
                 {(_isMounted.current && !loading && !posts.length) ? (

@@ -25,7 +25,7 @@ export default function LocationModal({title, locationAllow, handleYes, deleteMo
                     onClick={() => window.open("chrome://settings/content/location")}
                     className="modal-btn__footer"
                     
-                    style={{borderRadius: "0px 0px 15px 15px"}}>
+                    style={{borderRadius: "0px 0px 15px 15px", width: "100%"}}>
                         Yes
                     </button>
                 </div>
