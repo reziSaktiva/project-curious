@@ -42,6 +42,7 @@ module.exports = gql`
     type LatLong {
         lat: Float
         lng: Float
+        location: String
     }
     type GeoLocation {
         administrative_area_level_4: String
@@ -186,6 +187,7 @@ module.exports = gql`
     input Location {
         lat: Float
         lng: Float
+        location: String
     }
     input Data {
         repost: String
