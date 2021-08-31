@@ -30,6 +30,7 @@
     "react-facebook-login": "^4.1.1",
     "react-geocode": "^0.2.2",
     "react-infinite-scroll-component": "^5.1.0",
+    "react-mentions": "^4.3.0",
     "react-minimal-side-navigation": "^1.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",

@@ -41,7 +41,8 @@ export default function Comments({ post, loading, user, setReply, form }) {
         })
 
         form.setFieldsValue({
-            comment: `Reply to ${item.displayName}: `
+            comment: '@[Walter ujang](walter)'
+            // comment: `Reply to ${item.displayName}: `
         })
     }
 
@@ -113,10 +114,6 @@ export default function Comments({ post, loading, user, setReply, form }) {
                         <div className="descriptionContent">
                             <p> {moment(comment.createdAt).fromNow()}
                                 <Button type="link" className="replyComment__button" onClick={() => handleReply(comment)}>
-
-
-      
-
                                     Reply
                                 </Button>
                             </p>
