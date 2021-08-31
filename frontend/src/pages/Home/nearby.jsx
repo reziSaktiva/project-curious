@@ -48,7 +48,7 @@ const NearbyPost = () => {
     default:
       break;
   }
-  console.log("nearby", locationAllow);
+  
   return (
     <div>
       <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />

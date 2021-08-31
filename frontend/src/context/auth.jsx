@@ -269,13 +269,6 @@ export function AuthProvider(props) {
       }
     );
 
-    console.log(
-      "hi",{
-      
-      ...data,
-      location
-    });
-
     localStorage.setItem(LS_LOCATION, JSON.stringify({
       ...data,
       location

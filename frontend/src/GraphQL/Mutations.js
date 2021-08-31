@@ -128,7 +128,11 @@ export const MUTE_POST = gql`
 export const GET_MORE_MORE_FOR_YOU = gql`
   mutation nextMoreForYou($id: ID) {
     nextMoreForYou(id: $id) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
@@ -137,7 +141,11 @@ export const GET_MORE_MORE_FOR_YOU = gql`
 export const GET_MORE_POSTS = gql`
   mutation nextPosts($id: ID! $lat: Float! $lng: Float! $range: Float) {
     nextPosts(id: $id, lat:$lat ,lng: $lng, range: $range) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
@@ -146,7 +154,11 @@ export const GET_MORE_POSTS = gql`
 export const GET_MORE_POPULAR = gql`
 mutation nextPopular($id: ID! $lat: Float! $lng: Float! $range: Float) {
   nextPopularPosts(id: $id, lat:$lat ,lng: $lng range: $range) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
