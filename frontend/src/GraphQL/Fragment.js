@@ -79,6 +79,7 @@ export const postDetailFragment = gql`
       repostCount
       likeCount
       room
+      rank
       location {
         lat
         lng

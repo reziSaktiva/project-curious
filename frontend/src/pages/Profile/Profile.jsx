@@ -58,7 +58,7 @@ function Profile() {
   const [address, setAddress] = useState("");
   const [profilePicture, setProfilePicture] = useState(InitialState);
   const { isFinishUpload, url } = profilePicture;
-
+console.log(posts);
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
       setPosts(getProfilePosts.getProfilePosts);
@@ -142,7 +142,7 @@ function Profile() {
         {loading ? (
           <SkeletonLoading />
         ) : (
-          !posts.length ? (
+          !posts ? (
             <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
                 <img src={no_posts} style={{ width: 300}} />
                 <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>

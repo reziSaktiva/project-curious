@@ -8,6 +8,7 @@ module.exports = gql`
         media: [String]
         createdAt: String!
         location: LatLong
+        rank: Int
         likeCount: Int
         commentCount: Int
         repostCount: Int

@@ -24,7 +24,9 @@ import './style.css';
 const libraries = ["places"]
 const mapContainerStyle = {
   width: "100%",
-  height: '70vh'
+  minHeight: '50vh',
+  maxHeight : "70vh",
+  height: '100vh',
 }
 const options = {
   styles: mapStyle,
