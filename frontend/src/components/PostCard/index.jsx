@@ -39,13 +39,12 @@ export default function PostCard({ post, loading, type }) {
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
   const [deleteModal, setDeleteModal] = useState(false)
-  const {loginLoader} = useContext(AuthContext)
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
 
-  const [deletePost, {loading: deletePostLoading}] = useMutation(DELETE_POST, {
-    update(_, { data: { deletePost} }) {
-      
+  const [deletePost, { loading: deletePostLoading }] = useMutation(DELETE_POST, {
+    update(_, { data: { deletePost } }) {
+
       postContext.deletePost(post.id, post.room);
     },
   });
@@ -71,30 +70,13 @@ export default function PostCard({ post, loading, type }) {
 
   useEffect(() => {
     if (post.location) {
-      Geocode.fromLatLng(post.location.lat, post.location.lng).then(
-        (response) => {
-          const address = response.results[0].address_components[1].short_name;
-          setAddress(address);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+      setAddress(post.location.location);
+    };
 
-      if (isRepost) {
-        const { location } = repost;
-        Geocode.fromLatLng(location.lat, location.lng).then(
-          (response) => {
-            const address =
-              response.results[0].address_components[1].short_name;
-            setRepostAddress(address);
-            setRepostData(repost);
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      }
+    if (isRepost) {
+      const { location } = repost;
+      setRepostAddress(location.location);
+      setRepostData(repost);
     }
   }, [post, isRepost]);
 
@@ -104,7 +86,7 @@ export default function PostCard({ post, loading, type }) {
       background: 'white',
       marginBottom: '16px',
       borderRadius: 5
-      }}>
+    }}>
       <List.Item
         key={post.id}
         className="list-actions"
@@ -122,8 +104,8 @@ export default function PostCard({ post, loading, type }) {
                   />
                 </div>
                 <div className="action-post__item">
-                  <Link to={post.room ? `/room/${post.room}/${post.id}` : `/post/${post.id}` }>
-                  <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
+                  <Link to={post.room ? `/room/${post.room}/${post.id}` : `/post/${post.id}`}>
+                    <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
                   </Link>
                 </div>
                 <div className="action-post__item">
@@ -134,7 +116,7 @@ export default function PostCard({ post, loading, type }) {
           ]
         }
       >
-        
+
         <List.Item.Meta
           title={
             <div>
@@ -175,7 +157,7 @@ export default function PostCard({ post, loading, type }) {
                         {!post.room && (<Menu.Item
                           key="1"
                           onClick={() =>
-                            mutePost({ variables: { postId: post.id, room: post.room} })
+                            mutePost({ variables: { postId: post.id, room: post.room } })
                           }
                         >
                           {isMuted ? "Unmute" : "Mute"}
@@ -198,9 +180,9 @@ export default function PostCard({ post, loading, type }) {
                       onClick={(e) => e.preventDefault()}
                     >
                       <DropIcon />
-                      
+
                     </a>
-                    
+
                   </Dropdown>
                 </Col>
               </Row>
@@ -241,28 +223,28 @@ export default function PostCard({ post, loading, type }) {
               </div>
             )}
             <span style={{ fontSize: 12 }}>
-              {<div style={{marginBottom: 16}}>{moment(repost.createdAt).fromNow()}</div>}
+              {<div style={{ marginBottom: 16 }}>{moment(repost.createdAt).fromNow()}</div>}
             </span>
             {repost.media && <Photo photo={repost.media} />}
             <div style={{ marginTop: 5 }}>{repost.text}</div>
-            
+
           </Card>
         )}
-        
+
         <p style={{ marginTop: -9 }}>{post.text}</p>
         {/* {
           loginLoader && <ImgPreview photo={media} />
         } */}
-        {deletePostLoading && <BackDrop ><LoadingOutlined style={{fontSize: 50}} /></BackDrop> }   
+        {deletePostLoading && <BackDrop ><LoadingOutlined style={{ fontSize: 50 }} /></BackDrop>}
         <Photo photo={media} />
         <Modal title="delete this post"
-         deleteModal={deleteModal}
+          deleteModal={deleteModal}
           setDeleteModal={setDeleteModal}
           handleYes={() => {
-          deletePost({ variables: { id: post.id, room: post.room }})
-          setDeleteModal(false)
-          }}/>
-        
+            deletePost({ variables: { id: post.id, room: post.room } })
+            setDeleteModal(false)
+          }} />
+
       </List.Item>
     </List>
   );
