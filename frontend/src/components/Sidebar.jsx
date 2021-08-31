@@ -40,7 +40,7 @@ const Sidebar = () => {
   const location = loc ? JSON.parse(loc) : null;
 
   useEffect(() => {
-    setAddress(location.location)
+    if(location) setAddress(location.location);
   }, [location])
   return (
     <React.Fragment>

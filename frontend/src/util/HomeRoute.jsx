@@ -41,11 +41,7 @@ function HomeRoute({ component: Component, ...rest }) {
             }
         );
 
-        localStorage.setItem(LS_LOCATION, JSON.stringify({
-            ...data,
-            location
-        }));
-
+        localStorage.setItem(LS_LOCATION, JSON.stringify({ ...data, location }));
         setLocationAllow(true)
     }
     return (

@@ -65,22 +65,25 @@ function Latest() {
             return;
         }
     }, [data, _isMounted])
+    console.log("testtttt", loadingPosts);
     return (
         <div style={{ height: "100%" }} key="latest">
-            {user ? (<InfiniteScroll isLoading={loadingPosts} >
-                {!_isMounted.current && !locationAllow  && <LocationNotAllowed />}                
-                {!_isMounted.current && locationAllow  && <SkeletonLoading />}
+            {user ? (
+                !locationAllow ? <LocationNotAllowed /> : 
+            <InfiniteScroll isLoading={loadingPosts} >
+                {!_isMounted.current && !locationAllow && <LocationNotAllowed />}
+                {!_isMounted.current && locationAllow && <SkeletonLoading />}
 
                 {(_isMounted.current && !loading && !posts.length) ? (
-                    !locationAllow? (<LocationNotAllowed />) : (
-                    <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                                            <img src={No_result} style={{ width: 300 }} />
-                                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
-                                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
-                                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
-                                        </div>
+                    !locationAllow ? (<LocationNotAllowed />) : (
+                        <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                            <img src={No_result} style={{ width: 300 }} />
+                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                        </div>
                     )
-                    
+
                 )
                     :
                     <div>
@@ -93,25 +96,20 @@ function Latest() {
                                         <div className="postCard_container" key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 } : { marginTop: 0 }} >
                                             {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                                         </div>
-                                        { key > 1 && Math.ceil(key%7) === 0 && 
-                                    // <ins class="adsbygoogle"
-                                    // style="display:block"
-                                    // data-ad-format="fluid"
-                                    // data-ad-layout-key="-gw-3+1f-3d+2z"
-                                    // data-ad-client="ca-pub-9126030075206824"
-                                    // data-ad-slot="1861909959"></ins>
-                                    <AdSense.Google
-                                    client='ca-pub-9126030075206824'
-                                    slot='1861909959'
-                                    style={{ display: 'block' }}
-                                    format='fluid'
-                                    responsive='true'
-                                    layoutKey='-gw-3+1f-3d+2z'
-                                    />
-                                     }
-                        
-                                 </div>
-                                    
+                                        {key > 1 && Math.ceil(key % 7) === 0 &&
+
+                                            <AdSense.Google
+                                                client='ca-pub-9126030075206824'
+                                                slot='1861909959'
+                                                style={{ display: 'block' }}
+                                                format='fluid'
+                                                responsive='true'
+                                                layoutKey='-gw-3+1f-3d+2z'
+                                            />
+                                        }
+
+                                    </div>
+
                                 )
                             })
                         }

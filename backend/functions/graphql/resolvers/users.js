@@ -793,7 +793,7 @@ module.exports = {
             const { googleData: { username, email, imageUrl, token, mobileNumber, gender, birthday, id } } = args
 
             const checkUsername = await db.collection('user').where('username', "==", username).get()
-            if (checkUsername) throw new UserInputError("username has been used")
+            if (!checkUsername.empty) throw new UserInputError("username has been used")
 
             let newUser = {
                 username,

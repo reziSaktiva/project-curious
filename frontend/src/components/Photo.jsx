@@ -17,7 +17,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
               ) : (
             <Image
             onClick={() => setLoginLoader(true)}
-            style={{borderRadius: 10, maxHeight: 300}}
+            style={{borderRadius: 10, maxHeight: 300, objectFit:'cover'}}
              width={"100%"}
                 className="media__container"
               src={photo}

@@ -114,13 +114,13 @@ export default function EditProfile() {
               ,
               {
                 validator(_, value) {
-                  const regexlength = /^(?=[a-zA-Z0-9]{8,20}$)/
-                  if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
-                  const regex = /^(?=[._]$)/
-                  if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
-                  else return Promise.resolve();
+                const regexlength = /^(?=.{8,20}$)/ 
+                if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
+                const regex = /^(?=[a-zA-Z0-9._]{8,20}$)/
+                if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
+                else return Promise.resolve();
                 }
-              }
+            }
           ]}
               name="username"
               className="edit-profile__textfield"

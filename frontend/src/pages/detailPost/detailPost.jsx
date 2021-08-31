@@ -8,6 +8,9 @@ import Comments from './comments'
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { get } from "lodash";
 
+import defaultStyle from './defaultStyle'
+import defaultMentionStyle from './defaultMentionStyle'
+
 import '../../components/PostCard/style.css';
 
 //antd
@@ -23,6 +26,7 @@ import {
   Upload,
   Button,
   Form,
+  Mentions,
 } from "antd";
 
 //component
@@ -33,6 +37,7 @@ import RepostButton from "../../components/Buttons/RepostButton/index";
 import { EllipsisOutlined, PlusOutlined, LoadingOutlined, MessageOutlined } from "@ant-design/icons";
 import Photo from "../../components/Photo";
 import PostNavBar from "../../components/PostNavBar";
+import { MentionsInput, Mention } from 'react-mentions'
 
 // Query
 import { GET_POST } from "../../GraphQL/Queries";
@@ -59,6 +64,7 @@ function getBase64(file) {
 }
 
 export default function SinglePost(props) {
+  const [text, settext] = useState(null)
   const _isMounted = useRef(false)
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const { user } = useContext(AuthContext)
@@ -152,12 +158,19 @@ export default function SinglePost(props) {
       setComment(commentData)
     },
   });
-
+  const mentionSuggest = post.comments.map(data => {
+    return {
+      id: data.id,
+      display: data.displayName
+    }
+  })
   const onFinish = async value => {
     const { comment } = value;
+    const regex = /(?:@[[])/
     const newComment = comment ? comment.substring(comment.indexOf(':') + 1) : ''
     const finalComment = newComment === undefined ? comment : newComment
 
+console.log("apakah match",comment,comment.match(regex));
     const isReply = form.getFieldValue(["comment"]) && form.getFieldValue(["comment"]).includes(reply.username && reply.id) || false
 
     if (!isReply) {
@@ -201,6 +214,7 @@ export default function SinglePost(props) {
   };
 
 
+  const textchange = ({ setValue }) => (ev, newValue) => setValue(newValue)
 
   return (
     <div>
@@ -364,12 +378,21 @@ export default function SinglePost(props) {
                       { required: true, message: "Isi komennya dulu ya broooo!" },
                     ]}
                   >
-                    <Input
-                      showCount maxLength={250}
-                      name="comment"
-                      placeholder="Write your comment..."
-                      style={{ borderRadius: 15, width: '100%', height: 30, }}
+                    {/* <Input
+                 showCount maxLength={250}
+                 name="comment"
+                   placeholder="Write your comment..."
+                   style={{ borderRadius: 15, width:'100%', height:30, }}
+                 /> */}
+                    <MentionsInput
+                     value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
+                    <Mention
+                      trigger="@"
+                      data={mentionSuggest}
+                      style={defaultMentionStyle}
                     />
+                  </MentionsInput>
+
                   </Form.Item>
                   <Form.Item style={{ marginLeft: 10, }}>
                     <Button
