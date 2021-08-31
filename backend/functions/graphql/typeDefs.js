@@ -2,7 +2,7 @@ const gql = require('graphql-tag')
 
 module.exports = gql`
     type Post {
-        id: ID!
+        id: ID
         owner: String!
         text: String!
         media: [String]

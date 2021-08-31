@@ -28,9 +28,9 @@ module.exports = {
         const q = db.collection('posts')
           .orderBy('geohash')
           .orderBy('createdAt', 'desc')
-          .limit(8)
           .startAt(b[0])
-          .endAt(b[1]);
+          .endAt(b[1])
+          .limit(8);
 
         posts.push(q.get());
       }
@@ -60,7 +60,6 @@ module.exports = {
         docs.forEach(async doc => {
           const data = doc.data()
           const { repost: repostId } = data;
-
           const repostData = async () => {
             if (repostId) {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
@@ -163,18 +162,51 @@ module.exports = {
         throw new UserInputError('Lat and Lng is Required')
       }
 
-      const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
-      const docs = data.docs.map((doc) => doc.data())
+      const center = [lat, lng]
+      const radiusInM = range ? range * 1000 : 5000 * 1000
 
-      if (docs.length) {
-        const nearby = []
+      const bounds = geofire.geohashQueryBounds(center, radiusInM);
+      let posts = []
 
-        docs.forEach(async data => {
+      for (const b of bounds) {
+        const q = db.collection('posts')
+          .orderBy('geohash')
+          .orderBy('rank')
+          .startAt(b[0])
+          .endAt(b[1])
+          .limit(8);
+
+        posts.push(q.get());
+      }
+
+      let latest = []
+      try {
+        const docs = await Promise.all(posts).then((snapshots) => {
+          const matchingDocs = [];
+
+          for (const snap of snapshots) {
+            for (const doc of snap.docs) {
+              const lat = doc.get('location').lat;
+              const lng = doc.get('location').lng;
+
+              // We have to filter out a few false positives due to GeoHash
+              // accuracy, but most will match
+              const distanceInKm = geofire.distanceBetween([lat, lng], center);
+              const distanceInM = distanceInKm * 1000;
+              if (distanceInM <= radiusInM) {
+                matchingDocs.push(doc);
+              }
+            }
+          }
+          return matchingDocs;
+        })
+
+        docs.forEach(async doc => {
+          const data = doc.data()
           const { repost: repostId } = data;
-
           const repostData = async () => {
             if (repostId) {
-              const repostData = await db.doc(`/posts/${repostId}`).get()
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
           }
@@ -207,26 +239,14 @@ module.exports = {
 
           const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
-          const { lat: lattitude, lng: longtitude } = newData.location;
-          try {
-
-            const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
-            const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
-
-            const distance = computeDistanceBetween(currentLatLng, contentLocation)
-
-            if ((distance / 1000) <= (range || 5)) { // should be show in range 40 km
-              nearby.push(newData);
-            }
-          } catch (e) {
-            console.log('error : ', e)
-          }
+          latest.push(newData)
         });
-
-        return nearby;
+        console.log(latest);
+        return latest
       }
-
-      return [];
+      catch (err) {
+        console.log(err);
+      }
     },
     async getProfilePosts(_, args, context) {
       const { username } = await fbAuthContext(context)
@@ -413,38 +433,16 @@ module.exports = {
           const commentsPost = await commentCollection.get();
           const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
-          // const recursive = (listOfItem, listFilter, idx) => {
-          //   const roots = listFilter.filter(i => {
-          //     if (idx === 0 && i.reply && i.reply.id === null || idx > 0 && i.reply.id) {
-          //       return i
-          //     }
-          //   });
-
-          //   return roots.map((comment, idx) => {
-          //     const r = listOfItem.filter(item => item.reply && item.reply.id === comment.id);
-
-          //     return {
-          //       ...comment,
-          //       replyList: recursive(listOfItem, r, idx + 1)
-          //     }
-
-          //   })
-          // }
-
-          // const restructureComment = recursive(comments, comments, 0) || comments;
-
           const mutedPost = await mutedCollection.get();
           const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
           const subscribePost = await subscribeCollection.get();
           const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
-          // ('comments: ', restructureComment);
           return {
             ...post,
             repost,
             likes,
-            // comments: await comments(),
             comments: comments,
             muted,
             subscribe,
@@ -673,10 +671,10 @@ module.exports = {
         const q = db.collection('posts')
           .orderBy('geohash')
           .orderBy('createdAt', 'desc')
-          .limit(3)
           .startAfter(doc)
-          .startAt(b[0])
-          .endAt(b[1]);
+          .endAt(b[1])
+          .limit(3)
+
 
         posts.push(q.get());
       }
@@ -686,20 +684,21 @@ module.exports = {
         const docs = await Promise.all(posts).then((snapshots) => {
           const matchingDocs = [];
 
-          for (const snap of snapshots) {
-            for (const doc of snap.docs) {
-              const lat = doc.get('location').lat;
-              const lng = doc.get('location').lng;
-
-              // We have to filter out a few false positives due to GeoHash
-              // accuracy, but most will match
-              const distanceInKm = geofire.distanceBetween([lat, lng], center);
-              const distanceInM = distanceInKm * 1000;
-              if (distanceInM <= radiusInM) {
-                matchingDocs.push(doc);
-              }
+          snapshots.forEach((snap, index) => {
+            if (index === 0) {
+              snap.docs.forEach((doc) => {
+                const lat = doc.get('location').lat;
+                const lng = doc.get('location').lng;
+                // We have to filter out a few false positives due to GeoHash
+                // accuracy, but most will match
+                const distanceInKm = geofire.distanceBetween([lat, lng], center);
+                const distanceInM = distanceInKm * 1000;
+                if (distanceInM <= radiusInM) {
+                  matchingDocs.push(doc);
+                }
+              })
             }
-          }
+          })
           return matchingDocs;
         })
 

@@ -82,6 +82,7 @@ export const postDetailFragment = gql`
       location {
         lat
         lng
+        location
       }
       likes {
         id

@@ -17,8 +17,7 @@ function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
     const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, room_1, room_2, active } = useContext(PostContext)
-    const [hasMore, setHasMore] = useState(true)
+    const { posts, morePosts, room_1, room_2, active, isMorePost, lastIdPosts } = useContext(PostContext)
 
     const { location } = getSession()
     const range = getRangeSearch();
@@ -27,11 +26,6 @@ function ScrollInfinite(props) {
 
     const [nextPosts, { loading: loadingNearby }] = useMutation(GET_MORE_POSTS, {
         update(_, { data: { nextPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -41,11 +35,6 @@ function ScrollInfinite(props) {
 
     const [nextPopular, { loading: loadingPopular }] = useMutation(GET_MORE_POPULAR, {
         update(_, { data: { nextPopularPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -55,11 +44,6 @@ function ScrollInfinite(props) {
 
     const [nextRoom, { loading: loadingRoom }] = useMutation(GET_MORE_ROOM, {
         update(_, { data: { nextRoomPosts: postsData } }) {
-            if (postsData.length < 1) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -69,11 +53,6 @@ function ScrollInfinite(props) {
 
     const [nextMoreForYou, { loading: loadingMoreForYou }] = useMutation(GET_MORE_MORE_FOR_YOU, {
         update(_, { data: { nextMoreForYou: postsData } }) {
-            if (postsData.length < 3) {
-                setHasMore(false)
-            } else {
-                setHasMore(true) 
-            }
             morePosts(postsData)
         },
         onError(err) {
@@ -83,35 +62,37 @@ function ScrollInfinite(props) {
 
     const loadMore = () => {
         const loc = JSON.parse(location)
-        switch (pathname) {
-            case '/Insvire E-Sport':
-                nextRoom({ variables: { id: room_1[room_1.length - 1].id, room: 'Insvire E-Sport' } })
-                break;
-            case '/BMW Club Bandung':
-                nextRoom({ variables: { id: room_2[room_2.length - 1].id, room: 'BMW Club Bandung' } })
-                break;
-            case '/':
-                if (active === 'latest') {
+        if (posts.length) {
+            switch (pathname) {
+                case '/Insvire E-Sport':
+                    nextRoom({ variables: { id: room_1[room_1.length - 1].id, room: 'Insvire E-Sport' } })
+                    break;
+                case '/BMW Club Bandung':
+                    nextRoom({ variables: { id: room_2[room_2.length - 1].id, room: 'BMW Club Bandung' } })
+                    break;
+                case '/':
+                    if (active === 'latest') {
+                        nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                    } else {
+                        nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                    }
+                    break;
+                case '/visited':
+                    if (active === 'latest') {
+                        nextPosts({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                    } else {
+                        nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                    }
+                    break;
+                case '/search':
+                    if (active === 'moreForYou') {
+                        nextMoreForYou({ variables: { id: posts[posts.length - 1].id } })
+                    }
+                    break;
+                default:
                     nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
-                } else {
-                    nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
-                }
-                break;
-            case '/visited':
-                if (active === 'latest') {
-                    nextPosts({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
-                } else {
-                    nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
-                }
-                break;
-            case '/search':
-                if (active === 'moreForYou') {
-                    nextMoreForYou({ variables: { id: posts[posts.length - 1].id } })
-                }
-                break;
-            default:
-                nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
-                break;
+                    break;
+            }
         }
     }
 
@@ -138,7 +119,7 @@ function ScrollInfinite(props) {
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
-                hasMore={hasMore}
+                hasMore={isMorePost}
                 loader={(loading || isLoading) ? loading ?
                     <Skeleton avatar active paragraph={{ rows: 2 }} />
                     : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>) : <Skeleton avatar active paragraph={{ rows: 2 }} />}
