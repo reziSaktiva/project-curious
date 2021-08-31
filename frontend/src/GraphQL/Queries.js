@@ -4,7 +4,11 @@ import { postDetailFragment, userDataFragment } from './Fragment'
 export const MORE_FOR_YOU = gql`
   query {
     moreForYou {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
@@ -13,7 +17,11 @@ export const MORE_FOR_YOU = gql`
 export const GET_POSTS = gql`
   query getPostNearby($lat: Float, $lng: Float, $range: Float) {
     getPosts(lat: $lat, lng: $lng, range: $range) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
@@ -31,7 +39,11 @@ export const GET_ROOM_POSTS = gql`
 export const GET_POPULAR_POSTS = gql`
   query getPosts($lat: Float, $lng: Float $range: Float) {
     getPopularPosts(lat: $lat, lng: $lng range: $range) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}

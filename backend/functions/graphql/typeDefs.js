@@ -140,10 +140,15 @@ module.exports = gql`
     type Subscription {
         notificationAdded(username: String): Notification
     }
+    type dataPost {
+        hasMore: Boolean
+        lastId: ID
+        posts: [Post]
+    }
     type Query {
-        moreForYou: [Post]!
-        getPosts(lat: Float, lng: Float, range: Float): [Post]!
-        getPopularPosts(lat: Float, lng: Float range: Float): [Post]!
+        moreForYou: dataPost
+        getPosts(lat: Float, lng: Float, range: Float): dataPost
+        getPopularPosts(lat: Float, lng: Float range: Float): dataPost
         getVisited: [GeoLocation]
         getProfilePosts: [Post]!
         getRoomPosts(room: String!):[Post]!
@@ -216,10 +221,10 @@ module.exports = gql`
         deleteAccount( id: ID! ): String!
 
         # posts mutation
-        nextPosts( id:ID! lat: Float, lng: Float, range: Float ): [Post]!
+        nextPosts( id:ID! lat: Float, lng: Float, range: Float ): dataPost
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float, range: Float): [Post]!
-        nextMoreForYou (id: ID): [Post]!
+        nextMoreForYou (id: ID): dataPost
         createPost(text:String, media: [String] location: Location! repost: Data room: String): Post!
         subscribePost( postId: ID! room: String ): Subscribe!
         mutePost ( postId: ID! room: String ): Mute!
