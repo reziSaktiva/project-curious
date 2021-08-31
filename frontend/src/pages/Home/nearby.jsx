@@ -7,15 +7,18 @@ import NotificationMobile from '../../components/NotificationMobile'
 import { PostContext } from "../../context/posts";
 import Popular from "./popular";
 import Latest from './latest'
+import LocationModal from "../../components/Modal/locationModal";
+import { AuthContext } from "../../context/auth";
 
 
 
 const NearbyPost = () => {
   const { setNavMobileOpen, active, setNav } = useContext(PostContext)
+  const { locationAllow } = useContext(AuthContext)
   const [burger, setBurger] = useState({
     toggle: false
   })
-
+  
   useEffect(() => {
     setNav("latest")
   }, [])
@@ -45,6 +48,7 @@ const NearbyPost = () => {
     default:
       break;
   }
+  console.log("nearby", locationAllow);
   return (
     <div>
       <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />

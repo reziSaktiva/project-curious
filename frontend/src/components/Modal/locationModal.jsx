@@ -1,25 +1,31 @@
 import React from 'react'
 import './style.css'
 
-export default function LocationModal({title, handleYes, deleteModal, setDeleteModal}) {
+export default function LocationModal({title, locationAllow, handleYes, deleteModal, setDeleteModal}) {
     const handleClose = () => setDeleteModal(false)
-console.log(deleteModal);
+    console.log(locationAllow);
     let classes = "modal-bg"
-        if(deleteModal) {
+        if(!locationAllow) {
             classes = "modal-bg bg-active"
         }
-        
+        const revokePermission = () => {
+            // navigator.permissions.revoke({name:'geolocation'}).then(function(result) {
+            //   console.log(result.state);
+            // })
+            
+        }
     return (
         <>
         <div className={classes}>
             <div className="modal">
-                <p>Please Enable Location Setting, for best exprerience</p>
+                <p>Please Enable Location Setting<br />
+                Our Post are based on your location Radius</p>
                 <div className="btn-container">
                     <button 
-                    onClick={handleYes}
+                    onClick={() => window.open("chrome://settings/content/location")}
                     className="modal-btn__footer"
                     
-                    style={{borderRadius: "0px 0px 15px 0px"}}>
+                    style={{borderRadius: "0px 0px 15px 15px", width: "100%"}}>
                         Yes
                     </button>
                 </div>
