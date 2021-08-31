@@ -128,16 +128,7 @@ export default function SinglePost(props) {
 
       const post = data.getPost
       setPost(post);
-
-      Geocode.fromLatLng(post.location.lat, post.location.lng).then(
-        (response) => {
-          const address = response.results[0].address_components[1].short_name;
-          setAddress(address);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+      setAddress(post.location.location);
 
       // set did mount react
       _isMounted.current = true;
@@ -154,16 +145,7 @@ export default function SinglePost(props) {
   useEffect(() => {
     if (isRepost) {
       const { location } = repost;
-      Geocode.fromLatLng(location.lat, location.lng).then(
-        (response) => {
-          const address =
-            response.results[0].address_components[1].short_name;
-          setRepostAddress(address);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+      setRepostAddress(location.location);
     }
   }, [post, isRepost]);
 

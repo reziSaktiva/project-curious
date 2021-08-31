@@ -15,7 +15,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: action.payload,
-        isMorePost: true,
+        isMorePost: action.payload.length === 8,
         lastIdPosts,
       };
 
@@ -81,8 +81,8 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         posts: [...state.posts, ...action.payload],
-        isMorePost: action.payload.length === 0,
-        lastIdPosts: state.posts[state.posts.length - 1].id,
+        isMorePost: action.payload.length === 3,
+        lastIdPosts: action.payload[action.payload.length - 1].id,
       };
     case "MORE_Insvire E-Sport":
       return {

@@ -155,7 +155,7 @@ module.exports = {
         },
         async deleteComment(_, { postId, commentId, room }, context) {
             const { username } = await fbAuthContext(context)
-            const postDocument = await db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`).get()
+            const postDocument = await db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${postId}`).get()
             const getCommentDoc = await db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId).get()
             const commentDoc = db.collection(room ? `/room/${room}/posts` : 'posts').doc(postId).collection('comments').doc(commentId)
             const subscribeCollection = await db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${postId}/subscribes`).get()
@@ -169,13 +169,14 @@ module.exports = {
                         if (!getCommentChild.empty) {
                             const commentChilds = getCommentChild.docs.map(doc => doc.data())
                             commentChilds.forEach(doc => {
+                                console.log(doc);
                                 db.doc(`${room ? `/room/${room}/posts/` : `/posts/`}${postId}/comments/${doc.id}`).delete()
                             })
                         }
                     }
 
                     commentDoc.delete()
-                    postDocument.ref.update({ commentCount: doc.data().commentCount - 1 , rank : doc.data().rank - 1})
+                    postDocument.ref.update({ commentCount: getCommentDoc.data().commentCount - 1 , rank : getCommentDoc.data().rank - 1})
 
                     if (!subscribeCollection.empty) {
                         subscribeCollection.docs.forEach(doc => {
