@@ -34,24 +34,27 @@ const options = {
 
 
 const sliderValidator = () => {
-
+  console.log(
+    localStorage.getItem('rng') === '5',
+    localStorage.getItem('rng')
+  );
   if (!localStorage.getItem('rng')) {
     return 0
   }
-  if (localStorage.getItem('rng') === 1) {
+  if (localStorage.getItem('rng') === '1') {
     return 0
   }
-  if (localStorage.getItem('rng') === 5) {
+  if (localStorage.getItem('rng') === '5') {
     return 33
   }
-  if (localStorage.getItem('rng') === 10) {
+  if (localStorage.getItem('rng') === '10') {
     return 66
   }
-  if (localStorage.getItem('rng') === 15) {
+  if (localStorage.getItem('rng') === '15') {
     return 100
   }
 }
-
+console.log("sliderValidator", sliderValidator() );
 const MapHeader = props => {
 
   const { onSetCurrentLoc, onBack } = props;
@@ -140,7 +143,6 @@ const Map = () => {
     } if (value === 100) {
       range = 15000
     }
-
     setRadius(range);
   }
 

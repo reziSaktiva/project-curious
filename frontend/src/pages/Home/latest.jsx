@@ -65,7 +65,6 @@ function Latest() {
             return;
         }
     }, [data, _isMounted])
-    console.log("testtttt", loadingPosts);
     return (
         <div style={{ height: "100%" }} key="latest">
             {user ? (

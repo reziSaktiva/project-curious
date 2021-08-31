@@ -13,7 +13,7 @@ export default function ExplorePlace() {
     const { setLocationEP } = useContext(AuthContext)
     const { setNav, active } = useContext(PostContext)
     const { data, loading } = useQuery(EXPLORE_PLACE)
-    console.log(data);
+
     return loading ? <SearchSkeleton /> : (
         <>
             <div className="explore-place" >

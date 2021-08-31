@@ -8,12 +8,7 @@ export default function LocationModal({title, locationAllow, handleYes, deleteMo
         if(!locationAllow) {
             classes = "modal-bg bg-active"
         }
-        const revokePermission = () => {
-            // navigator.permissions.revoke({name:'geolocation'}).then(function(result) {
-            //   console.log(result.state);
-            // })
-            
-        }
+  
     return (
         <>
         <div className={classes}>
