@@ -158,7 +158,7 @@ export default function SinglePost(props) {
       setComment(commentData)
     },
   });
-  const mentionSuggest = post.comments.map(data => {
+  const mentionSuggest = post && post.comments.map(data => {
     return {
       id: data.id,
       display: data.displayName
@@ -166,11 +166,10 @@ export default function SinglePost(props) {
   })
   const onFinish = async value => {
     const { comment } = value;
-    const regex = /(?:@[[])/
-    const newComment = comment ? comment.substring(comment.indexOf(':') + 1) : ''
-    const finalComment = newComment === undefined ? comment : newComment
+    // const usernameMention = comment.split("[")[1].split("]")[0];
+    // const textAfterMention = comment.split("[")[1].split(")")[1];
+    const finalComment = comment.split("[").length <= 1 ? comment : comment.split("[")[1].split("]")[0] + comment.split("[")[1].split(")")[1]
 
-console.log("apakah match",comment,comment.match(regex));
     const isReply = form.getFieldValue(["comment"]) && form.getFieldValue(["comment"]).includes(reply.username && reply.id) || false
 
     if (!isReply) {
@@ -213,8 +212,6 @@ console.log("apakah match",comment,comment.match(regex));
     form.resetFields()
   };
 
-
-  const textchange = ({ setValue }) => (ev, newValue) => setValue(newValue)
 
   return (
     <div>
@@ -333,8 +330,8 @@ console.log("apakah match",comment,comment.match(regex));
               >
 
                 {fileList.length > 0 && (
-                  <div style={{ backgroundColor: "#f5f5f5", zIndex: 100 }}>
-                    <div style={{ height: 120, borderTopRightRadius: 30, borderTopLeftRadius: 30, backgroundColor: "white", padding: 10 }}>
+                  <div className="imagePreview_container">
+                    <div  style={{ height: 120, borderRadius: "30px 30px 0 0", backgroundColor: "white", padding: 10 }}>
                       <Form.Item name="foto" style={{ marginBottom: 0 }} >
                         <div className="centeringButton" style={{ marginTop: -38 }}>
                           <Upload
@@ -385,6 +382,7 @@ console.log("apakah match",comment,comment.match(regex));
                    style={{ borderRadius: 15, width:'100%', height:30, }}
                  /> */}
                     <MentionsInput
+                    maxLength={250}
                      value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
                     <Mention
                       trigger="@"

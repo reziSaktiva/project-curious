@@ -9,7 +9,7 @@
 
 }
 .font_responsive p{
-  font-size: clamp(0.1rem, 0.1rem + 2.5vw , 0.8rem);
+  font-size: clamp(0.1rem, 0.1rem + 2.5vw , 0.9rem);
 }
 .btn-comment .btn-comment__wrapper .btn-comment__label {
   height: 25px;

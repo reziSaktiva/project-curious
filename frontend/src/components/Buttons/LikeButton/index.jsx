@@ -28,9 +28,7 @@ export default function LikeButton({ likeCount, id, likes, room, type }) {
     <div className="ui labeled btn-like" tabIndex="0">
       <div className="btn-like__icon" >
         <Button
-          onClick={onLike}
-          shape="circle"
-          className="likeButton"
+          onClick={onLike} shape="circle" className="likeButton"
           icon={
             // <HeartOutlined />
             isLike ? (
@@ -42,7 +40,7 @@ export default function LikeButton({ likeCount, id, likes, room, type }) {
         />
       </div>
       <div className="btn-like__wrapper">
-        <div className="ui basic label float btn-like__label">
+              <div className="ui basic label float btn-like__label font_responsive ">
           <p>{likeCount} likes</p>
         </div>
       </div>

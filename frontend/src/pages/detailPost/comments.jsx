@@ -36,12 +36,12 @@ export default function Comments({ post, loading, user, setReply, form }) {
     //reply func
     const handleReply = (item) => {
         setReply({
-            username: item.owner,
+            username: item.username,
             id: item.id
         })
 
         form.setFieldsValue({
-            comment: '@[Walter ujang](walter)'
+            comment: `@[${item.displayName}](${item.id})`
             // comment: `Reply to ${item.displayName}: `
         })
     }

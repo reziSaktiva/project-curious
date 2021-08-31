@@ -10,7 +10,9 @@
   justify-content: center;
   align-items: center;
 }
-
+.font_responsive p{
+  font-size: clamp(0.1rem, 0.1rem + 2.5vw , 0.9rem);
+}
 .btn-like .btn-like__wrapper .btn-like__label {
   height: 25px;
   border-radius: 5px;
@@ -18,10 +20,12 @@
   position: relative;
   background-color: white;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-like .btn-like__wrapper .btn-like__label p {
-  margin-top: -4px;
   margin-left: 5px;
 }
 

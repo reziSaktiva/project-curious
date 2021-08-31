@@ -29,7 +29,7 @@
 @media only screen and (max-width: 883px) {
   .action-post {
     display: grid;
-    grid-template-columns: 29% 34% 29%;
+    grid-template-columns: 29% 36% 31%;
     grid-column-gap: 5px;
   }
 }

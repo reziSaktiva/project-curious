@@ -19,7 +19,7 @@ export default function RepostButton({ idPost, room, repostCount, ...rest }) {
       </div>
       
       <div className="btn-repost__wrapper">
-        <div className="ui basic label float btn-repost__label">
+        <div className="ui basic label float btn-repost__label font_responsive">
           <p>{repostCount} repost</p>
         </div>
       </div>
