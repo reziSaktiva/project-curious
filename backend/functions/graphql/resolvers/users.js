@@ -47,7 +47,7 @@ module.exports = {
 
             const oneWeekAgo = new Date(time).toISOString()
 
-            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '<=', oneWeekAgo).get()
+            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '>=', oneWeekAgo).get()
 
             const promises = getPosts.docs.map(async (doc, index) => {
                 const { lat, lng } = doc.data().location
@@ -67,12 +67,6 @@ module.exports = {
                         const addressComponents = address_components;
 
                         const geoResult = {}
-
-                        // const photo_reference = await axios({
-                        //     method: 'get',
-                        //     url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=photo&key=${API_KEY}`,
-                        //     headers: {}
-                        //   }).then(response => `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${response.data.result.photos[0].photo_reference}&maxwidth=400&key=${API_KEY}`)
 
                         addressComponents.map(({ types, long_name }) => {
                             const point = types[0];

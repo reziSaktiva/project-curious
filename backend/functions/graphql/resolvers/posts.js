@@ -27,7 +27,6 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
-          .orderBy('createdAt', 'desc')
           .startAt(b[0])
           .endAt(b[1])
           .limit(8);
@@ -57,7 +56,7 @@ module.exports = {
           return matchingDocs;
         })
 
-        docs.forEach(async doc => {
+        docs.forEach(async (doc, index) => {
           const data = doc.data()
           const { repost: repostId } = data;
           const repostData = async () => {
@@ -65,6 +64,10 @@ module.exports = {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
+          }
+
+          if (index === 7) {
+            lastId = data.id
           }
 
           // Likes
@@ -98,7 +101,13 @@ module.exports = {
           latest.push(newData)
         });
 
-        return latest
+        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+        return {
+          posts: latest,
+          lastId,
+          hasMore: latest.length === 8
+        }
       }
       catch (err) {
         console.log(err);
@@ -171,7 +180,6 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
-          .orderBy('rank')
           .startAt(b[0])
           .endAt(b[1])
           .limit(8);
@@ -180,6 +188,7 @@ module.exports = {
       }
 
       let latest = []
+      let lastId;
       try {
         const docs = await Promise.all(posts).then((snapshots) => {
           const matchingDocs = [];
@@ -201,7 +210,7 @@ module.exports = {
           return matchingDocs;
         })
 
-        docs.forEach(async doc => {
+        docs.forEach(async (doc, index) => {
           const data = doc.data()
           const { repost: repostId } = data;
           const repostData = async () => {
@@ -209,6 +218,10 @@ module.exports = {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
+          }
+
+          if (index === 7) {
+            lastId = data.id
           }
 
           // Likes
@@ -241,8 +254,15 @@ module.exports = {
 
           latest.push(newData)
         });
-        console.log(latest);
-        return latest
+        
+        const filter = latest.filter(a => a.rank > 1)
+        filter.sort((a, b) => b.rank - a.rank)
+
+        return {
+          posts: filter,
+          lastId,
+          hasMore: filter.length === 8
+        }
       }
       catch (err) {
         console.log(err);
@@ -541,7 +561,7 @@ module.exports = {
     },
     async moreForYou(_, _args, _context) {
       try {
-        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').limit(8).get()
+        const data = await db.collection('posts').where('rank', '>', 1).orderBy('rank', 'desc').limit(8).get()
         const docs = data.docs.map((doc) => doc.data())
         const posts = []
 
@@ -588,7 +608,11 @@ module.exports = {
           });
         }
 
-        return posts
+        return {
+          posts,
+          hasMore: posts.length === 8,
+          lastId: posts[posts.length - 1].id
+        }
       }
       catch (err) {
         console.log(err);
@@ -670,7 +694,6 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
-          .orderBy('createdAt', 'desc')
           .startAfter(doc)
           .endAt(b[1])
           .limit(3)
@@ -680,6 +703,7 @@ module.exports = {
       }
 
       let latest = []
+      let lastId ;
       try {
         const docs = await Promise.all(posts).then((snapshots) => {
           const matchingDocs = [];
@@ -702,7 +726,7 @@ module.exports = {
           return matchingDocs;
         })
 
-        docs.forEach(async doc => {
+        docs.forEach(async (doc, index) => {
           const data = doc.data()
           const { repost: repostId } = data;
 
@@ -711,6 +735,10 @@ module.exports = {
               const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
+          }
+
+          if (index === 2) {
+            lastId = data.id
           }
 
           // Likes
@@ -744,7 +772,13 @@ module.exports = {
           latest.push(newData)
         });
 
-        return latest
+        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+        return {
+          posts: latest,
+          lastId,
+          hasMore: latest.length === 3
+        }
       }
       catch (err) {
         console.log(err);
@@ -816,20 +850,61 @@ module.exports = {
       const lastPosts = await db.doc(`/posts/${id}/`).get();
       const doc = lastPosts
 
-      const data = await db.collection("posts").where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
-      const docs = data.docs.map(doc => doc.data())
+      const center = [lat, lng]
+      const radiusInM = range ? range * 1000 : 5000 * 1000
 
-      if (docs.length) {
-        const nearby = []
+      const bounds = geofire.geohashQueryBounds(center, radiusInM);
+      let posts = []
 
-        docs.forEach(async data => {
+      for (const b of bounds) {
+        const q = db.collection('posts')
+          .orderBy('geohash')
+          .orderBy('createdAt', 'desc')
+          .startAfter(doc)
+          .endAt(b[1])
+          .limit(3)
+
+
+        posts.push(q.get());
+      }
+
+      let latest = []
+      let lastId ;
+      try {
+        const docs = await Promise.all(posts).then((snapshots) => {
+          const matchingDocs = [];
+
+          snapshots.forEach((snap, index) => {
+            if (index === 0) {
+              snap.docs.forEach((doc) => {
+                const lat = doc.get('location').lat;
+                const lng = doc.get('location').lng;
+                // We have to filter out a few false positives due to GeoHash
+                // accuracy, but most will match
+                const distanceInKm = geofire.distanceBetween([lat, lng], center);
+                const distanceInM = distanceInKm * 1000;
+                if (distanceInM <= radiusInM) {
+                  matchingDocs.push(doc);
+                }
+              })
+            }
+          })
+          return matchingDocs;
+        })
+
+        docs.forEach(async (doc, index) => {
+          const data = doc.data()
           const { repost: repostId } = data;
 
           const repostData = async () => {
             if (repostId) {
-              const repostData = await db.doc(`/posts/${repostId}`).get()
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
               return repostData.data() || {}
             }
+          }
+
+          if (index === 7) {
+            lastId = data.id
           }
 
           // Likes
@@ -860,25 +935,21 @@ module.exports = {
 
           const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
 
-          const { lat: lattitude, lng: longtitude } = newData.location;
-          try {
-            const currentLatLng = new LatLng(parseFloat(lat), parseFloat(lng));
-            const contentLocation = new LatLng(parseFloat(lattitude), parseFloat(longtitude));
-
-            const distance = computeDistanceBetween(currentLatLng, contentLocation)
-
-            if ((distance / 1000) <= (range || 5)) { // should be show in range 40 km
-              nearby.push(newData);
-            }
-          } catch (e) {
-            console.log('error : ', e)
-          }
+          latest.push(newData)
         });
 
-        return nearby;
-      }
+        const filter = latest.filter(a => a.rank > 1)
+        filter.sort((a, b) => b.rank - a.rank)
 
-      return [];
+        return {
+          posts: filter,
+          lastId,
+          hasMore: filter.length === 3
+        }
+      }
+      catch (err) {
+        console.log(err);
+      }
     },
     async createPost(_, { text, media, location, repost, room }, context) {
 

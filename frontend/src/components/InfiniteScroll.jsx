@@ -18,7 +18,6 @@ function ScrollInfinite(props) {
 
     const { isLoading, visitedLocation } = props;
     const { posts, morePosts, room_1, room_2, active, isMorePost, lastIdPosts } = useContext(PostContext)
-
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -72,21 +71,21 @@ function ScrollInfinite(props) {
                     break;
                 case '/':
                     if (active === 'latest') {
-                        nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                        nextPosts({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                     } else {
-                        nextPopular({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                        nextPopular({ variables: { id: lastIdPosts, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
                     }
                     break;
                 case '/visited':
                     if (active === 'latest') {
-                        nextPosts({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                        nextPosts({ variables: { ...visitedLocation, id: lastIdPosts, range: 5 } })
                     } else {
-                        nextPopular({ variables: { ...visitedLocation, id: posts[posts.length - 1].id, range: 5 } })
+                        nextPopular({ variables: { ...visitedLocation, id: lastIdPosts, range: 5 } })
                     }
                     break;
                 case '/search':
                     if (active === 'moreForYou') {
-                        nextMoreForYou({ variables: { id: posts[posts.length - 1].id } })
+                        nextMoreForYou({ variables: { id: lastIdPosts } })
                     }
                     break;
                 default:

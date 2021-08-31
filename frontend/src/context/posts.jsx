@@ -1,5 +1,6 @@
-import React, { createContext, useMemo, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 import { cloneDeep } from "lodash";
+import { useHistory } from "react-router";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -9,14 +10,14 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      let lastIdPosts = action.payload.length && action.payload[action.payload.length - 1].id;
+      // let lastIdPosts = action.payload.length && action.payload[action.payload.length - 1].id;
 
       return {
         ...state,
         loading: false,
-        posts: action.payload,
-        isMorePost: action.payload.length === 8,
-        lastIdPosts,
+        posts: action.payload.posts,
+        isMorePost: action.payload.hasMore,
+        lastIdPosts: action.payload.lastId,
       };
 
     case "SET_NAV":
@@ -65,11 +66,11 @@ const reducer = (state, action) => {
         loading: false,
         likedPosts: action.payload,
       };
-      case "SET_NOTIF_LENGTH":
-        return {
-          ...state,
-          notifLength : action.payload
-        };
+    case "SET_NOTIF_LENGTH":
+      return {
+        ...state,
+        notifLength: action.payload
+      };
     case "SET_SUBSCRIBE_POSTS":
       return {
         ...state,
@@ -80,9 +81,9 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        posts: [...state.posts, ...action.payload],
-        isMorePost: action.payload.length === 3,
-        lastIdPosts: action.payload[action.payload.length - 1].id,
+        posts: [...state.posts, ...action.payload.posts],
+        isMorePost: action.payload.hasMore,
+        lastIdPosts: action.payload.lastId,
       };
     case "MORE_Insvire E-Sport":
       return {
@@ -209,7 +210,7 @@ const reducer = (state, action) => {
           commentsCount: state.post.comments + 1,
         },
       };
-      
+
     case "DELETE_COMMENT":
       return {
         ...state,
@@ -617,7 +618,7 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
-  setNotifLength: () => {},
+  setNotifLength: () => { },
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
@@ -817,7 +818,7 @@ export const PostProvider = (props) => {
   const setPosts = (posts) => {
     dispatch({
       type: "SET_POSTS",
-      payload: posts.length === 0 ? [] : posts,
+      payload: posts,
     });
   };
 
@@ -870,21 +871,18 @@ export const PostProvider = (props) => {
   };
 
   const morePosts = (posts) => {
-    const room = posts[0].room  
-
     setTimeout(() => {
-      if (posts) {
-        if (room) {
-          dispatch({
-            type: `MORE_${room}`,
-            payload: posts,
-          })
-        } else {
-          dispatch({
-            type: "MORE_POSTS",
-            payload: posts,
-          });
-        }
+      if (posts.length && posts[0].room) {
+        const room = posts[0].room ? posts[0].room : undefined
+        dispatch({
+          type: `MORE_${room}`,
+          payload: posts,
+        })
+      } else {
+        dispatch({
+          type: "MORE_POSTS",
+          payload: posts,
+        });
       }
     }, 2000);
   };
