@@ -20,6 +20,8 @@ import { MAP_API_KEY } from '../../util/ConfigMap';
 // Styles
 import mapStyle from '../../util/style/mapstyle'
 import './style.css';
+import { AuthContext } from '../../context/auth';
+import { useContext } from 'react';
 
 const libraries = ["places"]
 const mapContainerStyle = {
@@ -80,7 +82,7 @@ const MapHeader = props => {
 const Map = () => {
 
   const currentPosition = localStorage.location && JSON.parse(localStorage.location)
-
+  const { setLocationAllow } = useContext(AuthContext)
   const [position, setPosition] = useState(currentPosition);
   const history = useHistory();
 
@@ -124,7 +126,7 @@ const Map = () => {
         ...data,
         location
       }));
-
+      setLocationAllow(true)
       setPosition(data);
     })
   }

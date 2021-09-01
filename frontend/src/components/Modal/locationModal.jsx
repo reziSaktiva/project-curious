@@ -1,9 +1,7 @@
 import React from 'react'
 import './style.css'
 
-export default function LocationModal({title, locationAllow, handleYes, deleteModal, setDeleteModal}) {
-    const handleClose = () => setDeleteModal(false)
-    console.log(locationAllow);
+export default function LocationModal({locationAllow}) {
     let classes = "modal-bg"
         if(!locationAllow) {
             classes = "modal-bg bg-active"
