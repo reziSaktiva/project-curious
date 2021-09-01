@@ -39,12 +39,17 @@ import TOU from './pages/legal/TeromOfUse';
 import CG from './pages/legal/CommunityGuidelines';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import EPpost from './pages/search/EPpost';
-
+import { Helmet } from 'react-helmet'
 
 function App() {
   return (
     <Context>
       <Router>
+        <Helmet>
+          <title>Home of Curiousity</title>
+          <meta name="description" content="lets find out who are they"/>
+          <meta name="keywords" description="Social Media" />
+        </Helmet>
         <Grid>
           <Switch>
             <HomeRoute exact path="/" component={LandingPage} />

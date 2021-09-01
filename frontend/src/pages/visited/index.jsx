@@ -15,7 +15,7 @@ import AppBar from '../../components/AppBar'
 import SidebarMobile from '../../components/SidebarMobile'
 import BackDrop from '../../components/BackDrop'
 import NotificationMobile from '../../components/NotificationMobile'
-
+import { Helmet } from 'react-helmet';
 // Queries
 import { GET_VISITED } from '../../GraphQL/Queries';
 
@@ -92,6 +92,10 @@ export default function Visited() {
 
   return (
     <div>
+      <Helmet>
+     <title>See post you already been</title>
+     <meta name="description" content="See what's happening on your last vacation" />
+    </Helmet>
       <AppBar onClick={() => setPostsLocation(null)} postsLocation={postsLocation} title="Visited Places" />
 
       {!postsLocation ? (

@@ -8,7 +8,7 @@ export default function Chat() {
     const [device, setdevice] = useState(null)
 
     useEffect(() => {
-        setdevice(window.navigator.userAgent.split(";")[0].split("(")[1])
+        setdevice(window.userAgent.split(";")[0].split("(")[1])
     }, [])
 
     return (
