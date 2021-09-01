@@ -119,7 +119,7 @@ export default function PostCard({ post, loading, type }) {
 
         <List.Item.Meta
           title={
-            <div>
+            <div className="postcardnyaa">
               <Row>
                 <Col span={20}>
                   <Link to={post.room ? `/room/${post.room}/${post.id}` : `/post/${post.id}`} style={{ fontSize: 15 }}>

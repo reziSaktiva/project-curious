@@ -1,5 +1,5 @@
 import { Input, Form, Cascader, DatePicker, Upload } from "antd";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import AppBar from "../../components/AppBar";
 import { AuthContext } from "../../context/auth";
@@ -69,17 +69,19 @@ export default function EditProfile() {
 
   const handleChangesProfile = (value) => {
     const { username } = value
+
+    let newUserName = username === undefined ? user.username : username
     const newData = {
       ...value,
       url: newUserData.url && newUserData.url,
-      newUsername: username
+      newUsername: newUserName
     }
 
     changeProfileUser({ variables: newData })
 
 
   }
-
+console.log(user.gender);
   return (
     <div >
       <AppBar title="Edit Profile" />
@@ -97,7 +99,9 @@ export default function EditProfile() {
 
           </div>
 
-          <Form name="basic" initialValues={{ remember: true }} onFinish={handleChangesProfile}>
+          <Form
+           name="basic"
+            initialValues={{ remember: true }} onFinish={handleChangesProfile}>
             <Form.Item
               name="phoneNumber"
               className="edit-profile__textfield"
@@ -106,19 +110,25 @@ export default function EditProfile() {
             </Form.Item>
 
             <Form.Item
+            
             rules={[
               {
-                  required: true,
+                  required: false,
                   message: 'Please Enter Your Username',
               }
               ,
               {
                 validator(_, value) {
+                  console.log("validator value", value);
                 const regexlength = /^(?=.{8,20}$)/ 
-                if ( !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
-                const regex = /^(?=[a-zA-Z0-9._]{8,20}$)/
-                if ( !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
-                else return Promise.resolve();
+                if(value === undefined ) return Promise.resolve();
+                else {
+                  if ( !undefined && !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
+                  const regex = /^(?=[a-zA-Z0-9._]{8,20}$)/
+                  if ( !undefined && !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
+                  else return Promise.resolve();
+                }
+                
                 }
             }
           ]}
@@ -131,7 +141,7 @@ export default function EditProfile() {
 
             <Form.Item name="gender"
               className="edit-profile__textfield">
-              <Cascader style={{ backgroundColor: '#FAFAFF', width: "100%" }} options={gender} />
+              <Cascader style={{ backgroundColor: '#FAFAFF', width: "100%" }} placeholder={user.gender}  options={gender} />
             </Form.Item>
 
             <Form.Item name="birthday"

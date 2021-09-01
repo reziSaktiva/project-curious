@@ -86,7 +86,6 @@ export default function Comments({ post, loading, user, setReply, form }) {
                                                         <Menu.Item onClick={() => deleteComment({ variables: { postId: post.id, commentId: comment.id, room: post.room } })}>Delete Comment</Menu.Item>
                                                     ) : null}
                                                     <Menu.Item key="3">Report</Menu.Item>
-                                                    <Menu.Item key="4">Delete</Menu.Item>
                                                 </Menu>
                                             }
                                             trigger={["click"]}

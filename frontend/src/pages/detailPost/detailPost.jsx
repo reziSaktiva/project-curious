@@ -82,7 +82,6 @@ export default function SinglePost(props) {
 
   // upload photo comment /////////////////////////////
 
-
   const handlePreview = async file => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -217,9 +216,9 @@ export default function SinglePost(props) {
     <div>
       <PostNavBar />
       {getPostLoading ? <Skeleton avatar paragraph={{ rows: 2 }} /> : (
-        <List itemLayout="vertical" size="large" style={{ background: 'white', margin: 10, borderRadius: 5 }}>
+        <List className="single_post_container" itemLayout="vertical" size="large" style={{ background: 'white', margin: 10, borderRadius: 5 }}>
           {post ? (
-            <div>
+            <div >
               <List.Item
                 key={post.id || ''}
                 actions={
@@ -383,6 +382,8 @@ export default function SinglePost(props) {
                  /> */}
                     <MentionsInput
                     maxLength={250}
+                    singleLine
+                    style={{ width: "60vw", maxWidth: "400px"}}
                      value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
                     <Mention
                       trigger="@"

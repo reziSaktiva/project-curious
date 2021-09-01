@@ -105,7 +105,7 @@ console.log(posts);
     getProfilePosts &&
     getProfilePosts.getProfilePosts.map((doc) => doc.likeCount);
   const { TabPane } = Tabs;
-
+  
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
