@@ -235,7 +235,7 @@ export default function ModalPost() {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-        const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
+        const uploadTask = storage.ref(`upload/${elem.originFileObj.name}`).put(elem.originFileObj)
 
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',

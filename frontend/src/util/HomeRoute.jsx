@@ -26,7 +26,7 @@ function HomeRoute({ component: Component, ...rest }) {
         } else if (location) {
             setLocationAllow(true)
         }
-    }, [])
+    }, [location])
     async function showPosition(position) {
         const data = {
             lat: position.coords.latitude,

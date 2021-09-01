@@ -28,6 +28,7 @@ const Login = (props) => {
   })
 
   const onFinish = (values) => {
+    console.log(values);
       const { username, password } = values
       if(password === null || password === undefined) return;
       login({ variables: { username, password } })
