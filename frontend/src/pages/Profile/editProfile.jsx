@@ -33,7 +33,6 @@ export default function EditProfile() {
 
   const [changeProfileUser, { loading } ] = useMutation(CHANGE_PROFILE, {
     update(_, { data: { changeProfileUser } }) {
-
       changeProfile(changeProfileUser)
       history.push('/')
     },
@@ -81,7 +80,7 @@ export default function EditProfile() {
 
 
   }
-console.log(user.gender);
+
   return (
     <div >
       <AppBar title="Edit Profile" />
@@ -119,7 +118,6 @@ console.log(user.gender);
               ,
               {
                 validator(_, value) {
-                  console.log("validator value", value);
                 const regexlength = /^(?=.{8,20}$)/ 
                 if(value === undefined ) return Promise.resolve();
                 else {

@@ -273,6 +273,7 @@ export function AuthProvider(props) {
       ...data,
       location
     }));
+    setLocationAllow(true)
 
     dispatch({
       type: GET_LOCATION,

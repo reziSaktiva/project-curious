@@ -903,13 +903,14 @@ module.exports = {
             if (newName) {
                 const checkUsername = await db.collection('user').where('username', "==", newUsername).get()
                 const checkNewUsername = await db.collection('user').where('newUsername', "==", newUsername).get()
-                if (checkUsername || checkNewUsername) throw new UserInputError("username has been used")
+                if (!checkUsername.empty || !checkNewUsername.empty) throw new UserInputError("username has been used")
             }
             const userData = await (await db.doc(`users/${oldName}`).get()).data()
             try {
+                let newUserData
                 await db.doc(`users/${oldName}`).get()
                     .then(doc => {
-                        const newUserData = newName ? {
+                        newUserData = newName ? {
                             profilePicture: url ? url : userData.profilePicture,
                             mobileNumber: phoneNumber ? phoneNumber : userData.mobileNumber,
                             gender: gender ? gender : userData.gender,
@@ -922,10 +923,14 @@ module.exports = {
                             birthday: birthday ? birthday : userData.birthday
                         }
 
-                        doc.ref.update(newUserData)
+                        return doc.ref.update(newUserData)
                     })
 
-                return await (await db.doc(`users/${oldName}`).get()).data()
+                    const data = await db.doc(`users/${oldName}`).get()
+                return {
+                    ...data.data(),
+                    ...newUserData
+                }
             } catch (error) {
                 console.log(error);
             }
