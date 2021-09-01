@@ -19,10 +19,11 @@ module.exports = {
       }
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5 * 1000
+      const radiusInM = range ? range * 1000 : 1 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
+      let lastId;
 
       for (const b of bounds) {
         const q = db.collection('posts')
@@ -41,16 +42,19 @@ module.exports = {
 
           for (const snap of snapshots) {
             for (const doc of snap.docs) {
-              const lat = doc.get('location').lat;
-              const lng = doc.get('location').lng;
+              // const lat = doc.get('location').lat;
+              // const lng = doc.get('location').lng;
 
-              // We have to filter out a few false positives due to GeoHash
-              // accuracy, but most will match
-              const distanceInKm = geofire.distanceBetween([lat, lng], center);
-              const distanceInM = distanceInKm * 1000;
-              if (distanceInM <= radiusInM) {
-                matchingDocs.push(doc);
-              }
+              // // We have to filter out a few false positives due to GeoHash
+              // // accuracy, but most will match
+              // const distanceInKm = geofire.distanceBetween([lat, lng], center);
+              // const distanceInM = distanceInKm * 1000;
+
+              // if (distanceInM <= radiusInM) {
+              //   matchingDocs.push(doc);
+              // }
+
+              matchingDocs.push(doc);
             }
           }
           return matchingDocs;
@@ -172,7 +176,7 @@ module.exports = {
       }
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5 * 1000
+      const radiusInM = range ? range * 1000 : 1 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -195,16 +199,17 @@ module.exports = {
 
           for (const snap of snapshots) {
             for (const doc of snap.docs) {
-              const lat = doc.get('location').lat;
-              const lng = doc.get('location').lng;
+              // const lat = doc.get('location').lat;
+              // const lng = doc.get('location').lng;
 
-              // We have to filter out a few false positives due to GeoHash
-              // accuracy, but most will match
-              const distanceInKm = geofire.distanceBetween([lat, lng], center);
-              const distanceInM = distanceInKm * 1000;
-              if (distanceInM <= radiusInM) {
-                matchingDocs.push(doc);
-              }
+              // // We have to filter out a few false positives due to GeoHash
+              // // accuracy, but most will match
+              // const distanceInKm = geofire.distanceBetween([lat, lng], center);
+              // const distanceInM = distanceInKm * 1000;
+              // if (distanceInM <= radiusInM) {
+              //   matchingDocs.push(doc);
+              // }
+              matchingDocs.push(doc);
             }
           }
           return matchingDocs;
@@ -254,7 +259,7 @@ module.exports = {
 
           latest.push(newData)
         });
-        
+
         latest.sort((a, b) => b.rank - a.rank)
 
         return {
@@ -685,7 +690,7 @@ module.exports = {
       const doc = lastPosts
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5 * 1000
+      const radiusInM = range ? range * 1000 : 1 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -702,7 +707,7 @@ module.exports = {
       }
 
       let latest = []
-      let lastId ;
+      let lastId;
       try {
         const docs = await Promise.all(posts).then((snapshots) => {
           const matchingDocs = [];
@@ -710,15 +715,16 @@ module.exports = {
           snapshots.forEach((snap, index) => {
             if (index === 0) {
               snap.docs.forEach((doc) => {
-                const lat = doc.get('location').lat;
-                const lng = doc.get('location').lng;
-                // We have to filter out a few false positives due to GeoHash
-                // accuracy, but most will match
-                const distanceInKm = geofire.distanceBetween([lat, lng], center);
-                const distanceInM = distanceInKm * 1000;
-                if (distanceInM <= radiusInM) {
-                  matchingDocs.push(doc);
-                }
+                // const lat = doc.get('location').lat;
+                // const lng = doc.get('location').lng;
+                // // We have to filter out a few false positives due to GeoHash
+                // // accuracy, but most will match
+                // const distanceInKm = geofire.distanceBetween([lat, lng], center);
+                // const distanceInM = distanceInKm * 1000;
+                // if (distanceInM <= radiusInM) {
+                //   matchingDocs.push(doc);
+                // }
+                matchingDocs.push(doc);
               })
             }
           })
@@ -850,7 +856,7 @@ module.exports = {
       const doc = lastPosts
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5 * 1000
+      const radiusInM = range ? range * 1000 : 1 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -868,7 +874,7 @@ module.exports = {
       }
 
       let latest = []
-      let lastId ;
+      let lastId;
       try {
         const docs = await Promise.all(posts).then((snapshots) => {
           const matchingDocs = [];
@@ -876,15 +882,16 @@ module.exports = {
           snapshots.forEach((snap, index) => {
             if (index === 0) {
               snap.docs.forEach((doc) => {
-                const lat = doc.get('location').lat;
-                const lng = doc.get('location').lng;
-                // We have to filter out a few false positives due to GeoHash
-                // accuracy, but most will match
-                const distanceInKm = geofire.distanceBetween([lat, lng], center);
-                const distanceInM = distanceInKm * 1000;
-                if (distanceInM <= radiusInM) {
-                  matchingDocs.push(doc);
-                }
+                // const lat = doc.get('location').lat;
+                // const lng = doc.get('location').lng;
+                // // We have to filter out a few false positives due to GeoHash
+                // // accuracy, but most will match
+                // const distanceInKm = geofire.distanceBetween([lat, lng], center);
+                // const distanceInM = distanceInKm * 1000;
+                // if (distanceInM <= radiusInM) {
+                //   matchingDocs.push(doc);
+                // }
+                matchingDocs.push(doc);
               })
             }
           })
