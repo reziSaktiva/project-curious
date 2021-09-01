@@ -65,7 +65,7 @@ function Popular() {
                 <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
             </div>
                 ) 
-                    : posts.map((post, key) => {
+                    : posts.filter(a => a.rank > 2).map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         

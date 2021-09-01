@@ -61,44 +61,14 @@ function Profile() {
 console.log(posts);
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
-      setPosts(getProfilePosts.getProfilePosts);
+      setPosts({
+        hasMore : false,
+        posts : getProfilePosts.getProfilePosts
+      });
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
     }
   }, [getProfilePosts, getProfileLikedPost]);
 
-  //change Photo Profile funtion
-
-
-  // const handleChange = (value) => {
-  //   const uploadTask = storage
-  //     .ref(`proflePicture/${value.file.originFileObj.name}`)
-  //     .put(value.file.originFileObj);
-  //   uploadTask.on(
-  //     "state_changed",
-  //     () => { },
-  //     (error) => {
-  //       console.log(error);
-  //     },
-  //     async () => {
-  //       storage
-  //         .ref("proflePicture")
-  //         .child(value.file.originFileObj.name)
-  //         .getDownloadURL()
-  //         .then((url) => {
-  //           setProfilePicture({ url, isFinishUpload: true });
-  //           changeProfilePicture(url);
-  //         });
-  //     }
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   if (isFinishUpload) {
-  //     changePPuser({ variables: { url } });
-  //   }
-  // }, [url, isFinishUpload]);
-
-  //set location
   const loc = localStorage.location;
 
   const location = loc ? JSON.parse(loc) : null;
