@@ -138,9 +138,6 @@ module.exports = gql`
         postId: ID!
         isSubscribe: Boolean
     }
-    type Subscription {
-        notificationAdded(username: String): Notification
-    }
     type dataPost {
         hasMore: Boolean
         lastId: ID
