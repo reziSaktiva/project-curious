@@ -38,10 +38,6 @@ const options = {
 
 
 const sliderValidator = () => {
-  console.log(
-    localStorage.getItem('rng') === '5',
-    localStorage.getItem('rng')
-  );
   if (!localStorage.getItem('rng')) {
     return 0
   }
