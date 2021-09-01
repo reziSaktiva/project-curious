@@ -18,7 +18,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {dial} from './Countries'
 import CustomModal from '../components/Modal/customModal';
 import TOU from './legal/TeromOfUse';
-
+import { Helmet } from 'react-helmet';
 const { Option } = Select;
 const gender = [
     {
@@ -93,6 +93,10 @@ const Register = (props) => {
 
     return (
         <div >
+            <Helmet>
+     <title>Sign Up Now!</title>
+     <meta name="description" content="Join us and meet new people" />
+    </Helmet>
             <CustomModal click={openModal} setOpenModal={setOpenModal} title={"Term Of Use"} ><TOU  setOpenModal={setOpenModal} /></CustomModal>
             <div >
                 <Link to ='/'>

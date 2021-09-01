@@ -16,7 +16,7 @@ import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/auth';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import NotFound from './NotFound';
-
+import { Helmet } from 'react-helmet'
 const Search = () => {
   const [searched, setSearched] = useState(false);
   const [backtoDefault, setbacktoDefault] = useState(false)
@@ -53,8 +53,11 @@ const Search = () => {
 
   return (
     <>
+    <Helmet>
+     <title>Explore Everything</title>
+     <meta name="description" content="Explore Everything All Around The World" />
+    </Helmet>
     <AppBar title="Seach" />
-    
     <div className="search_page">
     <Input.Search
       className="search_input_wrapper"
