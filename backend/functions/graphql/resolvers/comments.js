@@ -169,7 +169,6 @@ module.exports = {
                         if (!getCommentChild.empty) {
                             const commentChilds = getCommentChild.docs.map(doc => doc.data())
                             commentChilds.forEach(doc => {
-                                console.log(doc);
                                 db.doc(`${room ? `/room/${room}/posts/` : `/posts/`}${postId}/comments/${doc.id}`).delete()
                             })
                         }
