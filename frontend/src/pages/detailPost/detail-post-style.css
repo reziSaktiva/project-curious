@@ -82,3 +82,9 @@
         z-index: 107;
     }
 }
+@media only screen and (max-width: 400px) {
+    .ant-list.ant-list-vertical.ant-list-lg.ant-list-split.single_post_container >div> div> div> li {
+        padding: 10px;
+    }
+}
+

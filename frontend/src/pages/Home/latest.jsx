@@ -87,7 +87,7 @@ function Latest() {
                     :
                     <div>
                         {
-                            posts.map((post, key) => {
+                            posts && posts.map((post, key) => {
                                 const { muted, id } = post;
                                 const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                                 return (
