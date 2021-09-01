@@ -1,10 +1,11 @@
-const { UserInputError, withFilter } = require('apollo-server-express');
+const { UserInputError } = require('apollo-server-express');
 const { Client } = require("@googlemaps/google-maps-services-js");
 const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { db, auth, NOTIFICATION_ADDED, pubSub, API_KEY } = require('../../utility/admin')
+const { API_KEY_GEOCODE } = require('../../utility/API')
+const { db, auth } = require('../../utility/admin')
 const firebase = require('firebase')
 const config = require('../../utility/config')
 const fbAuthContext = require('../../utility/fbAuthContext')
@@ -14,31 +15,6 @@ const { validateRegisterInput, validateLoginInput } = require('../../utility/val
 firebase.initializeApp(config)
 
 module.exports = {
-    Subscription: {
-        notificationAdded: {
-            subscribe: withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, variables, _context) => {
-                console.log(variables);
-                return payload.notificationAdded.owner === variables.username
-            })
-            // subscribe : (_, __, context) => {
-            //     return pubSub.asyncIterator(NOTIFICATION_ADDED)
-            // }
-            // subscribe: async (_, __, context) => {
-            //     const { username } = await fbAuthContext(context)
-            //     console.log(username);
-            //     try {
-            //         const data = await withFilter(() => pubSub.asyncIterator(NOTIFICATION_ADDED), (payload, _variables) => {
-            //             return payload.notificationAdded.owner === username
-            //         })
-            //         console.log(data());
-            //         return data()
-            //     }
-            //     catch (err) {
-            //         console.log(err);
-            //     }
-            // }
-        }
-    },
     Query: {
         async explorePlace(_, args, context) {
             const googleMapsClient = new Client({ axiosInstance: axios })
@@ -58,7 +34,7 @@ module.exports = {
                             language: 'en',
                             result_type: 'street_address|administrative_area_level_4',
                             location_type: 'APPROXIMATE',
-                            key: API_KEY
+                            key: API_KEY_GEOCODE
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
@@ -278,7 +254,7 @@ module.exports = {
                             language: 'en',
                             result_type: 'street_address|administrative_area_level_4',
                             location_type: 'APPROXIMATE',
-                            key: 'AIzaSyCbj90YrmUp3iI_L4DRpzKpwKGCFlAs6DA'
+                            key: API_KEY_GEOCODE
                         },
                         timeout: 1000 // milliseconds
                     }, axios)
@@ -560,7 +536,6 @@ module.exports = {
                     })
 
                     auth.deleteUser(id).then(() => {
-                        console.log("success");
                         db.doc(`/users/${username}`).delete()
                     })
                 }

@@ -13,20 +13,32 @@ const PORT = 5000
 require('dotenv').config()
 
 const context = ({ req, connection }) => {
-    if (req){
+    if (req) {
         return { req }
-    } 
-    if (connection){
+    }
+    if (connection) {
         return { connection }
     }
+    
+    functions.https.onCall((data, context) => {
+        // context.app will be undefined if the request doesn't include a valid
+        // App Check token.
+        if (context.app == undefined) {
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                'The function must be called from an App Check verified app.')
+        }
+
+        // Your function logic follows.
+    });
 }
 
-const server = new ApolloServer( {
-    typeDefs, 
+const server = new ApolloServer({
+    typeDefs,
     resolvers,
     context // Will take request body' and forward it to the context
-} )
-server.applyMiddleware({ app, path:'/', cors: true })
+})
+server.applyMiddleware({ app, path: '/', cors: true })
 
 // const httpServer = http.createServer(app)
 
@@ -34,5 +46,3 @@ server.applyMiddleware({ app, path:'/', cors: true })
 // httpServer.listen(PORT, console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`))
 
 exports.graphql = functions.region('asia-southeast2').https.onRequest(app)
-
-

@@ -5,9 +5,7 @@ const { AuthenticationError, UserInputError } = require('apollo-server-express')
 
 const fbAuthContext = require("../../utility/fbAuthContext");
 const randomGenerator = require("../../utility/randomGenerator");
-
-const ALGOLIA_ID = 'EIAYYZTM49';
-const ALGOLIA_ADMIN_KEY = '2a9c7905cd20fc8e32c70646ce563def';
+const { ALGOLIA_ID, ALGOLIA_ADMIN_KEY } = require('../../utility/API')
 const algoliasearch = require('algoliasearch');
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
