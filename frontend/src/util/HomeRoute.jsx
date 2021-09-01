@@ -8,8 +8,10 @@ import nearby from '../pages/Home/nearby';
 function HomeRoute({ component: Component, ...rest }) {
     const { setLocationAllow } = useContext(AuthContext)
     const user = localStorage.token
+    const loc = localStorage.location
+    const location = JSON.parse(loc)
     useEffect(() => {
-        if (navigator.geolocation) {
+        if (location.location) {
             navigator.geolocation.getCurrentPosition(
                 // Success function
                 showPosition,
@@ -24,7 +26,7 @@ function HomeRoute({ component: Component, ...rest }) {
         } else {
             console.log("hi");
         }
-    }, [])
+    }, [location])
     async function showPosition(position) {
         const data = {
             lat: position.coords.latitude,
