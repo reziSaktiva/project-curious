@@ -56,9 +56,7 @@ function Profile() {
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-  const [profilePicture, setProfilePicture] = useState(InitialState);
-  const { isFinishUpload, url } = profilePicture;
-console.log(posts);
+
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
       setPosts({

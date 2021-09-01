@@ -23,8 +23,8 @@ function HomeRoute({ component: Component, ...rest }) {
                     timeout: 5000,
                     maximumAge: 0
                 });
-        } else {
-            console.log("hi");
+        } else if (location) {
+            setLocationAllow(true)
         }
     }, [])
     async function showPosition(position) {

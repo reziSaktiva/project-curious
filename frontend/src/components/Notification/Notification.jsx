@@ -44,16 +44,6 @@ export default function Notification() {
     getNotifications();
   }, [user])
 
-
-
-  // useSubscription(NOTIFICATION_ADDED, {
-  //   onSubscriptionData: ({ client, subscriptionData }) => {
-  //     console.log(subscriptionData.data.notificationAdded);
-  //     notificationAdded(subscriptionData.data.notificationAdded);
-  //   },
-  //   variables: { username: user.username }
-  // })
-
   const [readNotification] = useMutation(READ_NOTIFICATION, {
     update(_, { data: { readNotification } }) {
       notificationRead(readNotification);
