@@ -224,7 +224,7 @@ module.exports = gql`
         # posts mutation
         nextPosts( id:ID! lat: Float, lng: Float, range: Float ): dataPost
         nextRoomPosts( id:ID!, room: String ): [Post]!
-        nextPopularPosts( id:ID! lat: Float, lng: Float, range: Float): [Post]!
+        nextPopularPosts( id:ID! lat: Float, lng: Float, range: Float): dataPost
         nextMoreForYou (id: ID): dataPost
         createPost(text:String, media: [String] location: Location! repost: Data room: String): Post!
         subscribePost( postId: ID! room: String ): Subscribe!

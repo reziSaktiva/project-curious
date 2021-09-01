@@ -893,8 +893,13 @@ module.exports = {
         async changeProfileUser(_, { profile }, context) {
             const { url, phoneNumber, gender, birthday, newUsername } = profile
             const { username: oldName } = await fbAuthContext(context)
+            let newName = newUsername
 
-            if (newUsername) {
+            if(newUsername === oldName){
+                newName = undefined
+            }
+
+            if (newName) {
                 const checkUsername = await db.collection('user').where('username', "==", newUsername).get()
                 const checkNewUsername = await db.collection('user').where('newUsername', "==", newUsername).get()
                 if (checkUsername || checkNewUsername) throw new UserInputError("username has been used")
@@ -903,7 +908,7 @@ module.exports = {
             try {
                 await db.doc(`users/${oldName}`).get()
                     .then(doc => {
-                        const newUserData = newUsername ? {
+                        const newUserData = newName ? {
                             profilePicture: url ? url : userData.profilePicture,
                             mobileNumber: phoneNumber ? phoneNumber : userData.mobileNumber,
                             gender: gender ? gender : userData.gender,
