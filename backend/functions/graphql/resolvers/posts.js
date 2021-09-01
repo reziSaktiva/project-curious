@@ -19,7 +19,7 @@ module.exports = {
       }
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5000 * 1000
+      const radiusInM = range ? range * 1000 : 5 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -172,7 +172,7 @@ module.exports = {
       }
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5000 * 1000
+      const radiusInM = range ? range * 1000 : 5 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -255,13 +255,12 @@ module.exports = {
           latest.push(newData)
         });
         
-        const filter = latest.filter(a => a.rank > 1)
-        filter.sort((a, b) => b.rank - a.rank)
+        latest.sort((a, b) => b.rank - a.rank)
 
         return {
-          posts: filter,
+          posts: latest,
           lastId,
-          hasMore: filter.length === 8
+          hasMore: latest.length === 8
         }
       }
       catch (err) {
@@ -686,7 +685,7 @@ module.exports = {
       const doc = lastPosts
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5000 * 1000
+      const radiusInM = range ? range * 1000 : 5 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -777,7 +776,7 @@ module.exports = {
         return {
           posts: latest,
           lastId,
-          hasMore: latest.length === 3
+          hasMore: lastId ? latest.length === 3 : false
         }
       }
       catch (err) {
@@ -851,7 +850,7 @@ module.exports = {
       const doc = lastPosts
 
       const center = [lat, lng]
-      const radiusInM = range ? range * 1000 : 5000 * 1000
+      const radiusInM = range ? range * 1000 : 5 * 1000
 
       const bounds = geofire.geohashQueryBounds(center, radiusInM);
       let posts = []
@@ -938,13 +937,12 @@ module.exports = {
           latest.push(newData)
         });
 
-        const filter = latest.filter(a => a.rank > 1)
-        filter.sort((a, b) => b.rank - a.rank)
+        latest.sort((a, b) => b.rank - a.rank)
 
         return {
-          posts: filter,
+          posts: latest,
           lastId,
-          hasMore: filter.length === 3
+          hasMore: lastId ? latest.length === 3 : false
         }
       }
       catch (err) {

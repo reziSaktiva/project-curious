@@ -526,6 +526,7 @@ const reducer = (state, action) => {
 
           return post;
         }),
+        mutedPost: state.mutedPost.filter(mute => mute.id !== action.payload.postId)
       };
     case "MUTE_POST_ROOM_1":
       return {
