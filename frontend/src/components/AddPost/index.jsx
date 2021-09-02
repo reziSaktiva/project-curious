@@ -235,7 +235,9 @@ export default function ModalPost() {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-        const uploadTask = storage.ref(`upload/${elem.originFileObj.name}`).put(elem.originFileObj)
+         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name : elem.originFileObj.name.split(".")[0] + "." +elem.type.split("/")[1]
+
+        const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
 
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
@@ -245,9 +247,9 @@ export default function ModalPost() {
               reject()
             },
             async () => {
-              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-
-              resolve(downloadUrl);
+               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+               const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
+              resolve( elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
             }
           )
         })
@@ -360,7 +362,8 @@ export default function ModalPost() {
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
-                accept={noVideoFilter ? "image/*" : "video/*, image/*"}
+                type="file"
+                accept={noVideoFilter ? ".jpg, .jpeg, .png" : ".jpg, .jpeg, .png"}
                 onPreview={handlePreview}
                 onChange={handleChange}
               >

@@ -1,6 +1,7 @@
 module.exports = {
-  apiKey: "AIzaSyB56bd6HDIwps9MyM4vza4M6hhpd5o4Sg4",
+  apiKey: "AIzaSyCl0eTUbnDS4-kFW9-Xwb3Ih8KVuWRYeI4",
   authDomain: "insvire-curious-app.firebaseapp.com",
+  databaseURL: "https://insvire-curious-app-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "insvire-curious-app",
   storageBucket: "insvire-curious-app.appspot.com",
   messagingSenderId: "32784977098",

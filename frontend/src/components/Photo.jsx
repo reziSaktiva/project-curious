@@ -5,6 +5,7 @@ import { AuthContext } from '../context/auth';
 
 export default function Photo({photo}) {
 const {loginLoader, setLoginLoader} = useContext(AuthContext)
+
     return (
         <div style={{width: "100%"}}>
             {photo ? (

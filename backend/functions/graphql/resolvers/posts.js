@@ -955,7 +955,7 @@ module.exports = {
       }
     },
     async createPost(_, { text, media, location, repost, room }, context) {
-
+console.log("url", media);
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
