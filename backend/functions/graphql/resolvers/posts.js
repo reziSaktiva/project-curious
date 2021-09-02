@@ -565,7 +565,7 @@ module.exports = {
       try {
         const data = await db.collection('posts').where('rank', '>', 1).orderBy('rank', 'desc').limit(8).get()
         const docs = data.docs.map((doc) => doc.data())
-        const posts = []
+        let posts = []
 
         if (docs.length) {
           docs.forEach(async data => {
@@ -608,12 +608,16 @@ module.exports = {
 
             posts.push(newData)
           });
+          return {
+            posts,
+            hasMore: posts.length === 8,
+            lastId: posts[posts.length - 1].id
+          }
         }
-
         return {
-          posts,
+          posts: [],
           hasMore: posts.length === 8,
-          lastId: posts[posts.length - 1].id
+          lastId: null
         }
       }
       catch (err) {
@@ -629,7 +633,7 @@ module.exports = {
 
         const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
         const docs = data.docs.map((doc) => doc.data())
-        const posts = []
+        let posts = [];
 
         if (docs.length) {
           docs.forEach(async data => {
@@ -672,9 +676,17 @@ module.exports = {
 
             posts.push(newData)
           });
+          return {
+            posts,
+            hasMore: posts.length === 8,
+            lastId: posts[posts.length - 1].id
+          }
         }
-
-        return posts
+        return {
+          posts: [],
+          hasMore: posts.length === 8,
+          lastId: null
+        }
       }
       catch (err) {
         console.log(err);
@@ -955,7 +967,7 @@ module.exports = {
       }
     },
     async createPost(_, { text, media, location, repost, room }, context) {
-console.log("url", media);
+      console.log("url", media);
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
