@@ -6,15 +6,15 @@ import 'firebase/app-check';
 import Config from './Config';
 
 
-const app = firebase.initializeApp(Config)
+ firebase.initializeApp(Config)
 
-export const appCheck = app.appCheck()
+// export const appCheck = app.appCheck()
 
-appCheck.activate('6LcYfzocAAAAALi0-lrtXpRWZQKGUX9G7EErRlv7',
+// appCheck.activate('6LcYfzocAAAAALi0-lrtXpRWZQKGUX9G7EErRlv7',
 
-    // Optional argument. If true, the SDK automatically refreshes App Check
-    // tokens as needed.
-    true);
+//     // Optional argument. If true, the SDK automatically refreshes App Check
+//     // tokens as needed.
+//     true);
 
 export const db = firebase.firestore();
 
