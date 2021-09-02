@@ -32,7 +32,7 @@ export default function VisitedPosts({ postsLocation }) {
 
     useEffect(() => {
         if (postsLocation) {
-            getPosts({ variables: { ...postsLocation, range: 5 ? parseFloat(5) : undefined } });
+            getPosts({ variables: { ...postsLocation, range: 1 } });
         }
     }, [postsLocation]);
 

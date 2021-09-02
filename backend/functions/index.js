@@ -1,36 +1,38 @@
 const functions = require('firebase-functions');
 const app = require('express')();
-const http = require('http')
 const { ApolloServer } = require('apollo-server-express');
-const { computeSignedArea, LatLng } = require('spherical-geometry-js');
 
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers/index');
-const { db } = require('./utility/admin');
-const PORT = 5000
+// const { admin } = require('./utility/admin');
 
 // Global Config
 require('dotenv').config()
 
-const context = ({ req, connection }) => {
+const context = async ({ req, connection }) => {
     if (req) {
         return { req }
     }
     if (connection) {
         return { connection }
     }
-    
-    functions.https.onCall((data, context) => {
-        // context.app will be undefined if the request doesn't include a valid
-        // App Check token.
-        if (context.app == undefined) {
-            throw new functions.https.HttpsError(
-                'failed-precondition',
-                'The function must be called from an App Check verified app.')
-        }
 
-        // Your function logic follows.
-    });
+    // const appCheckToken = req.header('X-Firebase-AppCheck');
+    // if (!appCheckToken) {
+    //     res.status(401);
+    //     return next('Unauthorized');
+    // }
+
+    // try {
+    //     const appCheckClaims = await admin.appCheck().verifyToken(appCheckToken);
+
+    //     // If verifyToken() succeeds, continue with the next middleware
+    //     // function in the stack.
+    //     return next();
+    // } catch (err) {
+    //     res.status(401);
+    //     return next('Unauthorized');
+    // }
 }
 
 const server = new ApolloServer({

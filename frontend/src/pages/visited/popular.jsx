@@ -37,7 +37,7 @@ export default function VisitedPopular({ postsLocation }) {
     });
 
     useEffect(() => {
-        getPosts({ variables: { ...postsLocation, range: 5 } });
+        getPosts({ variables: { ...postsLocation, range: 1 } });
     }, []);
 
     useEffect(() => {

@@ -78,9 +78,9 @@ function ScrollInfinite(props) {
                     break;
                 case '/visited':
                     if (active === 'latest') {
-                        nextPosts({ variables: { ...visitedLocation, id: lastIdPosts, range: 5 } })
+                        nextPosts({ variables: { ...visitedLocation, id: lastIdPosts, range: 1 } })
                     } else {
-                        nextPopular({ variables: { ...visitedLocation, id: lastIdPosts, range: 5 } })
+                        nextPopular({ variables: { ...visitedLocation, id: lastIdPosts, range: 1 } })
                     }
                     break;
                 case '/search':
