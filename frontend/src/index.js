@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client/core';
 import { onError } from 'apollo-link-error';
+
+// import { appCheck } from './util/Firebase';
 import { isMobile } from "react-device-detect";
 
 import { destorySession } from './util/Session';
@@ -14,14 +16,23 @@ import './index.css'
 import App from './App'
 
 // const httpUrl = 'http://localhost:5000/insvire-curious-app/asia-southeast2/graphql';
-  const httpUrl = 'https://asia-southeast2-insvire-curious-app.cloudfunctions.net/graphql';
+const httpUrl = 'https://asia-southeast2-insvire-curious-app.cloudfunctions.net/graphql';
 
 const httpLink = ApolloLink.from([
-  new ApolloLink((operation, forward) => {
+  new ApolloLink(async (operation, forward) => {
     const token = localStorage.token
+
+    // let appCheckTokenResponse;
+    // try {
+    //   appCheckTokenResponse = await appCheck.getToken(false);
+    // } catch (err) {
+    //   // Handle any errors if the token was not retrieved.
+    // }
+
     if (token) {
       operation.setContext({
         headers: {
+          // 'X-Firebase-AppCheck': appCheckTokenResponse.token,
           "Authorization": `Bearer ${token}`
         }
       })
