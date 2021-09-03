@@ -623,6 +623,7 @@ export const PostContext = createContext({
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
+  moreRoom:() => {},
   setLikedPosts: () => { },
   setComment: () => { },
   setPost: () => { },
@@ -816,6 +817,14 @@ export const PostProvider = (props) => {
     }
   };
 
+  const moreRoom = (posts) => {
+    const room = posts[0].room ? posts[0].room : undefined
+    dispatch({
+      type: `MORE_${room}`,
+      payload: posts,
+    })
+  }
+
   const setPosts = (posts) => {
     dispatch({
       type: "SET_POSTS",
@@ -873,18 +882,10 @@ export const PostProvider = (props) => {
 
   const morePosts = (posts) => {
     setTimeout(() => {
-      if (posts.length && posts[0].room) {
-        const room = posts[0].room ? posts[0].room : undefined
-        dispatch({
-          type: `MORE_${room}`,
-          payload: posts,
-        })
-      } else {
-        dispatch({
-          type: "MORE_POSTS",
-          payload: posts,
-        });
-      }
+      dispatch({
+        type: "MORE_POSTS",
+        payload: posts,
+      });
     }, 2000);
   };
 
@@ -981,6 +982,7 @@ export const PostProvider = (props) => {
         subscribePost,
         setSubscribePosts,
         setRoom,
+        moreRoom,
         commentDelete,
         setNavMobileOpen,
         likedPosts,

@@ -68,16 +68,16 @@ export default function SignIn(props) {
           </Row>
 
         <p style={{ marginTop: 10, fontSize: 14, color: "#352A39" }}>By signing up, you agree to our
-        <span onClick={handleOpenModalLegal}  className="terms"> Terms</span>
+        <span onClick={handleOpenModalLegal}  className="terms" style={{cursor: 'pointer'}}> Terms</span>
         <span> & </span>
-        <span onClick={handleOpenModalLegal} className="terms">Privacy Policy</span></p>
+        <span onClick={handleOpenModalLegal} className="terms" style={{cursor: 'pointer'}}>Privacy Policy</span></p>
         
     </div>
     </div>
      <div style={{backgroundColor: 'white'}}>
      <footer style={{textAlign: 'center'}}>
                 <span  type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                    &copy; 2020 Curious. Read Our <span onClick={handleOpenModalLegal}>Community Guidelines</span>
+                    &copy; 2020 Curious. Read Our <span onClick={handleOpenModalLegal} style={{cursor: 'pointer'}}>Community Guidelines</span>
                     </span> 
       </footer>
       </div>    
