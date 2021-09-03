@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import No_result from '../assets/Noresults/No_posts_home_Profile.png'
 import SkeletonLoading from '../components/SkeletonLoading'
 import InfiniteScroll from '../components/InfiniteScroll'
+import { Helmet } from 'react-helmet'
 
 
 function Room(props) {
@@ -54,6 +55,11 @@ function Room(props) {
     }, [data, _isMounted])
     return (
         <div>
+            <Helmet>
+      <title>Curious - Room</title>
+          <meta name="description" content="Here where you can see on going event so you wont miss the new trend."/>
+          <meta name="keywords" description="Social Media, Dating App, Chat App" />
+      </Helmet>
             <NavBar />
             {!_isMounted.current && room_1.length !== 0 && <SkeletonLoading />}
             <InfiniteScroll isLoading={loadingPosts}>

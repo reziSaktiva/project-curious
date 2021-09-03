@@ -54,8 +54,9 @@ const Search = () => {
   return (
     <>
     <Helmet>
-     <title>Explore Everything</title>
+     <title>Curious - Explore</title>
      <meta name="description" content="Explore Everything All Around The World" />
+     <meta name="keywords" description="Social Media, Dating App, Chat App" />
     </Helmet>
     <AppBar title="Seach" />
     <div className="search_page">

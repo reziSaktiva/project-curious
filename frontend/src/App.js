@@ -46,9 +46,9 @@ function App() {
     <Context>
       <Router>
         <Helmet>
-          <title>Home of Curiousity</title>
-          <meta name="description" content="lets find out who are they"/>
-          <meta name="keywords" description="Social Media" />
+          <title>Curious - Homepage</title>
+          <meta name="description" content="Create an account or log in to Curious - A fun yet misterious place way to post your thought or picture to make people curoius about who you are."/>
+          <meta name="keywords" description="Social Media, Dating App, Chat App" />
         </Helmet>
         <Grid>
           <Switch>

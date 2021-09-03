@@ -35,6 +35,7 @@ import "firebase/storage";
 import { PostContext } from "../../context/posts";
 import SkeletonLoading from "../../components/SkeletonLoading";
 import SkeletonProfile from "./SkeletonProfile";
+import { Helmet } from "react-helmet";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -198,10 +199,19 @@ function Profile() {
       return accumulator + current.repostCount;
     }, 0) : 0;
 
-  return loading? <div><AppBar title="My Profile" /><SkeletonProfile /></div> : (
+  return  (
     <div>
+      <Helmet>
+      <title>Curious - Profile</title>
+          <meta name="description" content="Where all your post stored here and also your photos, share your profile to your friend and see how they react."/>
+          <meta name="keywords" description="Social Media, Dating App, Chat App" />
+      </Helmet>
       <AppBar title="My Profile" />
-      <div
+      {loading ? (
+        <SkeletonProfile />
+      ) : (
+        <div>
+        <div
         style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10,  }}
       >
         <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
@@ -230,25 +240,6 @@ function Profile() {
                 <EditOutlined style={{ color: 'white' }} />
               </Link>
           </div>
-          {/* <div
-            style={{
-              backgroundColor: "#7f57ff",
-              color: "white",
-              borderRadius: "50%",
-              width: 21,
-              height: 21,
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-            }}
-          >
-            <ImgCrop rotate>
-
-              <Upload onChange={handleChange} showUploadList={false}>
-                <EditOutlined style={{ color: 'white' }} />
-              </Upload>
-            </ImgCrop>
-          </div> */}
         </div>
       </div>
 
@@ -314,6 +305,9 @@ function Profile() {
       </div>
 
       {Demo()}
+      </div>
+      )}
+      
     </div>
   );
 }
