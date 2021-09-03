@@ -26,13 +26,13 @@ export default function SignIn(props) {
         setlegal(e.target.innerText)
     }
     let legalKey;
-    if(legal === "Terms of Service" || legal =="Terms") legalKey = <TOU  setOpenModal={setOpenModal} />
+    if(legal === "Terms of Service" || legal ==" Terms") legalKey = <TOU  setOpenModal={setOpenModal} />
     if(legal === "Privacy Policy") legalKey = <PrivacyPolicy setOpenModal={setOpenModal} />
     if(legal === "Community Guidelines") legalKey = <CG  setOpenModal={setOpenModal} />
-
+    console.log(legal);
   return (
   <div className="landing-container">
-      <CustomModal click={openModal} setOpenModal={setOpenModal} title={legal} >{legalKey}</CustomModal>
+      <CustomModal click={openModal} setOpenModal={setOpenModal} title={legal === " Terms" ? "Terms of Service" : legal} >{legalKey}</CustomModal>
       {loginLoader && <BackDrop ><LoadingOutlined style={{fontSize: 80}} /></BackDrop> }
     <div className="left-grid__wrapper">
       <div className="landingimage" />
@@ -68,33 +68,17 @@ export default function SignIn(props) {
           </Row>
 
         <p style={{ marginTop: 10, fontSize: 14, color: "#352A39" }}>By signing up, you agree to our
-        <span onClick={handleOpenModalLegal}  className="terms">Terms</span>
+        <span onClick={handleOpenModalLegal}  className="terms"> Terms</span>
         <span> & </span>
         <span onClick={handleOpenModalLegal} className="terms">Privacy Policy</span></p>
         
     </div>
     </div>
      <div style={{backgroundColor: 'white'}}>
-     <footer>
-    <p className="copy-right" style={{textAlign: 'center'}}>&copy; 2020 Curious</p> 
-      <Row style={{textAlign: 'center'}}>
-                <Col span={8}>
-                    <Button key="tou" onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                        Terms of Service
-                    </Button>
-                </Col>
-                <Col span={7}>
-                    <Button onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                        Privacy Policy
-                    </Button>
-                </Col>
-                <Col span={9}>
-                    <Button onClick={handleOpenModalLegal} type="text" style={{ fontSize: 12, color: "#352A39" }}>
-                        Community Guidelines
-                    </Button>
-                </Col>
-
-            </Row>
+     <footer style={{textAlign: 'center'}}>
+                <span  type="text" style={{ fontSize: 12, color: "#352A39" }}>
+                    &copy; 2020 Curious. Read Our <span onClick={handleOpenModalLegal}>Community Guidelines</span>
+                    </span> 
       </footer>
       </div>    
   </div>)
