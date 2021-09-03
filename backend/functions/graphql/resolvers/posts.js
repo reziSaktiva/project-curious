@@ -26,6 +26,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAt(b[0])
           .endAt(b[1])
           .limit(8);
@@ -103,7 +104,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
@@ -708,6 +709,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAfter(doc)
           .endAt(b[1])
           .limit(3)
@@ -787,7 +789,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
