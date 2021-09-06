@@ -620,7 +620,6 @@ module.exports = {
             }
         },
         async login(_, { username, password }) {
-            console.log(username, password);
             const { valid, errors } = validateLoginInput(username, password)
             if (!valid) throw new UserInputError("Errors", { errors })
 

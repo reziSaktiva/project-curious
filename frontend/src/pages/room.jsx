@@ -54,7 +54,6 @@ function Room(props) {
         }
     }, [data, _isMounted])
 
-    console.log();
     return (
         <div>
             <Helmet>
@@ -64,43 +63,46 @@ function Room(props) {
       </Helmet>
             <Appbar title={room === "/Insvire E-Sport" ? "Insvire E-Sport" : "BMW Club Bandung" } />
             {!_isMounted.current && room_1.length !== 0 && <SkeletonLoading />}
-            <InfiniteScroll isLoading={loadingPosts}>
-            {room === "/Insvire E-Sport" ? (user ? (room_1.length === 0 ? (
-                <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                    <img src={No_result} style={{ width: 300 }} />
-                    <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
-                    <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
-                    <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
-                </div>)
-                : room_1.map((post, key) => {
-                    const { muted, id } = post;
-                    const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
 
-                    return (
-                            <div key={`posts${id} ${key}`}>
-                                {!isMuted && <PostCard post={post} loading={loading} />}
-                            </div>
-                    )
-                })) : null) : (user ? (room_2.length === 0 ? (
-                    (
-                        <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                            <img src={No_result} style={{ width: 300 }} />
-                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
-                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
-                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
-                        </div>)
-                )
-                    : room_2.map((post, key) => {
+            {_isMounted.current && room_1.length !== 0 && <SkeletonLoading />}
+
+            <InfiniteScroll isLoading={loadingPosts}>
+                {room === "/Insvire E-Sport" ? (user ? (room_1.length === 0 ? (
+                    <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                        <img src={No_result} style={{ width: 300 }} />
+                        <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                        <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                        <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                    </div>)
+                    : room_1.map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
 
                         return (
+                            <div key={`posts${id} ${key}`}>
+                                {!isMuted && <PostCard post={post} loading={loading} />}
+                            </div>
+                        )
+                    })) : null) : (user ? (room_2.length === 0 ? (
+                        (
+                            <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                                <img src={No_result} style={{ width: 300 }} />
+                                <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                                <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                                <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                            </div>)
+                    )
+                        : room_2.map((post, key) => {
+                            const { muted, id } = post;
+                            const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+
+                            return (
                                 <div key={`posts${id} ${key}`}>
                                     {!isMuted && <PostCard post={post} loading={loading} />}
                                 </div>
-                        )
-                    })) : null)}
-                    </InfiniteScroll>
+                            )
+                        })) : null)}
+            </InfiniteScroll>
         </div>
     );
 }
