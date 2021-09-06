@@ -8,7 +8,7 @@ import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Querie
 import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
 import "./style.css";
-import { Col, Row, Tabs,  } from "antd";
+import { Col, Row, Tabs, } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 
@@ -61,8 +61,8 @@ function Profile() {
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
       setPosts({
-        hasMore : false,
-        posts : getProfilePosts.getProfilePosts
+        hasMore: false,
+        posts: getProfilePosts.getProfilePosts
       });
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
     }
@@ -72,17 +72,11 @@ function Profile() {
 
   const location = loc ? JSON.parse(loc) : null;
 
-  if (location) {
-    Geocode.fromLatLng(location.lat, location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddress(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
+  useEffect(() => {
+    if (location) {
+      setAddress(location.location);
+    }
+  }, [location])
 
   useEffect(() => {
     if (!loading && getProfilePosts) {
@@ -104,7 +98,7 @@ function Profile() {
     getProfilePosts &&
     getProfilePosts.getProfilePosts.map((doc) => doc.likeCount);
   const { TabPane } = Tabs;
-  
+
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
@@ -112,13 +106,13 @@ function Profile() {
           <SkeletonLoading />
         ) : (
           !posts ? (
-            <div style={{display:"flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column"}}>
-                <img src={no_posts} style={{ width: 300}} />
-                <h4 style={{textAlign: 'center'}}>There is no Nearby post around you</h4>
-                <h4 style={{textAlign: 'center'}}>be the first to post in your area!</h4>
-                <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
+            <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+              <img src={no_posts} style={{ width: 300 }} />
+              <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+              <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+              <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
             </div>
-            ) : (
+          ) : (
             posts.map((post, key) => {
               return (
                 user && (
@@ -198,115 +192,115 @@ function Profile() {
     ? posts.reduce((accumulator, current) => {
       return accumulator + current.repostCount;
     }, 0) : 0;
-  return  (
+  return (
     <div>
       <Helmet>
-      <title>Curious - Profile</title>
-          <meta name="description" content="Where all your post stored here and also your photos, share your profile to your friend and see how they react."/>
-          <meta name="keywords" description="Social Media, Dating App, Chat App" />
+        <title>Curious - Profile</title>
+        <meta name="description" content="Where all your post stored here and also your photos, share your profile to your friend and see how they react." />
+        <meta name="keywords" description="Social Media, Dating App, Chat App" />
       </Helmet>
       <AppBar title="My Profile" />
       {loading ? (
         <SkeletonProfile />
       ) : (
         <div>
-        <div
-        style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10,  }}
-      >
-        <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
-          <img
-            src={user.profilePicture}
-            style={{
-              borderRadius: "50%",
-              objectFit: "cover",
-              width: 80,
-              height: 80,
-            }}
-          />
+          <div
+            style={{ margin: "auto", width: 80, marginTop: 60, marginBottom: -10, }}
+          >
+            <div style={{ position: "relative", textAlign: "center", width: 80, backgroundColor: 'white' }}>
+              <img
+                src={user.profilePicture}
+                style={{
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  width: 80,
+                  height: 80,
+                }}
+              />
+              <div
+                style={{
+                  backgroundColor: "#7f57ff",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: 21,
+                  height: 21,
+                  position: "absolute",
+                  bottom: 0,
+                  right: 0,
+                }}
+              >
+                <Link to="/editProfile" showUploadList={false}>
+                  <EditOutlined style={{ color: 'white' }} />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <h4 style={{ textAlign: "center" }}>{user.newUsername ? user.newUsername : user.username}</h4>
+          <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
+            <Link to="/maps">
+              <img src={Pin} style={{ width: 20, marginTop: -5 }} />
+              <span style={{ fontSize: 12 }}>{address}</span>
+            </Link>
+          </div>
+
           <div
             style={{
-              backgroundColor: "#7f57ff",
-              color: "white",
-              borderRadius: "50%",
-              width: 21,
-              height: 21,
-              position: "absolute",
-              bottom: 0,
-              right: 0,
+              textAlign: "center",
+              margin: "auto",
+              width: "50%",
+              marginTop: 20,
             }}
           >
-              <Link to="/editProfile" showUploadList={false}>
-                <EditOutlined style={{ color: 'white' }} />
-              </Link>
+            <Row>
+              <Col span={8}>
+                <h5>
+                  {getProfilePosts ? getProfilePosts.getProfilePosts.length : 0}
+                </h5>
+                <p>Post</p>
+              </Col>
+              <Col span={8}>
+                <h5>{repostCount}</h5>
+                <p>Repost</p>
+              </Col>
+              <Col span={8}>
+                <h5>
+                  {getProfilePosts && likeCounter.length >= 1
+                    ? likeCounter.reduce((total, num) => (total += num))
+                    : 0}
+                </h5>
+                <p>Likes</p>
+              </Col>
+            </Row>
           </div>
-        </div>
-      </div>
 
-      <h4 style={{ textAlign: "center" }}>{user.newUsername ? user.newUsername : user.username }</h4>
-      <div style={{ textAlign: "center", margin: "auto", width: "50%" }}>
-        <Link to="/maps">
-          <img src={Pin} style={{ width: 20, marginTop: -5 }} />
-          <span style={{ fontSize: 12 }}>{address}</span>
-        </Link>
-      </div>
-
-      <div
-        style={{
-          textAlign: "center",
-          margin: "auto",
-          width: "50%",
-          marginTop: 20,
-        }}
-      >
-        <Row>
-          <Col span={8}>
-            <h5>
-              {getProfilePosts ? getProfilePosts.getProfilePosts.length : 0}
-            </h5>
-            <p>Post</p>
-          </Col>
-          <Col span={8}>
-            <h5>{repostCount}</h5>
-            <p>Repost</p>
-          </Col>
-          <Col span={8}>
-            <h5>
-              {getProfilePosts && likeCounter.length >= 1
-                ? likeCounter.reduce((total, num) => (total += num))
-                : 0}
-            </h5>
-            <p>Likes</p>
-          </Col>
-        </Row>
-      </div>
-
-      <div
-        style={{
-          textAlign: "center",
-          margin: "auto",
-          width: "50%",
-          marginTop: 20,
-          marginBottom: 40,
-        }}
-      >
-        <div className="ui action input" style={{ height: 25 }}>
-          <input
-            type="text"
-            value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
-          />
-          <button
-            className="ui teal right icon button"
-            style={{ backgroundColor: "#7F57FF", fontSize: 10 }}
+          <div
+            style={{
+              textAlign: "center",
+              margin: "auto",
+              width: "50%",
+              marginTop: 20,
+              marginBottom: 40,
+            }}
           >
-            Copy
-          </button>
-        </div>
-      </div>
+            <div className="ui action input" style={{ height: 25 }}>
+              <input
+                type="text"
+                value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
+              />
+              <button
+                className="ui teal right icon button"
+                style={{ backgroundColor: "#7F57FF", fontSize: 10 }}
+              >
+                Copy
+              </button>
+            </div>
+          </div>
 
-      {Demo()}
-      </div>
+          {Demo()}
+        </div>
       )}
-      
+
     </div>
   );
 }

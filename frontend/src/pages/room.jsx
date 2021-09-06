@@ -62,8 +62,6 @@ function Room(props) {
           <meta name="keywords" description="Social Media, Dating App, Chat App" />
       </Helmet>
             <Appbar title={room === "/Insvire E-Sport" ? "Insvire E-Sport" : "BMW Club Bandung" } />
-            {!_isMounted.current && room_1.length !== 0 && <SkeletonLoading />}
-
             {_isMounted.current && room_1.length !== 0 && <SkeletonLoading />}
 
             <InfiniteScroll isLoading={loadingPosts}>
