@@ -77,7 +77,6 @@ export default function ModalPost() {
   const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
   const [errors, setErrors] = useState({});
-  console.log(errors);
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
@@ -105,20 +104,20 @@ export default function ModalPost() {
       if (location) {
         setAddress(location.location);
       }
-    }, [])
-    useEffect(() => {
-      if (getPost.location) {
-        setAddressRepost(getPost.location.location);
-      }
-    }, [])
+    }, [location])
+
 
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
-console.log(dataRepost);
 
 
+useEffect(() => {
+  if (getPost.location) {
+    setAddressRepost(getPost.location.location);
+  }
+}, [getPost])
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
@@ -245,7 +244,7 @@ console.log(dataRepost);
         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-        console.log("elem, uid", fileName + elem.uid);
+
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => { },
