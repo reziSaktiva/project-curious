@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import NotificationMobile from '../components/NotificationMobile'
 import SidebarMobile from '../components/SidebarMobile'
 import BackDrop from '../components/BackDrop'
-
+import Appbar from '../components/AppBar'
 function SubscribePosts() {
   const { setNavMobileOpen, loading, subscribePosts, setSubscribePosts, loadingData } = useContext(PostContext)
   const { user, setPathname } = useContext(AuthContext)
@@ -67,6 +67,7 @@ function SubscribePosts() {
 
   return (
     <div>
+      <Appbar title="Subscribe Posts" />
       <NotificationMobile />
       <SidebarMobile show={burger.toggle} />
 

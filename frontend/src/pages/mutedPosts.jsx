@@ -4,7 +4,7 @@ import { GET_MUTED_POSTS, GET_POSTS } from '../GraphQL/Queries'
 import { PostContext } from '../context/posts'
 import PostCard from '../components/PostCard/index'
 import { AuthContext } from '../context/auth'
-import NavBar from '../components/NavBar'
+import AppBar from '../components/AppBar'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import NotificationMobile from '../components/NotificationMobile'
 import SidebarMobile from '../components/SidebarMobile'
@@ -61,6 +61,7 @@ function MutedPost() {
 
   return (
     <div>
+      <AppBar title="Muted Post" />
       <NotificationMobile />
       <SidebarMobile show={burger.toggle} />
 
