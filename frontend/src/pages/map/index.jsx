@@ -54,7 +54,6 @@ const sliderValidator = () => {
     return 100
   }
 }
-console.log("sliderValidator", sliderValidator() );
 const MapHeader = props => {
 
   const { onSetCurrentLoc, onBack } = props;

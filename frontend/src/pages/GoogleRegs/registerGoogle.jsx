@@ -79,7 +79,7 @@ const RegisterGoogle = (props) => {
     return (
             <div>
                 <Link to='/' className="header-page">
-                <div className="curious centeringImage" style={{ marginTop: 50 }} />
+                <div className="curious centeringImage" style={{ marginTop: 50, marginBottom: 10 }} />
                 </Link>
                 
                 <div className="landing-card">
@@ -117,11 +117,10 @@ const RegisterGoogle = (props) => {
               className="edit-profile__textfield"
             >
               <Input
-                placeholder="Username" />
+                placeholder="Username" style={{width:"100%"}} />
             </Form.Item>
             <Form.Item
                 name="gender"
-                
                 rules={[
                     {
                         type: 'array',

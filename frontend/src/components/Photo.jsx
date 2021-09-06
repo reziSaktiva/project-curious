@@ -5,7 +5,7 @@ import { AuthContext } from '../context/auth';
 
 export default function Photo({photo}) {
 const {loginLoader, setLoginLoader} = useContext(AuthContext)
-
+  
     return (
         <div style={{width: "100%"}}>
             {photo ? (
@@ -37,14 +37,16 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
                   <Image.PreviewGroup>
                     <td style={{ width: "50%" }}>
                       <Image
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        style={{ borderRadius: "10px 0px 0px 10px",maxHeight: 200, objectFit:'cover'}}
                         src={photo[0]}
+                        width={"100%"}
                       />
                     </td>
-                    <td>
+                    <td style={{ width: "50%" }}>
                       <Image
-                        style={{ borderRadius: "0px 10px 10px 0px", minWidth: 300 }}
+                        style={{ borderRadius: "0px 10px 10px 0px", minHeight: 200 }}
                         src={photo[1]}
+                        width={"100%"}
                       />
                     </td>
                   </Image.PreviewGroup>

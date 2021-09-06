@@ -1,7 +1,7 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Image } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Alert } from "antd";
 import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -67,14 +67,17 @@ export default function ModalPost() {
 
   // Local State
   const [state, setState] = useState(InitialState);
+  const [disabled, setDisabled] = useState(false);
+  const [uploadDone, setuploadDone] = useState(false)
   const [noVideoFilter, setnoVideoFilter] = useState(false)
   const [limiter, setlimiter] = useState(false)
   const [address, setAddress] = useState("");
   const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
-  const [ room, setRoom ] = useState("Nearby")
+  const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
-
+  const [errors, setErrors] = useState({});
+  console.log(errors);
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
@@ -109,7 +112,7 @@ export default function ModalPost() {
       }
     );
   }
-  
+
 
 
   // Query
@@ -117,34 +120,23 @@ export default function ModalPost() {
   const getPost = get(dataRepost, 'getPost') || {};
 
 
-  if (getPost.location) {
-    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddressRepost(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
-
-  const [createPost, { loading : loadingCreatePost }] = useMutation(
+  const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
         const { createPost } = data;
-
         // Reset Form
         setState(InitialState);
         form.resetFields();
 
         // Update Redux
         toggleOpenNewPost(false)
-        updatePosts({
-          ...createPost,
-          repost: getPost
-        });
+        setTimeout(() => {
+          updatePosts({
+            ...createPost,
+            repost: getPost
+          });
+        }, 2000);
       }
     }
   )
@@ -171,7 +163,7 @@ export default function ModalPost() {
         roomRepost: repost.room || '',
         room: room === "Nearby" ? null : room
       };
-      
+
       createPost({ variables });
     }
   }, [uploaded, isFinishUpload]);
@@ -207,25 +199,41 @@ export default function ModalPost() {
   };
 
   const handleChange = ({ fileList }) => {
-    const newFiles = fileList.map(file => ({ ...file, status: 'done' }))
+
+    fileList.map(file => (
+      file.size > 10000000 ? ( Promise.reject(setErrors('File should less than 10mb'))) :
+      (Promise.resolve())
+      ))
+    fileList.map(file => (
+      file.status === "uploading" ? setDisabled(true) : setDisabled(false) 
+      ));
     setState({
       ...state,
-      fileList: newFiles
+      fileList: fileList
     });
-    let limit = fileList.map( file => file.type.split("/")[0])
-    if(limit[0] === "image") setnoVideoFilter(true)
+
+    let limit = fileList.map(file => file.type.split("/")[0])
+    if (limit[0] === "image") setnoVideoFilter(true)
     else setnoVideoFilter(false)
 
-    if(limit[0] === 'video') setlimiter(true)
+    if (limit[0] === 'video') setlimiter(true)
     else setlimiter(false)
   }
-  
+
   const handleRemove = file => {
     const newFile = fileList.filter(item => item !== file);
     setState({
       ...state,
       fileList: newFile
     })
+  }
+  const handleRemoveErr = () => {
+    const newFile = fileList.filter(item => item.size < 10000000);
+    setState({
+      ...state,
+      fileList: newFile
+    })
+    Promise.resolve(setErrors({}))
   }
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
@@ -235,10 +243,11 @@ export default function ModalPost() {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name : elem.originFileObj.name.split(".")[0] + "." +elem.type.split("/")[1]
+
+        const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-
+        console.log("elem, uid", fileName + elem.uid);
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => { },
@@ -247,9 +256,10 @@ export default function ModalPost() {
               reject()
             },
             async () => {
-               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-               const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
-              resolve( elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
+              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+              
+                 const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
+                 resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
             }
           )
         })
@@ -268,7 +278,6 @@ export default function ModalPost() {
     return;
   };
 
-  
   return (
     <div>
       <Modal
@@ -280,9 +289,9 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
-                  
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30}}>
-                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20  }} />
+
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30 }}>
+                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20 }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
@@ -293,8 +302,8 @@ export default function ModalPost() {
               } key="1" showArrow={false}>
                 {room !== "Nearby" && (
                   <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>Nearby</Radio.Button>
-                ) }
-                
+                )}
+
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
                   <img src={Gorila} alt='gorila' style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
@@ -322,7 +331,7 @@ export default function ModalPost() {
         onCancel={handleCancelModal}
         footer={null}
       >
-        {!!repost && (
+        {repost && (
           <>
             {loading ?
               (
@@ -338,26 +347,26 @@ export default function ModalPost() {
                 <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
                   <div style={{ display: 'flex' }}>
                     <p className="ic-location-small" style={{ margin: 0 }} />
-                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{addressRepost}</div>
+                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{getPost.location.location}</div>
                   </div>
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
-                  
+
                   <Photo photo={getPost.media} />
 
-                  
+
                 </Card>
               )}
           </>
         )}
         <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
-            <Input.TextArea bordered={true} style={{width: '100%'}} placeholder="What's your story" />
+            <Input.TextArea bordered={true} style={{ width: '100%' }} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
-                
+
                 onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
@@ -371,7 +380,17 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
-          
+          {/* ERROR HANDLE */}
+          {Object.keys(errors).length > 0 && (
+            <Alert
+              message={errors}
+              type="error"
+              closable
+              onClose={handleRemoveErr}
+              style={{ marginBottom: 10 }}
+            />
+          )}
+
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
@@ -394,7 +413,9 @@ export default function ModalPost() {
                 </Upload>
               </Form.Item>
             </Col>
-            <Button htmlType="submit" key="submit" type="primary" loading={loadingCreatePost}
+
+
+            <Button htmlType="submit"  disabled={Object.keys(errors).length > 0 || disabled} key="submit" type="primary" loading={loadingCreatePost}
               style={{ backgroundColor: 'var(--primary-color)', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
               Post
             </Button>

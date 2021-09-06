@@ -38,7 +38,8 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_1: action.payload,
-        // lastIdPosts,
+        isMorePost : action.payload.length < 8,
+        lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_BMW Club Bandung":
       // let lastIdPosts = action.payload[action.payload.length - 1].id;
@@ -46,7 +47,8 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_2: action.payload,
-        // lastIdPosts,
+        isMorePost : action.payload.length < 8,
+        lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_POST":
       return {
