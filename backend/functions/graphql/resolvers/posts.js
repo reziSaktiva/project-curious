@@ -1022,7 +1022,7 @@ module.exports = {
                   _geoloc: location
                 }], { autoGenerateObjectIDIfNotExist: false })
                 .then(({ objectIDs }) => {
-                  console.log(objectIDs);
+                  (objectIDs);
                 })
                 .catch(err => {
                   console.log(err);
