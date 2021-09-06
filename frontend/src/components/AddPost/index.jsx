@@ -98,26 +98,19 @@ export default function ModalPost() {
 
   const location = loc ? JSON.parse(loc) : null;
 
-  if (location) {
-    setAddress(location.location);
-  }
-
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
 
 
-  if (getPost.location) {
-    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddressRepost(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
+  useEffect(() => {
+    if (location) {
+      setAddress(location.location);
+    }
+    if (getPost.location) {
+      setAddressRepost(getPost.location.location)
+    }
+  }, [])
 
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
