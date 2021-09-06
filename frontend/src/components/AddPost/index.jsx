@@ -270,7 +270,7 @@ export default function ModalPost() {
 
     return;
   };
-console.log(fileList, "limiter", limiter);
+  
   return (
     <div>
       <Modal
