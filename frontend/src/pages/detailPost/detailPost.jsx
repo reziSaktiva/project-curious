@@ -2,7 +2,7 @@
 import moment from "moment";
 import Geocode from "react-geocode";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { CREATE_COMMENT } from "../../GraphQL/Mutations";
+import { CREATE_COMMENT, DELETE_POST, MUTE_POST, SUBSCRIBE_POST } from "../../GraphQL/Mutations";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Comments from './comments'
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -48,6 +48,8 @@ import firebase from 'firebase/app'
 import 'firebase/storage'
 import { AuthContext } from "../../context/auth";
 import { MAP_API_KEY } from "../../util/ConfigMap";
+import Modal from "../../components/Modal";
+import { useHistory } from "react-router";
 const storage = firebase.storage()
 
 //location
@@ -64,13 +66,16 @@ function getBase64(file) {
 }
 
 export default function SinglePost(props) {
+  const history = useHistory()
   const [text, settext] = useState(null)
   const _isMounted = useRef(false)
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
+  const [deleteModal, setDeleteModal] = useState(false)
   const [repostAddress, setRepostAddress] = useState("");
   const [reply, setReply] = useState({ username: null, id: null });
+  const postContext = useContext(PostContext);
   const [form] = Form.useForm()
   const [state, setState] = useState({
     previewVisible: false,
@@ -79,6 +84,24 @@ export default function SinglePost(props) {
     fileList: []
   })
   const { previewVisible, previewImage, fileList, previewTitle } = state;
+
+  const [deletePost, { loading: deletePostLoading }] = useMutation(DELETE_POST, {
+    update(_, { data: { deletePost } }) {
+      history.push('/')
+      postContext.deletePost(post.id, post.room);
+    },
+  });
+  const [mutePost] = useMutation(MUTE_POST, {
+    update(_, { data: { mutePost } }) {
+      postContext.mutePost(mutePost, post.room);
+    },
+  });
+
+  const [subscribePost] = useMutation(SUBSCRIBE_POST, {
+    update(_, { data: { subscribePost } }) {
+      postContext.subscribePost(subscribePost, post);
+    },
+  });
 
   // upload photo comment /////////////////////////////
 
@@ -211,9 +234,22 @@ export default function SinglePost(props) {
     form.resetFields()
   };
 
+  const muted = get(post, "muted") || [];
+  const subscribe = get(post, "subscribe") || [];
+
+  const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
+  const isSubscribe = user && subscribe && subscribe.find((sub) => sub.owner === user.username);
+
   const userName = user && user.username;
   return (
     <div>
+      <Modal title="delete this post"
+          deleteModal={deleteModal}
+          setDeleteModal={setDeleteModal}
+          handleYes={() => {
+            deletePost({ variables: { id: post.id, room: post.room } })
+            setDeleteModal(false)
+          }} />
       <PostNavBar />
       {getPostLoading ? <Skeleton avatar paragraph={{ rows: 2 }} /> : (
         <List className="single_post_container" itemLayout="vertical" size="large" style={{ background: 'white', margin: 10, borderRadius: 5 }}>
@@ -256,41 +292,53 @@ export default function SinglePost(props) {
                             <img src={Pin} style={{ width: 20, position: "center" }} />
                             {address}
                             {userName === post.owner && (
-                    <div
-                      style={{
-                        width: 60,
-                        height: 20,
-                        border: "1px black solid",
-                        borderRadius: 5,
-                        textAlign: "center",
-                        display: "inline-block",
-                        marginLeft: 6,
-                      }}
-                    >
-                      <p style={{ fontSize: 14 }}>My Post</p>
-                    </div>
-                  )}
+                              <div
+                                style={{
+                                  width: 60,
+                                  height: 20,
+                                  border: "1px black solid",
+                                  borderRadius: 5,
+                                  textAlign: "center",
+                                  display: "inline-block",
+                                  marginLeft: 6,
+                                }}
+                              >
+                                <p style={{ fontSize: 14 }}>My Post</p>
+                              </div>
+                            )}
                           </Col>
                           <Col span={6} style={{ textAlign: "right" }}>
                             <Dropdown
                               overlay={
                                 <Menu>
-                                  <Menu.Item key="0">Subscribe</Menu.Item>
+                                  {!post.room && (<Menu.Item
+                                    key="0"
+                                    onClick={() =>
+                                      subscribePost({ variables: { id: post.id, room: post.room } })
+                                    }
+                                  >
+                                    {isSubscribe ? "Unsubscribe" : "Subscribe"}
+                                  </Menu.Item>)}
+                                  {!post.room && (<Menu.Item
+                                    key="1"
+                                    onClick={() =>
+                                      mutePost({ variables: { postId: post.id, room: post.room } })
+                                    }
+                                  >
+                                    {isMuted ? "Unmute" : "Mute"}
+                                  </Menu.Item>)}
+                                  {userName === post.owner ? (
+                                    <Menu.Item
+                                      key="4"
+                                      onClick={() => setDeleteModal(true)}>
+                                      <span>Delete Post</span>
+                                    </Menu.Item>
+                                  ) : null}
                                   {
-                                   userName !== post.owner &&
-                                   <Menu.Item key="1" onClick={(e) => console.log(e)}>
-                                    Mute
-                                  </Menu.Item> 
+                                    userName !== post.owner &&
+                                    <Menu.Item key="3">Report</Menu.Item>
                                   }
-                                  {
-                                   userName === post.owner &&
-                                   <Menu.Item key="3">DeletePost</Menu.Item>
-                                  }
-                                  {
-                                   userName !== post.owner &&
-                                   <Menu.Item key="3">Report</Menu.Item>
-                                  }
-                                  
+
                                 </Menu>
                               }
                               trigger={["click"]}
@@ -354,7 +402,7 @@ export default function SinglePost(props) {
 
                 {fileList.length > 0 && (
                   <div className="imagePreview_container">
-                    <div  style={{ height: 120, borderRadius: "30px 30px 0 0", backgroundColor: "white", padding: 10 }}>
+                    <div style={{ height: 120, borderRadius: "30px 30px 0 0", backgroundColor: "white", padding: 10 }}>
                       <Form.Item name="foto" style={{ marginBottom: 0 }} >
                         <div className="centeringButton" style={{ marginTop: -38 }}>
                           <Upload
@@ -401,16 +449,16 @@ export default function SinglePost(props) {
                   >
 
                     <MentionsInput
-                    maxLength={250}
-                    singleLine
-                    className="mentionInput"
-                     value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
-                    <Mention
-                      trigger="@"
-                      data={mentionSuggest}
-                      style={defaultMentionStyle}
-                    />
-                  </MentionsInput>
+                      maxLength={250}
+                      singleLine
+                      className="mentionInput"
+                      value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
+                      <Mention
+                        trigger="@"
+                        data={mentionSuggest}
+                        style={defaultMentionStyle}
+                      />
+                    </MentionsInput>
 
                   </Form.Item>
                   <Form.Item style={{ marginLeft: 10, }}>
