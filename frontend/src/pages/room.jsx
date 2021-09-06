@@ -53,6 +53,8 @@ function Room(props) {
             return;
         }
     }, [data, _isMounted])
+
+    console.log();
     return (
         <div>
             <Helmet>

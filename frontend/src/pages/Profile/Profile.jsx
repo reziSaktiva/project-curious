@@ -198,7 +198,6 @@ function Profile() {
     ? posts.reduce((accumulator, current) => {
       return accumulator + current.repostCount;
     }, 0) : 0;
-
   return  (
     <div>
       <Helmet>

@@ -1,7 +1,7 @@
 // Modules
 import React, { useState, useEffect, useContext } from "react";
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Image } from "antd";
+import { Modal, Button, Form, Input, Col, Upload, Card, Skeleton, Space, Collapse, Radio, Alert } from "antd";
 import { DownOutlined } from '@ant-design/icons'
 import { PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -67,6 +67,8 @@ export default function ModalPost() {
 
   // Local State
   const [state, setState] = useState(InitialState);
+  const [disabled, setDisabled] = useState(false);
+  const [uploadDone, setuploadDone] = useState(false)
   const [noVideoFilter, setnoVideoFilter] = useState(false)
   const [limiter, setlimiter] = useState(false)
   const [address, setAddress] = useState("");
@@ -74,7 +76,8 @@ export default function ModalPost() {
   const [form] = Form.useForm();
   const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
-
+  const [errors, setErrors] = useState({});
+  console.log(errors);
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
@@ -110,24 +113,25 @@ export default function ModalPost() {
     if (getPost.location) {
       setAddressRepost(getPost.location.location)
     }
-  }, [])
+  }, [getPost, location])
 
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
         const { createPost } = data;
-
         // Reset Form
         setState(InitialState);
         form.resetFields();
 
         // Update Redux
         toggleOpenNewPost(false)
-        updatePosts({
-          ...createPost,
-          repost: getPost
-        });
+        setTimeout(() => {
+          updatePosts({
+            ...createPost,
+            repost: getPost
+          });
+        }, 2000);
       }
     }
   )
@@ -190,10 +194,17 @@ export default function ModalPost() {
   };
 
   const handleChange = ({ fileList }) => {
-    const newFiles = fileList.map(file => ({ ...file, status: 'done' }))
+
+    fileList.map(file => (
+      file.size > 10000000 ? ( Promise.reject(setErrors('File should less than 10mb'))) :
+      (Promise.resolve())
+      ))
+    fileList.map(file => (
+      file.status === "uploading" ? setDisabled(true) : setDisabled(false) 
+      ));
     setState({
       ...state,
-      fileList: newFiles
+      fileList: fileList
     });
     let limit = fileList.map(file => file.type.split("/")[0])
     if (limit[0] === "image") setnoVideoFilter(true)
@@ -210,6 +221,14 @@ export default function ModalPost() {
       fileList: newFile
     })
   }
+  const handleRemoveErr = () => {
+    const newFile = fileList.filter(item => item.size < 10000000);
+    setState({
+      ...state,
+      fileList: newFile
+    })
+    Promise.resolve(setErrors({}))
+  }
 
   //////////////////// Upload Photo Function Finish/////////////////////////////////
 
@@ -218,10 +237,11 @@ export default function ModalPost() {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-        const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name : elem.originFileObj.name.split(".")[0] + "." + elem.type.split("/")[1]
+
+        const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-
+        console.log("elem, uid", fileName + elem.uid);
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => { },
@@ -231,8 +251,9 @@ export default function ModalPost() {
             },
             async () => {
               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-              const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
-              resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
+              
+                 const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
+                 resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
             }
           )
         })
@@ -250,7 +271,6 @@ export default function ModalPost() {
 
     return;
   };
-
 
   return (
     <div>
@@ -305,9 +325,9 @@ export default function ModalPost() {
         onCancel={handleCancelModal}
         footer={null}
       >
-        {!!repost && (
+        {repost && (
           <>
-            {loading ?
+            {loading && !getPost ?
               (
                 <div style={{ marginBottom: 10 }}>
                   <Space>
@@ -354,6 +374,16 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
+          {/* ERROR HANDLE */}
+          {Object.keys(errors).length > 0 && (
+            <Alert
+              message={errors}
+              type="error"
+              closable
+              onClose={handleRemoveErr}
+              style={{ marginBottom: 10 }}
+            />
+          )}
 
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
@@ -377,7 +407,9 @@ export default function ModalPost() {
                 </Upload>
               </Form.Item>
             </Col>
-            <Button htmlType="submit" key="submit" type="primary" loading={loadingCreatePost}
+
+
+            <Button htmlType="submit"  disabled={Object.keys(errors).length > 0 || disabled} key="submit" type="primary" loading={loadingCreatePost}
               style={{ backgroundColor: 'var(--primary-color)', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
               Post
             </Button>
