@@ -26,6 +26,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAt(b[0])
           .endAt(b[1])
           .limit(8);
@@ -103,7 +104,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
@@ -708,6 +709,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAfter(doc)
           .endAt(b[1])
           .limit(3)
@@ -787,7 +789,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
@@ -967,7 +969,6 @@ module.exports = {
       }
     },
     async createPost(_, { text, media, location, repost, room }, context) {
-      console.log("url", media);
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
@@ -991,6 +992,7 @@ module.exports = {
             geohash,
             location,
             _tags: hastags,
+            repost,
             room
           } : {
             owner: username,
@@ -1003,39 +1005,9 @@ module.exports = {
             rank: 0,
             geohash,
             location,
+            repost,
             _tags: hastags
           };
-
-          if (repost.repost) {
-            newPost.repost = repost
-            db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
-              .then(async doc => {
-                doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
-                if (doc.data().owner !== username) {
-                  const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
-
-                  const notification = {
-                    owner: doc.data().owner,
-                    recipient: doc.data().owner,
-                    sender: username,
-                    read: false,
-                    postId: doc.data().id,
-                    type: "REPOST",
-                    createdAt: new Date().toISOString(),
-                    displayName: name,
-                    displayImage,
-                    colorCode,
-                  }
-                  // FIX ME (done)
-                  db.collection(`/users/${doc.data().owner}/notifications`)
-                    .add(notification)
-                    .then((data) => {
-                      data.update({ id: data.id });
-                      pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
-                    });
-                }
-              })
-          }
 
           await db
             .collection(`${room ? `/room/${room}/posts` : "posts"}`)
@@ -1058,6 +1030,37 @@ module.exports = {
 
               doc.update({ id: doc.id });
             });
+
+          if (repost.repost) {
+            newPost.repost = repost
+            db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
+              .then(async doc => {
+                doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
+                if (doc.data().owner !== username) {
+                  const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
+
+                  const notification = {
+                    owner: doc.data().owner,
+                    recipient: doc.data().owner,
+                    sender: username,
+                    read: false,
+                    postId: newPost.id,
+                    type: "REPOST",
+                    createdAt: new Date().toISOString(),
+                    displayName: name,
+                    displayImage,
+                    colorCode,
+                  }
+                  // FIX ME (done)
+                  db.collection(`/users/${doc.data().owner}/notifications`)
+                    .add(notification)
+                    .then((data) => {
+                      data.update({ id: data.id });
+                      pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
+                    });
+                }
+              })
+          }
 
           if (Object.keys(location).length) {
             const visited = await db.collection(`/users/${username}/visited`)
