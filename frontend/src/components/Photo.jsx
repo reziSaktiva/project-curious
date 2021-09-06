@@ -31,7 +31,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
 
         {photo ? (
           photo.length === 2 ? (
-            <table className="row-card-2">
+            <table className="row-card-2" style={{width: '100%'}}>
               <tbody>
                 <tr>
                   <Image.PreviewGroup>
@@ -44,7 +44,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
                     </td>
                     <td style={{ width: "50%" }}>
                       <Image
-                        style={{ borderRadius: "0px 10px 10px 0px", minHeight: 200 }}
+                        style={{ borderRadius: "0px 10px 10px 0px", minHeight: 200, objectFit:'cover' }}
                         src={photo[1]}
                         width={"100%"}
                       />

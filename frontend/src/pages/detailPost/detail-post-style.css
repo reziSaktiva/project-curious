@@ -64,7 +64,24 @@
     z-index:100;
     position: relative;
 }
+.mentionInput {
+    width: 60vw;
+    max-width:400px
+}
+@media only screen and (max-width: 928px) {
+    .mentionInput {
+        width: 39vw;
+        max-width:400px
+    }
+}
+@media only screen and (max-width: 640px) {
+    .mentionInput {
+        width: 58vw;
+    max-width:400px
+    }
+}
 @media only screen and (max-width: 600px) {
+
     .imagePreview_container {
         position: fixed;
         bottom: 65px;
@@ -80,6 +97,11 @@
         height: 60px;
         min-width: 100px;
         z-index: 107;
+    }
+    .onMobileContainer {
+        background-color: #ececec;
+        height:100vh;
+        position: relative
     }
 }
 @media only screen and (max-width: 400px) {

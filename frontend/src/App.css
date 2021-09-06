@@ -527,8 +527,8 @@ transform: translate(-50%, 30%);
 
 
 .row-card-2 img.ant-image-img {
-
  max-height: 200px;
+ width: 100%;
 }
 
 .photo-grid-3 {

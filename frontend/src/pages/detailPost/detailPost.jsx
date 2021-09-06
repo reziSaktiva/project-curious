@@ -211,7 +211,7 @@ export default function SinglePost(props) {
     form.resetFields()
   };
 
-
+  const userName = user && user.username;
   return (
     <div>
       <PostNavBar />
@@ -236,9 +236,7 @@ export default function SinglePost(props) {
                         </div>
                         <div className="action-post__item">
                           <Link to={`/post/${post.id}`}>
-
                             <CommentButton commentCount={post.commentCount} icon={<MessageOutlined />} />
-
                           </Link>
                         </div>
                         <div className="action-post__item">
@@ -257,6 +255,21 @@ export default function SinglePost(props) {
                           <Col span={18}>
                             <img src={Pin} style={{ width: 20, position: "center" }} />
                             {address}
+                            {userName === post.owner && (
+                    <div
+                      style={{
+                        width: 60,
+                        height: 20,
+                        border: "1px black solid",
+                        borderRadius: 5,
+                        textAlign: "center",
+                        display: "inline-block",
+                        marginLeft: 6,
+                      }}
+                    >
+                      <p style={{ fontSize: 14 }}>My Post</p>
+                    </div>
+                  )}
                           </Col>
                           <Col span={6} style={{ textAlign: "right" }}>
                             <Dropdown
@@ -373,17 +386,13 @@ export default function SinglePost(props) {
                     rules={[
                       { required: true, message: "Isi komennya dulu ya broooo!" },
                     ]}
+
                   >
-                    {/* <Input
-                 showCount maxLength={250}
-                 name="comment"
-                   placeholder="Write your comment..."
-                   style={{ borderRadius: 15, width:'100%', height:30, }}
-                 /> */}
+
                     <MentionsInput
                     maxLength={250}
                     singleLine
-                    style={{ width: "60vw", maxWidth: "400px"}}
+                    className="mentionInput"
                      value={text} onChange={e => console.log(e.target.value.match("/^(?=(@[[])$)/"))}>
                     <Mention
                       trigger="@"
