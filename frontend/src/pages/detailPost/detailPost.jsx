@@ -276,10 +276,21 @@ export default function SinglePost(props) {
                               overlay={
                                 <Menu>
                                   <Menu.Item key="0">Subscribe</Menu.Item>
-                                  <Menu.Item key="1" onClick={(e) => console.log(e)}>
+                                  {
+                                   userName !== post.owner &&
+                                   <Menu.Item key="1" onClick={(e) => console.log(e)}>
                                     Mute
-                                  </Menu.Item>
-                                  <Menu.Item key="3">Report</Menu.Item>
+                                  </Menu.Item> 
+                                  }
+                                  {
+                                   userName === post.owner &&
+                                   <Menu.Item key="3">DeletePost</Menu.Item>
+                                  }
+                                  {
+                                   userName !== post.owner &&
+                                   <Menu.Item key="3">Report</Menu.Item>
+                                  }
+                                  
                                 </Menu>
                               }
                               trigger={["click"]}
