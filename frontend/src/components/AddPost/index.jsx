@@ -72,7 +72,7 @@ export default function ModalPost() {
   const [address, setAddress] = useState("");
   const [addressRepost, setAddressRepost] = useState("");
   const [form] = Form.useForm();
-  const [ room, setRoom ] = useState("Nearby")
+  const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
 
   const handleCloseAddPost = () => {
@@ -99,18 +99,8 @@ export default function ModalPost() {
   const location = loc ? JSON.parse(loc) : null;
 
   if (location) {
-    Geocode.fromLatLng(location.lat, location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddress(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    setAddress(location.location);
   }
-  
-
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
@@ -129,7 +119,7 @@ export default function ModalPost() {
     );
   }
 
-  const [createPost, { loading : loadingCreatePost }] = useMutation(
+  const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
       onCompleted: (data) => {
@@ -171,7 +161,7 @@ export default function ModalPost() {
         roomRepost: repost.room || '',
         room: room === "Nearby" ? null : room
       };
-      
+
       createPost({ variables });
     }
   }, [uploaded, isFinishUpload]);
@@ -212,14 +202,14 @@ export default function ModalPost() {
       ...state,
       fileList: newFiles
     });
-    let limit = fileList.map( file => file.type.split("/")[0])
-    if(limit[0] === "image") setnoVideoFilter(true)
+    let limit = fileList.map(file => file.type.split("/")[0])
+    if (limit[0] === "image") setnoVideoFilter(true)
     else setnoVideoFilter(false)
 
-    if(limit[0] === 'video') setlimiter(true)
+    if (limit[0] === 'video') setlimiter(true)
     else setlimiter(false)
   }
-  
+
   const handleRemove = file => {
     const newFile = fileList.filter(item => item !== file);
     setState({
@@ -235,7 +225,7 @@ export default function ModalPost() {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name : elem.originFileObj.name.split(".")[0] + "." +elem.type.split("/")[1]
+        const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name : elem.originFileObj.name.split(".")[0] + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
 
@@ -247,9 +237,9 @@ export default function ModalPost() {
               reject()
             },
             async () => {
-               const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-               const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
-              resolve( elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
+              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+              const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
+              resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
             }
           )
         })
@@ -268,7 +258,7 @@ export default function ModalPost() {
     return;
   };
 
-  
+
   return (
     <div>
       <Modal
@@ -280,9 +270,9 @@ export default function ModalPost() {
             <Collapse ghost accordion activeKey={open} onChange={handleCollapse}>
               <Panel onChange={handleCollapse} header={
                 <div>
-                  
-                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30}}>
-                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20  }} />
+
+                  <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', height: 30 }}>
+                    <img src={Pin} alt="pin" style={{ display: 'inline-block', width: 40, marginTop: -20 }} />
                   </Radio.Button>
                   <div style={{ display: 'inline-block' }}>
                     <h3 style={{ fontWeight: "bold" }}>{room ? room : "Nearby"}</h3>
@@ -293,8 +283,8 @@ export default function ModalPost() {
               } key="1" showArrow={false}>
                 {room !== "Nearby" && (
                   <Radio.Button onClick={handleRoom} value="Nearby" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>Nearby</Radio.Button>
-                ) }
-                
+                )}
+
                 <p>Available Room</p>
                 <Radio.Button className='addpostRoom' onClick={handleRoom} value="Insvire E-Sport" style={{ border: 'none', color: 'black', backgroundColor: 'none', width: '100%', height: 55 }}>
                   <img src={Gorila} alt='gorila' style={{ display: 'inline-block', width: 40, marginTop: -21, marginBottom: "auto", borderRadius: '50%', marginRight: 5 }} />
@@ -342,22 +332,22 @@ export default function ModalPost() {
                   </div>
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
-                  
+
                   <Photo photo={getPost.media} />
 
-                  
+
                 </Card>
               )}
           </>
         )}
         <Form form={form} name="nest-messages" onFinish={onFinish}>
           <Form.Item name="text"  >
-            <Input.TextArea bordered={true} style={{width: '100%'}} placeholder="What's your story" />
+            <Input.TextArea bordered={true} style={{ width: '100%' }} placeholder="What's your story" />
           </Form.Item>
           {fileList.length > 0 && (
             <Form.Item name="foto" style={{ marginBottom: 0 }} >
               <Upload
-                
+
                 onRemove={handleRemove}
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
@@ -371,7 +361,7 @@ export default function ModalPost() {
               </Upload>
             </Form.Item>
           )}
-          
+
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
