@@ -273,94 +273,62 @@ module.exports = {
     },
     async getProfilePosts(_, args, context) {
       const { username } = await fbAuthContext(context)
-      const posts = [];
-      if (username) {
-        try {
-          await db
-            .collection("posts")
-            .where("owner", "==", username)
-            .orderBy("createdAt", "desc")
-            .get()
-            .then((data) => {
-              return data.docs.forEach((doc) => {
-                const { repost: repostId } = doc;
 
-                const repostData = async () => {
-                  if (repostId) {
-                    const repostData = await db.doc(`/posts/${repostId}`).get()
-                    return repostData.data() || {}
-                  }
-                }
+      const data = await db.collection("posts")
+        .where("owner", "==", username)
+        .orderBy("createdAt", "desc")
+        .get()
 
-                const likes = () => {
-                  return db
-                    .collection(`/posts/${doc.data().id}/likes`)
-                    .get()
-                    .then((data) => {
-                      const likes = [];
-                      data.forEach((doc) => {
-                        likes.push(doc.data());
-                      });
-                      return likes;
-                    });
-                };
+      const docs = data.docs.map((doc) => doc.data())
 
-                const comments = () => {
-                  return db
-                    .collection(`/posts/${doc.data().id}/comments`)
-                    .get()
-                    .then((data) => {
-                      const comments = [];
-                      data.forEach((doc) => {
-                        comments.push(doc.data());
-                      });
-                      return comments;
-                    });
-                };
+      if (docs.length) {
+        const nearby = []
 
-                const muted = () => {
-                  return db
-                    .collection(`/posts/${doc.data().id}/muted`)
-                    .get()
-                    .then((data) => {
-                      const muted = [];
-                      data.forEach((doc) => {
-                        muted.push(doc.data());
-                      });
-                      return muted;
-                    });
-                }
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
 
-                const subscribe = async () => {
-                  const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
-                  return subscribeData.docs.map(doc => doc.data());
-                }
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
+              return repostData.data() || {}
+            }
+          }
 
-                posts.push({
-                  id: doc.data().id,
-                  text: doc.data().text,
-                  media: doc.data().media,
-                  createdAt: doc.data().createdAt,
-                  owner: doc.data().owner,
-                  likeCount: doc.data().likeCount,
-                  commentCount: doc.data().commentCount,
-                  location: doc.data().location,
-                  repostCount: doc.data().repostCount,
-                  likes: likes(),
-                  comments: comments(),
-                  muted: muted(),
-                  subscribe: subscribe(),
-                  repost: repostData()
-                });
-              });
-            });
+          // Likes
+          const likes = async () => {
 
-          return posts;
-        } catch (err) {
-          console.log(err);
-          throw new Error(err);
-        }
+            const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData)
+        });
+
+        return nearby;
       }
+
+      return [];
 
     },
     async getProfileLikedPost(_, args, context) {
@@ -992,7 +960,6 @@ module.exports = {
             geohash,
             location,
             _tags: hastags,
-            repost,
             room
           } : {
             owner: username,
@@ -1005,12 +972,14 @@ module.exports = {
             rank: 0,
             geohash,
             location,
-            repost,
             _tags: hastags
           };
 
-          await db
-            .collection(`${room ? `/room/${room}/posts` : "posts"}`)
+          if (repost.repost) {
+            newPost.repost = repost
+          }
+
+          await db.collection(`${room ? `/room/${room}/posts` : "posts"}`)
             .add(newPost)
             .then((doc) => {
               newPost.id = doc.id;
@@ -1032,7 +1001,6 @@ module.exports = {
             });
 
           if (repost.repost) {
-            newPost.repost = repost
             db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
               .then(async doc => {
                 doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
