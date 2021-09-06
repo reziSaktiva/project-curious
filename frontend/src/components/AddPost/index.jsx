@@ -77,7 +77,6 @@ export default function ModalPost() {
   const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
   const [errors, setErrors] = useState({});
-  console.log(errors);
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
@@ -241,7 +240,7 @@ export default function ModalPost() {
         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-        console.log("elem, uid", fileName + elem.uid);
+
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => { },

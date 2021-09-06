@@ -81,7 +81,6 @@ export default function PostCard({ post, loading, type }) {
     }
   }, [post, isRepost]);
   
-console.log("tetetet",isRepost , "repost", repost,"test", repostFromContext);
   return (
     <List itemLayout="vertical" size="large" style={{
       background: 'white',
