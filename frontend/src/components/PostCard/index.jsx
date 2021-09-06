@@ -63,7 +63,7 @@ export default function PostCard({ post, loading, type }) {
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || false;
 
-  console.log(post);
+  
   const { muted, subscribe } = post;
   const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
 
@@ -81,6 +81,7 @@ export default function PostCard({ post, loading, type }) {
     }
   }, [post, isRepost]);
   
+console.log("tetetet",isRepost , "repost", repost,"test", repostFromContext);
   return (
     <List itemLayout="vertical" size="large" style={{
       background: 'white',
@@ -190,7 +191,7 @@ export default function PostCard({ post, loading, type }) {
           }
           description={<div>{moment(post.createdAt).fromNow()}</div>}
         ></List.Item.Meta>
-        {isRepost && (
+        {isRepost  && (
           <Card
             bodyStyle={{ padding: "10px 12px" }}
             style={{

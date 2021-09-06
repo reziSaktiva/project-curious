@@ -208,7 +208,6 @@ export default function ModalPost() {
     let limit = fileList.map(file => file.type.split("/")[0])
     if (limit[0] === "image") setnoVideoFilter(true)
     else setnoVideoFilter(false)
-
     if (limit[0] === 'video') setlimiter(true)
     else setlimiter(false)
   }
@@ -226,6 +225,7 @@ export default function ModalPost() {
       ...state,
       fileList: newFile
     })
+    setlimiter(false)
     Promise.resolve(setErrors({}))
   }
 
@@ -240,7 +240,7 @@ export default function ModalPost() {
         const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
 
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-
+        console.log("elem, uid", fileName + elem.uid);
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
             () => { },
@@ -270,7 +270,7 @@ export default function ModalPost() {
 
     return;
   };
-
+console.log(fileList, "limiter", limiter);
   return (
     <div>
       <Modal
