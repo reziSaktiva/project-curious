@@ -17,7 +17,7 @@ function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
     const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, room_1, room_2, active, isMorePost, lastIdPosts } = useContext(PostContext)
+    const { posts, morePosts, moreRoom, room_1, room_2, active, isMorePost, lastIdPosts } = useContext(PostContext)
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -43,7 +43,7 @@ function ScrollInfinite(props) {
 
     const [nextRoom, { loading: loadingRoom }] = useMutation(GET_MORE_ROOM, {
         update(_, { data: { nextRoomPosts: postsData } }) {
-            morePosts(postsData)
+            moreRoom(postsData)
         },
         onError(err) {
             console.log(err.message);

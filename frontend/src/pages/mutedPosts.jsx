@@ -11,80 +11,78 @@ import SidebarMobile from '../components/SidebarMobile'
 import BackDrop from '../components/BackDrop'
 
 function MutedPost() {
-    const { data } = useQuery(GET_MUTED_POSTS);
-    const _isMounted = useRef(false);
-    const { mutedPost,setNavMobileOpen, setMutedPost, loadingData, loading } = useContext(PostContext)
-    const { user } = useContext(AuthContext)
+  const { data } = useQuery(GET_MUTED_POSTS);
+  const _isMounted = useRef(false);
+  const { mutedPost, setNavMobileOpen, setMutedPost, loadingData, loading } = useContext(PostContext)
+  const { user } = useContext(AuthContext)
 
-    const [burger, setBurger] = useState({
-        toggle: false
-      })
+  const [burger, setBurger] = useState({
+    toggle: false
+  })
 
-    const path = useHistory().location.pathname
+  const path = useHistory().location.pathname
 
-    const { setPathname } = useContext(AuthContext)
-  
-    const handleBurger = () => {
-        setBurger(prevState => {
-          return {
-            toggle: !prevState.toggle
-          }
-        })
+  const { setPathname } = useContext(AuthContext)
+
+  const handleBurger = () => {
+    setBurger(prevState => {
+      return {
+        toggle: !prevState.toggle
       }
-      
-      const handleNotif = () => {
-        setNavMobileOpen(true)
+    })
+  }
+
+  const handleNotif = () => {
+    setNavMobileOpen(true)
+  }
+  const handleBackdropClose = () => {
+    setBurger({ toggle: false })
+  }
+  useEffect(() => {
+    setPathname(path)
+  }, [])
+
+  useEffect(() => {
+    if (!_isMounted.current && data) { // check if doesn't fetch data
+      if (!data) {
+        loadingData();
+
+        return;
       }
-      const handleBackdropClose = () => {
-        setBurger({ toggle: false })
-      }
-      useEffect(() => {
-          setPathname(path)
-      }, [])
 
-    useEffect(() => {
-        if (!_isMounted.current && data) { // check if doesn't fetch data
-            if (!data) {
-                loadingData();
+      setMutedPost(data.mutedPosts)
 
-                return;
-            }
+      // set did mount react
+      _isMounted.current = true;
 
-            setMutedPost(data.mutedPosts)
-            
-            // set did mount react
-            _isMounted.current = true;
+      return;
+    }
+  }, [data, _isMounted])
 
-            return;
-        }
-    }, [data, _isMounted])
+  return (
+    <div>
+      <NotificationMobile />
+      <SidebarMobile show={burger.toggle} />
 
-    return (
-        <div>
-            <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
-
-            <NotificationMobile />
-          <SidebarMobile show={burger.toggle} />
-          
-          {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
-            {user ? (<div>
-                {!mutedPost || mutedPost.length < 1 ? (
-                    <div className="centering-flex">
-                        <div className="mute_noPost" />
-                        <h4 style={{textAlign: 'center'}}>Here you can mute a post u dont like</h4>
-                        <h4 style={{textAlign: 'center'}}>and unmute to see it again</h4>
-                    </div>
-                )
-                    : mutedPost.map((post, key) => {
-                        return (
-                                <div key={`posts${post.id} ${key}`} style={key === 0 ? { marginTop: 40 }: { marginTop: 0 }}>
-                                <PostCard post={post} type="muted_posts" loading={loading} />
-                            </div>
-                        )
-                    })}
-            </div>) : <p className='centeringButton'>test</p>}
-        </div>
-    );
+      {burger.toggle ? <BackDrop click={handleBackdropClose} /> : null}
+      {user ? (<div>
+        {!mutedPost || mutedPost.length < 1 ? (
+          <div className="centering-flex">
+            <div className="mute_noPost" />
+            <h4 style={{ textAlign: 'center' }}>Here you can mute a post u dont like</h4>
+            <h4 style={{ textAlign: 'center' }}>and unmute to see it again</h4>
+          </div>
+        )
+          : mutedPost.map((post, key) => {
+            return (
+              <div key={`posts${post.id} ${key}`} style={key === 0 ? { marginTop: 40 } : { marginTop: 0 }}>
+                <PostCard post={post} type="muted_posts" loading={loading} />
+              </div>
+            )
+          })}
+      </div>) : <p className='centeringButton'>test</p>}
+    </div>
+  );
 }
 
 export default MutedPost

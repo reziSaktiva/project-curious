@@ -26,6 +26,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAt(b[0])
           .endAt(b[1])
           .limit(8);
@@ -103,7 +104,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
@@ -565,7 +566,7 @@ module.exports = {
       try {
         const data = await db.collection('posts').where('rank', '>', 1).orderBy('rank', 'desc').limit(8).get()
         const docs = data.docs.map((doc) => doc.data())
-        const posts = []
+        let posts = []
 
         if (docs.length) {
           docs.forEach(async data => {
@@ -608,12 +609,16 @@ module.exports = {
 
             posts.push(newData)
           });
+          return {
+            posts,
+            hasMore: posts.length === 8,
+            lastId: posts[posts.length - 1].id
+          }
         }
-
         return {
-          posts,
+          posts: [],
           hasMore: posts.length === 8,
-          lastId: posts[posts.length - 1].id
+          lastId: null
         }
       }
       catch (err) {
@@ -629,7 +634,7 @@ module.exports = {
 
         const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
         const docs = data.docs.map((doc) => doc.data())
-        const posts = []
+        let posts = [];
 
         if (docs.length) {
           docs.forEach(async data => {
@@ -672,9 +677,17 @@ module.exports = {
 
             posts.push(newData)
           });
+          return {
+            posts,
+            hasMore: posts.length === 8,
+            lastId: posts[posts.length - 1].id
+          }
         }
-
-        return posts
+        return {
+          posts: [],
+          hasMore: posts.length === 8,
+          lastId: null
+        }
       }
       catch (err) {
         console.log(err);
@@ -696,6 +709,7 @@ module.exports = {
       for (const b of bounds) {
         const q = db.collection('posts')
           .orderBy('geohash')
+          .orderBy("createdAt", 'desc')
           .startAfter(doc)
           .endAt(b[1])
           .limit(3)
@@ -775,7 +789,7 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
         return {
           posts: latest,
@@ -955,7 +969,6 @@ module.exports = {
       }
     },
     async createPost(_, { text, media, location, repost, room }, context) {
-console.log("url", media);
       const { username } = await fbAuthContext(context);
       if (username) {
         try {
@@ -979,6 +992,7 @@ console.log("url", media);
             geohash,
             location,
             _tags: hastags,
+            repost,
             room
           } : {
             owner: username,
@@ -991,39 +1005,9 @@ console.log("url", media);
             rank: 0,
             geohash,
             location,
+            repost,
             _tags: hastags
           };
-
-          if (repost.repost) {
-            newPost.repost = repost
-            db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
-              .then(async doc => {
-                doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
-                if (doc.data().owner !== username) {
-                  const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
-
-                  const notification = {
-                    owner: doc.data().owner,
-                    recipient: doc.data().owner,
-                    sender: username,
-                    read: false,
-                    postId: doc.data().id,
-                    type: "REPOST",
-                    createdAt: new Date().toISOString(),
-                    displayName: name,
-                    displayImage,
-                    colorCode,
-                  }
-                  // FIX ME (done)
-                  db.collection(`/users/${doc.data().owner}/notifications`)
-                    .add(notification)
-                    .then((data) => {
-                      data.update({ id: data.id });
-                      pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
-                    });
-                }
-              })
-          }
 
           await db
             .collection(`${room ? `/room/${room}/posts` : "posts"}`)
@@ -1046,6 +1030,37 @@ console.log("url", media);
 
               doc.update({ id: doc.id });
             });
+
+          if (repost.repost) {
+            newPost.repost = repost
+            db.doc(`/${repost.room ? `room/${repost.room}/posts` : 'posts'}/${repost.repost}`).get()
+              .then(async doc => {
+                doc.ref.update({ repostCount: doc.data().repostCount + 1, rank: doc.data().rank + 1 })
+                if (doc.data().owner !== username) {
+                  const { name, displayImage, colorCode } = await randomGenerator(username, repost.repost, repost.room)
+
+                  const notification = {
+                    owner: doc.data().owner,
+                    recipient: doc.data().owner,
+                    sender: username,
+                    read: false,
+                    postId: newPost.id,
+                    type: "REPOST",
+                    createdAt: new Date().toISOString(),
+                    displayName: name,
+                    displayImage,
+                    colorCode,
+                  }
+                  // FIX ME (done)
+                  db.collection(`/users/${doc.data().owner}/notifications`)
+                    .add(notification)
+                    .then((data) => {
+                      data.update({ id: data.id });
+                      pubSub.publish(NOTIFICATION_ADDED, { notificationAdded: { ...notification, id: data.id } })
+                    });
+                }
+              })
+          }
 
           if (Object.keys(location).length) {
             const visited = await db.collection(`/users/${username}/visited`)

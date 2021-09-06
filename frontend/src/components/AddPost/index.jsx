@@ -102,23 +102,25 @@ export default function ModalPost() {
   const location = loc ? JSON.parse(loc) : null;
 
   if (location) {
-    Geocode.fromLatLng(location.lat, location.lng).then(
+    setAddress(location.location);
+  }
+
+  // Query
+  const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
+  const getPost = get(dataRepost, 'getPost') || {};
+
+
+  if (getPost.location) {
+    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
       (response) => {
         const address = response.results[0].address_components[1].short_name;
-        setAddress(address);
+        setAddressRepost(address);
       },
       (error) => {
         console.error(error);
       }
     );
   }
-
-
-
-  // Query
-  const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
-  const getPost = get(dataRepost, 'getPost') || {};
-
 
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
@@ -211,7 +213,6 @@ export default function ModalPost() {
       ...state,
       fileList: fileList
     });
-
     let limit = fileList.map(file => file.type.split("/")[0])
     if (limit[0] === "image") setnoVideoFilter(true)
     else setnoVideoFilter(false)
