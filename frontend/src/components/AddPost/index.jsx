@@ -101,26 +101,23 @@ export default function ModalPost() {
 
   const location = loc ? JSON.parse(loc) : null;
 
-  if (location) {
-    setAddress(location.location);
-  }
+    useEffect(() => {
+      if (location) {
+        setAddress(location.location);
+      }
+    }, [])
+    useEffect(() => {
+      if (getPost.location) {
+        setAddressRepost(getPost.location.location);
+      }
+    }, [])
+
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
+console.log(dataRepost);
 
-
-  if (getPost.location) {
-    Geocode.fromLatLng(getPost.location.lat, getPost.location.lng).then(
-      (response) => {
-        const address = response.results[0].address_components[1].short_name;
-        setAddressRepost(address);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
 
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
@@ -334,7 +331,7 @@ export default function ModalPost() {
       >
         {repost && (
           <>
-            {loading ?
+            {loading && !getPost ?
               (
                 <div style={{ marginBottom: 10 }}>
                   <Space>
@@ -348,7 +345,7 @@ export default function ModalPost() {
                 <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
                   <div style={{ display: 'flex' }}>
                     <p className="ic-location-small" style={{ margin: 0 }} />
-                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{getPost.location.location}</div>
+                    <div style={{ fontWeight: 600, paddingLeft: 10 }}>{addressRepost}</div>
                   </div>
                   <span style={{ fontSize: 12 }}>{moment(getPost.createdAt).fromNow()}</span>
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
