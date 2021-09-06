@@ -26,7 +26,6 @@ export default function Comments({ post, loading, user, setReply, form }) {
 
     const [deleteComment] = useMutation(DELETE_COMMENT, {
         onError(err) {
-            console.log(err.message);
         }, update(_, { data: { deleteComment: commentData } }) {
             
             commentDelete(commentData)
@@ -52,7 +51,7 @@ export default function Comments({ post, loading, user, setReply, form }) {
     }, [post])
     
     return (
-        <div>
+        <div className="onMobileContainer">
             <List
                 itemLayout="vertical"
                 size="large"
