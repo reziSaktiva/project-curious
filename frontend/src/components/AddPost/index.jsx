@@ -100,24 +100,20 @@ export default function ModalPost() {
 
   const location = loc ? JSON.parse(loc) : null;
 
-    useEffect(() => {
-      if (location) {
-        setAddress(location.location);
-      }
-    }, [location])
-
-
-
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
   const getPost = get(dataRepost, 'getPost') || {};
 
 
-useEffect(() => {
-  if (getPost.location) {
-    setAddressRepost(getPost.location.location);
-  }
-}, [getPost])
+  useEffect(() => {
+    if (location) {
+      setAddress(location.location);
+    }
+    if (getPost.location) {
+      setAddressRepost(getPost.location.location)
+    }
+  }, [getPost, location])
+
   const [createPost, { loading: loadingCreatePost }] = useMutation(
     CREATE_POST,
     {
