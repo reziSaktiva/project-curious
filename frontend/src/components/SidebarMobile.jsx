@@ -75,14 +75,14 @@ export default function SidebarMobile(props) {
           collapsed={false}
         >
           <div style={{ width: 60 }}>
-            <Link to={`/profile/user/${user.id}`}>
+            <Link to={`/${user.newUsername ? user.newUsername : user.username}`}>
               <div
                 className="profilefoto"
                 style={{marginLeft: 4, backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}
               />
             </Link>
           </div>
-          <Link to={`/profile/user/${user.id}`}>
+          <Link to={`/${user.newUsername ? user.newUsername : user.username}`}>
             <h3 style={{marginLeft: 4, marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.username ? user.username : "My Account"}
             </h3>

@@ -61,7 +61,7 @@ const Sidebar = () => {
           collapsed={windowWidth <= 1071 ? true : false}
         >
           <div style={{ width: 60, backgroundColor: "#FAFAFA" }}>
-            <Link to={`/profile/user/${user.id}`}>
+            <Link to={`/${user.newUsername ? user.newUsername : user.username}`}>
               <div
                 className="profilefoto"
                 style={{ backgroundImage: `url("${user.profilePicture? user.profilePicture : Blank}")`}}

@@ -299,7 +299,7 @@ function Profile() {
             <div className="ui action input" style={{ height: 25 }}>
               <input
                 type="text"
-                value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
+                value={`curious.me/${user.newUsername ? user.newUsername : user.username}`}
               />
               <button
                 className="ui teal right icon button"
