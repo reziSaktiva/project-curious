@@ -160,18 +160,21 @@ function Profile() {
       <TabPane tab="Media" key="3">
         {gallery.length ? (
           gallery.map((media) => (
+            
             <div className="gallery">
               {media.length &&
                 media.map((photo, idx) => {
-                  const imgClass = cn({
-                    gallery_item_right: idx === 1,
-                    gallery_item_left: idx === 2,
-                    gallery__img: idx != 1 || idx != 2,
-                  });
-                  return (
-                    <img
+                  console.log("idx", idx);
+                  const result = photo.media.map((media) => {
+                    
+                    const imgClass = cn({
+                      gallery_item_right: idx === 1,
+                      gallery_item_left: idx === 2,
+                      gallery__img: idx != 1 || idx != 2,
+                    });
+                    return <img
                       key={`Media${idx}`}
-                      src={photo.media}
+                      src={media}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = IconCrash;
@@ -179,6 +182,9 @@ function Profile() {
                       className={imgClass}
                       alt="Image 1"
                     />
+                  })
+                  return (
+                    result
                   )
                 })}
             </div>
@@ -293,7 +299,7 @@ function Profile() {
             <div className="ui action input" style={{ height: 25 }}>
               <input
                 type="text"
-                value={`https://insvire-curious-app.web.app/profile/user/${user.id}`}
+                value={`curious.me/${user.newUsername ? user.newUsername : user.username}`}
               />
               <button
                 className="ui teal right icon button"

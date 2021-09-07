@@ -66,7 +66,7 @@ function App() {
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/editProfile" component={EditProfile} />
-            <UserRoute exact path="/profile/user/:id" component={Profile} />
+            <UserRoute exact path="/:username" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
             <UserRoute exact path="/explore/:location" component={EPpost} />

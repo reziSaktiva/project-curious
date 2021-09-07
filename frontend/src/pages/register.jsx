@@ -70,7 +70,9 @@ const Register = (props) => {
 
     const onFinish = (values) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
-        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || dial[0].dial_code) + phone}` } })
+        console.log("phoneCode", phoneCode);
+        console.log("dial[0].dial_code", dial[0].dial_code);
+        registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || "+62") + phone}` } })
     };
 
    const dialData = dial.map(item => {
