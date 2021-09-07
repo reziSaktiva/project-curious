@@ -169,7 +169,7 @@ export default function SinglePost(props) {
       const { location } = repost;
       setRepostAddress(location.location);
     }
-  }, [post, isRepost]);
+  }, [isRepost]);
 
 
   const [createComment, { loading: loadingCreate }] = useMutation(CREATE_COMMENT, {
