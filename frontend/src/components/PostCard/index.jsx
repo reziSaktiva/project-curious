@@ -34,7 +34,7 @@ Geocode.setApiKey(MAP_API_KEY);
 Geocode.setLanguage("id");
 
 export default function PostCard({ post, loading, type }) {
-  const [media] = useState(post.media)
+  const media = post.media
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
   const [repostData, setRepostData] = useState("");
