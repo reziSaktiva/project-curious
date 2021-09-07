@@ -58,7 +58,7 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
 
 {photo ? (
           photo.length >= 3 ? (
-            <table className="photo-grid-3">
+            <table className="photo-grid-3" style={{width: '100%'}} >
               <Image.PreviewGroup>
                 <tbody>
                   <tr style={{ margin: 0, padding: 0 }}>
@@ -68,15 +68,17 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
                     >
                       <Image
                         className="pict1-3"
-                        style={{ borderRadius: "10px 0px 0px 10px" }}
+                        style={{ borderRadius: "10px 0px 0px 10px",width:"100%", maxHeight: 300, objectFit:'cover' }}
                         src={photo[0]}
+                        
                       />
                     </td>
                     <td style={{ width: "50%" }}>
                       <Image
                         className="pict2-3"
-                        style={{ borderRadius: "0px 10px 0px 0px" }}
+                        style={{ borderRadius: "0px 10px 0px 0px",maxHeight: 300, objectFit:'cover' }}
                         src={photo[1]}
+                        width={"100%"}
                       />
                       <div
                         className="text-container"
@@ -84,13 +86,15 @@ const {loginLoader, setLoginLoader} = useContext(AuthContext)
                       >
                         <Image
                           className="pict3-3"
+                          width={"100%"}
                           style={
                             photo.length > 3
                               ? {
                                   borderRadius: "0px 0px 10px 0px",
                                   filter: "blur(2px)",
+                                  maxHeight: 300, objectFit:'cover'
                                 }
-                              : { borderRadius: "0px 0px 10px 0px" }
+                              : { borderRadius: "0px 0px 10px 0px",maxHeight: 300, objectFit:'cover' }
                           }
                           src={photo[2]}
                         />
