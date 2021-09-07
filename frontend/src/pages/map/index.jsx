@@ -27,7 +27,7 @@ const libraries = ["places"]
 const mapContainerStyle = {
   width: "100%",
   minHeight: '50vh',
-  maxHeight : "70vh",
+  maxHeight : "60vh",
   height: '100vh',
 }
 const options = {

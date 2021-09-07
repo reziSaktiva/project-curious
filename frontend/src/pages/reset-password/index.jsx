@@ -92,7 +92,15 @@ export default function ReserPassword(props) {
                 <Input style={{width:"100%", }}   placeholder="Email / Username" />
               </Form.Item>
 
-
+              {!!(message && alert) && (
+        <Alert
+          message={message}
+          type={alert}
+          className="message-response"
+          closable
+          onClose={onCloseErr}
+        />
+      )}
               <Form.Item style={{width:'100%', maxWidth: 450}}>
               <button className="ui  facebook button body-page__btn-send" type="submit" 
               style={{ fontSize: '14px',padding: 0, width:"100%",  }}>
@@ -102,15 +110,7 @@ export default function ReserPassword(props) {
             </Form>
         </div>
       </div>
-      {!!(message && alert) && (
-        <Alert
-          message={message}
-          type={alert}
-          className="message-response"
-          closable
-          onClose={onCloseErr}
-        />
-      )}
+      
     </div>
   );
 };

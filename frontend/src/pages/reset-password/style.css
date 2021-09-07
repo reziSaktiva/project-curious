@@ -46,10 +46,7 @@
 }
 
 .message-response {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  margin-bottom: 10px;
 }
 .body-page__textfield {
   width: 100%;

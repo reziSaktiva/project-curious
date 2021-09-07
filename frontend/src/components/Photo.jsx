@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import {Image } from "antd";
+import {Image, Skeleton } from "antd";
 import { AuthContext } from '../context/auth';
 
 
