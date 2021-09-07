@@ -319,7 +319,7 @@ export default function SinglePost(props) {
                                   >
                                     {isSubscribe ? "Unsubscribe" : "Subscribe"}
                                   </Menu.Item>)}
-                                  {!post.room && (<Menu.Item
+                                  {!post.room && post.owner !== userName && (<Menu.Item
                                     key="1"
                                     onClick={() =>
                                       mutePost({ variables: { postId: post.id, room: post.room } })
@@ -338,7 +338,6 @@ export default function SinglePost(props) {
                                     userName !== post.owner &&
                                     <Menu.Item key="3">Report</Menu.Item>
                                   }
-
                                 </Menu>
                               }
                               trigger={["click"]}
