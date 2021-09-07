@@ -181,7 +181,7 @@ console.log(radius);
       />
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={zoom}
+        zoom={zoom || 15}
         center={position}
         options={options}>
         <Marker
