@@ -532,7 +532,7 @@ module.exports = {
     },
     async moreForYou(_, _args, _context) {
       try {
-        const data = await db.collection('posts').where('rank', '>', 1).orderBy('rank', 'desc').limit(8).get()
+        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').limit(8).get()
         const docs = data.docs.map((doc) => doc.data())
         let posts = []
 
@@ -600,7 +600,7 @@ module.exports = {
         const lastPosts = await db.doc(`/posts/${id}/`).get();
         const doc = lastPosts
 
-        const data = await db.collection('posts').where('rating', '>', 0).orderBy('rating', 'desc').startAfter(doc).limit(3).get()
+        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').startAfter(doc).limit(3).get()
         const docs = data.docs.map((doc) => doc.data())
         let posts = [];
 
