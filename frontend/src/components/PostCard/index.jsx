@@ -41,7 +41,7 @@ export default function PostCard({ post, loading, type }) {
   const [deleteModal, setDeleteModal] = useState(false)
   const { user } = useContext(AuthContext);
   const postContext = useContext(PostContext);
-  const { repost : repostFromContext } = postContext
+  const { repost: repostFromContext } = postContext
   const [deletePost, { loading: deletePostLoading }] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
 
@@ -63,7 +63,7 @@ export default function PostCard({ post, loading, type }) {
   const repost = get(post, "repost") || {};
   const isRepost = get(repost, "id") || false;
 
-  
+
   const { muted, subscribe } = post;
   const isMuted = user && muted && muted.find((mute) => mute.owner === user.username);
 
@@ -80,7 +80,7 @@ export default function PostCard({ post, loading, type }) {
       setRepostData(repost);
     }
   }, [post, isRepost]);
-  
+
   return (
     <List itemLayout="vertical" size="large" style={{
       background: 'white',
@@ -154,7 +154,7 @@ export default function PostCard({ post, loading, type }) {
                         >
                           {isSubscribe ? "Unsubscribe" : "Subscribe"}
                         </Menu.Item>)}
-                        {!post.room && (<Menu.Item
+                        {!post.room && post.owner !== userName &&(<Menu.Item
                           key="1"
                           onClick={() =>
                             mutePost({ variables: { postId: post.id, room: post.room } })
@@ -162,7 +162,10 @@ export default function PostCard({ post, loading, type }) {
                         >
                           {isMuted ? "Unmute" : "Mute"}
                         </Menu.Item>)}
-                        <Menu.Item key="3">Report</Menu.Item>
+                        {
+                          userName !== post.owner &&
+                          <Menu.Item key="3">Report</Menu.Item>
+                        }
                         {userName === post.owner ? (
                           <Menu.Item
                             key="4"
@@ -180,9 +183,7 @@ export default function PostCard({ post, loading, type }) {
                       onClick={(e) => e.preventDefault()}
                     >
                       <DropIcon />
-
                     </a>
-
                   </Dropdown>
                 </Col>
               </Row>
@@ -190,7 +191,7 @@ export default function PostCard({ post, loading, type }) {
           }
           description={<div>{moment(post.createdAt).fromNow()}</div>}
         ></List.Item.Meta>
-        {isRepost  && (
+        {isRepost && (
           <Card
             bodyStyle={{ padding: "10px 12px" }}
             style={{
