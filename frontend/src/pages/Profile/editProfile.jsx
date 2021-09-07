@@ -118,12 +118,12 @@ export default function EditProfile() {
               ,
               {
                 validator(_, value) {
-                const regexlength = /^(?=.{8,20}$)/ 
+                const regexlength = /^(?=.{5,20}$)/ 
                 if(value === undefined ) return Promise.resolve();
                 else {
-                  if ( !undefined && !(value.match(regexlength)) )  return Promise.reject('Username should have 8-20 caracter');
-                  const regex = /^(?=[a-zA-Z0-9._]{8,20}$)/
-                  if ( !undefined && !(value.match(regex)) )  return Promise.reject('Username cant use "space" or any special caracter');
+                  if ( !undefined && !(value.match(regexlength)) )  return Promise.reject('Username should have 5-20 caracter');
+                  const regex = /^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+$/
+                  if ( !undefined && !(value.match(regex)) )  return Promise.reject('Username cannot use "space" or any special character unless _ and .');
                   else return Promise.resolve();
                 }
                 
