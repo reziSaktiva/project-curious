@@ -130,7 +130,7 @@ export default function ModalPost() {
             ...createPost,
             repost: getPost
           });
-        }, 2000);
+        }, 2500);
       }
     }
   )

@@ -57,7 +57,13 @@ function Profile() {
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-
+  const [postCount, setpostCount] = useState("")
+  
+  useEffect(() => {
+    if(!loading) {
+      setpostCount(posts.length)
+    }
+  }, [posts, loading])
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
       setPosts({
@@ -65,6 +71,7 @@ function Profile() {
         posts: getProfilePosts.getProfilePosts
       });
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
+      
     }
   }, [getProfilePosts, getProfileLikedPost]);
 
@@ -255,7 +262,7 @@ function Profile() {
             <Row>
               <Col span={8}>
                 <h5>
-                  {getProfilePosts ? getProfilePosts.getProfilePosts.length : 0}
+                  {getProfilePosts ? postCount : 0}
                 </h5>
                 <p>Post</p>
               </Col>

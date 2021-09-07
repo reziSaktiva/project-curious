@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Geocode from 'react-geocode'
 import { useHistory } from "react-router-dom";
 import { Slider } from 'antd'
@@ -80,7 +80,7 @@ const Map = () => {
   const { setLocationAllow } = useContext(AuthContext)
   const [position, setPosition] = useState(currentPosition);
   const history = useHistory();
-
+  const [zoom, setzoom] = useState('')
   // Hooks Map
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: MAP_API_KEY,
@@ -88,7 +88,7 @@ const Map = () => {
   });
 
   const [radius, setRadius] = useState(1000)
-
+console.log(radius);
   const marks = {
     0: "1km",
     33: "5km",
@@ -133,17 +133,42 @@ const Map = () => {
 
   const onChangeSlider = (value) => {
     let range = 1000
+    let zoom;
     if (value === 0) {
       range = 1000
+      zoom = 15
     } if (value === 33) {
       range = 5000
+      zoom = 13
     } if (value == 66) {
       range = 10000
+      zoom = 12
     } if (value === 100) {
       range = 15000
+      zoom = 11
     }
     setRadius(range);
+    setzoom(zoom)
   }
+
+  useEffect(() => {
+    if(localStorage.rng == 1) {
+      setRadius(1000)
+      setzoom(15)
+    }
+    if(localStorage.rng == 5){
+      setRadius(5000)
+      setzoom(13)
+    }
+    if(localStorage.rng == 10){
+      setRadius(10000)
+      setzoom(12)
+    }
+    if(localStorage.rng == 15){
+      setRadius(15000)
+      setzoom(11)
+    }
+  }, [localStorage.getItem('rng')])
 
   if (loadError) return 'Error loading page'
   if (!isLoaded) return 'Loading Maps'
@@ -156,7 +181,7 @@ const Map = () => {
       />
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={radius >= 15000 ? 11 : 15}
+        zoom={zoom}
         center={position}
         options={options}>
         <Marker

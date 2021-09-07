@@ -10,7 +10,7 @@ export default function MoreForYou() {
     const _isMounted = useRef(false);
 
     const { data, loading: loadingPosts } = useQuery(MORE_FOR_YOU)
-    const { posts, setPosts, loadingData, setNav } = useContext(PostContext)
+    const { posts, setPosts, loadingData,loading, setNav } = useContext(PostContext)
 
     useEffect(() => {
         setNav('moreForYou')
@@ -42,7 +42,7 @@ export default function MoreForYou() {
             <br />
             <InfiniteScroll isLoading={loadingPosts}>
             {
-                loadingPosts ? <SkeletonLoading /> : posts ? posts.map((post, key) => {
+                loadingPosts && loading ? <SkeletonLoading /> : posts ? posts.map((post, key) => {
                      return(
                         <div key={`more for you posts${key}`} style={key === 0 ? { marginTop: 16, marginLeft:-15 }: { marginTop: 0,marginLeft:-15 }} >
                             <PostCard post={post} type="nearby" loading={loadingPosts} />
