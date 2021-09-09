@@ -14,6 +14,12 @@ export const MORE_FOR_YOU = gql`
   ${postDetailFragment}
 `
 
+export const SET_PRIVATE = gql`
+  query {
+    privateSetting
+  }
+`
+
 export const GET_POSTS = gql`
   query getPostNearby($lat: Float, $lng: Float, $range: Float) {
     getPosts(lat: $lat, lng: $lng, range: $range) {
@@ -104,8 +110,8 @@ export const GET_POSTS_BASED_ON_NEAREST_LOC = gql`
 `;
 
 export const GET_USER_DATA = gql`
-  query {
-    getUserData {
+  query getUserData($username: String) {
+    getUserData(username: $username) {
       ...UserData
     }
   }

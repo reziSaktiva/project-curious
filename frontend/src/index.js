@@ -15,8 +15,8 @@ import './index.css'
 // Importing components
 import App from './App'
 
-//const httpUrl = 'http://localhost:5000/insvire-curious-app/asia-southeast2/graphql';
- const httpUrl = 'https://asia-southeast2-insvire-curious-app.cloudfunctions.net/graphql';
+const httpUrl = 'http://localhost:5000/insvire-curious-app/asia-southeast2/graphql';
+//  const httpUrl = 'https://asia-southeast2-insvire-curious-app.cloudfunctions.net/graphql';
 
 const httpLink = ApolloLink.from([
   new ApolloLink((operation, forward) => {
