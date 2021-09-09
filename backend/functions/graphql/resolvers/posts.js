@@ -410,34 +410,38 @@ module.exports = {
           const dataPost = await postDocument.get();
           const post = dataPost.data();
 
-          let repost = {}
-          const repostId = get(post, 'repost') || {};
-          if (repostId) {
-            const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
+          if (!dataPost.exists) {
+            throw new UserInputError('Post not found')
+          } else {
+            let repost = {}
+            const repostId = get(post, 'repost') || {};
+            if (repostId) {
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get();
 
-            repost = repostData.data();
-          }
+              repost = repostData.data();
+            }
 
-          const likesPost = await likeCollection.get();
-          const likes = likesPost.docs.map(doc => doc.data()) || []
+            const likesPost = await likeCollection.get();
+            const likes = likesPost.docs.map(doc => doc.data()) || []
 
-          const commentsPost = await commentCollection.get();
-          const comments = commentsPost.docs.map(doc => doc.data()) || [];
+            const commentsPost = await commentCollection.get();
+            const comments = commentsPost.docs.map(doc => doc.data()) || [];
 
-          const mutedPost = await mutedCollection.get();
-          const muted = mutedPost.docs.map(doc => doc.data()) || [];
+            const mutedPost = await mutedCollection.get();
+            const muted = mutedPost.docs.map(doc => doc.data()) || [];
 
-          const subscribePost = await subscribeCollection.get();
-          const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
+            const subscribePost = await subscribeCollection.get();
+            const subscribe = subscribePost.docs.map(doc => doc.data()) || [];
 
-          return {
-            ...post,
-            repost,
-            likes,
-            comments: comments,
-            muted,
-            subscribe,
-            repost
+            return {
+              ...post,
+              repost,
+              likes,
+              comments: comments,
+              muted,
+              subscribe,
+              repost
+            }
           }
         }
         catch (err) {
