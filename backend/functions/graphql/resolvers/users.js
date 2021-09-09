@@ -95,7 +95,7 @@ module.exports = {
 
             return filterLocation;
         },
-        async getUserData(_, args, context) {
+        async getUserData(_, { username: name }, context) {
             const { username } = await fbAuthContext(context)
 
             let dataUser = {
@@ -105,8 +105,8 @@ module.exports = {
             }
 
             try {
-                if (username) {
-                    await db.doc(`/users/${username}`).get()
+                if (username || name) {
+                    await db.doc(`/users/${name ? name : username}`).get()
                         .then(doc => {
                             dataUser.user = {
                                 email: doc.data().email,
@@ -117,34 +117,48 @@ module.exports = {
                                 gender: doc.data().gender,
                                 birthday: doc.data().birthday,
                                 profilePicture: doc.data().profilePicture,
-                                newUsername: doc.data().newUsername
+                                newUsername: doc.data().newUsername,
+                                private: doc.data().private
                             }
-
-                            return db.collection(`/users/${username}/liked`).get()
+                            if (name && doc.data().private) {
+                                throw new UserInputError('pengguna tidak di temukan')
+                            }
+                            return db.collection(`/users/${name ? name : username}/liked`).get()
                         })
                         .then(data => {
                             data.docs.forEach(doc => {
                                 dataUser.liked.push(doc.data())
                             })
-                            // return db.collection(`/users/${username}/notifications`).orderBy('createdAt', 'desc').get()
                         })
-                    // .then(data => {
-                    //     data.docs.forEach(doc => {
-                    //         dataUser.notifications.push(doc.data())
-                    //     })
-                    // })
 
                 }
 
                 return dataUser
             }
             catch (err) {
-                console.log(err);
                 throw new Error(err)
             }
 
         },
-        async mutedPosts(_, args, context) {
+        async privateSetting(_, _args, context) {
+            const { username } = await fbAuthContext(context)
+            let result;
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        result = !doc.data().private
+                        doc.ref.update({
+                            private: result
+                        })
+                    })
+
+                return result
+            }
+            catch (err) {
+                throw new Error(err);
+            }
+        },
+        async mutedPosts(_, _args, context) {
             const { username } = await fbAuthContext(context)
             const muteData = db.collection(`users/${username}/muted`)
 
@@ -648,7 +662,7 @@ module.exports = {
                 } else if (!findUserWithUsername.empty) {
 
                     if (findUserWithUsername.docs[0].data().newUsername) {
-                        throw new UserInputError('Username/email tidak ditemukan')  
+                        throw new UserInputError('Username/email tidak ditemukan')
                     } else {
                         data = findUserWithUsername.docs[0].data()
                     }
@@ -870,7 +884,7 @@ module.exports = {
             const { username: oldName } = await fbAuthContext(context)
             let newName = newUsername
 
-            if(newUsername === oldName){
+            if (newUsername === oldName) {
                 newName = undefined
             }
 
@@ -900,7 +914,7 @@ module.exports = {
                         return doc.ref.update(newUserData)
                     })
 
-                    const data = await db.doc(`users/${oldName}`).get()
+                const data = await db.doc(`users/${oldName}`).get()
                 return {
                     ...data.data(),
                     ...newUserData

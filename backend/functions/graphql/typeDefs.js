@@ -65,6 +65,7 @@ module.exports = gql`
         profilePicture: String!
         newUsername: String
         token: String
+        private: Boolean
     },
     type Comment {
         id: ID
@@ -152,12 +153,13 @@ module.exports = gql`
         getRoomPosts(room: String!):[Post]!
         getProfileLikedPost: [Post]!
         getPost(id: ID! room: String): Post!
-        getUserData: UserData
+        getUserData(username: String): UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
         mutedPosts: [Post]!
         getSubscribePosts: [Post]!
         setRulesSearchAlgolia(index: String!, rank: [String]!): String
         explorePlace: [GeoLocation]
+        privateSetting: Boolean
     },
     input RegisterInput {
         email: String!
