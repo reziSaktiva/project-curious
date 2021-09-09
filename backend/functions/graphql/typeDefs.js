@@ -149,9 +149,9 @@ module.exports = gql`
         getPosts(lat: Float, lng: Float, range: Float): dataPost
         getPopularPosts(lat: Float, lng: Float range: Float): dataPost
         getVisited: [GeoLocation]
-        getProfilePosts: [Post]!
+        getProfilePosts(username: String): [Post]!
         getRoomPosts(room: String!):[Post]!
-        getProfileLikedPost: [Post]!
+        getProfileLikedPost(username: String): [Post]!
         getPost(id: ID! room: String): Post!
         getUserData(username: String): UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
@@ -159,7 +159,6 @@ module.exports = gql`
         getSubscribePosts: [Post]!
         setRulesSearchAlgolia(index: String!, rank: [String]!): String
         explorePlace: [GeoLocation]
-        privateSetting: Boolean
     },
     input RegisterInput {
         email: String!
@@ -219,6 +218,7 @@ module.exports = gql`
         changeProfileUser( profile: Profile ): User!
         clearAllNotif: String!
         deleteAccount( id: ID! ): String!
+        privateSetting: Boolean
 
         # posts mutation
         nextPosts( id:ID! lat: Float, lng: Float, range: Float ): dataPost

@@ -7,6 +7,12 @@ export const DELETE_ACCOUNT = gql`
 }
 `
 
+export const SET_PRIVATE = gql`
+  mutation privateSetting {
+    privateSetting
+  }
+`
+
 export const SUBSCRIBE_POST = gql`
   mutation subscribePost($id: ID! $room: String) {
     subscribePost(postId: $id room:$room){

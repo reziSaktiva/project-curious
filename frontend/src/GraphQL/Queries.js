@@ -14,12 +14,6 @@ export const MORE_FOR_YOU = gql`
   ${postDetailFragment}
 `
 
-export const SET_PRIVATE = gql`
-  query {
-    privateSetting
-  }
-`
-
 export const GET_POSTS = gql`
   query getPostNearby($lat: Float, $lng: Float, $range: Float) {
     getPosts(lat: $lat, lng: $lng, range: $range) {
@@ -74,8 +68,8 @@ query {
 `;
 
 export const GET_PROFILE_POSTS = gql`
-  query {
-    getProfilePosts {
+  query getProfilePosts($username: String) {
+    getProfilePosts(username: $username) {
       ...PostDetail
     }
   }
@@ -83,8 +77,8 @@ export const GET_PROFILE_POSTS = gql`
 `;
 
 export const GET_PROFILE_LIKED_POSTS = gql`
-query{
-  getProfileLikedPost {
+query getProfileLikedPost($username: String){
+  getProfileLikedPost(username: $username) {
       ...PostDetail
     }
   }

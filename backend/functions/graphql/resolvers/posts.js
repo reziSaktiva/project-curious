@@ -271,11 +271,11 @@ module.exports = {
         console.log(err);
       }
     },
-    async getProfilePosts(_, args, context) {
+    async getProfilePosts(_, {username : name}, context) {
       const { username } = await fbAuthContext(context)
 
       const data = await db.collection("posts")
-        .where("owner", "==", username)
+        .where("owner", "==", name ? name : username)
         .orderBy("createdAt", "desc")
         .get()
 
@@ -331,12 +331,16 @@ module.exports = {
       return [];
 
     },
-    async getProfileLikedPost(_, args, context) {
+    async getProfileLikedPost(_, { username }, context) {
       const { likes } = await fbAuthContext(context)
-
+      
+      const getLiked = await db.collection(`/users/${username}/liked/`).get()
+      const liked = getLiked.docs.map(doc => doc.data())
+      
+      const data = username ? liked : likes
       try {
         //fungsi ngambil postingan yang sudah di like
-        const Post = likes.map(doc => {
+        const Post = data.map(doc => {
           return db.doc(`/posts/${doc.postId}`).get()
             .then(doc => doc.data())
         })

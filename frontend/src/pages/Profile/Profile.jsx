@@ -10,6 +10,7 @@ import "antd/dist/antd.css";
 import "./style.css";
 import { Col, Row, Tabs, } from "antd";
 import { EditOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router";
 
 
 //assets
@@ -20,7 +21,6 @@ import no_likes from '../../assets/Noresults/No_likes_profile.png'
 import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
 
 //location
-import Geocode from "react-geocode";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from "react-router-dom";
@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 // Components
 import PostCard from "../../components/PostCard/index";
 import AppBar from "../../components/AppBar";
+import OtherProfile from "./OtherProfile";
 
 // Init Firebase
 import firebase from "firebase/app";
@@ -36,6 +37,7 @@ import { PostContext } from "../../context/posts";
 import SkeletonLoading from "../../components/SkeletonLoading";
 import SkeletonProfile from "./SkeletonProfile";
 import { Helmet } from "react-helmet";
+
 const storage = firebase.storage();
 
 const InitialState = {
@@ -44,6 +46,18 @@ const InitialState = {
 };
 
 function Profile() {
+  const pathname = useHistory().location.pathname
+  const { user } = useContext(AuthContext);
+  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
+  const [isMyProfile, setIsMyProfile] = useState()
+
+  useEffect(() => {
+    const name = pathname.split('/')[1]
+
+    if(name === user.username) setIsMyProfile(true)
+    else setIsMyProfile(false)
+  }, [pathname, user])
+
   const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
     fetchPolicy: "network-only",
   });
@@ -53,8 +67,6 @@ function Profile() {
   });
 
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
-  const { user } = useContext(AuthContext);
-  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
   const [postCount, setpostCount] = useState("")
@@ -204,7 +216,7 @@ function Profile() {
     ? posts.reduce((accumulator, current) => {
       return accumulator + current.repostCount;
     }, 0) : 0;
-  return (
+  return isMyProfile ? (
     <div>
       <Helmet>
         <title>Curious - Profile</title>
@@ -314,6 +326,8 @@ function Profile() {
       )}
 
     </div>
+  ) : (
+    <OtherProfile username={pathname.split('/')[1]}/>
   );
 }
 

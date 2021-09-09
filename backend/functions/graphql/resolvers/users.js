@@ -140,24 +140,6 @@ module.exports = {
             }
 
         },
-        async privateSetting(_, _args, context) {
-            const { username } = await fbAuthContext(context)
-            let result;
-            try {
-                await db.doc(`/users/${username}`).get()
-                    .then(doc => {
-                        result = !doc.data().private
-                        doc.ref.update({
-                            private: result
-                        })
-                    })
-
-                return result
-            }
-            catch (err) {
-                throw new Error(err);
-            }
-        },
         async mutedPosts(_, _args, context) {
             const { username } = await fbAuthContext(context)
             const muteData = db.collection(`users/${username}/muted`)
@@ -318,6 +300,24 @@ module.exports = {
         }
     },
     Mutation: {
+        async privateSetting(_, _args, context) {
+            const { username } = await fbAuthContext(context)
+            let result;
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        result = !doc.data().private
+                        doc.ref.update({
+                            private: result
+                        })
+                    })
+
+                return result
+            }
+            catch (err) {
+                throw new Error(err);
+            }
+        },
         async deleteAccount(_, { id }, context) {
             const { username } = await fbAuthContext(context)
 
