@@ -1,12 +1,19 @@
 import { Button } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AppStore from '../assets/buttonIphone.png';
 import PlayStore from '../assets/buttonGoogle.png'
 import AppBar from './AppBar';
+import { useHistory } from 'react-router';
+import { AuthContext } from '../context/auth';
 
 export default function Chat() {
     const [device, setdevice] = useState(null)
-
+    const path = useHistory().location.pathname
+    const { setPathname } = useContext(AuthContext)
+      
+      useEffect(() => {
+          setPathname(path)
+      }, [])
     useEffect(() => {
         setdevice(window.navigator.userAgent.split(";")[0].split("(")[1])
     }, [])

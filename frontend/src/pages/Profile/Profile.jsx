@@ -53,7 +53,7 @@ function Profile() {
   });
 
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
-  const { user, changeProfilePicture } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
@@ -164,7 +164,6 @@ function Profile() {
             <div className="gallery">
               {media.length &&
                 media.map((photo, idx) => {
-                  console.log("idx", idx);
                   const result = photo.media.map((media) => {
                     
                     const imgClass = cn({

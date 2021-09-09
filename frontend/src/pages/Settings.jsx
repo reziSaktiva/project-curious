@@ -1,4 +1,4 @@
-import { List, message, Avatar, Spin } from 'antd';
+import { List, message, Avatar, Spin, Switch } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
 import AppBar from "../components/AppBar";
@@ -62,6 +62,13 @@ export default function Settings() {
       style={{marginTop: -15}}
         size="large"
         bordered>
+          <List.Item key='1'>
+            <List.Item.Meta
+              title="Private Profile"
+            />
+            <div><Switch defaultChecked onChange={e =>console.log(e)} /></div>
+          </List.Item>
+          
         <Link to="/TermOfUse">
           <List.Item key='1'>
             <List.Item.Meta
