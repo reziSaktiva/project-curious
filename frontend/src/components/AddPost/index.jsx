@@ -49,6 +49,13 @@ const InitialState = {
   text: ''
 };
 
+const skeletonStyle = {
+  marginTop: 10,
+  marginLeft: 3,
+  width: window.isMobile ? '200px' : '400px',
+  height: 10
+ }
+
 const UploadButton = () => (
   <div>
     <PlusOutlined />
@@ -68,7 +75,6 @@ export default function ModalPost() {
   // Local State
   const [state, setState] = useState(InitialState);
   const [disabled, setDisabled] = useState(false);
-  const [uploadDone, setuploadDone] = useState(false)
   const [noVideoFilter, setnoVideoFilter] = useState(false)
   const [limiter, setlimiter] = useState(false)
   const [address, setAddress] = useState("");
@@ -326,14 +332,26 @@ export default function ModalPost() {
       >
         {repost && (
           <>
-            {loading && !getPost ?
+            {loading  ?
               (
                 <div style={{ marginBottom: 10 }}>
-                  <Space>
+                  <Card bodyStyle={{ padding: '10px 12px' }} style={{ width: '100%', height: '100%', borderRadius: 10, backgroundColor: '#f5f5f5', borderColor: '#ededed', padding: 0, marginBottom: 12 }}>
+                  <div style={{ display: 'flex' }}>
+                    <p className="ic-location-small" style={{ margin: 0 }} />
+                    <Skeleton.Button style={skeletonStyle} active size={"small"} />
+                  </div>
+                  <div style={{marginBottom: 7}}>
+                  <Skeleton.Button style={skeletonStyle} active size={"small"} />
+                  </div>
+                  <Skeleton.Button style={skeletonStyle} active size={"small"} />
+
+                  <Photo photo={getPost.media} />
+                </Card>
+                  {/* <Space>
                     <Skeleton.Avatar active={true} size={"large"} />
                     <Skeleton.Button style={{ width: window.isMobile ? '200px' : '400px' }} size={"small"} />
                   </Space>
-                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10 }} size={"small"} />
+                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10 }} size={"small"} /> */}
                 </div>
               )
               : (
@@ -346,8 +364,6 @@ export default function ModalPost() {
                   <div style={{ marginTop: 5 }}>{getPost.text}</div>
 
                   <Photo photo={getPost.media} />
-
-
                 </Card>
               )}
           </>

@@ -47,13 +47,12 @@ const BottomBar = () => {
           </div>
         </div>
         <div className="bottom-bar__items">
-          <Link to='/chat'>
+          <Link className={`${currentPath === 'chat' ? 'active' : '' }`} to="/chat">
           <MessageOutlined style={{ fontSize: 20 }} />
           </Link>
-          
         </div>
         <div className="bottom-bar__items">
-          <Link className={`${currentPath === `profile/user/${user.id}` ? 'active' : '' }`} to={`/profile/user/${user.id}`}>
+          <Link className={`${currentPath === `${user.newUsername ? user.newUsername : user.username}` ? 'active' : '' }`} to={`/${user.newUsername ? user.newUsername : user.username}`}>
             <UserOutlined style={{ fontSize: 20 }} />
           </Link>
         </div>

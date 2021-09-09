@@ -50,6 +50,7 @@ import { AuthContext } from "../../context/auth";
 import { MAP_API_KEY } from "../../util/ConfigMap";
 import Modal from "../../components/Modal";
 import { useHistory } from "react-router";
+import NoPost from "../404/404-Post";
 const storage = firebase.storage()
 
 //location
@@ -128,10 +129,9 @@ export default function SinglePost(props) {
   const id = props.match.params.id;
   const room = props.match.params.room === "post" ? null : props.match.params.room
 
-  const [getPost, { data, loading: getPostLoading }] = useLazyQuery(GET_POST, {
+  const [getPost, { data, loading: getPostLoading, error }] = useLazyQuery(GET_POST, {
     fetchPolicy: 'network-only'
   });
-
   useEffect(() => {
     if (id) {
       getPost({ variables: { id, room } });
@@ -241,7 +241,7 @@ export default function SinglePost(props) {
   const isSubscribe = user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   const userName = user && user.username;
-  return (
+  return error? (<NoPost />) : (
     <div>
       <Modal title="delete this post"
           deleteModal={deleteModal}

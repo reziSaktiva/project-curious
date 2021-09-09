@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router,Route, Switch } from 'react-router-dom';
 
 import 'antd/dist/antd.css'
 import 'semantic-ui-css/semantic.min.css'
@@ -40,6 +40,7 @@ import CG from './pages/legal/CommunityGuidelines';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import EPpost from './pages/search/EPpost';
 import { Helmet } from 'react-helmet'
+import PageNotFound from './pages/404/404-page';
 
 function App() {
   return (
@@ -66,7 +67,6 @@ function App() {
             <UserRoute exact path="/mutedPost" component={MutedPosts} />
             <UserRoute exact path="/subscribePosts" component={SubscribePosts} />
             <UserRoute exact path="/editProfile" component={EditProfile} />
-            <UserRoute exact path="/:username" component={Profile} />
             <UserRoute exact path="/visited" component={Visited} />
             <UserRoute exact path="/search" component={Search} />
             <UserRoute exact path="/explore/:location" component={EPpost} />
@@ -76,6 +76,8 @@ function App() {
             <UserRoute exact path="/CommunityGuidelines" component={CG} />
             <UserRoute exact path="/PrivacyPolicy" component={PrivacyPolicy} />
             <UserRoute exact path="/maps" component={map} />
+            <UserRoute exact path="/:username" component={Profile} />
+            <Route component={PageNotFound} />
           </Switch>
         </Grid>
       </Router>

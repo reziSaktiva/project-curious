@@ -68,7 +68,7 @@ const Sidebar = () => {
               />
             </Link>
           </div>
-          <Link to={`/profile/user/${user.id}`}>
+          <Link to={`/${user.newUsername ? user.newUsername : user.username}`}>
             <h3 style={{backgroundColor: "#FAFAFA", marginTop: 15, marginBottom: -1, fontSize: 15 }}>
               {user.newUsername ? user.newUsername : user.username }
             </h3>
