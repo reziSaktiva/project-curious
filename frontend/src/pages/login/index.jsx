@@ -40,7 +40,7 @@ const Login = (props) => {
   return (
     <div>
       <Link to='/' className="header-page">
-        <div className="curious"/>
+        <div className="curious" style={{marginBottom: 10}}/>
       </Link>
       <div className="landing-card">
         <div className="body-page__wrapper content">
