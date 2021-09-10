@@ -70,8 +70,7 @@ const Register = (props) => {
 
     const onFinish = (values) => {
         const { birthday, email, gender, username, password, phone, phoneCode } = values
-        console.log("phoneCode", phoneCode);
-        console.log("dial[0].dial_code", dial[0].dial_code);
+
         registerUser({ variables: { username, email, password, gender: gender[0], birthday: birthday._d, mobileNumber: `${(phoneCode || "+62") + phone}` } })
     };
 
@@ -103,7 +102,7 @@ const Register = (props) => {
             <div >
                 <Link to ='/'>
                 <div className="centeringImage">
-                <div className="curious centeringImage" style={{ marginTop: 50, }} />
+                <div className="curious centeringImage" style={{ marginTop: 50,marginBottom: 10 }} />
                 </div>
                 </Link>
                 
@@ -196,7 +195,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <DatePicker placeholder="birthday" style={{width:"100%"}}  />
+                                <DatePicker placeholder="When is your birthday?" style={{width:"100%"}}  />
                             </Form.Item>
 
                             <Form.Item
@@ -209,7 +208,7 @@ const Register = (props) => {
                                     },
                                 ]}
                             >
-                                <Cascader style={{backgroundColor: '#FAFAFF', height:"100%"}} options={gender} />
+                                <Cascader placeholder="please select your gender" style={{backgroundColor: '#FAFAFF', height:"100%"}} options={gender} />
                             </Form.Item>
                             <Form.Item
                                 name="agreement"

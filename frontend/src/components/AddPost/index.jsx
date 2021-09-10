@@ -12,7 +12,6 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import "../../App.css";
 
 //location
-import Geocode from "react-geocode";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
@@ -243,8 +242,7 @@ export default function ModalPost() {
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
 
-        const fileName = elem.type.split("/")[0] === "video" ? elem.originFileObj.name + elem.uid : elem.originFileObj.name.split(".")[0] + elem.uid + "." + elem.type.split("/")[1]
-
+        const fileName = elem.uid + "." + elem.type.split("/")[1]
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
 
         const url = await new Promise((resolve, reject) => {
@@ -255,8 +253,7 @@ export default function ModalPost() {
               reject()
             },
             async () => {
-              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-              
+                const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
                  const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
                  resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
             }
@@ -265,13 +262,15 @@ export default function ModalPost() {
 
         return url
       }));
-
+    setlimiter(false)
+    Promise.resolve(setErrors({}))
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
 
       return;
     }
 
-
+    setlimiter(false)
+    Promise.resolve(setErrors({}))
     setState({ ...state, uploaded: [], isFinishUpload: true, text: value.text })
 
     return;

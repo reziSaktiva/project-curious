@@ -60,10 +60,15 @@ function Profile() {
   const [postCount, setpostCount] = useState("")
   
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
+
+  useEffect(() => {
     if(!loading) {
       setpostCount(posts.length)
     }
   }, [posts, loading])
+  
   useEffect(() => {
     if (getProfilePosts && getProfileLikedPost) {
       setPosts({

@@ -15,7 +15,7 @@ import NoNotif from "../assets/NoNotif.jpg";
 import { PostContext } from "../context/posts";
 import { db } from "../util/Firebase";
 import moment from "moment";
-
+import './Notification/notif-style.css'
 export default function NotificationMobile() {
   const { isNavMobileOpen, setNavMobileOpen } = useContext(PostContext)
   const { notificationRead, readAllNotificatons, user } = useContext(AuthContext);
@@ -65,8 +65,8 @@ export default function NotificationMobile() {
         <Card
         >
           <div style={{ margin: -22, height: '100vh' }}>
-          <div>
-                  <Row>
+          <div >
+          <Row >
           <Col span={6}>
             <button className="ui inverted basic button" type="text" onClick={() => setNavMobileOpen(false)}>
               <i className="chevron left icon" style={{ color: 'black' }}></i>
@@ -94,10 +94,15 @@ export default function NotificationMobile() {
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
               >
-                <DropIcon />
+                <div style={{marginTop: 5, position: "relative", right: 8}}>
+                  <DropIcon />
+                </div>
               </a>
             </Dropdown>
           </Col>
+          <div style={{width: "100%", marginTop: -10}}>
+        <div className="ui divider"/>
+      </div>
       </Row>
           </div>
             {(state && state.length ? (
@@ -135,7 +140,7 @@ export default function NotificationMobile() {
                           : { fontSize: 13, fontWeight: "bold", color: "black" }
                       }
                     >
-                      <div className="notifContainer">
+                      <div className="notifContainer" style={{padding: "2px 18px"}}>
                         <Row>
                           <Col span={22}>
                             <p style={{ marginBottom: 15 }}>
@@ -154,7 +159,10 @@ export default function NotificationMobile() {
                   );
                 })
               ) : (
-              <img alt="no notifications"src={NoNotif} className="centeringButton" style={{height: 200}} />
+                <div>
+                <div className="noNotif" />
+                <p style={{ textAlign: "center", fontWeight: 700 }}>No Notifications yet</p>
+                </div>
               )
             )
             }

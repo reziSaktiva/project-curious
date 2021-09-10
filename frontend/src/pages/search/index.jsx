@@ -28,6 +28,7 @@ const Search = () => {
   
   useEffect(() => {
       setPathname(path)
+      window.scrollTo(0, 0);
   }, [])
   
   const searchPosts = debounce(

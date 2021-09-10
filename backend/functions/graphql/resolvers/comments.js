@@ -14,7 +14,7 @@ module.exports = {
             const commentCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`)
             const subscribeCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/subscribes`)
 
-            if (text.trim() === '') {
+            if (text.trim() === '' && !photo) {
                 throw new UserInputError('kamu tidak bisa membuat comment tanpa text', { error: { text: 'kamu tidak bisa membuat comment tanpa text' } })
             }
             try {
