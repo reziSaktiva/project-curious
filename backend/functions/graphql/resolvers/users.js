@@ -107,7 +107,17 @@ module.exports = {
             try {
                 if (username || name) {
                     await db.doc(`/users/${name ? name : username}`).get()
-                        .then(doc => {
+                        .then(async doc => {
+                            const getPosts = await db.collection(`posts`).where('owner', '==', doc.data().username).get()
+                            const posts = getPosts.docs.map(doc => doc.data())
+
+                            const postsCount = posts.length
+                            const repostCount = posts.reduce((accumulator, current) => {
+                                return accumulator + current.repostCount;
+                            }, 0);
+                            const likeCounter = posts.map((doc) => doc.likeCount);
+                            const likesCount = likeCounter.reduce((total, num) => (total += num))
+
                             dataUser.user = {
                                 email: doc.data().email,
                                 id: doc.data().id,
@@ -118,8 +128,12 @@ module.exports = {
                                 birthday: doc.data().birthday,
                                 profilePicture: doc.data().profilePicture,
                                 newUsername: doc.data().newUsername,
-                                private: doc.data().private
+                                private: doc.data().private,
+                                postsCount,
+                                repostCount,
+                                likesCount
                             }
+                            
                             if (name && doc.data().private) {
                                 throw new UserInputError('pengguna tidak di temukan')
                             }
@@ -130,7 +144,6 @@ module.exports = {
                                 dataUser.liked.push(doc.data())
                             })
                         })
-
                 }
 
                 return dataUser

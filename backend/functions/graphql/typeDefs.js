@@ -66,6 +66,9 @@ module.exports = gql`
         newUsername: String
         token: String
         private: Boolean
+        postsCount: Int
+        repostCount: Int
+        likesCount: Int
     },
     type Comment {
         id: ID
@@ -151,7 +154,7 @@ module.exports = gql`
         getVisited: [GeoLocation]
         getProfilePosts(username: String): [Post]!
         getRoomPosts(room: String!):[Post]!
-        getProfileLikedPost(username: String): [Post]!
+        getProfileLikedPost(username: String): dataPost
         getPost(id: ID! room: String): Post!
         getUserData(username: String): UserData
         getPostBasedOnNearestLoc(lat: String, lng: String): [Post]
@@ -221,6 +224,7 @@ module.exports = gql`
         privateSetting: Boolean
 
         # posts mutation
+        nextProfileLikedPost( id:ID! username: String ): dataPost
         nextPosts( id:ID! lat: Float, lng: Float, range: Float ): dataPost
         nextRoomPosts( id:ID!, room: String ): [Post]!
         nextPopularPosts( id:ID! lat: Float, lng: Float, range: Float): dataPost

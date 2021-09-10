@@ -38,7 +38,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_1: action.payload,
-        isMorePost : action.payload.length >= 8,
+        isMorePost: action.payload.length >= 8,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_BMW Club Bandung":
@@ -47,7 +47,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_2: action.payload,
-        isMorePost : action.payload.length >= 8,
+        isMorePost: action.payload.length >= 8,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_POST":
@@ -66,7 +66,9 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        likedPosts: action.payload,
+        likedPosts: action.payload.posts,
+        isMorePost: action.payload.hasMore,
+        lastIdPosts: action.payload.lastId
       };
     case "SET_NOTIF_LENGTH":
       return {
@@ -625,7 +627,7 @@ export const PostContext = createContext({
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
-  moreRoom:() => {},
+  moreRoom: () => { },
   setLikedPosts: () => { },
   setComment: () => { },
   setPost: () => { },
@@ -687,7 +689,7 @@ export const PostProvider = (props) => {
     dispatch({ type: "LOADING_DATA" });
   };
 
-  const createPost = (post) => {
+  const createPost = (post, pathname) => {
     if (post.room) {
       const room = post.room === "Insvire E-Sport" ? "ROOM_1" : "ROOM_2";
 
@@ -696,10 +698,14 @@ export const PostProvider = (props) => {
         payload: post,
       });
     } else {
-      dispatch({
-        type: "CREATE_POST",
-        payload: post,
-      });
+      switch (pathname) {
+        case '/' || `/${post.owner}`:
+          dispatch({
+            type: "CREATE_POST",
+            payload: post,
+          });
+          break;
+      }
     }
   };
 

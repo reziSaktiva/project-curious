@@ -45,6 +45,9 @@ export const userDataFragment = gql`
         profilePicture
         newUsername
         private
+        postsCount
+        repostCount
+        likesCount
       }
       notifications {
         recipient

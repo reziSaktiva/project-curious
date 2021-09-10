@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import PostCard from "../../components/PostCard/index";
 import AppBar from "../../components/AppBar";
 import OtherProfile from "./OtherProfile";
+import InfiniteScroll from "../../components/InfiniteScroll";
 
 // Init Firebase
 import firebase from "firebase/app";
@@ -54,7 +55,7 @@ function Profile() {
   useEffect(() => {
     const name = pathname.split('/')[1]
 
-    if(name === user.username) setIsMyProfile(true)
+    if (name === user.username) setIsMyProfile(true)
     else setIsMyProfile(false)
   }, [pathname, user])
 
@@ -69,23 +70,18 @@ function Profile() {
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-  const [postCount, setpostCount] = useState("")
   
   useEffect(() => {
-    if(!loading) {
-      setpostCount(posts.length)
-    }
-  }, [posts, loading])
-  useEffect(() => {
-    if (getProfilePosts && getProfileLikedPost) {
+    const name = pathname.split('/')[1]
+    if (getProfilePosts && getProfileLikedPost && name === user.username) {
       setPosts({
         hasMore: false,
         posts: getProfilePosts.getProfilePosts
       });
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
-      
+
     }
-  }, [getProfilePosts, getProfileLikedPost]);
+  }, [getProfilePosts, getProfileLikedPost, pathname]);
 
   const loc = localStorage.location;
 
@@ -113,9 +109,6 @@ function Profile() {
     }
   }, [loading, getProfilePosts]);
 
-  const likeCounter =
-    getProfilePosts &&
-    getProfilePosts.getProfilePosts.map((doc) => doc.likeCount);
   const { TabPane } = Tabs;
 
   const Demo = () => (
@@ -172,12 +165,12 @@ function Profile() {
       <TabPane tab="Media" key="3">
         {gallery.length ? (
           gallery.map((media) => (
-            
+
             <div className="gallery">
               {media.length &&
                 media.map((photo, idx) => {
                   const result = photo.media.map((media) => {
-                    
+
                     const imgClass = cn({
                       gallery_item_right: idx === 1,
                       gallery_item_left: idx === 2,
@@ -212,10 +205,6 @@ function Profile() {
     </Tabs>
   );
 
-  let repostCount = posts
-    ? posts.reduce((accumulator, current) => {
-      return accumulator + current.repostCount;
-    }, 0) : 0;
   return isMyProfile ? (
     <div>
       <Helmet>
@@ -279,19 +268,17 @@ function Profile() {
             <Row>
               <Col span={8}>
                 <h5>
-                  {getProfilePosts ? postCount : 0}
+                  {user && user.postsCount}
                 </h5>
                 <p>Post</p>
               </Col>
               <Col span={8}>
-                <h5>{repostCount}</h5>
+                <h5>{user && user.repostCount}</h5>
                 <p>Repost</p>
               </Col>
               <Col span={8}>
                 <h5>
-                  {getProfilePosts && likeCounter.length >= 1
-                    ? likeCounter.reduce((total, num) => (total += num))
-                    : 0}
+                  {user && user.likesCount}
                 </h5>
                 <p>Likes</p>
               </Col>
@@ -327,7 +314,7 @@ function Profile() {
 
     </div>
   ) : (
-    <OtherProfile username={pathname.split('/')[1]}/>
+    <OtherProfile username={pathname.split('/')[1]} />
   );
 }
 

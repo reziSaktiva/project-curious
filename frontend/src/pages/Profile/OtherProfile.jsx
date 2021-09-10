@@ -1,53 +1,158 @@
 import React, { useContext, useEffect, useState } from "react";
 import "antd/dist/antd.css";
 import "./style.css";
-import { Col, Row } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Col, Row, Tabs } from "antd";
+
+//assets
+import no_likes from '../../assets/Noresults/No_likes_profile.png'
+import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
 
 //location
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
-import { Link } from "react-router-dom";
 
 // Components
+import PostCard from "../../components/PostCard/index";
 import AppBar from "../../components/AppBar";
 import { Helmet } from "react-helmet";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILE_LIKED_POSTS, GET_PROFILE_POSTS, GET_USER_DATA } from "../../GraphQL/Queries";
+import { PostContext } from "../../context/posts";
+
+import SkeletonLoading from "../../components/SkeletonLoading";
+import { AuthContext } from "../../context/auth";
 
 function OtherProfile({ username }) {
     const [userData, setUserData] = useState({})
-    const [profilePosts, setProfilePosts] = useState([])
-    const [likedPosts, setLikedPosts] = useState([])
+    const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
+    const { user } = useContext(AuthContext)
     const { data } = useQuery(GET_USER_DATA, {
         variables: { username }
     })
 
-    const [getProfilePosts, { data: dataPosts}] = useLazyQuery(GET_PROFILE_POSTS)
-    const [getProfileLikedPost, { data: dataLikedPosts}] = useLazyQuery(GET_PROFILE_LIKED_POSTS)
+    const [getProfilePosts, { data: dataPosts, loading }] = useLazyQuery(GET_PROFILE_POSTS)
+    const [getProfileLikedPost, { data: dataLikedPosts }] = useLazyQuery(GET_PROFILE_LIKED_POSTS)
 
     useEffect(() => {
         if (data) setUserData(data.getUserData.user)
     }, [data])
 
     useEffect(() => {
-      if(userData){
-        getProfilePosts({variables: { username }})
-        getProfileLikedPost({variables: { username }})
-      }
+        if (userData) {
+            getProfilePosts({ variables: { username } })
+            getProfileLikedPost({ variables: { username } })
+        }
     }, [userData])
 
     useEffect(() => {
-        if(dataPosts){
-            setProfilePosts(dataPosts.getProfilePosts)
+        if (dataPosts) {
+            setPosts({
+                posts: dataPosts.getProfilePosts,
+                hasMore: false,
+                lastId: dataPosts.getProfilePosts[dataPosts.getProfilePosts.length - 1].id
+            })
         }
-        if(dataLikedPosts){
+        if (dataLikedPosts) {
             setLikedPosts(dataLikedPosts.getProfileLikedPost)
         }
     }, [dataPosts, dataLikedPosts])
 
-    console.log("likedPost", likedPosts);
-    console.log("profilePosts", profilePosts);
+
+    const { TabPane } = Tabs;
+
+    const Demo = () => (
+        <Tabs defaultActiveKey="1" centered>
+            <TabPane tab="Posts" key="1">
+                {loading ? (
+                    <SkeletonLoading />
+                ) : (
+                    !posts ? (
+                        <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                            <img src={no_posts} style={{ width: 300 }} />
+                            <h4 style={{ textAlign: 'center' }}>There is no Nearby post around you</h4>
+                            <h4 style={{ textAlign: 'center' }}>be the first to post in your area!</h4>
+                            <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
+                        </div>
+                    ) : (
+                        posts.map((post, key) => {
+                            return (
+                                user && (
+                                    <div key={`posts${post.id} ${key}`}>
+                                        <PostCard post={post} type="nearby" loading={loading} location="otherProfile" />
+                                    </div>
+                                )
+                            );
+                        })
+                    )
+                )}
+            </TabPane>
+            <TabPane tab="Liked" key="2">
+                {!dataLikedPosts ? (
+                    <SkeletonLoading />
+                ) : (
+                    dataLikedPosts.getProfileLikedPost.length ? (
+                        likedPosts.map((post, key) => {
+                            return (
+                                post &&
+                                user && (
+                                    <div key={`posts${post.id} ${key}`}>
+                                        <PostCard post={post} type='liked_posts' loading={loading} location="otherProfile"/>
+                                    </div>
+                                )
+                            );
+                        })
+                    ) : (
+                        <div className="centeringButton">
+                            <img src={no_likes} style={{ width: 300 }} />
+                            <h4 style={{ textAlign: 'center' }}>Try Likes Some Posts</h4>
+                            <h4 style={{ textAlign: 'center' }}>and it will displayed here</h4>
+                        </div>
+                    )
+                )}
+            </TabPane>
+
+            <TabPane tab="Media" key="3">
+                {/* {gallery.length ? (
+                    gallery.map((media) => (
+
+                        <div className="gallery">
+                            {media.length &&
+                                media.map((photo, idx) => {
+                                    const result = photo.media.map((media) => {
+
+                                        const imgClass = cn({
+                                            gallery_item_right: idx === 1,
+                                            gallery_item_left: idx === 2,
+                                            gallery__img: idx != 1 || idx != 2,
+                                        });
+                                        return <img
+                                            key={`Media${idx}`}
+                                            src={media}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = IconCrash;
+                                            }}
+                                            className={imgClass}
+                                            alt="Image 1"
+                                        />
+                                    })
+                                    return (
+                                        result
+                                    )
+                                })}
+                        </div>
+                    ))
+                ) : (
+                    <div className="centeringButton">
+                        <img src={no_media} style={{ width: 300 }} />
+                        <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
+                        <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
+                        <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
+                    </div>
+                )} */}
+            </TabPane>
+        </Tabs>
+    );
     return (
         <div>
             <Helmet>
@@ -70,22 +175,6 @@ function OtherProfile({ username }) {
                                 height: 80,
                             }}
                         />
-                        <div
-                            style={{
-                                backgroundColor: "#7f57ff",
-                                color: "white",
-                                borderRadius: "50%",
-                                width: 21,
-                                height: 21,
-                                position: "absolute",
-                                bottom: 0,
-                                right: 0,
-                            }}
-                        >
-                            <Link to="/editProfile" showUploadList={false}>
-                                <EditOutlined style={{ color: 'white' }} />
-                            </Link>
-                        </div>
                     </div>
                 </div>
 
@@ -108,17 +197,17 @@ function OtherProfile({ username }) {
                     <Row>
                         <Col span={8}>
                             <h5>
-                                {99}
+                                {userData && userData.postsCount}
                             </h5>
                             <p>Post</p>
                         </Col>
                         <Col span={8}>
-                            <h5>{99}</h5>
+                            <h5>{userData && userData.repostCount}</h5>
                             <p>Repost</p>
                         </Col>
                         <Col span={8}>
                             <h5>
-                                {99}
+                                {userData && userData.likesCount}
                             </h5>
                             <p>Likes</p>
                         </Col>
@@ -137,7 +226,7 @@ function OtherProfile({ username }) {
                     <div className="ui action input" style={{ height: 25 }}>
                         <input
                             type="text"
-                            value={`curious.me/${"jonijomblo"}`}
+                            value={`curious.me/${userData && userData.newUsername ? userData.newUsername : userData.username}`}
                         />
                         <button
                             className="ui teal right icon button"
@@ -148,7 +237,7 @@ function OtherProfile({ username }) {
                     </div>
                 </div>
 
-                {/* {Demo()} */}
+                {Demo()}
             </div>}
 
         </div>
