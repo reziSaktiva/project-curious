@@ -160,44 +160,7 @@ function Profile() {
       </TabPane>
 
       <TabPane tab="Media" key="3">
-        {gallery.length ? (
-          gallery.map((media) => (
-
-            <div className="gallery">
-              {media.length &&
-                media.map((photo, idx) => {
-                  const result = photo.media.map((media) => {
-
-                    const imgClass = cn({
-                      gallery_item_right: idx === 1,
-                      gallery_item_left: idx === 2,
-                      gallery__img: idx != 1 || idx != 2,
-                    });
-                    return <img
-                      key={`Media${idx}`}
-                      src={media}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = IconCrash;
-                      }}
-                      className={imgClass}
-                      alt="Image 1"
-                    />
-                  })
-                  return (
-                    result
-                  )
-                })}
-            </div>
-          ))
-        ) : (
-          <div className="centeringButton">
-            <img src={no_media} style={{ width: 300 }} />
-            <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
-            <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
-            <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
-          </div>
-        )}
+        <Media gallery={gallery}/>
       </TabPane>
     </Tabs>
   );
