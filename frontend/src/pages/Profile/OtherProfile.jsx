@@ -18,6 +18,7 @@ import { Helmet } from "react-helmet";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_PROFILE_LIKED_POSTS, GET_PROFILE_POSTS, GET_USER_DATA } from "../../GraphQL/Queries";
 import { PostContext } from "../../context/posts";
+import InfiniteScroll from "../../components/InfiniteScroll";
 
 import SkeletonLoading from "../../components/SkeletonLoading";
 import { AuthContext } from "../../context/auth";
@@ -46,11 +47,7 @@ function OtherProfile({ username }) {
 
     useEffect(() => {
         if (dataPosts) {
-            setPosts({
-                posts: dataPosts.getProfilePosts,
-                hasMore: false,
-                lastId: dataPosts.getProfilePosts[dataPosts.getProfilePosts.length - 1].id
-            })
+            setPosts(dataPosts.getProfilePosts)
         }
         if (dataLikedPosts) {
             setLikedPosts(dataLikedPosts.getProfileLikedPost)
@@ -74,15 +71,17 @@ function OtherProfile({ username }) {
                             <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
                         </div>
                     ) : (
-                        posts.map((post, key) => {
-                            return (
-                                user && (
-                                    <div key={`posts${post.id} ${key}`}>
-                                        <PostCard post={post} type="nearby" loading={loading} location="otherProfile" />
-                                    </div>
-                                )
-                            );
-                        })
+                        <InfiniteScroll profile={"profilePosts"}>{
+                            posts.map((post, key) => {
+                                return (
+                                    user && (
+                                        <div key={`posts${post.id} ${key}`}>
+                                            <PostCard post={post} type="nearby" loading={loading} />
+                                        </div>
+                                    )
+                                );
+                            })
+                        }</InfiniteScroll>
                     )
                 )}
             </TabPane>
@@ -90,17 +89,19 @@ function OtherProfile({ username }) {
                 {!dataLikedPosts ? (
                     <SkeletonLoading />
                 ) : (
-                    dataLikedPosts.getProfileLikedPost.length ? (
-                        likedPosts.map((post, key) => {
-                            return (
-                                post &&
-                                user && (
-                                    <div key={`posts${post.id} ${key}`}>
-                                        <PostCard post={post} type='liked_posts' loading={loading} location="otherProfile"/>
-                                    </div>
-                                )
-                            );
-                        })
+                    dataLikedPosts.getProfileLikedPost.posts.length ? (
+                        <InfiniteScroll profile={"likedPosts"}>{
+                            likedPosts.map((post, key) => {
+                                return (
+                                    post &&
+                                    user && (
+                                        <div key={`posts${post.id} ${key}`}>
+                                            <PostCard post={post} type='liked_posts' loading={loading} />
+                                        </div>
+                                    )
+                                );
+                            })
+                        }</InfiniteScroll>
                     ) : (
                         <div className="centeringButton">
                             <img src={no_likes} style={{ width: 300 }} />

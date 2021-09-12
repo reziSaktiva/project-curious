@@ -152,7 +152,7 @@ module.exports = gql`
         getPosts(lat: Float, lng: Float, range: Float): dataPost
         getPopularPosts(lat: Float, lng: Float range: Float): dataPost
         getVisited: [GeoLocation]
-        getProfilePosts(username: String): [Post]!
+        getProfilePosts(username: String): dataPost
         getRoomPosts(room: String!):[Post]!
         getProfileLikedPost(username: String): dataPost
         getPost(id: ID! room: String): Post!
@@ -224,6 +224,7 @@ module.exports = gql`
         privateSetting: Boolean
 
         # posts mutation
+        nextProfilePosts(id:ID! username: String): dataPost
         nextProfileLikedPost( id:ID! username: String ): dataPost
         nextPosts( id:ID! lat: Float, lng: Float, range: Float ): dataPost
         nextRoomPosts( id:ID!, room: String ): [Post]!

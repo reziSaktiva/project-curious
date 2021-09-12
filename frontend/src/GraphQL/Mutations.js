@@ -131,6 +131,32 @@ export const MUTE_POST = gql`
   }
 `
 
+export const GET_MORE_PROFILE_POSTS = gql`
+  mutation nextProfilePosts($id: ID! $username: String) {
+    nextProfilePosts(id: $id username: $username) {
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
+    }
+  }
+  ${postDetailFragment}
+`;
+
+export const GET_MORE_PROFILE_LIKED_POSTS = gql`
+  mutation nextProfileLikedPost($id: ID! $username: String) {
+    nextProfileLikedPost(id: $id username: $username) {
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
+    }
+  }
+  ${postDetailFragment}
+`;
+
 export const GET_MORE_MORE_FOR_YOU = gql`
   mutation nextMoreForYou($id: ID) {
     nextMoreForYou(id: $id) {

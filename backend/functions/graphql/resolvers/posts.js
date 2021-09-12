@@ -277,6 +277,7 @@ module.exports = {
       const data = await db.collection("posts")
         .where("owner", "==", name ? name : username)
         .orderBy("createdAt", "desc")
+        .limit(8)
         .get()
 
       const docs = data.docs.map((doc) => doc.data())
@@ -325,11 +326,18 @@ module.exports = {
           nearby.push(newData)
         });
 
-        return nearby;
+        return {
+          posts: nearby,
+          lastId: nearby[nearby.length - 1].id,
+          hasMore: nearby.length >= 8
+        };
       }
 
-      return [];
-
+      return {
+        posts: [],
+        lastId: null,
+        hasMore: false
+      };
     },
     async getProfileLikedPost(_, { username: name }, context) {
       const { username } = await fbAuthContext(context)
@@ -608,6 +616,78 @@ module.exports = {
     }
   },
   Mutation: {
+    async nextProfilePosts(_, { id, username: name }, context) {
+      const { username } = await fbAuthContext(context)
+
+      const lastPosts = await db.doc(`/posts/${id}/`).get();
+      const doc = lastPosts
+
+      const data = await db.collection("posts")
+        .where("owner", "==", name ? name : username)
+        .orderBy("createdAt", "desc")
+        .startAfter(doc)
+        .limit(3)
+        .get()
+
+      const docs = data.docs.map((doc) => doc.data())
+
+      if (docs.length) {
+        const nearby = []
+
+        docs.forEach(async data => {
+          const { repost: repostId } = data;
+
+          const repostData = async () => {
+            if (repostId) {
+              const repostData = await db.doc(`/${repostId.room ? `room/${repostId.room}/posts` : 'posts'}/${repostId.repost}`).get()
+              return repostData.data() || {}
+            }
+          }
+
+          // Likes
+          const likes = async () => {
+
+            const likesData = await db.collection(`/posts/${data.id}/likes`).get()
+            const likes = likesData.docs.map(doc => doc.data())
+
+            return likes;
+          };
+
+          // Comments
+          const comments = async () => {
+            const commentsData = await db.collection(`/posts/${data.id}/comments`).get()
+            return commentsData.docs.map(doc => doc.data())
+          }
+
+          // Muted
+          const muted = async () => {
+            const mutedData = await db.collection(`/posts/${data.id}/muted`).get();
+            return mutedData.docs.map(doc => doc.data());
+          }
+
+          const subscribe = async () => {
+            const subscribeData = await db.collection(`/posts/${data.id}/subscribes`).get();
+            return subscribeData.docs.map(doc => doc.data());
+          }
+
+          const newData = { ...data, likes: likes(), comments: comments(), muted: muted(), repost: repostData(), subscribe: subscribe() }
+
+          nearby.push(newData)
+        });
+
+        return {
+          posts: nearby,
+          lastId: nearby[nearby.length - 1].id,
+          hasMore: nearby.length >= 3
+        };
+      }
+
+      return {
+        posts: [],
+        lastId: null,
+        hasMore: false
+      };
+    },
     async nextProfileLikedPost(_, { username: name, id }, context) {
       const { username } = await fbAuthContext(context)
 

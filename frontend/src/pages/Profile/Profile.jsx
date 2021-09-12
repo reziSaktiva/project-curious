@@ -12,7 +12,6 @@ import { Col, Row, Tabs, } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 
-
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
 import IconCrash from "../../assets/ic-crash.png";
@@ -70,14 +69,11 @@ function Profile() {
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-  
+
   useEffect(() => {
     const name = pathname.split('/')[1]
     if (getProfilePosts && getProfileLikedPost && name === user.username) {
-      setPosts({
-        hasMore: false,
-        posts: getProfilePosts.getProfilePosts
-      });
+      setPosts(getProfilePosts.getProfilePosts);
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
 
     }
@@ -97,7 +93,7 @@ function Profile() {
     if (!loading && getProfilePosts) {
       const filterByMedia =
         getProfilePosts &&
-        getProfilePosts.getProfilePosts.filter((post) => {
+        getProfilePosts.getProfilePosts.posts.filter((post) => {
           const hasMedia = post.media && post.media.length >= 1;
 
           if (hasMedia) return post;
@@ -110,7 +106,7 @@ function Profile() {
   }, [loading, getProfilePosts]);
 
   const { TabPane } = Tabs;
-
+  console.log(likedPosts);
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
@@ -125,15 +121,17 @@ function Profile() {
               <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
             </div>
           ) : (
-            posts.map((post, key) => {
-              return (
-                user && (
-                  <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} type="nearby" loading={loading} />
-                  </div>
-                )
-              );
-            })
+            <InfiniteScroll profile={"profilePosts"}>{
+              posts.map((post, key) => {
+                return (
+                  user && (
+                    <div key={`posts${post.id} ${key}`}>
+                      <PostCard post={post} type="nearby" loading={loading} />
+                    </div>
+                  )
+                );
+              })
+            }</InfiniteScroll>
           )
         )}
       </TabPane>
@@ -141,17 +139,19 @@ function Profile() {
         {!getProfileLikedPost ? (
           <SkeletonLoading />
         ) : (
-          getProfileLikedPost.getProfileLikedPost.length ? (
-            likedPosts.map((post, key) => {
-              return (
-                post &&
-                user && (
-                  <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} type='liked_posts' loading={loading} />
-                  </div>
-                )
-              );
-            })
+          likedPosts ? (
+            <InfiniteScroll profile={"likedPosts"}>{
+              likedPosts.map((post, key) => {
+                return (
+                  post &&
+                  user && (
+                    <div key={`posts${post.id} ${key}`}>
+                      <PostCard post={post} type='liked_posts' loading={loading} />
+                    </div>
+                  )
+                );
+              })
+            }</InfiniteScroll>
           ) : (
             <div className="centeringButton">
               <img src={no_likes} style={{ width: 300 }} />

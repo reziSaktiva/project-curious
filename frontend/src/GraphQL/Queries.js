@@ -70,7 +70,11 @@ query {
 export const GET_PROFILE_POSTS = gql`
   query getProfilePosts($username: String) {
     getProfilePosts(username: $username) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}
@@ -79,7 +83,11 @@ export const GET_PROFILE_POSTS = gql`
 export const GET_PROFILE_LIKED_POSTS = gql`
 query getProfileLikedPost($username: String){
   getProfileLikedPost(username: $username) {
-      ...PostDetail
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
     }
   }
   ${postDetailFragment}

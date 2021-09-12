@@ -67,8 +67,8 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         likedPosts: action.payload.posts,
-        isMorePost: action.payload.hasMore,
-        lastIdPosts: action.payload.lastId
+        isMoreLikedPost: action.payload.hasMore,
+        lastIdLikedPosts: action.payload.lastId
       };
     case "SET_NOTIF_LENGTH":
       return {
@@ -80,6 +80,15 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         subscribePosts: action.payload,
+      };
+    case "MORE_LIKED_POSTS":
+      console.log(action.payload);
+      return {
+        ...state,
+        loading: false,
+        likedPosts: [...state.likedPosts, ...action.payload.posts],
+        isMoreLikedPost: action.payload.hasMore,
+        lastIdLikedPosts: action.payload.lastId
       };
     case "MORE_POSTS":
       return {
@@ -620,6 +629,8 @@ export const PostContext = createContext({
   loading: false,
   lastIdPosts: null,
   isMorePost: false,
+  isMoreLikedPost: null,
+  lastIdLikedPosts: null,
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
@@ -643,6 +654,7 @@ export const PostContext = createContext({
   like: () => { },
   mutePost: () => { },
   commentDelete: () => { },
+  moreLikedPosts: () => { }
 });
 
 const initialState = {
@@ -660,6 +672,8 @@ const initialState = {
   loading: null,
   lastIdPosts: null,
   subscribePosts: [],
+  isMoreLikedPost: null,
+  lastIdLikedPosts: null,
 };
 
 
@@ -683,6 +697,8 @@ export const PostProvider = (props) => {
     likedPosts,
     room_1,
     room_2,
+    isMoreLikedPost,
+    lastIdLikedPosts
   } = state;
 
   const loadingData = () => {
@@ -738,13 +754,12 @@ export const PostProvider = (props) => {
 
 
 
-  const setLikedPosts = (posts) => {
-    if (posts.length > 0) {
-      dispatch({
-        type: "SET_LIKED_POSTS",
-        payload: posts,
-      });
-    }
+  const setLikedPosts = (data) => {
+    console.log(data);
+    dispatch({
+      type: "SET_LIKED_POSTS",
+      payload: data,
+    });
   };
 
   const setMutedPost = (posts) => {
@@ -824,6 +839,13 @@ export const PostProvider = (props) => {
       }
     }
   };
+
+  const moreLikedPosts = (data) => {
+    dispatch({
+      type: "MORE_LIKED_POSTS",
+      payload: data
+    })
+  }
 
   const moreRoom = (posts) => {
     const room = posts[0].room ? posts[0].room : undefined
@@ -972,6 +994,8 @@ export const PostProvider = (props) => {
         isNavMobileOpen,
         isModalActive,
         notifLength,
+        isMoreLikedPost,
+        lastIdLikedPosts,
         setNotifLength,
         setModal,
         setPosts,
@@ -990,6 +1014,7 @@ export const PostProvider = (props) => {
         subscribePost,
         setSubscribePosts,
         setRoom,
+        moreLikedPosts,
         moreRoom,
         commentDelete,
         setNavMobileOpen,
