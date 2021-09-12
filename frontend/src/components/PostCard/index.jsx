@@ -33,7 +33,7 @@ Geocode.setApiKey(MAP_API_KEY);
 
 Geocode.setLanguage("id");
 
-export default function PostCard({ post, loading, type }) {
+export default function PostCard({ post, loading, type, location }) {
   const media = post.media
   const [address, setAddress] = useState("");
   const [repostAddress, setRepostAddress] = useState("");
@@ -109,7 +109,7 @@ export default function PostCard({ post, loading, type }) {
                   </Link>
                 </div>
                 <div className="action-post__item">
-                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} icon={<RetweetOutlined />} />
+                  <RepostButton idPost={post.id} room={post.room} repostCount={post.repostCount} location={location} icon={<RetweetOutlined />} />
                 </div>
               </div>
             </>,

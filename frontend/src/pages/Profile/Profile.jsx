@@ -10,7 +10,7 @@ import "antd/dist/antd.css";
 import "./style.css";
 import { Col, Row, Tabs } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-
+import { useHistory } from "react-router";
 
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
@@ -19,7 +19,6 @@ import no_likes from '../../assets/Noresults/No_likes_profile.png'
 import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
 
 //location
-import Geocode from "react-geocode";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 import { Link } from "react-router-dom";
@@ -27,6 +26,8 @@ import { Link } from "react-router-dom";
 // Components
 import PostCard from "../../components/PostCard/index";
 import AppBar from "../../components/AppBar";
+import OtherProfile from "./OtherProfile";
+import InfiniteScroll from "../../components/InfiniteScroll";
 
 // Init Firebase
 import firebase from "firebase/app";
@@ -44,6 +45,18 @@ const InitialState = {
 };
 
 function Profile() {
+  const pathname = useHistory().location.pathname
+  const { user } = useContext(AuthContext);
+  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
+  const [isMyProfile, setIsMyProfile] = useState()
+
+  useEffect(() => {
+    const name = pathname.split('/')[1]
+
+    if (name === user.username) setIsMyProfile(true)
+    else setIsMyProfile(false)
+  }, [pathname, user])
+
   const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
     fetchPolicy: "network-only",
   });
@@ -53,32 +66,16 @@ function Profile() {
   });
 
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
-  const { user } = useContext(AuthContext);
-  const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-  const [postCount, setpostCount] = useState("")
-  
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [])
-
-  useEffect(() => {
-    if(!loading) {
-      setpostCount(posts.length)
-    }
-  }, [posts, loading])
-  
-  useEffect(() => {
-    if (getProfilePosts && getProfileLikedPost) {
-      setPosts({
-        hasMore: false,
-        posts: getProfilePosts.getProfilePosts
-      });
+    const name = pathname.split('/')[1]
+    if (getProfilePosts && getProfileLikedPost && name === user.username) {
+      setPosts(getProfilePosts.getProfilePosts);
       setLikedPosts(getProfileLikedPost.getProfileLikedPost);
-      
+
     }
-  }, [getProfilePosts, getProfileLikedPost]);
+  }, [getProfilePosts, getProfileLikedPost, pathname]);
 
   const loc = localStorage.location;
 
@@ -94,7 +91,7 @@ function Profile() {
     if (!loading && getProfilePosts) {
       const filterByMedia =
         getProfilePosts &&
-        getProfilePosts.getProfilePosts.filter((post) => {
+        getProfilePosts.getProfilePosts.posts.filter((post) => {
           const hasMedia = post.media && post.media.length >= 1;
 
           if (hasMedia) return post;
@@ -106,11 +103,7 @@ function Profile() {
     }
   }, [loading, getProfilePosts]);
 
-  const likeCounter =
-    getProfilePosts &&
-    getProfilePosts.getProfilePosts.map((doc) => doc.likeCount);
   const { TabPane } = Tabs;
-
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">
@@ -125,15 +118,17 @@ function Profile() {
               <h4 style={{ textAlign: 'center' }}>or change your location to see other post around</h4>
             </div>
           ) : (
-            posts.map((post, key) => {
-              return (
-                user && (
-                  <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} type="nearby" loading={loading} />
-                  </div>
-                )
-              );
-            })
+            <InfiniteScroll profile={"profilePosts"}>{
+              posts.map((post, key) => {
+                return (
+                  user && (
+                    <div key={`posts${post.id} ${key}`}>
+                      <PostCard post={post} type="nearby" loading={loading} />
+                    </div>
+                  )
+                );
+              })
+            }</InfiniteScroll>
           )
         )}
       </TabPane>
@@ -141,17 +136,19 @@ function Profile() {
         {!getProfileLikedPost ? (
           <SkeletonLoading />
         ) : (
-          getProfileLikedPost.getProfileLikedPost.length ? (
-            likedPosts.map((post, key) => {
-              return (
-                post &&
-                user && (
-                  <div key={`posts${post.id} ${key}`}>
-                    <PostCard post={post} type='liked_posts' loading={loading} />
-                  </div>
-                )
-              );
-            })
+          likedPosts ? (
+            <InfiniteScroll profile={"likedPosts"}>{
+              likedPosts.map((post, key) => {
+                return (
+                  post &&
+                  user && (
+                    <div key={`posts${post.id} ${key}`}>
+                      <PostCard post={post} type='liked_posts' loading={loading} />
+                    </div>
+                  )
+                );
+              })
+            }</InfiniteScroll>
           ) : (
             <div className="centeringButton">
               <img src={no_likes} style={{ width: 300 }} />
@@ -163,25 +160,12 @@ function Profile() {
       </TabPane>
 
       <TabPane tab="Media" key="3">
-        {gallery.length ? (
-          <Media gallery={gallery} />
-        ) : (
-          <div className="centeringButton">
-            <img src={no_media} style={{ width: 300 }} />
-            <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
-            <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
-            <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
-          </div>
-        )}
+        <Media gallery={gallery}/>
       </TabPane>
     </Tabs>
   );
 
-  let repostCount = posts
-    ? posts.reduce((accumulator, current) => {
-      return accumulator + current.repostCount;
-    }, 0) : 0;
-  return (
+  return isMyProfile ? (
     <div>
       <Helmet>
         <title>Curious - Profile</title>
@@ -244,19 +228,17 @@ function Profile() {
             <Row>
               <Col span={8}>
                 <h5>
-                  {getProfilePosts ? postCount : 0}
+                  {user && user.postsCount}
                 </h5>
                 <p>Post</p>
               </Col>
               <Col span={8}>
-                <h5>{repostCount}</h5>
+                <h5>{user && user.repostCount}</h5>
                 <p>Repost</p>
               </Col>
               <Col span={8}>
                 <h5>
-                  {getProfilePosts && likeCounter.length >= 1
-                    ? likeCounter.reduce((total, num) => (total += num))
-                    : 0}
+                  {user && user.likesCount}
                 </h5>
                 <p>Likes</p>
               </Col>
@@ -291,6 +273,8 @@ function Profile() {
       )}
 
     </div>
+  ) : (
+    <OtherProfile username={pathname.split('/')[1]} />
   );
 }
 

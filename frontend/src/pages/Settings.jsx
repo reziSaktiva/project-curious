@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import AppBar from "../components/AppBar";
 import { RightOutlined, LoadingOutlined } from '@ant-design/icons'
 import { useMutation } from '@apollo/client';
-import { DELETE_ACCOUNT } from '../GraphQL/Mutations';
+import { DELETE_ACCOUNT, SET_PRIVATE } from '../GraphQL/Mutations';
 import { AuthContext } from '../context/auth'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import Modal from '../components/Modal';
@@ -16,7 +16,7 @@ export default function Settings() {
   const history = useHistory()
   const path = useHistory().location.pathname
   const { setPathname } = useContext(AuthContext)
-  const { user, loginLoader, setLoginLoader } = useContext(AuthContext)
+  const { user, loginLoader, setLoginLoader, setPrivate } = useContext(AuthContext)
   const [deleteAccount] = useMutation(DELETE_ACCOUNT ,{
     update(){
       handleLogout()
@@ -26,6 +26,13 @@ export default function Settings() {
       console.log(err);
     }
   })
+
+  const [privateSetting] = useMutation(SET_PRIVATE , {
+    update(_, { data: { privateSetting } }){
+      setPrivate(privateSetting);
+    }
+  })
+
   useEffect(() => {
     setPathname(path)
 }, [])
@@ -66,7 +73,7 @@ export default function Settings() {
             <List.Item.Meta
               title="Private Profile"
             />
-            <div><Switch defaultChecked onChange={e =>console.log(e)} /></div>
+            <div><Switch checked={user.private} onChange={() => privateSetting()} /></div>
           </List.Item>
           
         <Link to="/TermOfUse">

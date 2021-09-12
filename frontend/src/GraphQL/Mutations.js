@@ -7,6 +7,12 @@ export const DELETE_ACCOUNT = gql`
 }
 `
 
+export const SET_PRIVATE = gql`
+  mutation privateSetting {
+    privateSetting
+  }
+`
+
 export const SUBSCRIBE_POST = gql`
   mutation subscribePost($id: ID! $room: String) {
     subscribePost(postId: $id room:$room){
@@ -124,6 +130,32 @@ export const MUTE_POST = gql`
     }
   }
 `
+
+export const GET_MORE_PROFILE_POSTS = gql`
+  mutation nextProfilePosts($id: ID! $username: String) {
+    nextProfilePosts(id: $id username: $username) {
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
+    }
+  }
+  ${postDetailFragment}
+`;
+
+export const GET_MORE_PROFILE_LIKED_POSTS = gql`
+  mutation nextProfileLikedPost($id: ID! $username: String) {
+    nextProfileLikedPost(id: $id username: $username) {
+      lastId
+      hasMore
+      posts {
+        ...PostDetail
+      }
+    }
+  }
+  ${postDetailFragment}
+`;
 
 export const GET_MORE_MORE_FOR_YOU = gql`
   mutation nextMoreForYou($id: ID) {

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import { useMutation } from '@apollo/client'
-import { GET_MORE_MORE_FOR_YOU, GET_MORE_POPULAR, GET_MORE_POSTS, GET_MORE_ROOM } from '../GraphQL/Mutations'
+import { GET_MORE_MORE_FOR_YOU, GET_MORE_POPULAR, GET_MORE_POSTS, GET_MORE_PROFILE_LIKED_POSTS, GET_MORE_PROFILE_POSTS, GET_MORE_ROOM } from '../GraphQL/Mutations'
 import { PostContext } from '../context/posts'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -12,12 +12,14 @@ import { Skeleton } from 'antd'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { AuthContext } from '../context/auth'
 
 function ScrollInfinite(props) {
     const pathname = useHistory().location.pathname
 
-    const { isLoading, visitedLocation } = props;
-    const { posts, morePosts, moreRoom, room_1, room_2, active, isMorePost, lastIdPosts } = useContext(PostContext)
+    const { isLoading, visitedLocation, profile } = props;
+    const { posts, morePosts, moreRoom, moreLikedPosts, room_1, room_2, active, isMorePost, lastIdPosts, isMoreLikedPost, lastIdLikedPosts } = useContext(PostContext)
+    const { user } = useContext(AuthContext)
     const { location } = getSession()
     const range = getRangeSearch();
 
@@ -26,6 +28,24 @@ function ScrollInfinite(props) {
     const [nextPosts, { loading: loadingNearby }] = useMutation(GET_MORE_POSTS, {
         update(_, { data: { nextPosts: postsData } }) {
             morePosts(postsData)
+        },
+        onError(err) {
+            console.log(err.message);
+        }
+    })
+
+    const [nextProfilePosts, { loading: loadingProfile }] = useMutation(GET_MORE_PROFILE_POSTS, {
+        update(_, { data: { nextProfilePosts: postsData } }) {
+            morePosts(postsData)
+        },
+        onError(err) {
+            console.log(err.message);
+        }
+    })
+
+    const [nextProfileLikedPost, { loading: loadingProfileLiked }] = useMutation(GET_MORE_PROFILE_LIKED_POSTS, {
+        update(_, { data: { nextProfileLikedPost: postsData } }) {
+            moreLikedPosts(postsData)
         },
         onError(err) {
             console.log(err.message);
@@ -88,8 +108,25 @@ function ScrollInfinite(props) {
                         nextMoreForYou({ variables: { id: lastIdPosts } })
                     }
                     break;
+                case `/${user.username}`:
+                    switch (profile) {
+                        case 'profilePosts':
+                            nextProfilePosts({ variables: { id: lastIdPosts } })
+                            break;
+                        case "likedPosts":
+                            nextProfileLikedPost({ variables: { id: lastIdLikedPosts } })
+                            break;
+                    }
+                    break;
                 default:
-                    nextPosts({ variables: { id: posts[posts.length - 1].id, lat: loc.lat, lng: loc.lng, range: range ? parseFloat(range) : undefined } })
+                    switch (profile) {
+                        case 'profilePosts':
+                            nextProfilePosts({ variables: { id: lastIdPosts, username: pathname.split('/')[1] } })
+                            break;
+                        case "likedPosts":
+                            nextProfileLikedPost({ variables: { id: lastIdLikedPosts, username: pathname.split('/')[1] } })
+                            break;
+                    }
                     break;
             }
         }
@@ -108,8 +145,24 @@ function ScrollInfinite(props) {
                     loading = loadingMoreForYou
                 }
                 break;
+            case `/${user.username}`:
+                switch (profile) {
+                    case 'profilePosts':
+                        loading = loadingProfile
+                        break;
+                    case "likedPosts":
+                        loading = loadingProfileLiked
+                        break;
+                }
             default:
-                loading = loadingNearby
+                switch (profile) {
+                    case 'profilePosts':
+                        loading = loadingProfile
+                        break;
+                    case "likedPosts":
+                        loading = loadingProfileLiked
+                        break;
+                }
                 break;
         }
     }, [pathname])
@@ -118,8 +171,8 @@ function ScrollInfinite(props) {
             <InfiniteScroll
                 dataLength={posts ? posts.length : 0}
                 next={loadMore}
-                hasMore={isMorePost}
-                loader={(loading || isLoading) ? loading ?
+                hasMore={profile ? profile === "likedPosts" ? isMoreLikedPost : isMorePost : isMorePost}
+                loader={(loading || isLoading) ? loading || loadingNearby ?
                     <Skeleton avatar active paragraph={{ rows: 2 }} />
                     : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>) : <Skeleton avatar active paragraph={{ rows: 2 }} />}
                 scrollableTarget="scrollableDiv"
