@@ -75,6 +75,7 @@ export default function SinglePost(props) {
   const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
   const [deleteModal, setDeleteModal] = useState(false)
+  const [UploadBar, setUploadBar] = useState(0)
   const [repostAddress, setRepostAddress] = useState("");
   const [reply, setReply] = useState({ username: null, id: null });
   const postContext = useContext(PostContext);
@@ -209,16 +210,30 @@ export default function SinglePost(props) {
 
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
-            () => { },
+            (snapshot) => {
+              let uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+
+              setUploadBar(Math.ceil(uploadProgress))
+             },
             error => {
               fileList.push({ ...elem, status: 'error' })
               reject()
             },
             async () => {
-              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-              const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
-              resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
-         }
+              let downloadUrl;
+                await uploadTask.snapshot.ref.getDownloadURL().then(data => {
+
+                  return elem.type.split("/")[0] === "video" ? (
+                    downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "." + data.split("?")[0].split(".")[5] + "?alt=media"
+                    ) : (
+                      downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "_1920x1080." + data.split("?")[0].split(".")[5] + "?alt=media" 
+                    )
+
+                  }).catch(err => reject());
+                
+                 resolve(downloadUrl)
+                 setUploadBar(0)
+                }
           )
         })
 
@@ -407,6 +422,7 @@ export default function SinglePost(props) {
                 {fileList.length > 0 && (
                   <div className="imagePreview_container">
                     <div style={{ height: 120, borderRadius: "30px 30px 0 0", backgroundColor: "white", padding: 10 }}>
+                    
                       <Form.Item name="foto" style={{ marginBottom: 0 }} >
                         <div className="centeringButton" style={{ marginTop: -38 }}>
                           <Upload
@@ -418,9 +434,16 @@ export default function SinglePost(props) {
                             onChange={handleChange}
                           >
                           </Upload>
+                          
                         </div>
+                        
                       </Form.Item>
+                      { UploadBar >=1 &&
+                        <progress value={UploadBar} max="100"  style={{position: "relative", bottom: -50}}/>
+                      }
+                      
                     </div>
+                    
                   </div>
 
                 )}
@@ -469,16 +492,16 @@ export default function SinglePost(props) {
                   </Form.Item>
                   <Form.Item style={{ marginLeft: 10, }}>
                     <Button
+                    disabled={loadingCreate || UploadBar >=1 }
                       htmlType="submit"
                       style={{
                         borderRadius: 20,
                         backgroundColor: "#7f57ff",
                         display: "inline-block",
-                        color: "white",
-
+                        color: "white"
                       }}
                     >
-                      {loadingCreate ? <LoadingOutlined /> : 'Post'}
+                      {loadingCreate || UploadBar >=1 ? <LoadingOutlined /> : 'Post'}
 
                     </Button>
                   </Form.Item>

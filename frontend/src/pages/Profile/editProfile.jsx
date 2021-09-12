@@ -1,4 +1,4 @@
-import { Input, Form, Cascader, DatePicker, Upload } from "antd";
+import { Input, Form, Cascader, DatePicker, Upload, Skeleton } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import AppBar from "../../components/AppBar";
@@ -11,6 +11,7 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import { useMutation } from "@apollo/client";
 import { CHANGE_PROFILE } from "../../GraphQL/Mutations";
+import SkeletonButton from "antd/lib/skeleton/Button";
 const storage = firebase.storage();
 
 const gender = [
@@ -42,10 +43,13 @@ export default function EditProfile() {
   });
   const { user, changeProfile } = useContext(AuthContext);
   const [newUserData, setUserData] = useState({});
+  const [LoadingProfilePicture, setLoadingProfilePicture] = useState(false)
 
   const handleChange = (value) => {
+    let obj = value.file.originFileObj
+    console.log(obj.uid);
     const uploadTask = storage
-      .ref(`proflePicture/${value.file.originFileObj.name}`)
+      .ref(`profilePicture/${obj.uid }`)
       .put(value.file.originFileObj);
     uploadTask.on(
       "state_changed",
@@ -55,16 +59,23 @@ export default function EditProfile() {
       },
       async () => {
         storage
-          .ref("proflePicture")
-          .child(value.file.originFileObj.name)
+          .ref("profilePicture")
+          .child(obj.uid )
           .getDownloadURL()
           .then((url) => {
-            setUserData({ url, isFinishUpload: true });
-            // changeProfile(url);
+            let resizeURl = url.split("?")[0] + "_1920x1080?" +url.split("?")[1]
+            setLoadingProfilePicture(true)
+            setTimeout(() => {
+              setUserData({ url : resizeURl, isFinishUpload: true });
+              changeProfile(resizeURl);
+              setLoadingProfilePicture(false)  
+            }, 2500);
+            
           });
       }
     );
   };
+
 
   const handleChangesProfile = (value) => {
     const { username } = value
@@ -75,7 +86,7 @@ export default function EditProfile() {
       url: newUserData.url && newUserData.url,
       newUsername: newUserName
     }
-
+    console.log("newData", newData);
     changeProfileUser({ variables: newData })
 
 
@@ -87,7 +98,11 @@ export default function EditProfile() {
       <div className="edit-profile__container">
         <div className="form__container">
           <div className="PP__grid">
-            <img src={newUserData.url ? newUserData.url : user.profilePicture} className="profile-picture" />
+            {LoadingProfilePicture ? (
+              <Skeleton.Avatar active   size={80} style={{marginBottom: 16}} />
+            ) : (
+              <img src={newUserData.url ? newUserData.url : user.profilePicture} className="profile-picture" />
+            )}
             <div className="right-content">
               <ImgCrop rotate>
                 <Upload onChange={handleChange} showUploadList={false}>

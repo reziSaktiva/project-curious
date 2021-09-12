@@ -1,6 +1,6 @@
 // Modules
 import React, { useContext, useEffect, useState } from "react";
-import cn from "classnames";
+
 import { useQuery } from "@apollo/client";
 import { chunk } from "lodash";
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
@@ -8,13 +8,12 @@ import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Querie
 import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
 import "./style.css";
-import { Col, Row, Tabs, } from "antd";
+import { Col, Row, Tabs } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
-import IconCrash from "../../assets/ic-crash.png";
 import no_media from '../../assets/Noresults/No_images_profile.png'
 import no_likes from '../../assets/Noresults/No_likes_profile.png'
 import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
@@ -36,6 +35,7 @@ import { PostContext } from "../../context/posts";
 import SkeletonLoading from "../../components/SkeletonLoading";
 import SkeletonProfile from "./SkeletonProfile";
 import { Helmet } from "react-helmet";
+import Media from "./Media";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -164,35 +164,7 @@ function Profile() {
 
       <TabPane tab="Media" key="3">
         {gallery.length ? (
-          gallery.map((media) => (
-            
-            <div className="gallery">
-              {media.length &&
-                media.map((photo, idx) => {
-                  const result = photo.media.map((media) => {
-                    
-                    const imgClass = cn({
-                      gallery_item_right: idx === 1,
-                      gallery_item_left: idx === 2,
-                      gallery__img: idx != 1 || idx != 2,
-                    });
-                    return <img
-                      key={`Media${idx}`}
-                      src={media}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = IconCrash;
-                      }}
-                      className={imgClass}
-                      alt="Image 1"
-                    />
-                  })
-                  return (
-                    result
-                  )
-                })}
-            </div>
-          ))
+          <Media gallery={gallery} />
         ) : (
           <div className="centeringButton">
             <img src={no_media} style={{ width: 300 }} />
