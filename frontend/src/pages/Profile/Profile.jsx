@@ -1,6 +1,6 @@
 // Modules
 import React, { useContext, useEffect, useState } from "react";
-import cn from "classnames";
+
 import { useQuery } from "@apollo/client";
 import { chunk } from "lodash";
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
@@ -8,13 +8,12 @@ import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Querie
 import { AuthContext } from "../../context/auth";
 import "antd/dist/antd.css";
 import "./style.css";
-import { Col, Row, Tabs, } from "antd";
+import { Col, Row, Tabs } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 
 //assets
 import Pin from "../../assets/pin-svg-25px.svg";
-import IconCrash from "../../assets/ic-crash.png";
 import no_media from '../../assets/Noresults/No_images_profile.png'
 import no_likes from '../../assets/Noresults/No_likes_profile.png'
 import no_posts from '../../assets/Noresults/No_posts_home_Profile.png'
@@ -37,7 +36,7 @@ import { PostContext } from "../../context/posts";
 import SkeletonLoading from "../../components/SkeletonLoading";
 import SkeletonProfile from "./SkeletonProfile";
 import { Helmet } from "react-helmet";
-
+import Media from "./Media";
 const storage = firebase.storage();
 
 const InitialState = {
@@ -69,7 +68,6 @@ function Profile() {
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
-
   useEffect(() => {
     const name = pathname.split('/')[1]
     if (getProfilePosts && getProfileLikedPost && name === user.username) {
@@ -106,7 +104,6 @@ function Profile() {
   }, [loading, getProfilePosts]);
 
   const { TabPane } = Tabs;
-  console.log(likedPosts);
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>
       <TabPane tab="Posts" key="1">

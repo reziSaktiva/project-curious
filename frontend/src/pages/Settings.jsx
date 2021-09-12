@@ -84,14 +84,14 @@ export default function Settings() {
             <div><RightOutlined /></div>
           </List.Item>
         </Link>
-        <Link to="/">
+        <a href="https://play.google.com/store/apps/details?id=com.ramadhan.curious">
           <List.Item key='2'>
             <List.Item.Meta
               title="Share Curious App"
             />
             <div><RightOutlined /></div>
           </List.Item>
-        </Link>
+        </a>
         <Link to="/CommunityGuidelines">
           <List.Item key='3'>
             <List.Item.Meta

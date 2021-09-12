@@ -76,7 +76,7 @@ function MutedPost() {
         )
           : mutedPost.map((post, key) => {
             return (
-              <div key={`posts${post.id} ${key}`} style={key === 0 ? { marginTop: 40 } : { marginTop: 0 }}>
+              <div key={`posts${post.id} ${key}`} style={key === 0 ? { marginTop: 8 } : { marginTop: 0 }}>
                 <PostCard post={post} type="muted_posts" loading={loading} />
               </div>
             )

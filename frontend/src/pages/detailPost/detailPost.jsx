@@ -51,6 +51,7 @@ import { MAP_API_KEY } from "../../util/ConfigMap";
 import Modal from "../../components/Modal";
 import { useHistory } from "react-router";
 import NoPost from "../404/404-Post";
+import AppBar from "../../components/AppBar";
 const storage = firebase.storage()
 
 //location
@@ -74,6 +75,7 @@ export default function SinglePost(props) {
   const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
   const [deleteModal, setDeleteModal] = useState(false)
+  const [UploadBar, setUploadBar] = useState(0)
   const [repostAddress, setRepostAddress] = useState("");
   const [reply, setReply] = useState({ username: null, id: null });
   const postContext = useContext(PostContext);
@@ -84,7 +86,7 @@ export default function SinglePost(props) {
     previewTitle: '',
     fileList: []
   })
-  const { previewVisible, previewImage, fileList, previewTitle } = state;
+  const { fileList } = state;
 
   const [deletePost, { loading: deletePostLoading }] = useMutation(DELETE_POST, {
     update(_, { data: { deletePost } }) {
@@ -176,8 +178,10 @@ export default function SinglePost(props) {
     onError(err) {
       console.log(err.message);
     }, update(_, { data: { createComment: commentData } }) {
-
-      setComment(commentData)
+      setTimeout(() => {
+        setComment(commentData)
+      }, 2500);
+      
     },
   });
   const mentionSuggest = post && post.comments.map(data => {
@@ -190,7 +194,7 @@ export default function SinglePost(props) {
     const { comment } = value;
     // const usernameMention = comment.split("[")[1].split("]")[0];
     // const textAfterMention = comment.split("[")[1].split(")")[1];
-    const finalComment = comment.split("[").length <= 1 ? comment : comment.split("[")[1].split("]")[0] + comment.split("[")[1].split(")")[1]
+    const finalComment =  comment ? (comment.split("[").length <= 1 ? (comment) : (comment.split("[")[1].split("]")[0] + comment.split("[")[1].split(")")[1])) : comment
 
     const isReply = form.getFieldValue(["comment"]) && form.getFieldValue(["comment"]).includes(reply.username && reply.id) || false
 
@@ -201,20 +205,35 @@ export default function SinglePost(props) {
     ////////////////fungsi upload///////////////////
     if (fileList.length) {
       uploaded = await Promise.all(fileList.map(async (elem) => {
-        const uploadTask = storage.ref(`images/${elem.originFileObj.name}`).put(elem.originFileObj)
+        const fileName = elem.uid + "." + elem.type.split("/")[1]
+        const uploadTask = storage.ref(`images/${fileName}`).put(elem.originFileObj)
 
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
-            () => { },
+            (snapshot) => {
+              let uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+
+              setUploadBar(Math.ceil(uploadProgress))
+             },
             error => {
               fileList.push({ ...elem, status: 'error' })
               reject()
             },
             async () => {
-              const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+              let downloadUrl;
+                await uploadTask.snapshot.ref.getDownloadURL().then(data => {
 
-              resolve(downloadUrl);
-            }
+                  return elem.type.split("/")[0] === "video" ? (
+                    downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "." + data.split("?")[0].split(".")[5] + "?alt=media"
+                    ) : (
+                      downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "_1920x1080." + data.split("?")[0].split(".")[5] + "?alt=media" 
+                    )
+
+                  }).catch(err => reject());
+                
+                 resolve(downloadUrl)
+                 setUploadBar(0)
+                }
           )
         })
 
@@ -222,7 +241,7 @@ export default function SinglePost(props) {
       }));
 
       setState({ ...state, uploaded, fileList, isFinishUpload: true, text: value.text });
-      createComment({ variables: { text: finalComment, id: id, reply: reply, photo: uploaded[0], room: post.room } });
+      createComment({ variables: { text: finalComment || " ", id: id, reply: reply, photo: uploaded[0], room: post.room } });
       setState({ ...state, fileList: [] })
       form.resetFields()
       return;
@@ -241,6 +260,7 @@ export default function SinglePost(props) {
   const isSubscribe = user && subscribe && subscribe.find((sub) => sub.owner === user.username);
 
   const userName = user && user.username;
+
   return error? (<NoPost />) : (
     <div>
       <Modal title="delete this post"
@@ -250,7 +270,7 @@ export default function SinglePost(props) {
             deletePost({ variables: { id: post.id, room: post.room } })
             setDeleteModal(false)
           }} />
-      <PostNavBar />
+      <AppBar title="Post" />
       {getPostLoading ? <Skeleton avatar paragraph={{ rows: 2 }} /> : (
         <List className="single_post_container" itemLayout="vertical" size="large" style={{ background: 'white', margin: 10, borderRadius: 5 }}>
           {post ? (
@@ -402,6 +422,7 @@ export default function SinglePost(props) {
                 {fileList.length > 0 && (
                   <div className="imagePreview_container">
                     <div style={{ height: 120, borderRadius: "30px 30px 0 0", backgroundColor: "white", padding: 10 }}>
+                    
                       <Form.Item name="foto" style={{ marginBottom: 0 }} >
                         <div className="centeringButton" style={{ marginTop: -38 }}>
                           <Upload
@@ -413,9 +434,16 @@ export default function SinglePost(props) {
                             onChange={handleChange}
                           >
                           </Upload>
+                          
                         </div>
+                        
                       </Form.Item>
+                      { UploadBar >=1 &&
+                        <progress value={UploadBar} max="100"  style={{position: "relative", bottom: -50}}/>
+                      }
+                      
                     </div>
+                    
                   </div>
 
                 )}
@@ -441,8 +469,10 @@ export default function SinglePost(props) {
 
                   <Form.Item
                     name="comment"
-                    rules={[
-                      { required: true, message: "Isi komennya dulu ya broooo!" },
+                    rules={ fileList.length >=1 ? [
+                      { required: false },
+                    ] : [
+                      { required: false , message: "Isi komennya dulu ya broooo!" },
                     ]}
 
                   >
@@ -462,16 +492,16 @@ export default function SinglePost(props) {
                   </Form.Item>
                   <Form.Item style={{ marginLeft: 10, }}>
                     <Button
+                    disabled={loadingCreate || UploadBar >=1 }
                       htmlType="submit"
                       style={{
                         borderRadius: 20,
                         backgroundColor: "#7f57ff",
                         display: "inline-block",
-                        color: "white",
-
+                        color: "white"
                       }}
                     >
-                      {loadingCreate ? <LoadingOutlined /> : 'Post'}
+                      {loadingCreate || UploadBar >=1 ? <LoadingOutlined /> : 'Post'}
 
                     </Button>
                   </Form.Item>
