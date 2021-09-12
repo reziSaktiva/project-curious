@@ -124,6 +124,7 @@ export const postDetailFragment = gql`
         location {
           lat
           lng
+          location
         }
       }
       subscribe {

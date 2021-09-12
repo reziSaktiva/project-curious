@@ -82,6 +82,7 @@ export default function ModalPost() {
   const [room, setRoom] = useState("Nearby")
   const [open, setOpen] = useState([])
   const [errors, setErrors] = useState({});
+  const [UploadBar, setUploadBar] = useState(0)
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
@@ -200,15 +201,13 @@ export default function ModalPost() {
   const handleChange = ({ fileList }) => {
 
     fileList.map(file => (
-      file.size > 10000000 ? ( Promise.reject(setErrors('File should less than 10mb'))) :
+      file.size > 10000000 ? (Promise.reject(setErrors('File should less than 10mb'))) :
       (Promise.resolve())
       ))
-    fileList.map(file => (
-      file.status === "uploading" ? setDisabled(true) : setDisabled(false) 
-      ));
+    const newfile = fileList.map(file => ({ ...file, status: 'done' }))
     setState({
       ...state,
-      fileList: fileList
+      fileList: newfile
     });
     let limit = fileList.map(file => file.type.split("/")[0])
     if (limit[0] === "image") setnoVideoFilter(true)
@@ -244,22 +243,37 @@ export default function ModalPost() {
 
         const fileName = elem.uid + "." + elem.type.split("/")[1]
         const uploadTask = storage.ref(`upload/${fileName}`).put(elem.originFileObj)
-
+        
         const url = await new Promise((resolve, reject) => {
           uploadTask.on('state_changed',
-            () => { },
+            (snapshot) => {
+              let uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+
+              setUploadBar(Math.ceil(uploadProgress))
+             },
             error => {
               fileList.push({ ...elem, status: 'error' })
               reject()
             },
             async () => {
-                const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-                 const resizeDownloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + downloadUrl.split("?")[0].split(".")[4] + "_1920x1080." + downloadUrl.split("?")[0].split(".")[5] + "?alt=media";
-                 resolve(elem.type.split("/")[0] === "video" ? downloadUrl : resizeDownloadUrl);
+              let downloadUrl;
+                await uploadTask.snapshot.ref.getDownloadURL().then(data => {
+
+                  return elem.type.split("/")[0] === "video" ? (
+                    downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "." + data.split("?")[0].split(".")[5] + "?alt=media"
+                    ) : (
+                      downloadUrl = "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app.appspot." + data.split("?")[0].split(".")[4] + "_1920x1080." + data.split("?")[0].split(".")[5] + "?alt=media" 
+                    )
+
+                  }).catch(err => reject(setErrors('Upload Failed, Check Your Connection')));
+                
+                 resolve(downloadUrl);
+
+                 setUploadBar(0)
+                 setnoVideoFilter(false)
             }
           )
         })
-
         return url
       }));
     setlimiter(false)
@@ -346,11 +360,7 @@ export default function ModalPost() {
 
                   <Photo photo={getPost.media} />
                 </Card>
-                  {/* <Space>
-                    <Skeleton.Avatar active={true} size={"large"} />
-                    <Skeleton.Button style={{ width: window.isMobile ? '200px' : '400px' }} size={"small"} />
-                  </Space>
-                  <Skeleton.Button style={{ width: window.isMobile ? '250px' : '450px', marginTop: 10 }} size={"small"} /> */}
+
                 </div>
               )
               : (
@@ -398,7 +408,8 @@ export default function ModalPost() {
               style={{ marginBottom: 10 }}
             />
           )}
-
+          {UploadBar >=1 && <progress  value={UploadBar} max="100" /> }
+          
           <div style={{ position: 'relative', width: '100%' }}>
             {/* <Divider /> */}
             <hr style={{
@@ -422,10 +433,10 @@ export default function ModalPost() {
               </Form.Item>
             </Col>
 
-
-            <Button htmlType="submit"  disabled={Object.keys(errors).length > 0 || disabled} key="submit" type="primary" loading={loadingCreatePost}
-              style={{ backgroundColor: 'var(--primary-color)', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10 }}>
-              Post
+            
+            <Button htmlType="submit"  disabled={Object.keys(errors).length > 0 || disabled || UploadBar} key="submit" type="primary" loading={loadingCreatePost || UploadBar >=1  }
+              style={{ backgroundColor: 'var(--primary-color)', borderRadius: 20, position: "absolute", bottom: "3%", right: 0, height: 25, fontSize: 10, color: "white" }}>
+              {UploadBar >=1 ? "Uploading..." : "Post"}
             </Button>
           </div>
 
