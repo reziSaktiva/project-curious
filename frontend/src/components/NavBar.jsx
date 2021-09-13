@@ -11,7 +11,7 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location, noBurger,
   const handleToggle = e => {
     setNav(e.target.value)
   }
-
+console.log("notifLength", notifLength);
   return (
     <header className="toolbar">
       <div className="toolbar__nav">
@@ -54,7 +54,7 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location, noBurger,
               strokeWidth: "30",
               }} onClick={toggleOpenNotif} />
               {
-          notifLength > 1 && <div className="notifCounter__mobile">
+          notifLength >= 1 && <div className="notifCounter__mobile">
             <p style={{fontSize:10,display: 'flex', justifyContent: 'center', color: "white"}}> {notifLength > 99 ?
                ('99+') :
                 (notifLength)}</p>    
