@@ -11,7 +11,6 @@ export default function NavBar({toggleOpen, toggleOpenNotif, location, noBurger,
   const handleToggle = e => {
     setNav(e.target.value)
   }
-console.log("notifLength", notifLength);
   return (
     <header className="toolbar">
       <div className="toolbar__nav">

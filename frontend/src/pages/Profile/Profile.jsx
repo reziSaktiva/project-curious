@@ -1,7 +1,7 @@
 // Modules
 import React, { useContext, useEffect, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { selectHttpOptionsAndBody, useQuery } from "@apollo/client";
 import { chunk } from "lodash";
 import { GET_PROFILE_POSTS, GET_PROFILE_LIKED_POSTS } from "../../GraphQL/Queries";
 // import { CHANGE_PP } from "../../GraphQL/Mutations";
@@ -49,6 +49,8 @@ function Profile() {
   const { user } = useContext(AuthContext);
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
   const [isMyProfile, setIsMyProfile] = useState()
+  const [Value, setValue] = useState()
+  const [Top, setTop] = useState()
 
   useEffect(() => {
     const name = pathname.split('/')[1]
@@ -56,6 +58,7 @@ function Profile() {
     if (name === user.username) setIsMyProfile(true)
     else setIsMyProfile(false)
   }, [pathname, user])
+
 
   const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
     fetchPolicy: "network-only",

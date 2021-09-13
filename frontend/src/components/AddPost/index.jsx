@@ -85,10 +85,10 @@ export default function ModalPost() {
   const [open, setOpen] = useState([])
   const [errors, setErrors] = useState({});
   const [UploadBar, setUploadBar] = useState(0)
+  const {setloadingAddPost} = useContext(PostContext)
   const handleCloseAddPost = () => {
     toggleOpenNewPost(false)
   }
-
   //changeroom func
   const handleCollapse = () => {
     if (open.length) {
@@ -133,12 +133,14 @@ export default function ModalPost() {
 
         // Update Redux
         toggleOpenNewPost(false)
+        setloadingAddPost(true)
         setTimeout(() => {
           updatePosts({
             ...createPost,
             repost: repost && getPost
           }, pathname);
-        }, 2500);
+          setloadingAddPost(false)
+        }, 3000);
       }
     }
   )
@@ -184,12 +186,8 @@ export default function ModalPost() {
 
   const handleCancelModal = () => {
     toggleOpenNewPost(false);
-    console.log("repost", repost);
-    console.log("sebelum", getPost)
     getPost = {}
-    console.log("sesudah",getPost)
   };
-  console.log("dari luar", getPost);
 
   const handlePreview = async file => {
     if (!file.url && !file.preview) {
