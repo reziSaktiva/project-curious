@@ -65,6 +65,14 @@ function authReducer(state, action) {
         ...state,
         locationEP: action.payload
       }
+    case "CHANGE_PRIVATE_STATUS":
+      return {
+        ...state,
+        user : {
+          ...state.user,
+          private: action.payload
+        }
+      }
     case SET_PROFILE_PICTURE:
       return {
         ...state,
@@ -247,6 +255,13 @@ export function AuthProvider(props) {
     })
   }
 
+  function setPrivate(data) {
+    dispatch({
+      type: 'CHANGE_PRIVATE_STATUS',
+      payload: data
+    })
+  }
+
   function clearNotifications() {
     dispatch({
       type: "CLEAR_ALL_NOTIFICATIONS"
@@ -376,6 +391,7 @@ export function AuthProvider(props) {
       loginLoader,
       locationEP,
       locationAllow,
+      setPrivate,
       setLocationEP,
       setLoginLoader,
       setRoom,

@@ -29,6 +29,7 @@ import { CREATE_POST } from '../../GraphQL/Mutations'
 import firebase from 'firebase/app'
 import 'firebase/storage'
 import Photo from "../Photo";
+import { useHistory } from "react-router";
 
 const storage = firebase.storage()
 
@@ -63,6 +64,7 @@ const UploadButton = () => (
 );
 
 export default function ModalPost() {
+  const pathname = useHistory().location.pathname
   // Context
   const {
     isOpenNewPost,
@@ -135,7 +137,7 @@ export default function ModalPost() {
           updatePosts({
             ...createPost,
             repost: repost && getPost
-          });
+          }, pathname);
         }, 2500);
       }
     }

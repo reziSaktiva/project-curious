@@ -38,7 +38,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_1: action.payload,
-        isMorePost : action.payload.length >= 8,
+        isMorePost: action.payload.length >= 8,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_BMW Club Bandung":
@@ -47,7 +47,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_2: action.payload,
-        isMorePost : action.payload.length >= 8,
+        isMorePost: action.payload.length >= 8,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_POST":
@@ -66,7 +66,9 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        likedPosts: action.payload,
+        likedPosts: action.payload.posts,
+        isMoreLikedPost: action.payload.hasMore,
+        lastIdLikedPosts: action.payload.lastId
       };
     case "SET_NOTIF_LENGTH":
       return {
@@ -78,6 +80,15 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         subscribePosts: action.payload,
+      };
+    case "MORE_LIKED_POSTS":
+      console.log(action.payload);
+      return {
+        ...state,
+        loading: false,
+        likedPosts: [...state.likedPosts, ...action.payload.posts],
+        isMoreLikedPost: action.payload.hasMore,
+        lastIdLikedPosts: action.payload.lastId
       };
     case "MORE_POSTS":
       return {
@@ -618,6 +629,8 @@ export const PostContext = createContext({
   loading: false,
   lastIdPosts: null,
   isMorePost: false,
+  isMoreLikedPost: null,
+  lastIdLikedPosts: null,
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
@@ -625,7 +638,7 @@ export const PostContext = createContext({
   setModal: () => { },
   setNavMobileOpen: () => { },
   setRoom: () => { },
-  moreRoom:() => {},
+  moreRoom: () => { },
   setLikedPosts: () => { },
   setComment: () => { },
   setPost: () => { },
@@ -641,6 +654,7 @@ export const PostContext = createContext({
   like: () => { },
   mutePost: () => { },
   commentDelete: () => { },
+  moreLikedPosts: () => { }
 });
 
 const initialState = {
@@ -658,6 +672,8 @@ const initialState = {
   loading: null,
   lastIdPosts: null,
   subscribePosts: [],
+  isMoreLikedPost: null,
+  lastIdLikedPosts: null,
 };
 
 
@@ -681,13 +697,15 @@ export const PostProvider = (props) => {
     likedPosts,
     room_1,
     room_2,
+    isMoreLikedPost,
+    lastIdLikedPosts
   } = state;
 
   const loadingData = () => {
     dispatch({ type: "LOADING_DATA" });
   };
 
-  const createPost = (post) => {
+  const createPost = (post, pathname) => {
     if (post.room) {
       const room = post.room === "Insvire E-Sport" ? "ROOM_1" : "ROOM_2";
 
@@ -696,10 +714,14 @@ export const PostProvider = (props) => {
         payload: post,
       });
     } else {
-      dispatch({
-        type: "CREATE_POST",
-        payload: post,
-      });
+      switch (pathname) {
+        case '/' || `/${post.owner}`:
+          dispatch({
+            type: "CREATE_POST",
+            payload: post,
+          });
+          break;
+      }
     }
   };
 
@@ -732,13 +754,12 @@ export const PostProvider = (props) => {
 
 
 
-  const setLikedPosts = (posts) => {
-    if (posts.length > 0) {
-      dispatch({
-        type: "SET_LIKED_POSTS",
-        payload: posts,
-      });
-    }
+  const setLikedPosts = (data) => {
+    console.log(data);
+    dispatch({
+      type: "SET_LIKED_POSTS",
+      payload: data,
+    });
   };
 
   const setMutedPost = (posts) => {
@@ -818,6 +839,13 @@ export const PostProvider = (props) => {
       }
     }
   };
+
+  const moreLikedPosts = (data) => {
+    dispatch({
+      type: "MORE_LIKED_POSTS",
+      payload: data
+    })
+  }
 
   const moreRoom = (posts) => {
     const room = posts[0].room ? posts[0].room : undefined
@@ -966,6 +994,8 @@ export const PostProvider = (props) => {
         isNavMobileOpen,
         isModalActive,
         notifLength,
+        isMoreLikedPost,
+        lastIdLikedPosts,
         setNotifLength,
         setModal,
         setPosts,
@@ -984,6 +1014,7 @@ export const PostProvider = (props) => {
         subscribePost,
         setSubscribePosts,
         setRoom,
+        moreLikedPosts,
         moreRoom,
         commentDelete,
         setNavMobileOpen,
