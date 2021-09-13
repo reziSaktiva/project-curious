@@ -88,7 +88,6 @@ const Map = () => {
   });
 
   const [radius, setRadius] = useState(1000)
-console.log(radius);
   const marks = {
     0: "1km",
     33: "5km",

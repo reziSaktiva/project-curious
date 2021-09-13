@@ -11,7 +11,6 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import { useMutation } from "@apollo/client";
 import { CHANGE_PROFILE } from "../../GraphQL/Mutations";
-import SkeletonButton from "antd/lib/skeleton/Button";
 const storage = firebase.storage();
 
 const gender = [
@@ -47,7 +46,6 @@ export default function EditProfile() {
 
   const handleChange = (value) => {
     let obj = value.file.originFileObj
-    console.log(obj.uid);
     const uploadTask = storage
       .ref(`profilePicture/${obj.uid }`)
       .put(value.file.originFileObj);
@@ -86,7 +84,6 @@ export default function EditProfile() {
       url: newUserData.url && newUserData.url,
       newUsername: newUserName
     }
-    console.log("newData", newData);
     changeProfileUser({ variables: newData })
 
 
