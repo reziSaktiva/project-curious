@@ -69,6 +69,7 @@ export const userDataFragment = gql`
         displayImage
         colorCode
       }
+      galery
     }
 `
 

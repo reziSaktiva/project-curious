@@ -227,12 +227,16 @@ export function AuthProvider(props) {
   useEffect(() => {
     if (!loading && data && !error) {
       const user = get(data, "getUserData.user", {});
+      const galery = get(data, "getUserData.galery", []);
       const notifications = get(data, "getUserData.notifications", []);
       const likes = get(data, "getUserData.liked", []);
 
       dispatch({
         type: SET_USER_DATA,
-        payload: user,
+        payload: {
+          ...user,
+          galery
+        },
       });
 
       dispatch({
@@ -324,7 +328,6 @@ export function AuthProvider(props) {
     //   type: SET_PROFILE_PICTURE,
     //   payload: url
     // })
-    console.log(data);
   }
 
   function login(token) {

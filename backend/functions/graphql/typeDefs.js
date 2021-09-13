@@ -126,6 +126,7 @@ module.exports = gql`
         user: User!
         notifications: [Notification]
         liked: [Like]
+        galery: [[String]]
     },
     type Subscribe {
         owner: String!

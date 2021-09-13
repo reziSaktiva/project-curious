@@ -71,8 +71,8 @@ module.exports = {
             const response = await Promise.all(promises);
 
             response.sort(function (a, b) {
-                var nameA = a.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
-                var nameB = b.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
+                var nameA = a.administrative_area_level_3; // ignore upper and lowercase
+                var nameB = b.administrative_area_level_3; // ignore upper and lowercase
                 if (nameA < nameB) {
                     return -1;
                 }
@@ -100,6 +100,7 @@ module.exports = {
 
             let dataUser = {
                 user: null,
+                galery: [],
                 liked: [],
                 notifications: []
             }
@@ -118,6 +119,12 @@ module.exports = {
                             const likeCounter = posts.map((doc) => doc.likeCount);
                             const likesCount = likeCounter.reduce((total, num) => (total += num))
 
+                            posts.forEach((post) => {
+                                if(post.media.length){
+                                    dataUser.galery.push(post.media)
+                                }
+                            });
+
                             dataUser.user = {
                                 email: doc.data().email,
                                 id: doc.data().id,
@@ -134,9 +141,6 @@ module.exports = {
                                 likesCount
                             }
                             
-                            if (name && doc.data().private) {
-                                throw new UserInputError('pengguna tidak di temukan')
-                            }
                             return db.collection(`/users/${name ? name : username}/liked`).get()
                         })
                         .then(data => {
@@ -145,7 +149,7 @@ module.exports = {
                             })
                         })
                 }
-
+                console.log(dataUser);
                 return dataUser
             }
             catch (err) {

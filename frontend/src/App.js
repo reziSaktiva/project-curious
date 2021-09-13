@@ -25,7 +25,7 @@ import SinglePost from './pages/detailPost/detailPost';
 // import Nearby from './pages/nearby';
 import MutedPosts from './pages/mutedPosts'
 import SubscribePosts from './pages/subscribePosts'
-import Profile from './pages/Profile/Profile'
+import Profile from './pages/Profile/Index'
 import Visited from './pages/visited/index'
 import resetPassword from './pages/reset-password';
 import confirmPassword from './pages/confirm-password';
