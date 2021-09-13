@@ -14,6 +14,7 @@ import '../reset-password/style.css';
 
 
 const Login = (props) => {
+  console.log(window.matchMedia('(prefers-color-scheme: dark)'));
   const context = useContext(AuthContext)
   const [errors, setErrors] = useState({});
 

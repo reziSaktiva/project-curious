@@ -108,7 +108,7 @@ export default function ModalPost() {
 
   // Query
   const [getRepost, { data: dataRepost, loading }] = useLazyQuery(GET_POST);
-  const getPost = get(dataRepost, 'getPost') || {};
+  let getPost = get(dataRepost, 'getPost') || {};
 
 
   useEffect(() => {
@@ -134,14 +134,14 @@ export default function ModalPost() {
         setTimeout(() => {
           updatePosts({
             ...createPost,
-            repost: getPost
+            repost: repost && getPost
           });
         }, 2500);
       }
     }
   )
 
-  const { isFinishUpload, previewVisible, previewImage, fileList, previewTitle, uploaded } = state;
+  const { isFinishUpload, fileList,  uploaded } = state;
 
   useEffect(() => {
     if (repost) {
@@ -179,11 +179,15 @@ export default function ModalPost() {
     });
   }
 
-  const handleCancel = () => setState({ ...state, previewVisible: false });
 
   const handleCancelModal = () => {
     toggleOpenNewPost(false);
+    console.log("repost", repost);
+    console.log("sebelum", getPost)
+    getPost = {}
+    console.log("sesudah",getPost)
   };
+  console.log("dari luar", getPost);
 
   const handlePreview = async file => {
     if (!file.url && !file.preview) {
@@ -441,14 +445,14 @@ export default function ModalPost() {
           </div>
 
         </Form>
-        <Modal
+        {/* <Modal
           visible={previewVisible}
           title={previewTitle}
           footer={null}
           onCancel={handleCancel}
         >
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
+        </Modal> */}
       </Modal>
 
     </div>
