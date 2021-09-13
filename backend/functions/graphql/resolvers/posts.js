@@ -273,7 +273,7 @@ module.exports = {
     },
     async getProfilePosts(_, { username: name }, context) {
       const { username } = await fbAuthContext(context)
-
+       console.log(username);
       const data = await db.collection("posts")
         .where("owner", "==", name ? name : username)
         .orderBy("createdAt", "desc")
@@ -383,10 +383,14 @@ module.exports = {
           })
         })
 
-        return {
+        return Posts.length ? {
           posts: data,
           hasMore: data.length >= 8,
           lastId: liked[liked.length - 1].id
+        } : {
+          posts: [],
+          hasMore: false,
+          lastId: null
         }
       } catch (error) {
         console.log(error);

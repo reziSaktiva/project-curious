@@ -110,20 +110,29 @@ module.exports = {
                     await db.doc(`/users/${name ? name : username}`).get()
                         .then(async doc => {
                             const getPosts = await db.collection(`posts`).where('owner', '==', doc.data().username).get()
-                            const posts = getPosts.docs.map(doc => doc.data())
 
-                            const postsCount = posts.length
-                            const repostCount = posts.reduce((accumulator, current) => {
-                                return accumulator + current.repostCount;
-                            }, 0);
-                            const likeCounter = posts.map((doc) => doc.likeCount);
-                            const likesCount = likeCounter.reduce((total, num) => (total += num))
+                            let postsCount = 0;
+                            let repostCount = 0;
+                            let likesCount = 0;
 
-                            posts.forEach((post) => {
-                                if(post.media.length){
-                                    dataUser.galery.push(post.media)
+                            if (!getPosts.empty) {
+                                const posts = getPosts.docs.map(doc => doc.data())
+                                postsCount = posts.length
+
+                                repostCount = posts.reduce((accumulator, current) => {
+                                    return accumulator + current.repostCount;
+                                }, 0)
+                                const likeCounter = posts.map((doc) => doc.likeCount);
+                                likesCount = likeCounter.reduce((total, num) => (total += num))
+
+                                if (posts.length) {
+                                    posts.forEach((post) => {
+                                        if (post.media.length) {
+                                            dataUser.galery.push(post.media)
+                                        }
+                                    });
                                 }
-                            });
+                            }
 
                             dataUser.user = {
                                 email: doc.data().email,
@@ -140,7 +149,7 @@ module.exports = {
                                 repostCount,
                                 likesCount
                             }
-                            
+
                             return db.collection(`/users/${name ? name : username}/liked`).get()
                         })
                         .then(data => {
@@ -149,7 +158,7 @@ module.exports = {
                             })
                         })
                 }
-                console.log(dataUser);
+
                 return dataUser
             }
             catch (err) {

@@ -224,7 +224,7 @@ const reducer = (state, action) => {
         post: {
           ...state.post,
           comments: [...state.post.comments, action.payload],
-          commentsCount: state.post.comments + 1,
+          postDocument: state.post.postDocument + 1,
         },
       };
 

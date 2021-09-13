@@ -175,7 +175,7 @@ module.exports = {
                     }
 
                     commentDoc.delete()
-                    postDocument.ref.update({ commentCount: getCommentDoc.data().commentCount - 1 , rank : getCommentDoc.data().rank - 1})
+                    postDocument.ref.update({ commentCount: postDocument.data().commentCount - 1 , rank : postDocument.data().rank - 1})
 
                     if (!subscribeCollection.empty) {
                         subscribeCollection.docs.forEach(doc => {

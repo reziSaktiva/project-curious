@@ -198,6 +198,10 @@ export function AuthProvider(props) {
   ] = useLazyQuery(GET_USER_DATA);
 
   useEffect(() => {
+    loadDataUser()
+  }, [])
+
+  useEffect(() => {
     if (token) {
       if (!called) {
         return loadDataUser();
