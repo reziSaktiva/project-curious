@@ -70,7 +70,7 @@ function getBase64(file) {
 export default function SinglePost(props) {
   const history = useHistory()
   const [text, settext] = useState(null)
-  const _isMounted = useRef(false)
+  // const _isMounted = useRef(false)
   const { post, setPost, loading, loadingData, setComment } = useContext(PostContext);
   const { user } = useContext(AuthContext)
   const [address, setAddress] = useState("");
@@ -143,23 +143,14 @@ export default function SinglePost(props) {
   //input form
 
   useEffect(() => {
-    if (!_isMounted.current && data) {
-      if (!data) {
-        loadingData()
-
-        return;
-      }
-
+    if (data) {
       const post = data.getPost
       setPost(post);
       setAddress(post.location.location);
 
-      // set did mount react
-      _isMounted.current = true;
-
       return;
     }
-  }, [data, _isMounted]);
+  }, [data]);
 
   //repost
 

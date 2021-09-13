@@ -82,7 +82,6 @@ const reducer = (state, action) => {
         subscribePosts: action.payload,
       };
     case "MORE_LIKED_POSTS":
-      console.log(action.payload);
       return {
         ...state,
         loading: false,
@@ -706,6 +705,7 @@ export const PostProvider = (props) => {
   };
 
   const createPost = (post, pathname) => {
+    // console.log(`/${post.owner}`);
     if (post.room) {
       const room = post.room === "Insvire E-Sport" ? "ROOM_1" : "ROOM_2";
 
@@ -714,13 +714,11 @@ export const PostProvider = (props) => {
         payload: post,
       });
     } else {
-      switch (pathname) {
-        case '/' || `/${post.owner}`:
-          dispatch({
-            type: "CREATE_POST",
-            payload: post,
-          });
-          break;
+      if (pathname === '/' || pathname === `/${post.owner}`) {
+        dispatch({
+          type: "CREATE_POST",
+          payload: post,
+        });
       }
     }
   };
@@ -755,7 +753,6 @@ export const PostProvider = (props) => {
 
 
   const setLikedPosts = (data) => {
-    console.log(data);
     dispatch({
       type: "SET_LIKED_POSTS",
       payload: data,

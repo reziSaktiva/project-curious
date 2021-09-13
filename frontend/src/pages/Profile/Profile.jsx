@@ -26,7 +26,6 @@ import { Link } from "react-router-dom";
 // Components
 import PostCard from "../../components/PostCard/index";
 import AppBar from "../../components/AppBar";
-import OtherProfile from "./OtherProfile";
 import InfiniteScroll from "../../components/InfiniteScroll";
 
 // Init Firebase
@@ -45,37 +44,28 @@ const InitialState = {
 };
 
 function Profile() {
-  const pathname = useHistory().location.pathname
   const { user } = useContext(AuthContext);
   const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
-  const [isMyProfile, setIsMyProfile] = useState()
+  
+  const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS);
 
-  useEffect(() => {
-    const name = pathname.split('/')[1]
-
-    if (name === user.username) setIsMyProfile(true)
-    else setIsMyProfile(false)
-  }, [pathname, user])
-
-  const { data: getProfilePosts, loading } = useQuery(GET_PROFILE_POSTS, {
-    fetchPolicy: "network-only",
-  });
-
-  const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS, {
-    fetchPolicy: "network-only",
-  });
+  const { data: getProfileLikedPost } = useQuery(GET_PROFILE_LIKED_POSTS);
 
   // const [changePPuser, { data }] = useMutation(CHANGE_PP);
   const [gallery, setGallery] = useState([]);
   const [address, setAddress] = useState("");
   useEffect(() => {
-    const name = pathname.split('/')[1]
-    if (getProfilePosts && getProfileLikedPost && name === user.username) {
+    if (getProfilePosts) {
       setPosts(getProfilePosts.getProfilePosts);
-      setLikedPosts(getProfileLikedPost.getProfileLikedPost);
+      
+    } 
+  }, [getProfilePosts, getProfileLikedPost]);
 
+  useEffect(() => {
+    if(getProfileLikedPost){
+      setLikedPosts(getProfileLikedPost.getProfileLikedPost);
     }
-  }, [getProfilePosts, getProfileLikedPost, pathname]);
+  }, [getProfileLikedPost])
 
   const loc = localStorage.location;
 
@@ -165,7 +155,7 @@ function Profile() {
     </Tabs>
   );
 
-  return isMyProfile ? (
+  return (
     <div>
       <Helmet>
         <title>Curious - Profile</title>
@@ -273,9 +263,7 @@ function Profile() {
       )}
 
     </div>
-  ) : (
-    <OtherProfile username={pathname.split('/')[1]} />
-  );
+  ) 
 }
 
 export default Profile;

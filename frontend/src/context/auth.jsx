@@ -324,7 +324,6 @@ export function AuthProvider(props) {
     //   type: SET_PROFILE_PICTURE,
     //   payload: url
     // })
-    console.log(data);
   }
 
   function login(token) {

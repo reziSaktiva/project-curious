@@ -344,7 +344,7 @@ module.exports = {
 
       const getLiked = await db.collection(`/users/${name ? name : username}/liked/`).limit(8).get()
       const liked = getLiked.docs.map(doc => doc.data())
-      console.log(liked[liked.length - 1].id);
+
       try {
         //fungsi ngambil postingan yang sudah di like
         const Posts = liked.map(doc => {
@@ -737,7 +737,7 @@ module.exports = {
         return {
           posts: data,
           hasMore: data.length >= 3,
-          lastId: liked[liked.length - 1].id
+          lastId: liked.length ? liked[liked.length - 1].id : null
         }
       } catch (error) {
         console.log(error);
@@ -1672,7 +1672,6 @@ module.exports = {
               })
             }
 
-            console.log(newHits)
             // return following structure data algolia
             resolve({ hits: newHits, page, nbHits, nbPages, hitsPerPage, processingTimeMS })
           }).catch(err => {

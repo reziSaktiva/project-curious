@@ -71,8 +71,8 @@ module.exports = {
             const response = await Promise.all(promises);
 
             response.sort(function (a, b) {
-                var nameA = a.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
-                var nameB = b.administrative_area_level_3.toUpperCase(); // ignore upper and lowercase
+                var nameA = a.administrative_area_level_3; // ignore upper and lowercase
+                var nameB = b.administrative_area_level_3; // ignore upper and lowercase
                 if (nameA < nameB) {
                     return -1;
                 }

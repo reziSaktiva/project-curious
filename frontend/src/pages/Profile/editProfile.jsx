@@ -47,7 +47,6 @@ export default function EditProfile() {
 
   const handleChange = (value) => {
     let obj = value.file.originFileObj
-    console.log(obj.uid);
     const uploadTask = storage
       .ref(`profilePicture/${obj.uid }`)
       .put(value.file.originFileObj);
@@ -86,7 +85,6 @@ export default function EditProfile() {
       url: newUserData.url && newUserData.url,
       newUsername: newUserName
     }
-    console.log("newData", newData);
     changeProfileUser({ variables: newData })
 
 
