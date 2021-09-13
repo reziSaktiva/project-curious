@@ -25,6 +25,11 @@ const reducer = (state, action) => {
         ...state,
         active: action.payload,
       };
+      case "LOADING_ADD_POST":
+      return {
+        ...state,
+        loadingAddPost: action.payload,
+      };
 
     case "SET_NAV_MOBILE_OPEN":
 
@@ -633,6 +638,7 @@ export const PostContext = createContext({
   isOpenNewPost: false,
   repost: false,
   isNavMobileOpen: false,
+  setloadingAddPost: () => {},
   setNotifLength: () => { },
   setModal: () => { },
   setNavMobileOpen: () => { },
@@ -689,6 +695,7 @@ export const PostProvider = (props) => {
     loading,
     lastIdPosts,
     isMorePost,
+    loadingAddPost,
     isOpenNewPost,
     repost,
     mutedPost,
@@ -727,6 +734,12 @@ export const PostProvider = (props) => {
     dispatch({
       type: "SET_POST",
       payload: post,
+    });
+  };
+  const setloadingAddPost = (LoadingAdd) => {
+    dispatch({
+      type: "LOADING_ADD_POST",
+      payload: LoadingAdd,
     });
   };
   const setNotifLength = (notifLength) => {
@@ -993,6 +1006,8 @@ export const PostProvider = (props) => {
         notifLength,
         isMoreLikedPost,
         lastIdLikedPosts,
+        loadingAddPost,
+        setloadingAddPost,
         setNotifLength,
         setModal,
         setPosts,

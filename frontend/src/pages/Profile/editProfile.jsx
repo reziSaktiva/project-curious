@@ -11,7 +11,6 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import { useMutation } from "@apollo/client";
 import { CHANGE_PROFILE } from "../../GraphQL/Mutations";
-import SkeletonButton from "antd/lib/skeleton/Button";
 const storage = firebase.storage();
 
 const gender = [
