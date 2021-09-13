@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "antd/dist/antd.css";
 import "./style.css";
 import { Col, Row, Tabs } from "antd";
+import { chunk } from "lodash";
 
 //assets
 import no_likes from '../../assets/Noresults/No_likes_profile.png'
@@ -22,11 +23,13 @@ import InfiniteScroll from "../../components/InfiniteScroll";
 
 import SkeletonLoading from "../../components/SkeletonLoading";
 import { AuthContext } from "../../context/auth";
+import Media from "./Media";
 
 function OtherProfile({ username }) {
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState(null)
     const { posts, setPosts, likedPosts, setLikedPosts } = useContext(PostContext);
     const { user } = useContext(AuthContext)
+    const [gallery, setgallery] = useState()
     const { data } = useQuery(GET_USER_DATA, {
         variables: { username }
     })
@@ -35,13 +38,18 @@ function OtherProfile({ username }) {
     const [getProfileLikedPost, { data: dataLikedPosts }] = useLazyQuery(GET_PROFILE_LIKED_POSTS)
 
     useEffect(() => {
-        if (data) setUserData(data.getUserData.user)
+        if (data) setUserData({
+            ...data.getUserData.user,
+            galery: data.getUserData.galery
+        })
     }, [data])
 
     useEffect(() => {
         if (userData) {
-            getProfilePosts({ variables: { username } })
-            getProfileLikedPost({ variables: { username } })
+            if (!userData.private) {
+                getProfilePosts({ variables: { username } })
+                getProfileLikedPost({ variables: { username } })
+            }
         }
     }, [userData])
 
@@ -54,6 +62,12 @@ function OtherProfile({ username }) {
         }
     }, [dataPosts, dataLikedPosts])
 
+    useEffect(() => {
+        if (userData) {
+            const gallery = chunk(userData.galery, 4);
+            setgallery(gallery)
+        }
+    }, [userData])
 
     const { TabPane } = Tabs;
 
@@ -74,7 +88,7 @@ function OtherProfile({ username }) {
                         <InfiniteScroll profile={"profilePosts"}>{
                             posts.map((post, key) => {
                                 return (
-                                    user && (
+                                    userData && (
                                         <div key={`posts${post.id} ${key}`}>
                                             <PostCard post={post} type="nearby" loading={loading} />
                                         </div>
@@ -113,48 +127,11 @@ function OtherProfile({ username }) {
             </TabPane>
 
             <TabPane tab="Media" key="3">
-                {/* {gallery.length ? (
-                    gallery.map((media) => (
-
-                        <div className="gallery">
-                            {media.length &&
-                                media.map((photo, idx) => {
-                                    const result = photo.media.map((media) => {
-
-                                        const imgClass = cn({
-                                            gallery_item_right: idx === 1,
-                                            gallery_item_left: idx === 2,
-                                            gallery__img: idx != 1 || idx != 2,
-                                        });
-                                        return <img
-                                            key={`Media${idx}`}
-                                            src={media}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = IconCrash;
-                                            }}
-                                            className={imgClass}
-                                            alt="Image 1"
-                                        />
-                                    })
-                                    return (
-                                        result
-                                    )
-                                })}
-                        </div>
-                    ))
-                ) : (
-                    <div className="centeringButton">
-                        <img src={no_media} style={{ width: 300 }} />
-                        <h4 style={{ textAlign: 'center' }}>Try Upload a Photo when posting</h4>
-                        <h4 style={{ textAlign: 'center' }}>and make your post more atractive</h4>
-                        <h4 style={{ textAlign: 'center' }}>and your photo colection will shown up here</h4>
-                    </div>
-                )} */}
+                <Media gallery={gallery} />
             </TabPane>
         </Tabs>
     );
-    return (
+    return userData ? (
         <div>
             <Helmet>
                 <title>Curious - Profile</title>
@@ -238,9 +215,20 @@ function OtherProfile({ username }) {
                     </div>
                 </div>
 
-                {Demo()}
+                {userData && userData.private ? (
+                    <div style={{ display: 'grid', placeItems: 'center', height: "100%" }}>
+                        This User Profile is Private
+                    </div>
+                ) : Demo()}
             </div>}
 
+        </div>
+    ) : (<div>
+        <AppBar title="My Profile" />
+        <div style={{display: 'grid', placeItems: 'center'}}>
+        <div className="profile_not_found" />
+        <h1>user tidak di temukan</h1>
+        </div>
         </div>
     )
 }

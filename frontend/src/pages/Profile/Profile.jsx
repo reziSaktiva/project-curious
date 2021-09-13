@@ -78,21 +78,12 @@ function Profile() {
   }, [location])
 
   useEffect(() => {
-    if (!loading && getProfilePosts) {
-      const filterByMedia =
-        getProfilePosts &&
-        getProfilePosts.getProfilePosts.posts.filter((post) => {
-          const hasMedia = post.media && post.media.length >= 1;
-
-          if (hasMedia) return post;
-        });
-
-      const gallery = chunk(filterByMedia, 4);
-
+    if (user.galery) {
+      
+      const gallery = chunk(user.galery, 4);
       setGallery(gallery);
     }
-  }, [loading, getProfilePosts]);
-
+  }, [user]);
   const { TabPane } = Tabs;
   const Demo = () => (
     <Tabs defaultActiveKey="1" centered>

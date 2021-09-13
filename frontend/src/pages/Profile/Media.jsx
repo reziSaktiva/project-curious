@@ -35,12 +35,13 @@ const {gallery__img, gallery_item_left, gallery_item_right} = styleState
 const Media = ({gallery}) => {
     return (  
         gallery.map((media) => (
-            
+          
             <div className="gallery">
               {media.length &&
                 media.map((photo, idx) => {
-                   const filter = photo.media.filter((data) => !(data.split(".")[5].split("?")[0] === "mp4"))
+                   const filter = photo.filter((data) => !(data.split(".")[5].split("?")[0] === "mp4"))
                   const result = filter.map((media) => {
+                    console.log("mediaaa", media)
                     const imgClass = cn({
                       gallery_item_right: idx === 1,
                       gallery_item_left: idx === 2,

@@ -9,6 +9,13 @@
     display: flex;
     justify-content: center;
 }
+.profile_not_found {
+    background-image: url('../../assets/Noresults/No_posts.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 200px;
+    height: 200px;
+}
 .gallery {
  margin-bottom: 16px;
 }
