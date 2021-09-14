@@ -41,12 +41,7 @@ const Media = ({gallery}) => {
                 media.map((photo, idx) => {
                    const filter = photo.filter((data) => !(data.split(".")[5].split("?")[0] === "mp4"))
                   const result = filter.map((media) => {
-                    console.log("mediaaa", media)
-                    const imgClass = cn({
-                      gallery_item_right: idx === 1,
-                      gallery_item_left: idx === 2,
-                      gallery__img: idx != 1 || idx != 2,
-                    });
+                    
                     return <Image
                       key={`Media${idx}`}
                       src={media}

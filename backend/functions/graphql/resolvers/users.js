@@ -23,7 +23,7 @@ module.exports = {
 
             const oneWeekAgo = new Date(time).toISOString()
 
-            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '>=', oneWeekAgo).get()
+            const getPosts = await db.collection('posts').where('createdAt', '>=', oneWeekAgo).get()
 
             const promises = getPosts.docs.map(async (doc, index) => {
                 const { lat, lng } = doc.data().location
@@ -36,10 +36,10 @@ module.exports = {
                             location_type: 'APPROXIMATE',
                             key: API_KEY_GEOCODE
                         },
-                        timeout: 1000 // milliseconds
+                        timeout: 5000 // milliseconds
                     }, axios)
                     .then(async r => {
-                        const { address_components, place_id } = r.data.results[0];
+                        const { address_components } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
