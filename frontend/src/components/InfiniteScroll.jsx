@@ -188,6 +188,7 @@ function ScrollInfinite(props) {
                     : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>) : <Skeleton avatar active paragraph={{ rows: 2 }} />}
                 scrollableTarget="scrollableDiv"
                 {...props}
+                
             />
         </div>
     )

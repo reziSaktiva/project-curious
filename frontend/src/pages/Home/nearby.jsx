@@ -9,6 +9,7 @@ import Popular from "./popular";
 import Latest from './latest'
 import LocationModal from "../../components/Modal/locationModal";
 import { AuthContext } from "../../context/auth";
+import { useHistory } from "react-router";
 
 
 
@@ -18,6 +19,10 @@ const NearbyPost = () => {
   const [burger, setBurger] = useState({
     toggle: false
   })
+  const history = useHistory().location.pathname
+  useEffect(() => {
+    window.scrollTo(0, 0);
+}, [history])
   
   useEffect(() => {
     setNav("latest")
@@ -50,7 +55,7 @@ const NearbyPost = () => {
   }
   
   return (
-    <div>
+    <div style={{height: "100vh"}}>
       <NavBar toggleOpen={handleBurger} toggleOpenNotif={handleNotif} />
       <NotificationMobile />
       <SidebarMobile show={burger.toggle} />

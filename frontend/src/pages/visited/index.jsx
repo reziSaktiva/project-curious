@@ -89,6 +89,10 @@ export default function Visited() {
 
     setPostsLocation(location);
   }
+  useEffect(() => {
+    setPathname(path)
+    window.scrollTo(0, 0);
+}, [])
 
   return (
     <div>

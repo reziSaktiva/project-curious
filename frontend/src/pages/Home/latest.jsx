@@ -24,7 +24,9 @@ import { Skeleton } from 'antd'
 
 function Latest() {
     const history = useHistory().location.pathname
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [history])
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loadingAddPost, loading } = useContext(PostContext)
@@ -87,7 +89,7 @@ function Latest() {
 
                         )
                             :
-                            <div>
+                            <div style={{height: "100%"}}>
                                 {loadingAddPost && <Skeleton active />}
                                 {
                                 posts && posts.map((post, key) => {
@@ -95,7 +97,7 @@ function Latest() {
                                     const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                             return (
                             <div>
-                                <div className="postCard_container" key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 } : { marginTop: 0 }} >
+                                <div className="postCard_container" key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 20 } : { marginTop: 0 }} >
                                     {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                                 </div>
 
@@ -104,7 +106,7 @@ function Latest() {
                                     <AdSense.Google
                                         client='ca-pub-9126030075206824'
                                         slot='1861909959'
-                                        style={{ display: 'block' }}
+                                        style={{ display: 'flex' }}
                                         format='fluid'
                                         responsive='true'
                                         layoutKey='-gw-3+1f-3d+2z'
