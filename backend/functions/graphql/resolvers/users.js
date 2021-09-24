@@ -831,7 +831,7 @@ module.exports = {
             }
         },
         async registerUser(_, args, content, info) {
-            const { registerInput: { mobileNumber, email, password, gender, birthday, username } } = args;
+            const { registerInput: { mobileNumber, email, password, gender, dob, username } } = args;
 
             //TODO: cek apakah datausers sudah pernah daftar ke fire store
             // TODO: simpan data yang user input ke firestore
@@ -850,7 +850,7 @@ module.exports = {
                 email,
                 mobileNumber,
                 gender,
-                birthday,
+                dob,
                 createdAt: new Date().toISOString(),
                 profilePicture: "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/Profile%20Default.png?alt=media&token=64b822ce-e1c7-4f6b-9dfd-f02a830fe942",
             }

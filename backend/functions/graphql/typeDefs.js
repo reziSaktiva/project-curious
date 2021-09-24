@@ -169,7 +169,7 @@ module.exports = gql`
         mobileNumber: String!
         username: String!
         password: String!
-        birthday: String!
+        dob: String!
         gender: String
     },
     input FacebookData {
