@@ -11,7 +11,7 @@ const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 module.exports = {
   Query: {
-    async getPosts(_, { lat, lng, range }) {
+    async getPosts(_, { lat, lng, range, type }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -104,7 +104,15 @@ module.exports = {
           latest.push(newData)
         });
 
-        latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        switch (type) {
+          case 'Latest':
+            latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            break;
+          case 'Popular':
+            latest.sort((a, b) => b.rank - a.rank)
+            break;
+        }
+        console.log(type);
 
         return {
           posts: latest,

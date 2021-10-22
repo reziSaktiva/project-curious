@@ -101,8 +101,7 @@ module.exports = {
             let dataUser = {
                 user: null,
                 galery: [],
-                liked: [],
-                notifications: []
+                liked: []
             }
 
             try {
@@ -114,7 +113,6 @@ module.exports = {
                             let postsCount = 0;
                             let repostCount = 0;
                             let likesCount = 0;
-
                             if (!getPosts.empty) {
                                 const posts = getPosts.docs.map(doc => doc.data())
                                 postsCount = posts.length
@@ -127,24 +125,29 @@ module.exports = {
 
                                 if (posts.length) {
                                     posts.forEach((post) => {
-                                        if (post.media.length) {
+                                        if (post.media && post.media.length) {
                                             dataUser.galery.push(post.media)
                                         }
                                     });
                                 }
                             }
 
+                            const private = doc.data()._private
+                            const passwordUpdateHistory = private && private.filter(item => item.lastUpdate)
+
                             dataUser.user = {
                                 email: doc.data().email,
                                 id: doc.data().id,
                                 username: doc.data().username,
+                                fullName: doc.data().fullName,
                                 mobileNumber: doc.data().mobileNumber,
-                                createdAt: doc.data().createdAt,
+                                joinDate: doc.data().joinDate,
                                 gender: doc.data().gender,
-                                birthday: doc.data().birthday,
+                                dob: doc.data().dob,
                                 profilePicture: doc.data().profilePicture,
-                                newUsername: doc.data().newUsername,
-                                private: doc.data().private,
+                                interest: doc.data().interest,
+                                theme: doc.data().theme,
+                                passwordUpdateHistory,
                                 postsCount,
                                 repostCount,
                                 likesCount
@@ -332,9 +335,9 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).get()
                     .then(doc => {
-                        result = !doc.data().private
+                        private = !doc.data().private
                         doc.ref.update({
-                            private: result
+                            private
                         })
                     })
 
@@ -342,6 +345,40 @@ module.exports = {
             }
             catch (err) {
                 throw new Error(err);
+            }
+        },
+        async setUserTheme(_, { theme }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        doc.ref.update({
+                            theme
+                        })
+                    })
+
+                return theme
+            }
+            catch (err) {
+                throw new Error(err);
+            }
+        },
+        async setPersonalInterest(_, { interest }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        doc.ref.update({
+                            interest
+                        })
+                    })
+
+                return interest
+            }
+            catch (err) {
+
             }
         },
         async deleteAccount(_, { id }, context) {
@@ -830,75 +867,79 @@ module.exports = {
                 console.log(err);
             }
         },
-        async registerUser(_, args, content, info) {
-            const { registerInput: { mobileNumber, email, password, gender, dob, username } } = args;
-
-            //TODO: cek apakah datausers sudah pernah daftar ke fire store
-            // TODO: simpan data yang user input ke firestore
-            //TODO: daftarkan user dengan data yang diinput ke firestore Auth
-
-            //TODO: cek apakan user menginput data dengan benar -> BUat validator function
-
-            const { valid, errors } = validateRegisterInput(email, password, username)
-            const checkUsername = await db.collection('user').where('username', "==", username).get()
-
-            if (!valid) throw new UserInputError("Errors", { errors })
-            if (!checkUsername.empty) throw new UserInputError("username has been used")
-
-            let newUser = {
-                username,
-                email,
-                mobileNumber,
-                gender,
-                dob,
-                createdAt: new Date().toISOString(),
-                profilePicture: "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/Profile%20Default.png?alt=media&token=64b822ce-e1c7-4f6b-9dfd-f02a830fe942",
-            }
-
-            const hash = await encrypt.hash(password, 12)
+        async checkUsername(_, { username }) {
+            const checkUsername = await db.collection('users').where('username', "==", username).get()
 
             try {
-                await db.doc(`users/${username}`).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            throw new UserInputError("username telah digunakan")
-                        }
-                        else return firebase.auth().createUserWithEmailAndPassword(email, password)
-                    })
-                    .then(data => {
-                        newUser.id = data.user.uid
-                        return data.user.getIdToken()
-                    })
-                    .then(idToken => {
-                        newUser.token = idToken
+                return !checkUsername.empty
+            }
+            catch (err) {
+                console.log(err);
+            }
+        },
+        async registerUser(_, args, _context, _info) {
+            const { registerInput: { username, email, fullName, password, token, dob, mobileNumber } } = args;
 
-                        const saveUserData = {
-                            id: newUser.id,
-                            username,
-                            email,
-                            mobileNumber,
-                            gender,
-                            birthday,
-                            createdAt: new Date().toISOString(),
-                            profilePicture: newUser.profilePicture,
-                            _private: []
-                        }
-                        saveUserData._private.push({
-                            hash,
-                            lastUpdate: new Date().toISOString()
+            try {
+                // const { valid, errors } = validateRegisterInput(email, password, username)
+                const checkUsername = await db.collection('users').where('username', "==", username).get()
+                let id;
+
+                if (!checkUsername.empty) throw new UserInputError("username is taken")
+
+                if (!token && password) {
+                    const hash = await encrypt.hash(password, 12)
+
+                    return firebase.auth().createUserWithEmailAndPassword(email, password)
+                        .then(data => {
+                            id = data.user.uid
+                            return data.user.getIdToken()
                         })
+                        .then(resultToken => {
+                            let saveUserData = {
+                                id,
+                                username,
+                                email,
+                                mobileNumber,
+                                fullName,
+                                dob,
+                                joinDate: new Date().toISOString(),
+                                profilePicture: '',
+                                _private: []
+                            }
 
-                        return db.doc(`/users/${username}`).set(saveUserData)
-                    })
+                            saveUserData._private.push({
+                                hash,
+                                lastUpdate: new Date().toISOString()
+                            })
 
-                return newUser.token
+                            db.doc(`/users/${username}`).set(saveUserData)
+                            return resultToken
+                        })
+                } else if (token && !password) {
+                    const id = await auth.verifyIdToken(token).then(decodeToken => decodeToken.uid)
+
+                    let newUser = {
+                        id,
+                        username,
+                        email,
+                        mobileNumber,
+                        fullName,
+                        dob,
+                        joinDate: new Date().toISOString(),
+                        profilePicture: ''
+                    }
+
+                    db.doc(`/users/${username}`).set(newUser)
+                    return token
+                }
             }
             catch (err) {
                 if (err.code === "auth/email-already-in-use") {
-                    throw new UserInputError("Email sudah pernah digunakan")
+                    throw new UserInputError("Email already in use")
                 }
                 if (err.code === 'auth/invalid-email') {
-                    throw new UserInputError("Format email tidak benar")
+                    throw new UserInputError("Email format is invalid")
                 }
 
                 console.log(err)
