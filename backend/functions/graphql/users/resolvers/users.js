@@ -4,13 +4,13 @@ const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { API_KEY_GEOCODE } = require('../../utility/API')
-const { db, auth } = require('../../utility/admin')
+const { API_KEY_GEOCODE } = require('../../../utility/API')
+const { db, auth } = require('../../../utility/admin')
 const firebase = require('firebase')
-const config = require('../../utility/config')
-const fbAuthContext = require('../../utility/fbAuthContext')
+const config = require('../../../utility/config')
+const fbAuthContext = require('../../../utility/fbAuthContext')
 
-const { validateRegisterInput, validateLoginInput } = require('../../utility/validators')
+const { validateRegisterInput, validateLoginInput } = require('../../../utility/validators')
 
 firebase.initializeApp(config)
 
@@ -740,7 +740,9 @@ module.exports = {
                 const { email } = data
 
                 const token = await firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then(data => data.user.getIdToken())
+                    .then(data => {
+                        return data.user.getIdToken()
+                    })
                     .then(idToken => idToken)
 
                 return token
@@ -755,43 +757,13 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async checkUserWithFacebook(_, args, content, info) {
-            const { username } = args;
-
+        async checkUserAccount(_, { email }, _context) {
+            const userCollection = await db.collection('users').where('email', '==', email).get()
             try {
-                let user;
-                await db.doc(`users/${username}`).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            user = true
-                        } else {
-                            user = false
-                        }
-                    })
-
-                return user
+                return !userCollection.empty
             }
             catch (err) {
-                console.log(err);
-            }
-        },
-        async checkUserWithGoogle(_, { email }, content) {
-
-            try {
-                let user;
-                await db.collection(`users`).where('email', '==', email).get()
-                    .then(data => {
-                        if (!data.empty) {
-                            user = true
-                        } else {
-                            user = false
-                        }
-                    })
-
-                return user
-            }
-            catch (err) {
-                console.log(err);
+                throw new Error(err)
             }
         },
         async loginWithFacebook(_, { username, token }, content, info) {

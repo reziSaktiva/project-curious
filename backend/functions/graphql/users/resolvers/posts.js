@@ -1,11 +1,11 @@
-const { db, pubSub, NOTIFICATION_ADDED, geofire } = require('../../utility/admin');
+const { db, pubSub, NOTIFICATION_ADDED, geofire } = require('../../../utility/admin');
 const { get } = require('lodash');
 const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
-const fbAuthContext = require("../../utility/fbAuthContext");
-const randomGenerator = require("../../utility/randomGenerator");
-const { ALGOLIA_ID, ALGOLIA_ADMIN_KEY } = require('../../utility/API')
+const fbAuthContext = require("../../../utility/fbAuthContext");
+const randomGenerator = require("../../../utility/randomGenerator");
+const { ALGOLIA_ID, ALGOLIA_ADMIN_KEY } = require('../../../utility/API')
 const algoliasearch = require('algoliasearch');
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
@@ -112,7 +112,6 @@ module.exports = {
             latest.sort((a, b) => b.rank - a.rank)
             break;
         }
-        console.log(type);
 
         return {
           posts: latest,
@@ -1218,6 +1217,7 @@ module.exports = {
     },
     async deletePost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context);
+
       const document = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
       const commentsCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`);
       const likesCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);

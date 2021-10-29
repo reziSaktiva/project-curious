@@ -226,8 +226,7 @@ module.exports = gql`
         loginWithFacebook(username: String!, token: String!): String!
         registerUserWithFacebook(facebookData: FacebookData): String!
         registerUserWithGoogle(googleData: GoogleData): String!
-        checkUserWithFacebook(username: String!): Boolean!
-        checkUserWithGoogle(email: String!): Boolean!
+        checkUserAccount(email: String): Boolean!
         readNotification( id: ID! ): Notification!
         readAllNotification: [Notification]
         changeProfileUser( profile: Profile ): User!
