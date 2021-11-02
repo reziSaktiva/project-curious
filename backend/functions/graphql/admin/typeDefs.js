@@ -9,4 +9,7 @@ module.exports = gql`
     type Query {
         getAdmin: [Admin]
     }
+    type Mutation {
+        checkEmail(email: String): Boolean
+    }
 `

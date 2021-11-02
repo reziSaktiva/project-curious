@@ -4,10 +4,10 @@ const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { API_KEY_GEOCODE } = require('../../../utility/API')
+const { API_KEY_GEOCODE } = require('../../../utility/secret/API')
 const { db, auth } = require('../../../utility/admin')
 const firebase = require('firebase')
-const config = require('../../../utility/config')
+const config = require('../../../utility/secret/config')
 const fbAuthContext = require('../../../utility/fbAuthContext')
 
 const { validateRegisterInput, validateLoginInput } = require('../../../utility/validators')

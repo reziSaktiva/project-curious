@@ -13,5 +13,17 @@ module.exports = {
                 console.log(err);
             }
         }
+    },
+    Mutation: {
+        async checkEmail(_, { email }) {
+            const getAdmin = await db.collection('admin').where('email', '==', email).get()
+
+            try {
+                return !getAdmin.empty
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
     }
 }

@@ -2,6 +2,9 @@ const adminResolvers = require('./admin')
 
 module.exports = {
     Query: {
-        ...adminResolvers.Query
+        ...adminResolvers.Query,
+    },
+    Mutation: {
+        ...adminResolvers.Mutation
     }
 }
