@@ -5,9 +5,8 @@ const { AuthenticationError, UserInputError } = require('apollo-server-express')
 
 const fbAuthContext = require("../../../utility/fbAuthContext");
 const randomGenerator = require("../../../utility/randomGenerator");
-const { ALGOLIA_ID, ALGOLIA_ADMIN_KEY } = require('../../../utility/secret/API')
-const algoliasearch = require('algoliasearch');
-const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+
+const { client } = require('../../../utility/algolia')
 
 module.exports = {
   Query: {

@@ -10,7 +10,9 @@ const firebase = require('firebase')
 const config = require('../../../utility/secret/config')
 const fbAuthContext = require('../../../utility/fbAuthContext')
 
-const { validateRegisterInput, validateLoginInput } = require('../../../utility/validators')
+const { client } = require('../../../utility/algolia')
+
+const { validateLoginInput } = require('../../../utility/validators')
 
 firebase.initializeApp(config)
 
@@ -880,6 +882,24 @@ module.exports = {
                                 _private: []
                             }
 
+                            const index = client.initIndex('users');
+
+                            index.saveObjects([{
+                                objectID: saveUserData.id,
+                                username,
+                                joinDate: saveUserData.joinDate,
+                                dob,
+                                fullName,
+                                email,
+                                mobileNumber
+                            }], { autoGenerateObjectIDIfNotExist: false })
+                                .then(({ objectIDs }) => {
+                                    (objectIDs);
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+
                             saveUserData._private.push({
                                 hash,
                                 lastUpdate: new Date().toISOString()
@@ -901,6 +921,24 @@ module.exports = {
                         joinDate: new Date().toISOString(),
                         profilePicture: ''
                     }
+
+                    const index = client.initIndex('users');
+
+                    index.saveObjects([{
+                        objectID: id,
+                        username,
+                        joinDate: newUser.joinDate,
+                        dob,
+                        fullName,
+                        email,
+                        mobileNumber
+                    }], { autoGenerateObjectIDIfNotExist: false })
+                        .then(({ objectIDs }) => {
+                            (objectIDs);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
 
                     db.doc(`/users/${username}`).set(newUser)
                     return token
