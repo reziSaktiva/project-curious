@@ -13,7 +13,7 @@ export default function Index() {
     useEffect(() => {
         const name = pathname.split('/')[1]
     
-        if (name === user.username) setIsMyProfile(true)
+        if (name === user.username || name === user.newUsername) setIsMyProfile(true)
         else setIsMyProfile(false)
       }, [pathname, user])
 

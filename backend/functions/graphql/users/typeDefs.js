@@ -2,10 +2,10 @@ const gql = require('graphql-tag')
 
 module.exports = gql`
     type Post {
-        id: ID
+        id: ID!
         owner: String!
-        text: String!
-        media: [String]
+        text: String
+        media: Media
         createdAt: String!
         location: LatLong
         rank: Int
@@ -19,6 +19,11 @@ module.exports = gql`
         subscribe: [Subscribe],
         hastags: [String]
         room: String
+    }
+    type Media {
+        content: [String]
+        meta: String
+        type: String
     }
     type Search {
         hits: [Post]
@@ -43,7 +48,7 @@ module.exports = gql`
     type LatLong {
         lat: Float
         lng: Float
-        location: String
+        name: String
     }
     type GeoLocation {
         administrative_area_level_4: String
@@ -54,18 +59,23 @@ module.exports = gql`
         photo_reference: String
         location: LatLong
     }
+    type Private {
+        hash: String
+        lastUpdate: String
+    }
     type User {
         id: ID!
-        username: String!
-        email: String!
-        mobileNumber: Float!
-        gender: String!
-        birthday: String!
-        createdAt: String!
-        profilePicture: String!
-        newUsername: String
-        token: String
-        private: Boolean
+        username: String
+        fullName: String
+        email: String
+        mobileNumber: Float
+        gender: String
+        dob: String
+        joinDate: String
+        profilePicture: String
+        theme: String
+        interest: [String]
+        passwordUpdateHistory: [Private]
         postsCount: Int
         repostCount: Int
         likesCount: Int
@@ -124,7 +134,6 @@ module.exports = gql`
     }
     type UserData {
         user: User!
-        notifications: [Notification]
         liked: [Like]
         galery: [[String]]
     },
@@ -150,7 +159,7 @@ module.exports = gql`
     }
     type Query {
         moreForYou: dataPost
-        getPosts(lat: Float, lng: Float, range: Float): dataPost
+        getPosts(lat: Float, lng: Float, range: Float type: String): dataPost
         getPopularPosts(lat: Float, lng: Float range: Float): dataPost
         getVisited: [GeoLocation]
         getProfilePosts(username: String): dataPost
@@ -165,11 +174,13 @@ module.exports = gql`
         explorePlace: [GeoLocation]
     },
     input RegisterInput {
-        email: String!
-        mobileNumber: String!
-        username: String!
-        password: String!
-        birthday: String!
+        email: String
+        mobileNumber: String
+        username: String
+        fullName: String
+        password: String
+        token: String
+        dob: String
         gender: String
     },
     input FacebookData {
@@ -195,7 +206,7 @@ module.exports = gql`
     input Location {
         lat: Float
         lng: Float
-        location: String
+        name: String
     }
     input Data {
         repost: String
@@ -210,19 +221,21 @@ module.exports = gql`
     }
     type Mutation {
         # users mutation
-        registerUser(registerInput: RegisterInput): String!
+        registerUser(registerInput: RegisterInput): String
         login(username: String!, password: String!): String!
         loginWithFacebook(username: String!, token: String!): String!
         registerUserWithFacebook(facebookData: FacebookData): String!
         registerUserWithGoogle(googleData: GoogleData): String!
-        checkUserWithFacebook(username: String!): Boolean!
-        checkUserWithGoogle(email: String!): Boolean!
+        checkUserAccount(email: String): Boolean!
         readNotification( id: ID! ): Notification!
         readAllNotification: [Notification]
         changeProfileUser( profile: Profile ): User!
         clearAllNotif: String!
         deleteAccount( id: ID! ): String!
         privateSetting: Boolean
+        checkUsername( username: String! ): Boolean
+        setUserTheme(theme: String): String
+        setPersonalInterest(interest: [String] ): [String]
 
         # posts mutation
         nextProfilePosts(id:ID! username: String): dataPost

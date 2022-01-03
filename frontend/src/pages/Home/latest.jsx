@@ -24,7 +24,9 @@ import { Skeleton } from 'antd'
 
 function Latest() {
     const history = useHistory().location.pathname
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [history])
     const _isMounted = useRef(false);
 
     const { posts, setPosts, loadingData, loadingAddPost, loading } = useContext(PostContext)
@@ -66,7 +68,7 @@ function Latest() {
             return;
         }
     }, [data, _isMounted])
-    console.log(loadingAddPost);
+
     return (
         <div style={{ height: "100%" }} key="latest">
             {user ? (
@@ -87,35 +89,35 @@ function Latest() {
 
                         )
                             :
-                            <div>
+                            <div style={{ height: "100%" }}>
                                 {loadingAddPost && <Skeleton active />}
                                 {
-                                posts && posts.map((post, key) => {
-                                    const {muted, id} = post;
-                                    const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
-                            return (
-                            <div>
-                                <div className="postCard_container" key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 } : { marginTop: 0 }} >
-                                    {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
-                                </div>
+                                    posts && posts.map((post, key) => {
+                                        const { muted, id } = post;
+                                        const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
+                                        return (
+                                            <div>
+                                                <div className="postCard_container" key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 20 } : { marginTop: 0 }} >
+                                                    {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
+                                                </div>
 
-                                {key > 1 && Math.ceil(key % 7) === 0 &&
+                                                {key > 1 && Math.ceil(key % 7) === 0 &&
 
-                                    <AdSense.Google
-                                        client='ca-pub-9126030075206824'
-                                        slot='1861909959'
-                                        style={{ display: 'block' }}
-                                        format='fluid'
-                                        responsive='true'
-                                        layoutKey='-gw-3+1f-3d+2z'
-                                    />
+                                                    <AdSense.Google
+                                                        client='ca-pub-9126030075206824'
+                                                        slot='1861909959'
+                                                        style={{ display: 'flex' }}
+                                                        format='fluid'
+                                                        responsive='true'
+                                                        layoutKey='-gw-3+1f-3d+2z'
+                                                    />
+                                                }
+
+                                            </div>
+
+                                        )
+                                    })
                                 }
-
-                            </div>
-
-                            )
-                        })
-                            }
                             </div>
                         }
                     </InfiniteScroll>) : null

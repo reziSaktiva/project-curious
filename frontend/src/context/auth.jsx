@@ -68,7 +68,7 @@ function authReducer(state, action) {
     case "CHANGE_PRIVATE_STATUS":
       return {
         ...state,
-        user : {
+        user: {
           ...state.user,
           private: action.payload
         }
@@ -96,7 +96,7 @@ function authReducer(state, action) {
         ...state,
         liked: action.payload,
       };
-      case "SET_LOCATION_ALLOW":
+    case "SET_LOCATION_ALLOW":
       return {
         ...state,
         locationAllow: action.payload,
@@ -198,6 +198,10 @@ export function AuthProvider(props) {
   ] = useLazyQuery(GET_USER_DATA);
 
   useEffect(() => {
+    loadDataUser()
+  }, [])
+
+  useEffect(() => {
     if (token) {
       if (!called) {
         return loadDataUser();
@@ -243,7 +247,7 @@ export function AuthProvider(props) {
         type: "SET_LIKED_DATA",
         payload: likes,
       });
-      
+
 
       dispatch({
         type: SET_NOTIFICATIONS,
@@ -309,10 +313,10 @@ export function AuthProvider(props) {
       payload: room
     })
   }
-  function setLocationAllow(location){
-   dispatch({
-    type: "SET_LOCATION_ALLOW",
-    payload: location,
+  function setLocationAllow(location) {
+    dispatch({
+      type: "SET_LOCATION_ALLOW",
+      payload: location,
     })
   };
 

@@ -4,13 +4,15 @@ const { get } = require('lodash');
 const encrypt = require('bcrypt');
 const axios = require('axios');
 
-const { API_KEY_GEOCODE } = require('../../utility/API')
-const { db, auth } = require('../../utility/admin')
+const { API_KEY_GEOCODE } = require('../../../utility/secret/API')
+const { db, auth } = require('../../../utility/admin')
 const firebase = require('firebase')
-const config = require('../../utility/config')
-const fbAuthContext = require('../../utility/fbAuthContext')
+const config = require('../../../utility/secret/config')
+const fbAuthContext = require('../../../utility/fbAuthContext')
 
-const { validateRegisterInput, validateLoginInput } = require('../../utility/validators')
+const { client } = require('../../../utility/algolia')
+
+const { validateLoginInput } = require('../../../utility/validators')
 
 firebase.initializeApp(config)
 
@@ -23,7 +25,7 @@ module.exports = {
 
             const oneWeekAgo = new Date(time).toISOString()
 
-            const getPosts = await db.collection('posts').orderBy('createdAt', "desc").where('createdAt', '>=', oneWeekAgo).get()
+            const getPosts = await db.collection('posts').where('createdAt', '>=', oneWeekAgo).get()
 
             const promises = getPosts.docs.map(async (doc, index) => {
                 const { lat, lng } = doc.data().location
@@ -36,10 +38,10 @@ module.exports = {
                             location_type: 'APPROXIMATE',
                             key: API_KEY_GEOCODE
                         },
-                        timeout: 1000 // milliseconds
+                        timeout: 5000 // milliseconds
                     }, axios)
                     .then(async r => {
-                        const { address_components, place_id } = r.data.results[0];
+                        const { address_components } = r.data.results[0];
                         const addressComponents = address_components;
 
                         const geoResult = {}
@@ -101,8 +103,7 @@ module.exports = {
             let dataUser = {
                 user: null,
                 galery: [],
-                liked: [],
-                notifications: []
+                liked: []
             }
 
             try {
@@ -110,37 +111,50 @@ module.exports = {
                     await db.doc(`/users/${name ? name : username}`).get()
                         .then(async doc => {
                             const getPosts = await db.collection(`posts`).where('owner', '==', doc.data().username).get()
-                            const posts = getPosts.docs.map(doc => doc.data())
 
-                            const postsCount = posts.length
-                            const repostCount = posts.reduce((accumulator, current) => {
-                                return accumulator + current.repostCount;
-                            }, 0);
-                            const likeCounter = posts.map((doc) => doc.likeCount);
-                            const likesCount = likeCounter.reduce((total, num) => (total += num))
+                            let postsCount = 0;
+                            let repostCount = 0;
+                            let likesCount = 0;
+                            if (!getPosts.empty) {
+                                const posts = getPosts.docs.map(doc => doc.data())
+                                postsCount = posts.length
 
-                            posts.forEach((post) => {
-                                if(post.media.length){
-                                    dataUser.galery.push(post.media)
+                                repostCount = posts.reduce((accumulator, current) => {
+                                    return accumulator + current.repostCount;
+                                }, 0)
+                                const likeCounter = posts.map((doc) => doc.likeCount);
+                                likesCount = likeCounter.reduce((total, num) => (total += num))
+
+                                if (posts.length) {
+                                    posts.forEach((post) => {
+                                        if (post.media && post.media.length) {
+                                            dataUser.galery.push(post.media)
+                                        }
+                                    });
                                 }
-                            });
+                            }
+
+                            const private = doc.data()._private
+                            const passwordUpdateHistory = private && private.filter(item => item.lastUpdate)
 
                             dataUser.user = {
                                 email: doc.data().email,
                                 id: doc.data().id,
                                 username: doc.data().username,
+                                fullName: doc.data().fullName,
                                 mobileNumber: doc.data().mobileNumber,
-                                createdAt: doc.data().createdAt,
+                                joinDate: doc.data().joinDate,
                                 gender: doc.data().gender,
-                                birthday: doc.data().birthday,
+                                dob: doc.data().dob,
                                 profilePicture: doc.data().profilePicture,
-                                newUsername: doc.data().newUsername,
-                                private: doc.data().private,
+                                interest: doc.data().interest,
+                                theme: doc.data().theme,
+                                passwordUpdateHistory,
                                 postsCount,
                                 repostCount,
                                 likesCount
                             }
-                            
+
                             return db.collection(`/users/${name ? name : username}/liked`).get()
                         })
                         .then(data => {
@@ -149,7 +163,7 @@ module.exports = {
                             })
                         })
                 }
-                console.log(dataUser);
+
                 return dataUser
             }
             catch (err) {
@@ -323,9 +337,9 @@ module.exports = {
             try {
                 await db.doc(`/users/${username}`).get()
                     .then(doc => {
-                        result = !doc.data().private
+                        private = !doc.data().private
                         doc.ref.update({
-                            private: result
+                            private
                         })
                     })
 
@@ -333,6 +347,40 @@ module.exports = {
             }
             catch (err) {
                 throw new Error(err);
+            }
+        },
+        async setUserTheme(_, { theme }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        doc.ref.update({
+                            theme
+                        })
+                    })
+
+                return theme
+            }
+            catch (err) {
+                throw new Error(err);
+            }
+        },
+        async setPersonalInterest(_, { interest }, context) {
+            const { username } = await fbAuthContext(context)
+
+            try {
+                await db.doc(`/users/${username}`).get()
+                    .then(doc => {
+                        doc.ref.update({
+                            interest
+                        })
+                    })
+
+                return interest
+            }
+            catch (err) {
+
             }
         },
         async deleteAccount(_, { id }, context) {
@@ -694,7 +742,9 @@ module.exports = {
                 const { email } = data
 
                 const token = await firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then(data => data.user.getIdToken())
+                    .then(data => {
+                        return data.user.getIdToken()
+                    })
                     .then(idToken => idToken)
 
                 return token
@@ -709,43 +759,13 @@ module.exports = {
                 throw new Error(err)
             }
         },
-        async checkUserWithFacebook(_, args, content, info) {
-            const { username } = args;
-
+        async checkUserAccount(_, { email }, _context) {
+            const userCollection = await db.collection('users').where('email', '==', email).get()
             try {
-                let user;
-                await db.doc(`users/${username}`).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            user = true
-                        } else {
-                            user = false
-                        }
-                    })
-
-                return user
+                return !userCollection.empty
             }
             catch (err) {
-                console.log(err);
-            }
-        },
-        async checkUserWithGoogle(_, { email }, content) {
-
-            try {
-                let user;
-                await db.collection(`users`).where('email', '==', email).get()
-                    .then(data => {
-                        if (!data.empty) {
-                            user = true
-                        } else {
-                            user = false
-                        }
-                    })
-
-                return user
-            }
-            catch (err) {
-                console.log(err);
+                throw new Error(err)
             }
         },
         async loginWithFacebook(_, { username, token }, content, info) {
@@ -821,75 +841,115 @@ module.exports = {
                 console.log(err);
             }
         },
-        async registerUser(_, args, content, info) {
-            const { registerInput: { mobileNumber, email, password, gender, birthday, username } } = args;
-
-            //TODO: cek apakah datausers sudah pernah daftar ke fire store
-            // TODO: simpan data yang user input ke firestore
-            //TODO: daftarkan user dengan data yang diinput ke firestore Auth
-
-            //TODO: cek apakan user menginput data dengan benar -> BUat validator function
-
-            const { valid, errors } = validateRegisterInput(email, password, username)
-            const checkUsername = await db.collection('user').where('username', "==", username).get()
-
-            if (!valid) throw new UserInputError("Errors", { errors })
-            if (!checkUsername.empty) throw new UserInputError("username has been used")
-
-            let newUser = {
-                username,
-                email,
-                mobileNumber,
-                gender,
-                birthday,
-                createdAt: new Date().toISOString(),
-                profilePicture: "https://firebasestorage.googleapis.com/v0/b/insvire-curious-app12.appspot.com/o/Profile%20Default.png?alt=media&token=64b822ce-e1c7-4f6b-9dfd-f02a830fe942",
-            }
-
-            const hash = await encrypt.hash(password, 12)
+        async checkUsername(_, { username }) {
+            const checkUsername = await db.collection('users').where('username', "==", username).get()
 
             try {
-                await db.doc(`users/${username}`).get()
-                    .then(doc => {
-                        if (doc.exists) {
-                            throw new UserInputError("username telah digunakan")
-                        }
-                        else return firebase.auth().createUserWithEmailAndPassword(email, password)
-                    })
-                    .then(data => {
-                        newUser.id = data.user.uid
-                        return data.user.getIdToken()
-                    })
-                    .then(idToken => {
-                        newUser.token = idToken
+                return !checkUsername.empty
+            }
+            catch (err) {
+                console.log(err);
+            }
+        },
+        async registerUser(_, args, _context, _info) {
+            const { registerInput: { username, email, fullName, password, token, dob, mobileNumber } } = args;
 
-                        const saveUserData = {
-                            id: newUser.id,
-                            username,
-                            email,
-                            mobileNumber,
-                            gender,
-                            birthday,
-                            createdAt: new Date().toISOString(),
-                            profilePicture: newUser.profilePicture,
-                            _private: []
-                        }
-                        saveUserData._private.push({
-                            hash,
-                            lastUpdate: new Date().toISOString()
+            try {
+                // const { valid, errors } = validateRegisterInput(email, password, username)
+                const checkUsername = await db.collection('users').where('username', "==", username).get()
+                let id;
+
+                if (!checkUsername.empty) throw new UserInputError("username is taken")
+
+                if (!token && password) {
+                    const hash = await encrypt.hash(password, 12)
+
+                    return firebase.auth().createUserWithEmailAndPassword(email, password)
+                        .then(data => {
+                            id = data.user.uid
+                            return data.user.getIdToken()
                         })
+                        .then(resultToken => {
+                            let saveUserData = {
+                                id,
+                                username,
+                                email,
+                                mobileNumber,
+                                fullName,
+                                dob,
+                                joinDate: new Date().toISOString(),
+                                profilePicture: '',
+                                _private: []
+                            }
 
-                        return db.doc(`/users/${username}`).set(saveUserData)
-                    })
+                            const index = client.initIndex('users');
 
-                return newUser.token
+                            index.saveObjects([{
+                                objectID: saveUserData.id,
+                                username,
+                                joinDate: saveUserData.joinDate,
+                                dob,
+                                fullName,
+                                email,
+                                mobileNumber
+                            }], { autoGenerateObjectIDIfNotExist: false })
+                                .then(({ objectIDs }) => {
+                                    (objectIDs);
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+
+                            saveUserData._private.push({
+                                hash,
+                                lastUpdate: new Date().toISOString()
+                            })
+
+                            db.doc(`/users/${username}`).set(saveUserData)
+                            return resultToken
+                        })
+                } else if (token && !password) {
+                    const id = await auth.verifyIdToken(token).then(decodeToken => decodeToken.uid)
+
+                    let newUser = {
+                        id,
+                        username,
+                        email,
+                        mobileNumber,
+                        fullName,
+                        dob,
+                        joinDate: new Date().toISOString(),
+                        profilePicture: ''
+                    }
+
+                    const index = client.initIndex('users');
+
+                    index.saveObjects([{
+                        objectID: id,
+                        username,
+                        joinDate: newUser.joinDate,
+                        dob,
+                        fullName,
+                        email,
+                        mobileNumber
+                    }], { autoGenerateObjectIDIfNotExist: false })
+                        .then(({ objectIDs }) => {
+                            (objectIDs);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+
+                    db.doc(`/users/${username}`).set(newUser)
+                    return token
+                }
             }
             catch (err) {
                 if (err.code === "auth/email-already-in-use") {
-                    throw new UserInputError("Email sudah pernah digunakan")
+                    throw new UserInputError("Email already in use")
                 }
                 if (err.code === 'auth/invalid-email') {
-                    throw new UserInputError("Format email tidak benar")
+                    throw new UserInputError("Email format is invalid")
                 }
 
                 console.log(err)

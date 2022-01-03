@@ -1,17 +1,16 @@
-const { db, pubSub, NOTIFICATION_ADDED, geofire } = require('../../utility/admin');
+const { db, pubSub, NOTIFICATION_ADDED, geofire } = require('../../../utility/admin');
 const { get } = require('lodash');
 const { computeDistanceBetween, LatLng } = require('spherical-geometry-js');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
-const fbAuthContext = require("../../utility/fbAuthContext");
-const randomGenerator = require("../../utility/randomGenerator");
-const { ALGOLIA_ID, ALGOLIA_ADMIN_KEY } = require('../../utility/API')
-const algoliasearch = require('algoliasearch');
-const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+const fbAuthContext = require("../../../utility/fbAuthContext");
+const randomGenerator = require("../../../utility/randomGenerator");
+
+const { client } = require('../../../utility/algolia')
 
 module.exports = {
   Query: {
-    async getPosts(_, { lat, lng, range }) {
+    async getPosts(_, { lat, lng, range, type }) {
       if (!lat || !lng) {
         throw new UserInputError('Lat and Lng is Required')
       }
@@ -29,7 +28,7 @@ module.exports = {
           .orderBy("createdAt", 'desc')
           .startAt(b[0])
           .endAt(b[1])
-          .limit(8);
+          .limit(20);
 
         posts.push(q.get());
       }
@@ -69,7 +68,7 @@ module.exports = {
             }
           }
 
-          if (index === 7) {
+          if (index === 19) {
             lastId = data.id
           }
 
@@ -104,12 +103,19 @@ module.exports = {
           latest.push(newData)
         });
 
-        // latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        switch (type) {
+          case 'Latest':
+            latest.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            break;
+          case 'Popular':
+            latest.sort((a, b) => b.rank - a.rank)
+            break;
+        }
 
         return {
           posts: latest,
           lastId,
-          hasMore: latest.length === 8
+          hasMore: latest.length === 20
         }
       }
       catch (err) {
@@ -117,7 +123,7 @@ module.exports = {
       }
     },
     async getRoomPosts(_, { room }, context) {
-      const data = await db.collection(`/room${room}/posts`).orderBy('createdAt', 'desc').limit(8).get()
+      const data = await db.collection(`/room${room}/posts`).orderBy('createdAt', 'desc').limit(20).get()
       const docs = data.docs.map((doc) => doc.data())
 
       if (docs.length) {
@@ -185,7 +191,7 @@ module.exports = {
           .orderBy('geohash')
           .startAt(b[0])
           .endAt(b[1])
-          .limit(8);
+          .limit(20);
 
         posts.push(q.get());
       }
@@ -224,7 +230,7 @@ module.exports = {
             }
           }
 
-          if (index === 7) {
+          if (index === 19) {
             lastId = data.id
           }
 
@@ -264,7 +270,7 @@ module.exports = {
         return {
           posts: latest,
           lastId,
-          hasMore: latest.length === 8
+          hasMore: latest.length === 20
         }
       }
       catch (err) {
@@ -273,11 +279,10 @@ module.exports = {
     },
     async getProfilePosts(_, { username: name }, context) {
       const { username } = await fbAuthContext(context)
-
       const data = await db.collection("posts")
         .where("owner", "==", name ? name : username)
         .orderBy("createdAt", "desc")
-        .limit(8)
+        .limit(20)
         .get()
 
       const docs = data.docs.map((doc) => doc.data())
@@ -329,7 +334,7 @@ module.exports = {
         return {
           posts: nearby,
           lastId: nearby[nearby.length - 1].id,
-          hasMore: nearby.length >= 8
+          hasMore: nearby.length >= 20
         };
       }
 
@@ -342,7 +347,7 @@ module.exports = {
     async getProfileLikedPost(_, { username: name }, context) {
       const { username } = await fbAuthContext(context)
 
-      const getLiked = await db.collection(`/users/${name ? name : username}/liked/`).limit(8).get()
+      const getLiked = await db.collection(`/users/${name ? name : username}/liked/`).limit(20).get()
       const liked = getLiked.docs.map(doc => doc.data())
 
       try {
@@ -383,10 +388,14 @@ module.exports = {
           })
         })
 
-        return {
+        return Posts.length ? {
           posts: data,
-          hasMore: data.length >= 8,
+          hasMore: data.length >= 20,
           lastId: liked[liked.length - 1].id
+        } : {
+          posts: [],
+          hasMore: false,
+          lastId: null
         }
       } catch (error) {
         console.log(error);
@@ -553,7 +562,7 @@ module.exports = {
     },
     async moreForYou(_, _args, _context) {
       try {
-        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').limit(8).get()
+        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').limit(20).get()
         const docs = data.docs.map((doc) => doc.data())
         let posts = []
 
@@ -600,13 +609,13 @@ module.exports = {
           });
           return {
             posts,
-            hasMore: posts.length === 8,
+            hasMore: posts.length === 20,
             lastId: posts[posts.length - 1].id
           }
         }
         return {
           posts: [],
-          hasMore: posts.length === 8,
+          hasMore: posts.length === 20,
           lastId: null
         }
       }
@@ -626,7 +635,7 @@ module.exports = {
         .where("owner", "==", name ? name : username)
         .orderBy("createdAt", "desc")
         .startAfter(doc)
-        .limit(3)
+        .limit(10)
         .get()
 
       const docs = data.docs.map((doc) => doc.data())
@@ -678,7 +687,7 @@ module.exports = {
         return {
           posts: nearby,
           lastId: nearby[nearby.length - 1].id,
-          hasMore: nearby.length >= 3
+          hasMore: nearby.length >= 10
         };
       }
 
@@ -693,7 +702,7 @@ module.exports = {
 
       const doc = await db.doc(`/users/${name ? name : username}/liked/${id}/`).get();
 
-      const getLiked = await db.collection(`/users/${name ? name : username}/liked/`).startAfter(doc).limit(3).get()
+      const getLiked = await db.collection(`/users/${name ? name : username}/liked/`).startAfter(doc).limit(10).get()
       const liked = getLiked.docs.map(doc => doc.data())
 
       try {
@@ -736,7 +745,7 @@ module.exports = {
 
         return {
           posts: data,
-          hasMore: data.length >= 3,
+          hasMore: data.length >= 10,
           lastId: liked.length ? liked[liked.length - 1].id : null
         }
       } catch (error) {
@@ -748,7 +757,7 @@ module.exports = {
         const lastPosts = await db.doc(`/posts/${id}/`).get();
         const doc = lastPosts
 
-        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').startAfter(doc).limit(3).get()
+        const data = await db.collection('posts').where('rank', '>', 2).orderBy('rank', 'desc').startAfter(doc).limit(10).get()
         const docs = data.docs.map((doc) => doc.data())
         let posts = [];
 
@@ -795,13 +804,13 @@ module.exports = {
           });
           return {
             posts,
-            hasMore: posts.length === 8,
+            hasMore: posts.length === 10,
             lastId: posts[posts.length - 1].id
           }
         }
         return {
           posts: [],
-          hasMore: posts.length === 8,
+          hasMore: posts.length === 10,
           lastId: null
         }
       }
@@ -828,7 +837,7 @@ module.exports = {
           .orderBy("createdAt", 'desc')
           .startAfter(doc)
           .endAt(b[1])
-          .limit(3)
+          .limit(10)
 
 
         posts.push(q.get());
@@ -870,7 +879,7 @@ module.exports = {
             }
           }
 
-          if (index === 2) {
+          if (index === 9) {
             lastId = data.id
           }
 
@@ -910,7 +919,7 @@ module.exports = {
         return {
           posts: latest,
           lastId,
-          hasMore: lastId ? latest.length === 3 : false
+          hasMore: lastId ? latest.length === 9 : false
         }
       }
       catch (err) {
@@ -924,7 +933,7 @@ module.exports = {
       const lastPosts = await db.doc(`/room/${room}/posts/${id}/`).get();
       const doc = lastPosts
 
-      const data = await db.collection(`/room/${room}/posts`).orderBy("createdAt", "desc").startAfter(doc).limit(3).get()
+      const data = await db.collection(`/room/${room}/posts`).orderBy("createdAt", "desc").startAfter(doc).limit(10).get()
       const docs = data.docs.map(doc => doc.data())
 
       if (docs.length) {
@@ -995,7 +1004,7 @@ module.exports = {
           .orderBy('createdAt', 'desc')
           .startAfter(doc)
           .endAt(b[1])
-          .limit(3)
+          .limit(10)
 
 
         posts.push(q.get());
@@ -1037,7 +1046,7 @@ module.exports = {
             }
           }
 
-          if (index === 7) {
+          if (index === 9) {
             lastId = data.id
           }
 
@@ -1077,7 +1086,7 @@ module.exports = {
         return {
           posts: latest,
           lastId,
-          hasMore: lastId ? latest.length === 3 : false
+          hasMore: lastId ? latest.length === 9 : false
         }
       }
       catch (err) {
@@ -1207,6 +1216,7 @@ module.exports = {
     },
     async deletePost(_, { id, room }, context) {
       const { username } = await fbAuthContext(context);
+
       const document = db.doc(`/${room ? `room/${room}/posts` : 'posts'}/${id}`);
       const commentsCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/comments`);
       const likesCollection = db.collection(`/${room ? `room/${room}/posts` : 'posts'}/${id}/likes`);

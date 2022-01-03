@@ -10,8 +10,6 @@ const reducer = (state, action) => {
         loading: true,
       };
     case "SET_POSTS":
-      // let lastIdPosts = action.payload.length && action.payload[action.payload.length - 1].id;
-
       return {
         ...state,
         loading: false,
@@ -43,7 +41,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_1: action.payload,
-        isMorePost: action.payload.length >= 8,
+        isMorePost: action.payload.length >= 20,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_BMW Club Bandung":
@@ -52,7 +50,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_2: action.payload,
-        isMorePost: action.payload.length >= 8,
+        isMorePost: action.payload.length >= 20,
         lastIdPosts: action.payload[action.payload.length - 1].id
       };
     case "SET_POST":
@@ -107,7 +105,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_1: [...state.room_1, ...action.payload],
-        isMorePost: action.payload.length >= 3,
+        isMorePost: action.payload.length >= 10,
         lastIdPosts: state.posts[state.posts.length - 1].id,
       };
     case "MORE_BMW Club Bandung":
@@ -115,7 +113,7 @@ const reducer = (state, action) => {
         ...state,
         loading: false,
         room_2: [...state.room_2, ...action.payload],
-        isMorePost: action.payload.length >= 3,
+        isMorePost: action.payload.length >= 10,
         lastIdPosts: state.posts[state.posts.length - 1].id,
       };
     case "CREATE_POST_ROOM_1":
@@ -224,7 +222,7 @@ const reducer = (state, action) => {
         post: {
           ...state.post,
           comments: [...state.post.comments, action.payload],
-          commentsCount: state.post.comments + 1,
+          commentCount: state.post.commentCount + 1,
         },
       };
 
@@ -236,6 +234,7 @@ const reducer = (state, action) => {
           comments: state.post.comments.filter(
             (comment) => comment.id !== action.payload.id
           ),
+          commentCount: state.post.commentCount - 1
         },
       };
     case "LIKE_POST":
@@ -712,7 +711,6 @@ export const PostProvider = (props) => {
   };
 
   const createPost = (post, pathname) => {
-    // console.log(`/${post.owner}`);
     if (post.room) {
       const room = post.room === "Insvire E-Sport" ? "ROOM_1" : "ROOM_2";
 

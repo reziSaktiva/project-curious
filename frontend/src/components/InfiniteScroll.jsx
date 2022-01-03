@@ -80,7 +80,6 @@ function ScrollInfinite(props) {
 
     const loadMore = () => {
         const loc = JSON.parse(location)
-        console.log("jalan");
         switch (pathname) {
             case '/Insvire E-Sport':
                 nextRoom({ variables: { id: room_1[room_1.length - 1].id, room: 'Insvire E-Sport' } })
@@ -188,6 +187,7 @@ function ScrollInfinite(props) {
                     : (isLoading && <div className="centeringButton" ><LoadingOutlined /></div>) : <Skeleton avatar active paragraph={{ rows: 2 }} />}
                 scrollableTarget="scrollableDiv"
                 {...props}
+                
             />
         </div>
     )

@@ -59,6 +59,10 @@ function MutedPost() {
     }
   }, [data, _isMounted])
 
+  useEffect(() => {
+    setPathname(path)
+    window.scrollTo(0, 0);
+}, [])
   return (
     <div>
       <AppBar title="Muted Post" />

@@ -23,6 +23,9 @@ function Popular() {
         setPathname(history)
     }, [])
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [history])
 
     const _isMounted = useRef(false);
     const { location } = getSession();
@@ -51,7 +54,7 @@ function Popular() {
             return;
         }
     }, [data, _isMounted])
-
+    
     return (
         <div>
 
@@ -65,12 +68,12 @@ function Popular() {
                 <h4 style={{textAlign: 'center'}}>or change your location to see other post around</h4>
             </div>
                 ) 
-                    : posts.filter(a => a.rank > 2).map((post, key) => {
+                    : posts.filter(a => a.rank > 0).map((post, key) => {
                         const { muted, id } = post;
                         const isMuted = user && muted && muted.find((mute) => mute.owner === user.username)
                         
                         return (
-                            <div key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 16 } : { marginTop: 0 }}>
+                            <div key={`posts${id} ${key}`} style={key === 0 ? { marginTop: 20 } : { marginTop: 0 }}>
                                 {!isMuted && <PostCard post={post} type="nearby" loading={loading} />}
                             </div>
                         )

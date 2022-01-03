@@ -1,8 +1,8 @@
-const { db, NOTIFICATION_ADDED, pubSub } = require('../../utility/admin')
+const { db, NOTIFICATION_ADDED, pubSub } = require('../../../utility/admin')
 const { UserInputError } = require('apollo-server-express');
 
-const fbAuthContext = require('../../utility/fbAuthContext')
-const randomGenerator = require('../../utility/randomGenerator')
+const fbAuthContext = require('../../../utility/fbAuthContext')
+const randomGenerator = require('../../../utility/randomGenerator')
 
 module.exports = {
     Mutation: {
@@ -34,7 +34,7 @@ module.exports = {
                         if (!doc.exists) {
                             throw new UserInputError('Postingan tidak ditemukan/sudah dihapus')
                         } else {
-                            doc.ref.update({ commentCount: doc.data().commentCount + 1 , rank : doc.data().rank + 1})
+                            doc.ref.update({ commentCount: doc.data().commentCount + 1, rank: doc.data().rank + 1 })
                             postOwner = doc.data().owner
 
                             return commentCollection.add(newComment)
@@ -175,7 +175,7 @@ module.exports = {
                     }
 
                     commentDoc.delete()
-                    postDocument.ref.update({ commentCount: getCommentDoc.data().commentCount - 1 , rank : getCommentDoc.data().rank - 1})
+                    postDocument.ref.update({ commentCount: postDocument.data().commentCount - 1, rank: postDocument.data().rank - 1 })
 
                     if (!subscribeCollection.empty) {
                         subscribeCollection.docs.forEach(doc => {

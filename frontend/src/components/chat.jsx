@@ -29,11 +29,11 @@ export default function Chat() {
                 <div >
                     {device === 'iPhone' || device === 'iPad'? (
                         <a href="https://www.apple.com/app-store/">
-                    <Button type="link" > <img src={ AppStore } style={{width: 150}} /></Button>
+                    <Button type="link" style={{height:200}} > <img src={ AppStore } style={{width: 150}} /></Button>
                     </a>
                     ) : (
                         <a href="https://play.google.com/store/apps/details?id=com.ramadhan.curious">
-                    <Button type="link" > <img src={PlayStore} style={{width: 150}} /></Button>
+                    <Button type="link" > <img src={PlayStore} style={{width: 150, height: 200}} /></Button>
                     </a>
                     )
 
